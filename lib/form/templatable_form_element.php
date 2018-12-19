@@ -83,6 +83,7 @@ trait templatable_form_element {
         $context['attributes'] = implode(' ', $otherattributes);
         $context['emptylabel'] = ($this->getLabel() === '');
 
+        $context['nameraw'] = $context['name'];
         // Elements with multiple values need array syntax.
         if ($this->getAttribute('multiple')) {
             $context['name'] = $context['name'] . '[]';
