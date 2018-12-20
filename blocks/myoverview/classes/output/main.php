@@ -105,14 +105,25 @@ class main implements renderable, templatable {
 
         $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
 
+        switch ($this->sort) {
+            case BLOCK_MYOVERVIEW_SORTING_TITLE:
+                $sort = 'fullname';
+                break;
+            case BLOCK_MYOVERVIEW_SORTING_LASTACCESSED:
+                $sort = 'ul.timeaccess desc';
+                break;
+            case BLOCK_MYOVERVIEW_SORTING_STARRED:
+                $sort = 'fullname starred desc';
+                break;
+        }
+
         $defaultvariables = [
             'nocoursesimg' => $nocoursesurl,
             'grouping' => $this->grouping,
-            'sort' => $this->sort == BLOCK_MYOVERVIEW_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc',
+            'sort' => $sort,
             'view' => $this->view,
             'paging' => $this->paging
         ];
-
         $preferences = $this->get_preferences_as_booleans();
         return array_merge($defaultvariables, $preferences);
 

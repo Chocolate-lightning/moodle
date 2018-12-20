@@ -3770,7 +3770,13 @@ class core_course_external extends external_api {
         $requiredproperties = course_summary_exporter::define_properties();
         $fields = join(',', array_keys($requiredproperties));
         $hiddencourses = get_hidden_courses_on_timeline();
+        $starsort = false;
         $courses = [];
+
+        if (strpos($sort, 'starred')) {
+            $starsort = true;
+            $sort = 'fullname';
+        }
 
         // If the timeline requires the hidden courses then restrict the result to only $hiddencourses else exclude.
         if ($classification == COURSE_TIMELINE_HIDDEN) {
@@ -3797,6 +3803,12 @@ class core_course_external extends external_api {
                 $courses,
                 $favouritecourseids,
                 $limit
+            );
+        } else if ($starsort == true) {
+            list($filteredcourses, $processedcount) = course_sort_courses_by_favourites(
+                    $courses,
+                    $favouritecourseids,
+                    $limit
             );
         } else {
             list($filteredcourses, $processedcount) = course_filter_courses_by_timeline_classification(

@@ -40,6 +40,7 @@ define('BLOCK_MYOVERVIEW_GROUPING_HIDDEN', 'hidden');
  */
 define('BLOCK_MYOVERVIEW_SORTING_TITLE', 'title');
 define('BLOCK_MYOVERVIEW_SORTING_LASTACCESSED', 'lastaccessed');
+define('BLOCK_MYOVERVIEW_SORTING_STARRED', 'starred');
 
 /**
  * Constants for the user preferences view options
@@ -80,7 +81,8 @@ function block_myoverview_user_preferences() {
         'type' => PARAM_ALPHA,
         'choices' => array(
             BLOCK_MYOVERVIEW_SORTING_TITLE,
-            BLOCK_MYOVERVIEW_SORTING_LASTACCESSED
+            BLOCK_MYOVERVIEW_SORTING_LASTACCESSED,
+            BLOCK_MYOVERVIEW_SORTING_STARRED
         )
     );
     $preferences['block_myoverview_user_view_preference'] = array(

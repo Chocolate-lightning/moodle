@@ -4343,6 +4343,53 @@ function course_filter_courses_by_favourites(
 }
 
 /**
+ * Search the given $courses for any that match the given $classification up to the specified
+ * $limit.
+ *
+ * This function will return a sorted list of courses that are favourites as well as regular courses.
+ *
+ * It is recommended that for larger sets of courses this function is given a Generator that loads
+ * the courses from the database in chunks.
+ *
+ * @param array|Traversable $courses List of courses to process
+ * @param array $favouritecourseids Array of favourite courses.
+ * @param int $limit Limit the number of results to this amount
+ * @return array First value is the filtered courses, second value is the number of courses processed
+ */
+function course_sort_courses_by_favourites(
+        $courses,
+        $favouritecourseids,
+        int $limit = 0
+) : array {
+
+    $sortedcourses = [];
+    $regcourses = [];
+    $numberofcoursesprocessed = 0;
+    $filtermatches = 0;
+
+    foreach ($courses as $course) {
+        $numberofcoursesprocessed++;
+
+        if (in_array($course->id, $favouritecourseids)) {
+            $sortedcourses[] = $course;
+            $filtermatches++;
+        } else {
+            $regcourses[] = $course;
+            $filtermatches++;
+        }
+
+        if ($limit && $filtermatches >= $limit) {
+            // We've found the number of requested courses. No need to continue searching.
+            break;
+        }
+    }
+    $sortedcourses = array_merge($sortedcourses, $regcourses);
+    // Return the number of courses in order to find the matching courses.
+    // This allows the calling code to do some kind of pagination.
+    return [$sortedcourses, $numberofcoursesprocessed];
+}
+
+/**
  * Check module updates since a given time.
  * This function checks for updates in the module config, file areas, completion, grades, comments and ratings.
  *
