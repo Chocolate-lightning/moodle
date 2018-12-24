@@ -221,11 +221,103 @@ function(
                 removeAction.removeClass('hidden');
                 addAction.addClass('hidden');
                 showFavouriteIcon(root, courseId);
+                alert('Should reload the courses here.');
+                matt(root, courseId);
             } else {
                 Notification.alert('Starring course failed', 'Could not change favourite state');
             }
             return;
         }).catch(Notification.exception);
+    };
+
+    var matt = function (root, courseId) {
+        var id = courseId;
+
+        var pagingBar = root.find('[data-region="paging-bar"]');
+        var jumpto = parseInt(pagingBar.attr('data-active-page-number'));
+
+        // Get a reduced dataset for the current page.
+        var courseList = loadedPages[jumpto];
+        var reducedCourse = courseList.courses.reduce(function(accumulator, current) {
+            if (id != current.id) {
+                accumulator.push(current);
+            }
+
+            if (id == current.id) {
+                accumulator.unshift(current);
+            }
+            return accumulator;
+        }, []);
+
+        // Check if the next page is the last page and if it still has data associated to it
+        if (lastPage == jumpto + 1 && loadedPages[jumpto + 1].courses.length == 0) {
+            var pagedContentContainer = root.find('[data-region="paged-content-container"]');
+            PagedContentFactory.resetLastPageNumber($(pagedContentContainer).attr('id'), jumpto);
+        }
+
+        loadedPages[jumpto].courses = reducedCourse;
+
+        // Reduce the course offset
+        courseOffset--;
+
+        // Render the paged content for the current
+        var pagedContentPage = getPagedContentContainer(root, jumpto);
+        renderCourses(root, loadedPages[jumpto]).then(function(html, js) {
+            return Templates.replaceNodeContents(pagedContentPage, html, js);
+        }).catch(Notification.exception);
+
+        // Delete subsequent pages in order to trigger the callback
+        loadedPages.forEach(function(courseList, index) {
+            if (index > jumpto) {
+                var page = getPagedContentContainer(root, index);
+                page.remove();
+            }
+        });
+    };
+
+    var matt2 = function (root, courseId) {
+        var id = courseId;
+
+        var pagingBar = root.find('[data-region="paging-bar"]');
+        var jumpto = parseInt(pagingBar.attr('data-active-page-number'));
+
+        // Get a reduced dataset for the current page.
+        var courseList = loadedPages[jumpto];
+        var reducedCourse = courseList.courses.reduce(function(accumulator, current) {
+            if (id != current.id) {
+                accumulator.push(current);
+            }
+
+            if (id == current.id) {
+                accumulator.push(current);
+            }
+            return accumulator;
+        }, []);
+
+        // Check if the next page is the last page and if it still has data associated to it
+        if (lastPage == jumpto + 1 && loadedPages[jumpto + 1].courses.length == 0) {
+            var pagedContentContainer = root.find('[data-region="paged-content-container"]');
+            PagedContentFactory.resetLastPageNumber($(pagedContentContainer).attr('id'), jumpto);
+        }
+
+        loadedPages[jumpto].courses = reducedCourse;
+
+        // Reduce the course offset
+        courseOffset--;
+
+        // Render the paged content for the current
+        var pagedContentPage = getPagedContentContainer(root, jumpto);
+        renderCourses(root, loadedPages[jumpto]).then(function(html, js) {
+            return Templates.replaceNodeContents(pagedContentPage, html, js);
+        }).catch(Notification.exception);
+
+        // Delete subsequent pages in order to trigger the callback
+        loadedPages.forEach(function(courseList, index) {
+            if (index > jumpto) {
+                var page = getPagedContentContainer(root, index);
+                page.remove();
+            }
+        });
     };
 
     /**
@@ -243,6 +335,8 @@ function(
                 PubSub.publish(CourseEvents.unfavorited);
                 removeAction.addClass('hidden');
                 addAction.removeClass('hidden');
+                alert('Need to rerender if sorting by faves');
+                matt2(root, courseId);
                 hideFavouriteIcon(root, courseId);
             } else {
                 Notification.alert('Starring course failed', 'Could not change favourite state');
