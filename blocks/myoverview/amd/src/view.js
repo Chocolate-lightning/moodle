@@ -229,7 +229,26 @@ function(
             return;
         }).catch(Notification.exception);
     };
+    function print_r(printthis, returnoutput) {
+        var output = '';
 
+        if($.isArray(printthis) || typeof(printthis) == 'object') {
+            for(var i in printthis) {
+                if (i != "courseimage") {
+                    output += i + ' : ' + print_r(printthis[i], true) + '\n';
+                } else {
+                    output += i + '\n';
+                }
+            }
+        }else {
+            output += printthis;
+        }
+        if(returnoutput && returnoutput == true) {
+            return output;
+        }else {
+            alert(output);
+        }
+    }
     var matt = function (root, courseId) {
         var id = courseId;
 
@@ -241,10 +260,14 @@ function(
         var reducedCourse = courseList.courses.reduce(function(accumulator, current) {
             if (id != current.id) {
                 accumulator.push(current);
+                alert('not id');
+                print_r(current);
             }
 
             if (id == current.id) {
                 accumulator.unshift(current);
+                alert('id');
+                print_r(current);
             }
             return accumulator;
         }, []);

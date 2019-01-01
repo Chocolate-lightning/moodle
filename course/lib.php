@@ -4371,7 +4371,11 @@ function course_sort_courses_by_favourites(
         $numberofcoursesprocessed++;
 
         if (in_array($course->id, $favouritecourseids)) {
-            $sortedcourses[] = $course;
+            if (strcasecmp($course->fullname, $sortedcourses[0]->fullname) < 1) {
+                array_unshift($sortedcourses, $course);
+            } else {
+                $sortedcourses[] = $course;
+            }
             $filtermatches++;
         } else {
             $regcourses[] = $course;
