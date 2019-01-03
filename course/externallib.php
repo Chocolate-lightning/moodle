@@ -3855,6 +3855,114 @@ class core_course_external extends external_api {
      *
      * @return external_function_parameters
      */
+    public static function get_enrolled_courses_by_matt_parameters() {
+        /*return new external_function_parameters(
+            array(
+                'courses' => new external_multiple_structure(course_summary_exporter::get_read_structure(), 'Course'),
+                'target' => new external_multiple_structure(course_summary_exporter::get_read_structure(), 'Course')
+            )
+        );*/
+        return new external_function_parameters(
+            array(
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_RAW, 'id number'),
+                            'fullname' => new external_value(PARAM_TEXT, 'full name'),
+                            'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+
+
+                            'summary' => new external_value(PARAM_RAW, 'summary', VALUE_OPTIONAL),
+                            'summaryformat' => new external_format_value('summary', VALUE_DEFAULT),
+                            'startdate' => new external_value(PARAM_INT,
+                                'timestamp when the course start', VALUE_OPTIONAL),
+                            'enddate' => new external_value(PARAM_INT,
+                                'timestamp when the course end', VALUE_OPTIONAL),
+
+                                'idnumber' => new external_value(PARAM_RAW, 'id number'),
+                                'fullnamedisplay' => new external_value(PARAM_RAW, 'id number'),
+                                'viewurl' => new external_value(PARAM_RAW, 'id number'),
+                                'courseimage' => new external_value(PARAM_RAW, 'id number'),
+                                'progress' => new external_value(PARAM_RAW, 'id number'),
+                                'hasprogress' => new external_value(PARAM_RAW, 'id number'),
+                                'isfavourite' => new external_value(PARAM_RAW, 'id number'),
+                                'hidden' => new external_value(PARAM_RAW, 'id number'),
+                                'showshortname' => new external_value(PARAM_RAW, 'id number'),
+                                'coursecategory' => new external_value(PARAM_RAW, 'id number'),
+
+                        )
+                    ), 'courses to create'
+                ),
+                'target' => new external_value(PARAM_INT, 'Result set limit', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Get courses matching the given timeline classification.
+     *
+     * NOTE: The offset applies to the unfiltered full set of courses before the classification
+     * filtering is done.
+     * E.g.
+     * If the user is enrolled in 5 courses:
+     * c1, c2, c3, c4, and c5
+     * And c4 and c5 are 'future' courses
+     *
+     * If a request comes in for future courses with an offset of 1 it will mean that
+     * c1 is skipped (because the offset applies *before* the classification filtering)
+     * and c4 and c5 will be return.
+     *
+     * @param  string $classification past, inprogress, or future
+     * @param  int $limit Result set limit
+     * @param  int $offset Offset the full course set before timeline classification is applied
+     * @param  string $sort SQL sort string for results
+     * @return array list of courses and warnings
+     * @throws  invalid_parameter_exception
+     */
+    public static function get_enrolled_courses_by_matt(
+        array $courses,
+        int $target
+    ) {
+        global $CFG, $PAGE, $USER;
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $params = self::validate_parameters(self::get_enrolled_courses_by_matt_parameters(),
+            array(
+                'courses' => $courses,
+                'target' => $target
+            )
+        );
+
+        $courses = $params['courses'];
+        $target = $params['target'];
+
+        self::validate_context(context_user::instance($USER->id));
+
+        $fcourses = course_manage_matt($courses, $target);
+
+        return [
+            'courses' => $fcourses
+        ];
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function get_enrolled_courses_by_matt_returns() {
+        return new external_single_structure(
+            array(
+                'courses' => new external_multiple_structure(course_summary_exporter::get_read_structure(), 'Course')
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
     public static function set_favourite_courses_parameters() {
         return new external_function_parameters(
             array(

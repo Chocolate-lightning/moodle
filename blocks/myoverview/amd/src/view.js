@@ -257,11 +257,19 @@ function(
 
         // Get a reduced dataset for the current page.
         var courseList = loadedPages[jumpto];
+        print_r(courseList.courses);
+
+        return Repository.mattws({
+            courses: courseList.courses,
+            target: id
+        });
+
+        // This will be replaced by WS call.
         var reducedCourse = courseList.courses.reduce(function(accumulator, current) {
             if (id != current.id) {
                 accumulator.push(current);
-                alert('not id');
-                print_r(current);
+                //alert('not id');
+                //print_r(current);
             }
 
             if (id == current.id) {
@@ -272,30 +280,15 @@ function(
             return accumulator;
         }, []);
 
-        // Check if the next page is the last page and if it still has data associated to it
-        if (lastPage == jumpto + 1 && loadedPages[jumpto + 1].courses.length == 0) {
-            var pagedContentContainer = root.find('[data-region="paged-content-container"]');
-            PagedContentFactory.resetLastPageNumber($(pagedContentContainer).attr('id'), jumpto);
-        }
+        // End of replaceable stuff.
 
         loadedPages[jumpto].courses = reducedCourse;
-
-        // Reduce the course offset
-        courseOffset--;
 
         // Render the paged content for the current
         var pagedContentPage = getPagedContentContainer(root, jumpto);
         renderCourses(root, loadedPages[jumpto]).then(function(html, js) {
             return Templates.replaceNodeContents(pagedContentPage, html, js);
         }).catch(Notification.exception);
-
-        // Delete subsequent pages in order to trigger the callback
-        loadedPages.forEach(function(courseList, index) {
-            if (index > jumpto) {
-                var page = getPagedContentContainer(root, index);
-                page.remove();
-            }
-        });
     };
 
     var matt2 = function (root, courseId) {

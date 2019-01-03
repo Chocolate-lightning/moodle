@@ -545,6 +545,15 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_course_get_enrolled_courses_by_matt' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_enrolled_courses_by_matt',
+        'classpath' => 'course/externallib.php',
+        'description' => 'List of enrolled courses for the given timeline classification (past, inprogress, or future).',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_course_get_recent_courses' => array(
         'classname' => 'core_course_external',
         'methodname' => 'get_recent_courses',
