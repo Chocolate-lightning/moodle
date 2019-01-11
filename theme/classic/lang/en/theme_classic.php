@@ -1,5 +1,5 @@
 <?php
-// This file is part of the classic theme for Moodle
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Raw SCSS setting.
-$string['choosereadme'] = 'Theme Classic';
+$string['choosereadme'] = 'Classic is a highly-customisable theme, based on Boost, with an alternative navigation layout. This theme is intended to be used directly, or as a parent theme when creating or updating custom themes to utilise Bootstrap 4.';
 $string['configtitle'] = 'Classic';
 $string['navbardark'] = 'Use a dark style navbar';
 $string['navbardarkdesc'] = 'Swaps text and background colours for the navbar at the top of the page between dark and light.';
