@@ -41,14 +41,15 @@ if (!isloggedin()) {
 }
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
-$context = context_course::instance($course->id, MUST_EXIST);
+$coursecontext = context_course::instance($course->id, MUST_EXIST);
+$categorycontext = context_coursecat::instance($course->category);
 
 // Everybody is enrolled on the frontpage
 if ($course->id == SITEID) {
     redirect("$CFG->wwwroot/");
 }
 
-if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
+if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
     print_error('coursehidden');
 }
 
@@ -76,7 +77,7 @@ foreach($enrolinstances as $instance) {
 }
 
 // Check if user already enrolled
-if (is_enrolled($context, $USER, '', true)) {
+if (is_enrolled($coursecontext, $USER, '', true)) {
     if (!empty($SESSION->wantsurl)) {
         $destination = $SESSION->wantsurl;
         unset($SESSION->wantsurl);
@@ -84,6 +85,9 @@ if (is_enrolled($context, $USER, '', true)) {
         $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
     }
     redirect($destination);   // Bye!
+} else {
+    // User is not enrolled so we give theme a context they can see.
+    $PAGE->set_context($categorycontext);
 }
 
 $PAGE->set_title($course->shortname);
