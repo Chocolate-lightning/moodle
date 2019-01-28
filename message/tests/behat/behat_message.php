@@ -37,20 +37,16 @@ require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
  */
 class behat_message extends behat_base {
 
-
     /**
      * Open the messaging UI.
      *
      * @Given /^I open messaging$/
      */
     public function i_open_messaging() {
-
         // Visit home page and follow messages.
         $this->execute("behat_general::i_am_on_homepage");
         $this->execute("behat_general::i_click_on", [get_string('togglemessagemenu', 'core_message'), 'link']);
-        $this->execute('behat_general::i_wait_seconds', 1);
     }
-
 
     /**
      * View the contact information of a user in the messages ui.
@@ -82,7 +78,6 @@ class behat_message extends behat_base {
      * @param string $userfullname
      */
     public function i_select_user_in_messaging($userfullname) {
-
         $this->i_open_messaging();
 
         $this->execute('behat_general::i_click_on', [get_string('search', 'core'), 'field']);
@@ -111,7 +106,6 @@ class behat_message extends behat_base {
 
         $this->execute('behat_general::wait_until_the_page_is_ready');
     }
-
 
     /**
      * Sends a message to the specified user from the logged user. The user full name should contain the first and last names.
@@ -168,6 +162,7 @@ class behat_message extends behat_base {
                 'css_element',
             )
         );
+        $this->execute('behat_general::i_wait_seconds', 2);
     }
 
     /**
@@ -179,9 +174,7 @@ class behat_message extends behat_base {
      * @return void
      */
     public function i_expand_conversation_group_in($buttontext, $parentregion) {
-
-        $this->execute('behat_general::i_wait_seconds', 1);
-
+        $this->execute('behat_general::i_wait_seconds', 2);
         $parentxpath = "//*[@id='message-drawer-view-overview-container']//div[@data-region='" . $parentregion . "']";
         $buttonxpath = $parentxpath."//button[contains(.,'" . $buttontext . "')]";
         $button = $this->find('xpath', $buttonxpath);
@@ -191,7 +184,6 @@ class behat_message extends behat_base {
             $parent = $this->find('xpath', $parentxpath);
             $this->ensure_node_is_visible($parent);
             $parent->click();
-            $this->execute('behat_general::i_wait_seconds', 1);
         }
     }
 
@@ -202,14 +194,10 @@ class behat_message extends behat_base {
      * @param string $conversationname
      */
     public function i_select_conversation_in_messaging($conversationname) {
-
-        $this->execute('behat_general::i_wait_seconds', 1);
         $xpath = "//*[@id='message-drawer-view-overview-container']//div[@class='d-flex']//strong[text()='"
             .$this->escape($conversationname)."']";
         $node = $this->find('xpath', $xpath);
         $this->ensure_node_is_visible($node);
         $node->click();
-        $this->execute('behat_general::wait_until_the_page_is_ready');
     }
-
 }
