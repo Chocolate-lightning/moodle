@@ -25,8 +25,8 @@ Feature: Create conversations for course's groups
       | student3 | C1     | student |
       | student4 | C1     | student |
     And the following "groups" exist:
-      | name        | course | idnumber | enablemessaging |
-      | Group 1   | C1     | G1       | 1               |
+      | name    | course | idnumber | enablemessaging |
+      | Group 1 | C1     | G1       | 1               |
       | Group 2 | C1     | G2       | 1               |
       | Group 3 | C1     | G3       | 0               |
     And the following "group members" exist:
@@ -43,47 +43,47 @@ Feature: Create conversations for course's groups
   Scenario: Group conversations are restricted to members
     Given I log in as "teacher1"
     Then I open messaging
-    And I should see "Group 1" in the "[data-region='view-overview-group-messages']" "css_element"
-    And I should see "Group 2" in the "[data-region='view-overview-group-messages']" "css_element"
-    And I should not see "Group 3" in the "[data-region='view-overview-group-messages']" "css_element"
+    And "Group 1" "group_message" should exist
+    And "Group 2" "group_message" should exist
+    And "Group 3" "group_message" should not exist
     And I log out
     And I log in as "student1"
     And I open messaging
-    And I should see "Group 1" in the "[data-region='view-overview-group-messages']" "css_element"
-    And I should not see "Group 2" in the "[data-region='view-overview-group-messages']" "css_element"
-    And I should not see "Group 3" in the "[data-region='view-overview-group-messages']" "css_element"
+    And "Group 1" "group_message" should exist
+    And "Group 2" "group_message" should not exist
+    And "Group 3" "group_message" should not exist
 
   Scenario: View group conversation's participants numbers
     Given I log in as "teacher1"
     Then I open messaging
     And I select "Group 1" conversation in messaging
-    And I should see "5 participants" in the "[data-region='message-drawer']" "css_element"
+    And "5 participants" "group_message_header" should exist
     And I go back in "view-conversation" message drawer
     And I expand "Group" group in "view-overview-group-messages"
     And I select "Group 2" conversation in messaging
-    And I should see "1 participants" in the "[data-region='message-drawer']" "css_element"
+    And "1 participants" "group_message_header" should exist
 
   Scenario: View group conversation's participants list
     Given I log in as "teacher1"
     Then I open messaging
     # Check Group 1 participants list.
     And I select "Group 1" conversation in messaging
-    And I click on "[data-action='view-group-info']" "css_element"
-    And I should not see "Teacher 1" in the "[data-region='group-info-content-container']" "css_element"
-    And I should see "Student 0" in the "[data-region='group-info-content-container']" "css_element"
-    And I should see "Student 1" in the "[data-region='group-info-content-container']" "css_element"
-    And I should see "Student 2" in the "[data-region='group-info-content-container']" "css_element"
-    And I should see "Student 3" in the "[data-region='group-info-content-container']" "css_element"
-    And I should not see "Student 4" in the "[data-region='group-info-content-container']" "css_element"
+    And I open messaging information
+    And "Teacher 1" "group_message_member" should not exist
+    And "Student 0" "group_message_member" should exist
+    And "Student 1" "group_message_member" should exist
+    And "Student 2" "group_message_member" should exist
+    And "Student 3" "group_message_member" should exist
+    And "Student 4" "group_message_member" should not exist
     And I go back in "group-info-content-container" message drawer
     And I go back in "view-conversation" message drawer
     And I expand "Group" group in "view-overview-group-messages"
     # Check Group 2 participants list.
     And I select "Group 2" conversation in messaging
-    And I click on "[data-action='view-group-info']" "css_element"
-    And I should not see "Teacher 1" in the "[data-region='group-info-content-container']" "css_element"
-    And I should see "No participants" in the "[data-region='group-info-content-container']" "css_element"
-    And I should not see "Student 4" in the "[data-region='group-info-content-container']" "css_element"
+    And I open messaging information
+    And "Teacher 1" "group_message_member" should not exist
+    And "No participants" "group_message_member" should exist
+    And "Student 4" "group_message_member" should not exist
 
   Scenario: Check group conversation members are synced when a new group member is added
     Given I log in as "teacher1"
@@ -93,14 +93,14 @@ Feature: Create conversations for course's groups
     And I add "Student 4 (student4@example.com)" user to "Group 2" group members
     And I open messaging
     And I select "Group 1" conversation in messaging
-    And I should see "6 participants" in the "[data-region='message-drawer']" "css_element"
-    And I click on "[data-action='view-group-info']" "css_element"
-    And I should see "Student 4" in the "[data-region='group-info-content-container']" "css_element"
+    And "6 participants" "group_message_header" should exist
+    And I open messaging information
+    And "Student 4" "group_message_member" should exist
     And I go back in "group-info-content-container" message drawer
     And I go back in "view-conversation" message drawer
     And I expand "Group" group in "view-overview-group-messages"
     And I select "Group 2" conversation in messaging
-    And I should see "2 participants" in the "[data-region='message-drawer']" "css_element"
-    And I click on "[data-action='view-group-info']" "css_element"
-    And I should not see "No participants" in the "[data-region='group-info-content-container']" "css_element"
-    And I should see "Student 4" in the "[data-region='group-info-content-container']" "css_element"
+    And "2 participants" "group_message_header" should exist
+    And I open messaging information
+    And "No participants" "group_message_member" should not exist
+    And "Student 4" "group_message_member" should exist

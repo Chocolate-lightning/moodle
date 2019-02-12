@@ -49,6 +49,15 @@ class behat_message extends behat_base {
     }
 
     /**
+     * Open the messaging UI.
+     *
+     * @Given /^I open messaging information$/
+     */
+    public function i_open_messaging_information() {
+        $this->execute('behat_general::i_click_on', ["[data-action='view-group-info']", 'css_element']);
+    }
+
+    /**
      * View the contact information of a user in the messages ui.
      *
      * @Given /^I view the "(?P<user_full_name_string>(?:[^"]|\\")*)" contact in the message area$/

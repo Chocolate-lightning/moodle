@@ -90,6 +90,9 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'fieldset' => 'fieldset',
         'file' => 'file',
         'filemanager' => 'filemanager',
+        'group_message' => 'group_message',
+        'group_message_header' => 'group_message_header',
+        'group_message_member' => 'group_message_member',
         'icon' => 'icon',
         'link' => 'link',
         'link_or_button' => 'link_or_button',
@@ -151,6 +154,18 @@ XPATH
             and
         normalize-space(descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' modal-header ')] = %locator%)
     ]
+XPATH
+        , 'group_message' => <<<XPATH
+        .//*[@data-conversation-id]//img[contains(@alt, %locator%)]/..
+XPATH
+        , 'group_message_header' => <<<XPATH
+        .//*[@data-region='message-drawer']//div[@data-region='header-container']//*[text()[contains(., %locator%)]]
+XPATH
+        , 'group_message_member' => <<<XPATH
+        .//*[@data-region='message-drawer']//div[@data-region='group-info-content-container']
+        //div[@class='list-group' and not(contains(@class, 'hidden'))]//*[text()[contains(., %locator%)]] |
+        .//*[@data-region='message-drawer']//div[@data-region='group-info-content-container']
+        //div[@data-region='empty-message-container' and not(contains(@class, 'hidden'))]//*[text()[contains(., %locator%)]]
 XPATH
         , 'icon' => <<<XPATH
 .//*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') and ( contains(normalize-space(@title), %locator%))]
