@@ -21,7 +21,7 @@
  * @copyright  2012 Bas Brands, www.basbrands.nl
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-use html_writer;
+use \html_writer as html_writer;
 
 class theme_bootstrapbase_core_renderer extends core_renderer {
 
@@ -42,8 +42,8 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         // Setup help icon overlays.
         $this->page->requires->yui_module('moodle-core-popuphelp', 'M.core.init_popuphelp');
         $this->page->requires->strings_for_js(array(
-            'morehelp',
-            'loadinghelp',
+                'morehelp',
+                'loadinghelp',
         ), 'moodle');
 
         if ($PAGE->pagelayout == 'frontpage') {
