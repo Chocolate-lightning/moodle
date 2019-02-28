@@ -34,12 +34,15 @@
 
 }}
 <div
-    class="{{$rootclasses}}{{/rootclasses}} lazy-load-list"
+    class="{{$rootclasses}}{{/rootclasses}}"
+    style="overflow-y: auto"
     aria-live="polite"
     data-region="lazy-load-list"
     data-user-id="{{loggedinuser.id}}"
     {{$rootattributes}}{{/rootattributes}}
 >
+    <div class="onepix">
+    </div>
     {{$notification}}{{/notification}}
     <div class="hidden text-center p-2" data-region="empty-message-container">
         {{$emptymessage}}{{/emptymessage}}
