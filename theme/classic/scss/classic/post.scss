@@ -107,7 +107,7 @@
     }
 }
 
-// The block column nees some padding on small devices.
+// The block column needs some padding on small devices.
 @include media-breakpoint-down(sm) {
     .blockcolumn,
     .region-main {
