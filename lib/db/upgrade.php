@@ -2736,21 +2736,57 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019021500.02);
     }
 
-    if ($oldversion < 2019030100.01) {
-        // Create adhoc task to delete renamed My Course search area (ID core_course-mycourse).
-        $record = new \stdClass();
-        $record->classname = '\core\task\clean_up_deleted_search_area_task';
-        $record->component = 'core';
+    if ($oldversion < 2019030100.03) {
+        // Removing the themes from core.
+        $themes = array('theme_bootstrapbase' => 'bootstrapbase',
+                'theme_clean' => 'clean', 'theme_more' => 'more');
 
-        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
-        $nextruntime = time() - 1;
-        $record->nextruntime = $nextruntime;
-        $record->customdata = json_encode('core_course-mycourse');
+        foreach ($themes as $key => $theme) {
+            if (check_dir_exists($CFG->dirroot . '/theme/' . $theme, false)) {
+                // Ignore the themes that have been re-downloaded.
+                unset($themes[$key]);
+            }
+            // Delete from config_plugins.
+            $DB->delete_records('config_plugins', array('plugin' => $key));
+            // Delete the config logs.
+            $DB->delete_records('config_log', array('plugin' => $key));
+        }
 
-        $DB->insert_record('task_adhoc', $record);
+        // Check we actually have themes to remove.
+        if (count($themes) > 0) {
+
+            // Replace the theme configs.
+            if (in_array(get_config('core', 'theme'), $themes)) {
+                set_config('theme', 'classic');
+            }
+            if (in_array(get_config('core', 'thememobile'), $themes)) {
+                set_config('thememobile', 'classic');
+            }
+            if (in_array(get_config('core', 'themelegacy'), $themes)) {
+                set_config('themelegacy', 'classic');
+            }
+            if (in_array(get_config('core', 'themetablet'), $themes)) {
+                set_config('themetablet', 'classic');
+            }
+        }
+
+        $params = [
+            'clean' => 'clean',
+            'more' => 'more'
+        ];
+
+        $select = "theme = :clean OR theme = :more";
+
+        $DB->set_field_select('course_categories', 'theme', 'classic', $select, $params);
+
+        $DB->set_field_select('course', 'theme', 'classic', $select, $params);
+
+        $DB->set_field_select('cohort', 'theme', 'classic', $select, $params);
+
+        $DB->set_field_select('user', 'theme', 'classic', $select, $params);
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2019030100.01);
+        upgrade_main_savepoint(true, 2019030100.03);
     }
 
     return true;
