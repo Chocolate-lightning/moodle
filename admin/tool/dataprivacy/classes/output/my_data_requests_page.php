@@ -106,12 +106,12 @@ class my_data_requests_page implements renderable, templatable {
             $cancancel = true;
             switch ($status) {
                 case api::DATAREQUEST_STATUS_COMPLETE:
-                    $item->statuslabelclass = 'label-success';
+                    $item->statuslabelclass = 'tag-success';
                     $item->statuslabel = get_string('statuscomplete', 'tool_dataprivacy');
                     $cancancel = false;
                     break;
                 case api::DATAREQUEST_STATUS_DOWNLOAD_READY:
-                    $item->statuslabelclass = 'label-success';
+                    $item->statuslabelclass = 'tag-success';
                     $item->statuslabel = get_string('statusready', 'tool_dataprivacy');
                     $cancancel = false;
                     $candownload = true;
@@ -122,7 +122,7 @@ class my_data_requests_page implements renderable, templatable {
                     }
                     break;
                 case api::DATAREQUEST_STATUS_DELETED:
-                    $item->statuslabelclass = 'label-success';
+                    $item->statuslabelclass = 'tag-success';
                     $item->statuslabel = get_string('statusdeleted', 'tool_dataprivacy');
                     $cancancel = false;
                     break;

@@ -160,33 +160,33 @@ class data_request_exporter extends persistent_exporter {
 
         switch ($this->persistent->get('status')) {
             case api::DATAREQUEST_STATUS_PENDING:
-                $values['statuslabelclass'] = 'label-info';
+                $values['statuslabelclass'] = 'tag-info';
                 // Request can be manually completed for general enquiry requests.
                 $values['canmarkcomplete'] = $requesttype == api::DATAREQUEST_TYPE_OTHERS;
                 break;
             case api::DATAREQUEST_STATUS_AWAITING_APPROVAL:
-                $values['statuslabelclass'] = 'label-info';
+                $values['statuslabelclass'] = 'tag-info';
                 // DPO can review the request once it's ready.
                 $values['canreview'] = true;
                 // Whether the DPO can approve or deny the request.
                 $values['approvedeny'] = in_array($requesttype, [api::DATAREQUEST_TYPE_EXPORT, api::DATAREQUEST_TYPE_DELETE]);
                 break;
             case api::DATAREQUEST_STATUS_APPROVED:
-                $values['statuslabelclass'] = 'label-info';
+                $values['statuslabelclass'] = 'tag-info';
                 break;
             case api::DATAREQUEST_STATUS_PROCESSING:
-                $values['statuslabelclass'] = 'label-info';
+                $values['statuslabelclass'] = 'tag-info';
                 break;
             case api::DATAREQUEST_STATUS_COMPLETE:
             case api::DATAREQUEST_STATUS_DOWNLOAD_READY:
             case api::DATAREQUEST_STATUS_DELETED:
-                $values['statuslabelclass'] = 'label-success';
+                $values['statuslabelclass'] = 'tag-success';
                 break;
             case api::DATAREQUEST_STATUS_CANCELLED:
-                $values['statuslabelclass'] = 'label-warning';
+                $values['statuslabelclass'] = 'tag-warning';
                 break;
             case api::DATAREQUEST_STATUS_REJECTED:
-                $values['statuslabelclass'] = 'label-important';
+                $values['statuslabelclass'] = 'tag-danger';
                 break;
             case api::DATAREQUEST_STATUS_EXPIRED:
                 $values['statuslabelclass'] = 'label-default';

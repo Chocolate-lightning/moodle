@@ -47,7 +47,7 @@
                 "id": 2,
                 "typename" : "Data export",
                 "comments": "Give me all of the information you have about me, or else...",
-                "statuslabelclass": "label-warning",
+                "statuslabelclass": "tag-warning",
                 "statuslabel": "Awaiting completion",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
@@ -59,7 +59,7 @@
                 "id": 3,
                 "typename" : "Data deletion",
                 "comments": "Please delete all of my son's personal data.",
-                "statuslabelclass": "label-success",
+                "statuslabelclass": "tag-success",
                 "statuslabel": "Deleted",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
@@ -83,7 +83,7 @@
                 "id": 5,
                 "typename" : "Data export",
                 "comments": "Please let me download my data",
-                "statuslabelclass": "label-info",
+                "statuslabelclass": "tag-info",
                 "statuslabel": "Processing",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
@@ -140,7 +140,7 @@
                 <td>{{#userdate}} {{timecreated}}, {{#str}} strftimedatetime {{/str}} {{/userdate}}</td>
                 <td><a href="{{requestedbyuser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{requestedbyuser.fullname}}</a></td>
                 <td>
-                    <span class="label {{statuslabelclass}}" title="{{statuslabeltitle}}">{{statuslabel}}</span>
+                    <span class="tag {{statuslabelclass}}" title="{{statuslabeltitle}}">{{statuslabel}}</span>
                 </td>
                 <td>{{comments}}</td>
                 <td>
