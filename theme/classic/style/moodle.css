@@ -17179,6 +17179,10 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   margin-left: 0;
   padding-left: 0.75rem; }
 
+.block_navigation .block_tree p.hasicon .icon,
+.block_settings .block_tree p.hasicon .icon {
+  margin-right: 5px; }
+
 .block.block_navigation .block_tree ul[role="group"] {
   padding-left: 0; }
 
@@ -17191,6 +17195,3 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 .block.block_settings .type_siteadmin > ul {
   padding-left: 0.75rem !important;
   /* stylelint-disable-line declaration-no-important */ }
-
-.block_navigation .navicon:before {
-  content: ""; }

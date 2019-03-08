@@ -170,6 +170,11 @@
     }
 }
 
+.block_navigation .block_tree p.hasicon .icon,
+.block_settings .block_tree p.hasicon .icon {
+    margin-right: 5px;
+}
+
 .block.block_navigation {
     .block_tree ul[role="group"] {
         padding-left: 0;
@@ -184,9 +189,4 @@
     .type_siteadmin > ul {
         padding-left: 0.75rem !important; /* stylelint-disable-line declaration-no-important */
     }
-}
-
-// Fix the fa-fw empty icon to have at least a circle.
-.block_navigation .navicon:before {
-    content: $fa-var-genderless;
 }
