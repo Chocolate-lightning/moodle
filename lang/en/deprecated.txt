@@ -143,3 +143,9 @@ error:invalidbadgeurl,core_badges
 nomessages,core_message
 searchallavailablecourses_desc,core_admin
 search:mycourse,core_search
+addtodock,core_block
+dockblock,core_block
+hidedockpanel,core_block
+undockall,core_block
+undockblock,core_block
+undockitem,core_block
