@@ -151,7 +151,8 @@ class behat_navigation extends behat_base {
 
         if ($this->running_javascript()) {
             // The user menu must be expanded when JS is enabled.
-            $xpath = "//div[contains(concat(' ', @class, ' '),  ' usermenu ')]//a[contains(concat(' ', @class, ' '), ' dropdown-toggle ')]";
+            $xpath = "//div[contains(concat(' ', @class, ' '),  ' usermenu ')]" .
+                    "//a[contains(concat(' ', @class, ' '), ' dropdown-toggle ')]";
             $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
         }
 
@@ -188,7 +189,8 @@ class behat_navigation extends behat_base {
             return true;
         }
 
-        $node = $this->get_node_text_node($nodetext, true, true, 'The "' . $nodetext . '" node can not be expanded');
+        $node = $this->get_node_text_node($nodetext, true, true,
+                'The "' . $nodetext . '" node can not be expanded');
         // Check if the node is a link AND a branch.
         if (strtolower($node->getTagName()) === 'a') {
             // We just want to expand the node, we don't want to follow it.
@@ -212,7 +214,8 @@ class behat_navigation extends behat_base {
             return true;
         }
 
-        $node = $this->get_node_text_node($nodetext, true, false, 'The "' . $nodetext . '" node can not be collapsed');
+        $node = $this->get_node_text_node($nodetext, true, false,
+                'The "' . $nodetext . '" node can not be collapsed');
         // Check if the node is a link AND a branch.
         if (strtolower($node->getTagName()) === 'a') {
             // We just want to expand the node, we don't want to follow it.
@@ -564,7 +567,8 @@ class behat_navigation extends behat_base {
         try {
             $this->execute("behat_forms::press_button", get_string('turneditingon'));
         } catch (Exception $e) {
-            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingon')]);
+            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
+                    [get_string('turneditingon')]);
         }
     }
 
@@ -627,7 +631,8 @@ class behat_navigation extends behat_base {
     protected function go_to_main_course_page() {
         $url = $this->getSession()->getCurrentUrl();
         if (!preg_match('|/course/view.php\?id=[\d]+$|', $url)) {
-            $this->find('xpath', '//header//div[@id=\'page-navbar\']//a[contains(@href,\'/course/view.php?id=\')]')->click();
+            $this->find('xpath', '//header//div[@id=\'page-navbar\']' .
+                    '//a[contains(@href,\'/course/view.php?id=\')]')->click();
             $this->execute('behat_general::wait_until_the_page_is_ready');
         }
     }
@@ -671,7 +676,8 @@ class behat_navigation extends behat_base {
         $linkname = behat_context_helper::escape($lastnode);
         $xpath .= '//a[contains(normalize-space(.), ' . $linkname . ')]';
         if (!$node = $this->getSession()->getPage()->find('xpath', $xpath)) {
-            throw new ElementNotFoundException($this->getSession(), 'Link "' . join(' > ', $nodelist) . '"" not found on the page');
+            throw new ElementNotFoundException($this->getSession(),
+                    'Link "' . join(' > ', $nodelist) . '"" not found on the page');
         }
         $node->click();
         $this->wait_for_pending_js();
@@ -749,7 +755,8 @@ class behat_navigation extends behat_base {
         if (!$isheader || count($nodelist) == 1) {
             $lastnode = end($nodelist);
             $linkname = behat_context_helper::escape($lastnode);
-            $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' . $linkname . ')]');
+            $link = $this->getSession()->getPage()->find('xpath', $menuxpath .
+                    '//a[contains(normalize-space(.), ' . $linkname . ')]');
             if ($link) {
                 $link->click();
                 $this->wait_for_pending_js();
@@ -760,7 +767,8 @@ class behat_navigation extends behat_base {
         if ($isheader) {
             // Course administration and Front page administration will have subnodes under "More...".
             $linkname = behat_context_helper::escape(get_string('morenavigationlinks'));
-            $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' . $linkname . ')]');
+            $link = $this->getSession()->getPage()->find('xpath', $menuxpath .
+                    '//a[contains(normalize-space(.), ' . $linkname . ')]');
             if ($link) {
                 $link->click();
                 $this->execute('behat_general::wait_until_the_page_is_ready');
