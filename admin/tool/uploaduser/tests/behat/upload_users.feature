@@ -84,3 +84,37 @@ Feature: Upload users
     And I should see "Super field"
     And I should see "The big guy"
     And I log out
+
+  @javascript
+  Scenario: Upload users setting their user theme
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Maths    | math102   | 0        |
+    # We need to do a bit of setup here.
+    And I log in as "admin"
+    And I change window size to "large"
+    And I navigate to "Security > Site security settings" in site administration
+    And I click on "s__passwordpolicy" "checkbox"
+    And I click on "Save changes" "button"
+    And I navigate to "Appearance > Themes > Theme settings" in site administration
+    And I click on "s__allowuserthemes" "checkbox"
+    And I click on "Save changes" "button"
+    # Upload the users.
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_themes.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I should see "boost"
+    And I should see "classic"
+    And I press "Upload users"
+    And I press "Continue"
+    And I log out
+    # Boost check.
+    And I log in as "jonest"
+    And I am on "Maths" course homepage
+    And "Turn editing on" "button" should not exist
+    And I log out
+    # Classic check.
+    And I log in as "reznor"
+    And I am on "Maths" course homepage
+    And "Turn editing on" "button" should exist

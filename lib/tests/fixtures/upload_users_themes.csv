@@ -1,0 +1,3 @@
+username,password,firstname,lastname,email,course1,role1,theme
+jonest,jonest,Tom,Jones,jonest@example.com,math102,3,boost
+reznor,reznor,Trent,Reznor,reznor@example.com,math102,3,classic
