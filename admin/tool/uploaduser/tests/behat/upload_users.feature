@@ -91,13 +91,13 @@ Feature: Upload users
       | fullname | shortname | category |
       | Maths    | math102   | 0        |
     # We need to do a bit of setup here.
-    And I log in as "admin"
     And I change window size to "large"
+    And I log in as "admin"
     And I navigate to "Security > Site security settings" in site administration
-    And I click on "s__passwordpolicy" "checkbox"
+    And I click on "Password policy" "checkbox"
     And I click on "Save changes" "button"
     And I navigate to "Appearance > Themes > Theme settings" in site administration
-    And I click on "s__allowuserthemes" "checkbox"
+    And I click on "Allow user themes" "checkbox"
     And I click on "Save changes" "button"
     # Upload the users.
     And I navigate to "Users > Accounts > Upload users" in site administration
@@ -108,6 +108,9 @@ Feature: Upload users
     And I should see "classic"
     And I press "Upload users"
     And I press "Continue"
+    And I log out
+    # No theme check.
+    And I log in as "user"
     And I log out
     # Boost check.
     And I log in as "jonest"

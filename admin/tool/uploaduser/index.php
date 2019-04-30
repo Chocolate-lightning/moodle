@@ -71,8 +71,6 @@ $struserauthunsupported     = get_string('userauthunsupported', 'error');
 $stremailduplicate          = get_string('useremailduplicate', 'error');
 
 $strinvalidpasswordpolicy   = get_string('invalidpasswordpolicy', 'error');
-$strinvalidtheme            = get_string('invalidtheme', 'error');
-
 $errorstr                   = get_string('error');
 
 $stryes                     = get_string('yes');
@@ -104,7 +102,6 @@ $STD_FIELDS = array('id', 'username', 'email',
 $STD_FIELDS = array_merge($STD_FIELDS, get_all_user_name_fields());
 
 $PRF_FIELDS = array();
-
 if ($proffields = $DB->get_records('user_info_field')) {
     foreach ($proffields as $key => $proffield) {
         $profilefieldname = 'profile_field_'.$proffield->shortname;
@@ -360,21 +357,15 @@ if ($formdata = $mform2->is_cancelled()) {
             $upt->track('username', s($user->username), 'normal', false);
         }
 
-        // Validate theme.
-        if (!$CFG->allowuserthemes) {
-            $upt->track('status', get_string('invalidtheme', 'error', 'theme'), 'error');
-            $upt->track('theme', $errorstr, 'error');
-            $userserrors++;
-            continue;
-        }
-
         if (isset($user->theme)) {
-            if (!isset($themes[$user->theme])) {
-                $user->theme = '';
-                $upt->track('status', get_string('invalidfieldvalue', 'error', 'theme'), 'error');
-                $upt->track('theme', $errorstr, 'error');
-                $userserrors++;
+            // Validate if user themes are allowed.
+            if (!$CFG->allowuserthemes) {
+                $upt->track('status', get_string('userthemesnotallowed', 'error'), 'warning');
+                $upt->track('theme', $errorstr, 'warning');
                 continue;
+            } else if (!isset($themes[$user->theme])) {
+                $user->theme = $CFG->theme;
+                $upt->track('theme', get_string('invalidtheme', 'error', $user->theme), 'warning');
             }
         }
 
