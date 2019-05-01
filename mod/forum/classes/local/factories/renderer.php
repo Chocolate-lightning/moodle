@@ -124,10 +124,17 @@ class renderer {
         $baseurl = $this->urlfactory->get_discussion_view_url_from_discussion($discussion);
         $notifications = [];
 
+        if ($displaymode === FORUM_MODE_NEW) {
+            $template = 'mod_forum/forum_discussion_new';
+        } else {
+            $template = 'mod_forum/forum_discussion';
+        }
+
         return new discussion_renderer(
             $forum,
             $discussion,
             $displaymode,
+            $template,
             $rendererbase,
             $this->get_single_discussion_posts_renderer($displaymode, false),
             $this->page,
@@ -180,6 +187,9 @@ class renderer {
             case FORUM_MODE_NESTED:
                 $template = 'mod_forum/forum_discussion_nested_posts';
                 break;
+            case FORUM_MODE_NEW:
+                $template = 'mod_forum/forum_discussion_posts_new';
+                break;
             default;
                 $template = 'mod_forum/forum_discussion_posts';
                 break;
@@ -221,7 +231,7 @@ class renderer {
                     $exportedposts
                 );
 
-                if ($displaymode === FORUM_MODE_NESTED || $displaymode === FORUM_MODE_THREADED) {
+                if ($displaymode === FORUM_MODE_NESTED || $displaymode === FORUM_MODE_THREADED || $displaymode === FORUM_MODE_NEW) {
                     $sortedposts = $exportedpostssorter->sort_into_children($exportedposts);
                     $sortintoreplies = function($nestedposts) use (&$sortintoreplies) {
                         return array_map(function($postdata) use (&$sortintoreplies) {

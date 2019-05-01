@@ -68,6 +68,8 @@ class discussion {
     private $forumrecord;
     /** @var int $displaymode The display mode to render the discussion in */
     private $displaymode;
+    /** @var string $template The template to render */
+    private $template;
     /** @var renderer_base $renderer Renderer base */
     private $renderer;
     /** @var posts_renderer $postsrenderer A posts renderer */
@@ -115,6 +117,7 @@ class discussion {
         forum_entity $forum,
         discussion_entity $discussion,
         int $displaymode,
+        string $template,
         renderer_base $renderer,
         posts_renderer $postsrenderer,
         moodle_page $page,
@@ -131,6 +134,7 @@ class discussion {
         $this->forum = $forum;
         $this->discussion = $discussion;
         $this->displaymode = $displaymode;
+        $this->template = $template;
         $this->renderer = $renderer;
         $this->postsrenderer = $postsrenderer;
         $this->page = $page;
@@ -212,7 +216,11 @@ class discussion {
             $exporteddiscussion['html']['movediscussion'] = $this->get_move_discussion_html();
         }
 
-        return $this->renderer->render_from_template('mod_forum/forum_discussion', $exporteddiscussion);
+        if ($capabilities['pin']) {
+            $exporteddiscussion['html']['pindiscussion'] = $this->get_pin_discussion_html();
+        }
+
+        return $this->renderer->render_from_template($this->template, $exporteddiscussion);
     }
 
     /**
