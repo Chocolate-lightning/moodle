@@ -368,3 +368,26 @@ span.unread {
     border: none;
 }
 
+.post-container .post-message p:last-of-type {
+    margin-bottom: 0;
+}
+
+.post-container .author-image-container {
+    width: 70px;
+    margin-right: 24px;
+    flex-shrink: 0;
+}
+
+.post-container .replies-container .replies-container {
+    padding-left: 94px;
+}
+
+.post-container .replies-container .replies-container .author-image-container {
+    width: 30px;
+    margin-right: 8px;
+}
+
+.post-container .replies-container .replies-container .replies-container {
+    padding-left: 38px;
+}
+

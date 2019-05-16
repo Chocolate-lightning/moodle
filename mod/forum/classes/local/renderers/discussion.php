@@ -216,10 +216,6 @@ class discussion {
             $exporteddiscussion['html']['movediscussion'] = $this->get_move_discussion_html();
         }
 
-        if ($capabilities['pin']) {
-            $exporteddiscussion['html']['pindiscussion'] = $this->get_pin_discussion_html();
-        }
-
         return $this->renderer->render_from_template($this->template, $exporteddiscussion);
     }
 

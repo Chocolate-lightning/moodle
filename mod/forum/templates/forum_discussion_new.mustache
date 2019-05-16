@@ -31,11 +31,9 @@
 }}
 
 <div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
-{{#notifications}}
-    {{> core/notification}}
-{{/notifications}}
+    {{#notifications}}
+        {{> core/notification}}
+    {{/notifications}}
 
-{{{html.posts}}}
-
-{{#html.neighbourlinks}}{{{.}}}{{/html.neighbourlinks}}
+    {{{html.posts}}}
 </div>

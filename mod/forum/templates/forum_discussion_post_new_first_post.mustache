@@ -31,23 +31,24 @@
 }}
 <article
     id="p{{id}}"
+    class="post-container"
     data-post-id="{{id}}"
     data-region="post"
     data-target="{{id}}-target"
-    tabindex="-1"
+    tabindex="0"
     aria-labelledby="post-header-{{id}}"
     aria-describedby="post-content-{{id}}"
 >
     <!-- The firstpost and starter classes below aren't used for anything other than to identify the first post in behat -->
     <div
-        class="d-flex mb-2 border-bottom {{#unread}}unread{{/unread}} {{#firstpost}}firstpost starter{{/firstpost}}"
+        class="d-flex pb-4 {{#unread}}unread{{/unread}} {{#firstpost}}firstpost starter{{/firstpost}}"
         aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
         data-post-id="{{id}}" data-content="forum-post"
     >
         {{#isfirstunread}}<a id="unread" aria-hidden="true"></a>{{/isfirstunread}}
         {{^isdeleted}}
             {{#author}}
-                <div style="width: 70px;">
+                <div class="author-image-container d-inline-block">
                     {{#urls.profileimage}}
                         <img
                             class="rounded-circle w-100"
@@ -56,54 +57,39 @@
                             aria-hidden="true"
                         >
                     {{/urls.profileimage}}
-                    {{#groups}}
-                        {{#urls.image}}
-                            <img
-                                class="rounded-circle w-100"
-                                src="{{{.}}}"
-                                alt="{{#str}} pictureof, core, {{name}} {{/str}}"
-                            >
-                        {{/urls.image}}
-                    {{/groups}}
                 </div>
             {{/author}}
         {{/isdeleted}}
-
-        <div class="d-flex flex-column ml-4 w-100"  data-region-content="forum-post-core">
-            <header  class="mb-1">
+        <div class="d-flex flex-column w-100"  data-region-content="forum-post-core">
+            <header class="mb-1">
                 {{#parentauthorname}}
                     <span class="sr-only">{{#str}} inreplyto, mod_forum, {{.}} {{/str}}</span>
                 {{/parentauthorname}}
                 {{^isdeleted}}
                     <div class="d-flex">
                         <address class="mb-0" tabindex="-1">
-                            <h4 class="h5 font-weight-bold d-inline-block mb-0">{{author.fullname}}</h4>
-                            <time class="small ml-1">
+                            {{$authorname}}
+                                <h4 class="h5 font-weight-bold d-inline-block mb-0">{{author.fullname}}</h4>
+                            {{/authorname}}
+                            <time class="small ml-1 dimmed_text">
                                 {{#userdate}} {{timecreated}}, {{#str}} strftimedaydatetime, core_langconfig {{/str}} {{/userdate}}
                             </time>
                         </address>
-                        {{#isprivatereply}}
-                            <div class="privatereplyinfo">
-                            {{#str}}postisprivatereply, forum{{/str}}
-                            </div>
-                        {{/isprivatereply}}
+                        {{#capabilities.view}}
+                            <a
+                                href="{{{urls.view}}}"
+                                class="d-inline-block ml-2 small dimmed_text align-self-center icon-no-margin"
+                                title="{{#str}} permanentlinktopost, mod_forum {{/str}}"
+                            >
+                                {{#pix}} e/insert_edit_link, core {{/pix}}
+                            </a>
+                        {{/capabilities.view}}
                         <div class="dropdown">
-                            <button class="btn btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-sm dimmed_text icon-no-margin" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{#pix}} i/moremenu {{/pix}}
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 {{#capabilities}}
-                                    {{#view}}
-                                        <a
-                                            data-region="post-action"
-                                            href="{{{urls.view}}}"
-                                            class="dropdown-item"
-                                            title="{{#str}} permanentlinktopost, mod_forum {{/str}}"
-                                            role="menuitem"
-                                        >
-                                            {{#str}} permalink, mod_forum {{/str}}
-                                        </a>
-                                    {{/view}}
                                     {{#controlreadstatus}}
                                         {{#unread}}
                                             <a
@@ -180,95 +166,51 @@
                                 {{/capabilities}}
                             </div>
                         </div>
+                        {{#isprivatereply}}
+                            <div class="text-danger small align-self-center">{{#str}}postisprivatereply, forum{{/str}}</div>
+                        {{/isprivatereply}}
                     </div>
+                    <h3 class="h1 font-weight-bold mb-0" data-region-content="forum-post-core-subject">{{$subject}}{{{subject}}}{{/subject}}</h3>
                 {{/isdeleted}}
                 {{#hasreplycount}}
                     <span class="sr-only">{{#str}} numberofreplies, mod_forum, {{replycount}} {{/str}}</span>
                 {{/hasreplycount}}
-                <h3 class="h1 font-weight-bold mb-0" data-region-content="forum-post-core-subject">{{$subject}}{{{subject}}}{{/subject}}</h3>
             </header>
-            <div id="post-content-{{id}}">
+
+            <div class="post-message" id="post-content-{{id}}">
                 {{{message}}}
             </div>
 
             {{^isdeleted}}
-                {{#haswordcount}}
-                    <p class="font-italic mb-0"><small>{{#str}} numwords, core, {{wordcount}} {{/str}}</small></p>
-                {{/haswordcount}}
-
-                {{#attachments}}
-                    {{#isimage}}
-                        <div>
-                            <img
-                                src="{{{url}}}"
-                                alt="{{#str}} attachmentname, mod_forum, {{filename}} {{/str}}"
-                                style="max-width: 100%"
-                            >
-                            {{#urls.export}}
-                                <a href="{{{.}}}" title="{{#str}} addtoportfolio, core_portfolio {{/str}}">
-                                    {{#pix}} t/portfolioadd, core {{/pix}}
-                                </a>
-                            {{/urls.export}}
-                            {{#html.plagiarism}}
-                                <div>{{{.}}}</div>
-                            {{/html.plagiarism}}
-                        </div>
-                    {{/isimage}}
-                {{/attachments}}
-
-                {{{html.taglist}}}
-
-                {{#attachments}}
-                    {{^isimage}}
-                        <div>
+                {{$footer}}
+                    <div class="d-flex mt-3">
+                        {{#capabilities.reply}}
                             <a
-                                href="{{{url}}}"
-                                aria-label="{{#str}} attachmentname, mod_forum, {{filename}} {{/str}}"
+                                href="{{{urls.reply}}}"
+                                class="btn btn-primary d-inline-block"
+                                data-post-id="{{id}}"
+                                data-action="collapsible-link"
+                                title="{{#str}} reply, mod_forum {{/str}}"
+                                role="button"
                             >
-                                {{#pix}} {{icon}}, core {{/pix}} {{filename}}
+                                {{#str}} reply, mod_forum {{/str}}
                             </a>
-                            {{#urls.export}}
-                                <a href="{{{.}}}" title="{{#str}} exportattachmentname, mod_forum, {{filename}} {{/str}}">
-                                    {{#pix}} t/portfolioadd, core {{/pix}}
-                                </a>
-                            {{/urls.export}}
-                            {{#html.plagiarism}}
-                                <div>{{{.}}}</div>
-                            {{/html.plagiarism}}
-                        </div>
-                    {{/isimage}}
-                {{/attachments}}
-
-                {{#html.rating}}
-                    <div class="mt-2">{{{.}}}</div>
-                {{/html.rating}}
-
-                {{$footer}}{{/footer}}
-                {{#capabilities.reply}}
-                    <a
-                        href="{{{urls.reply}}}"
-                        class="btn btn-primary"
-                        data-post-id="{{id}}"
-                        data-action="collapsible-link"
-                        title="{{#str}} reply, mod_forum {{/str}}"
-                        role="button"
-                    >
-                        {{#str}} reply, mod_forum {{/str}}
-                    </a>
-                {{/capabilities.reply}}
+                        {{/capabilities.reply}}
+                    </div>
+                {{/footer}}
             {{/isdeleted}}
         </div>
     </div>
 
-    <div data-region="replies-container">
-    {{$replies}}
-        <div>
-        {{#hasreplies}}
-            {{#replies}}
-                {{> mod_forum/forum_discussion_post }}
-            {{/replies}}
-        {{/hasreplies}}
-        </div>
-    {{/replies}}
+    <div class="replies-container" data-region="replies-container">
+        {{$replies}}
+            {{#hasreplies}}
+                {{#replies}}
+                    <div class="border-top pt-4">
+                        {{> mod_forum/forum_discussion_post_new_reply }}
+                    </div>
+                {{/replies}}
+            {{/hasreplies}}
+        {{/replies}}
     </div>
 </article>
