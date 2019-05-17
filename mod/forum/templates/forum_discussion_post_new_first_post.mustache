@@ -69,7 +69,7 @@
                     <div class="d-flex">
                         <address class="mb-0" tabindex="-1">
                             {{$authorname}}
-                                <h4 class="h5 font-weight-bold d-inline-block mb-0">{{author.fullname}}</h4>
+                                <h4 class="h5 font-weight-bold d-inline-block mb-0" data-region="author-name">{{author.fullname}}</h4>
                             {{/authorname}}
                             <time class="small ml-1 dimmed_text">
                                 {{#userdate}} {{timecreated}}, {{#str}} strftimedaydatetime, core_langconfig {{/str}} {{/userdate}}
@@ -189,7 +189,7 @@
                                 href="{{{urls.reply}}}"
                                 class="btn btn-primary d-inline-block"
                                 data-post-id="{{id}}"
-                                data-action="collapsible-link"
+                                data-action="reply"
                                 title="{{#str}} reply, mod_forum {{/str}}"
                                 role="button"
                             >
@@ -202,8 +202,10 @@
         </div>
     </div>
 
-    <div class="replies-container" data-region="replies-container">
-        {{$replies}}
+    {{$replies}}
+        <div class="image-spacer mb-4 hidden inline-reply-container" data-region="in-line-reply-container"></div>
+
+        <div class="image-spacer replies-container" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
                     <div class="border-top pt-4">
@@ -211,6 +213,6 @@
                     </div>
                 {{/replies}}
             {{/hasreplies}}
-        {{/replies}}
-    </div>
+        </div>
+    {{/replies}}
 </article>

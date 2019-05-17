@@ -36,4 +36,136 @@
     {{/notifications}}
 
     {{{html.posts}}}
+
+    <div class="hidden" data-region="inline-reply-content">
+        <div class="d-flex">
+            <div class="author-image-container">
+                <img
+                    class="rounded-circle w-100"
+                    src="{{{loggedinuser.profileimageurl}}}"
+                    alt="{{#str}} pictureof, core, {{loggedinuser.fullname}} {{/str}}"
+                    aria-hidden="true"
+                >
+            </div>
+            <div class="w-100">
+                <h4 class="h5 font-weight-bold reply-author">{{loggedinuser.firstname}} (you)</h4>
+                <form>
+                    <textarea
+                        rows="3"
+                        class="w-100"
+                        data-auto-rows
+                        data-min-rows="3"
+                        data-max-rows="10"
+                    ></textarea>
+                    <div class="d-flex">
+                        <button class="btn btn-primary mr-auto" data-action="forum-inpage-submit">
+                            Post
+                        </button>
+                        <button class="btn btn-link dimmed_text">
+                            Reply privately
+                        </button>
+                        <button
+                            class="btn btn-link icon-no-margin icon-size-4 dimmed_text"
+                            data-cancel-reply
+                        >
+                            {{#pix}} i/delete, core {{/pix}}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+{{#js}}
+require(['jquery', 'core/auto_rows'], function($, AutoRows) {
+    var root = $('#discussion-container-{{uniqid}}');
+    var replyFormContainer = root.find('[data-region="inline-reply-content"]');
+
+    AutoRows.init(root);
+
+    var cancelReply = function(postContainer, postReplyFormContainer, replyButton, replyVisibilityToggleContainer) {
+        postReplyFormContainer.addClass('hidden');
+        postReplyFormContainer.empty();
+        replyButton.attr('data-active', false);
+
+        if (replyVisibilityToggleContainer.length) {
+            var repliesContainer = postContainer.children('[data-region="replies-container"]');
+
+            replyVisibilityToggleContainer.addClass('hidden');
+            repliesContainer.removeClass('hidden');
+        }
+    }
+
+    root.on('click', '[data-action="reply"]', function(e) {
+        e.preventDefault();
+
+        var replyButton = $(e.target);
+        var active = replyButton.attr('data-active') == 'true';
+        var postContainer = replyButton.closest('[data-region="post"]');
+        var postReplyFormContainer = postContainer.children('[data-region="in-line-reply-container"]');
+        var replyVisibilityToggleContainer = postContainer.children('[data-region="reply-visibility-toggle-container"]');
+
+        if (active) {
+            cancelReply(postContainer, postReplyFormContainer, replyButton, replyVisibilityToggleContainer);
+        } else {
+            var postAuthorName = postContainer.children('[data-content="forum-post"]').find('[data-region="author-name"]').text();
+            var postRepliesContainer = postContainer.children('[data-region="replies-container"]');
+            var replyForm = replyFormContainer.children().first().clone();
+            replyForm.find('textarea').attr('placeholder', 'Replying to ' + postAuthorName + '...');
+            replyForm.appendTo(postReplyFormContainer);
+            postReplyFormContainer.removeClass('hidden');
+            replyButton.attr('data-active', true);
+            replyForm.find('textarea').focus();
+
+            if (replyVisibilityToggleContainer.length) {
+                var showButton = replyVisibilityToggleContainer.find('[data-action="show-replies"]');
+                var hideButton = replyVisibilityToggleContainer.find('[data-action="hide-replies"]');
+                var repliesContainer = postContainer.children('[data-region="replies-container"]');
+
+                if (repliesContainer.children().length) {
+                    showButton.removeClass('hidden');
+                    hideButton.addClass('hidden');
+                    replyVisibilityToggleContainer.removeClass('hidden');
+                    repliesContainer.addClass('hidden');
+                }
+            }
+        }
+    });
+
+    root.on('click', '[data-cancel-reply]', function(e) {
+        e.preventDefault();
+
+        var cancelButton = $(e.target);
+        var postContainer = cancelButton.closest('[data-region="post"]');
+        var postReplyFormContainer = postContainer.children('[data-region="in-line-reply-container"]');
+        var replyVisibilityToggleContainer = postContainer.children('[data-region="reply-visibility-toggle-container"]');
+        var replyButton = postContainer.children('[data-content="forum-post"]').find('[data-action="reply"]');
+
+        cancelReply(postContainer, postReplyFormContainer, replyButton, replyVisibilityToggleContainer);
+    });
+
+    root.on('click', '[data-action="show-replies"]', function(e) {
+        var showButton = $(e.target).closest('[data-action="show-replies"]');
+        var buttonContainer = showButton.parent();
+        var hideButton = buttonContainer.find('[data-action="hide-replies"]');
+        var postContainer = buttonContainer.closest('[data-region="post"]');
+        var repliesContainer = postContainer.children('[data-region="replies-container"]');
+
+        repliesContainer.removeClass('hidden');
+        hideButton.removeClass('hidden');
+        showButton.addClass('hidden');
+    });
+
+    root.on('click', '[data-action="hide-replies"]', function(e) {
+        var hideButton = $(e.target).closest('[data-action="hide-replies"]');
+        var buttonContainer = hideButton.parent();
+        var showButton = buttonContainer.find('[data-action="show-replies"]');
+        var postContainer = buttonContainer.closest('[data-region="post"]');
+        var repliesContainer = postContainer.children('[data-region="replies-container"]');
+
+        repliesContainer.addClass('hidden');
+        showButton.removeClass('hidden');
+        hideButton.addClass('hidden');
+    });
+});
+{{/js}}

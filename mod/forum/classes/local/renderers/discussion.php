@@ -30,8 +30,10 @@ use mod_forum\local\entities\discussion as discussion_entity;
 use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\entities\post as post_entity;
 use mod_forum\local\entities\sorter as sorter_entity;
+use mod_forum\local\factories\entity as entity_factory;
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\exporter as exporter_factory;
+use mod_forum\local\factories\url as url_factory;
 use mod_forum\local\factories\vault as vault_factory;
 use mod_forum\local\managers\capability as capability_manager;
 use mod_forum\local\renderers\posts as posts_renderer;
@@ -82,6 +84,10 @@ class discussion {
     private $exporterfactory;
     /** @var vault_factory $vaultfactory Vault factory */
     private $vaultfactory;
+    /** @var url_factory $urlfactory URL factory */
+    private $urlfactory;
+    /** @var entity_factory $entityfactory Entity factory */
+    private $entityfactory;
     /** @var capability_manager $capabilitymanager Capability manager */
     private $capabilitymanager;
     /** @var rating_manager $ratingmanager Rating manager */
@@ -107,6 +113,8 @@ class discussion {
      * @param legacy_data_mapper_factory $legacydatamapperfactory Legacy data mapper factory
      * @param exporter_factory $exporterfactory Exporter factory
      * @param vault_factory $vaultfactory Vault factory
+     * @param url_factory $urlfactory URL factory
+     * @param entity_factory $entityfactory Entity factory
      * @param capability_manager $capabilitymanager Capability manager
      * @param rating_manager $ratingmanager Rating manager
      * @param sorter_entity $exportedpostsorter Sorter for the exported posts
@@ -124,6 +132,8 @@ class discussion {
         legacy_data_mapper_factory $legacydatamapperfactory,
         exporter_factory $exporterfactory,
         vault_factory $vaultfactory,
+        url_factory $urlfactory,
+        entity_factory $entityfactory,
         capability_manager $capabilitymanager,
         rating_manager $ratingmanager,
         sorter_entity $exportedpostsorter,
@@ -142,6 +152,8 @@ class discussion {
         $this->legacydatamapperfactory = $legacydatamapperfactory;
         $this->exporterfactory = $exporterfactory;
         $this->vaultfactory = $vaultfactory;
+        $this->urlfactory = $urlfactory;
+        $this->entityfactory = $entityfactory;
         $this->capabilitymanager = $capabilitymanager;
         $this->ratingmanager = $ratingmanager;
         $this->notifications = $notifications;
@@ -173,6 +185,9 @@ class discussion {
 
         $displaymode = $this->displaymode;
         $capabilitymanager = $this->capabilitymanager;
+        $urlfactory = $this->urlfactory;
+        $entityfactory = $this->entityfactory;
+        $loggedinauthor = $entityfactory->get_author_from_stdClass($user);
 
         // Make sure we can render.
         if (!$capabilitymanager->can_view_discussions($user)) {
@@ -193,6 +208,11 @@ class discussion {
         $hasanyactions = $hasanyactions || $capabilitymanager->can_manage_forum($user);
 
         $exporteddiscussion = array_merge($exporteddiscussion, [
+            'loggedinuser' => [
+                'firstname' => $loggedinauthor->get_first_name(),
+                'fullname' => $loggedinauthor->get_full_name(),
+                'profileimageurl' => ($urlfactory->get_author_profile_image_url($loggedinauthor, null))->out(false)
+            ],
             'notifications' => $this->get_notifications($user),
             'html' => [
                 'hasanyactions' => $hasanyactions,
