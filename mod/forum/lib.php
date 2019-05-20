@@ -6547,16 +6547,20 @@ function mod_forum_core_calendar_provide_event_action(calendar_event $event,
  *                        will know about (most noticeably, an icon).
  */
 function forum_get_coursemodule_info($coursemodule) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionposts, completiondiscussions, completionreplies';
+    $fields = 'id, name, intro, introformat, completionposts, completiondiscussions, completionreplies, type';
     if (!$forum = $DB->get_record('forum', $dbparams, $fields)) {
         return false;
     }
 
     $result = new cached_cm_info();
     $result->name = $forum->name;
+
+    if ($forum->type == 'news') {
+        $result->iconurl = $OUTPUT->image_url('icon', 'mod_feedback');
+    }
 
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
