@@ -399,3 +399,16 @@ span.unread {
 .post-container .replies-container .inline-reply-container .reply-author {
     display: none;
 }
+
+.post-container .inline-reply-container input[type="checkbox"] {
+    opacity: 0;
+}
+
+.post-container .inline-reply-container input[type="checkbox"]:not(:checked) + label .checked {
+    display: none;
+}
+
+.post-container .inline-reply-container input[type="checkbox"]:checked + label .unchecked {
+    display: none;
+}
+

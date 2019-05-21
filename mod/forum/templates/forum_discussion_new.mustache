@@ -38,7 +38,7 @@
     {{{html.posts}}}
 
     <div class="hidden" data-region="inline-reply-content">
-        <div class="d-flex">
+        <div class="d-flex inline-reply-container">
             <div class="author-image-container">
                 <img
                     class="rounded-circle w-100"
@@ -61,9 +61,13 @@
                         <button class="btn btn-primary mr-auto" data-action="forum-inpage-submit">
                             Post
                         </button>
-                        <button class="btn btn-link dimmed_text">
-                            Reply privately
-                        </button>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="private-reply-checkbox-{{uniqid}}">
+                            <label class="form-check-label" for="private-reply-checkbox-{{uniqid}}">
+                                <span class="unchecked dimmed_text">Reply privately</span>
+                                <span class="checked text-danger">Replying privately</span>
+                            </label>
+                        </div>
                         <button
                             class="btn btn-link icon-no-margin icon-size-4 dimmed_text"
                             data-cancel-reply
