@@ -182,7 +182,8 @@
                                 href="{{{urls.reply}}}"
                                 class="btn btn-primary d-inline-block"
                                 data-post-id="{{id}}"
-                                data-action="reply"
+                                data-action="collapsible-link"
+                                data-can-reply-privately="{{canreplyprivately}}"
                                 title="{{#str}} reply, mod_forum {{/str}}"
                                 role="button"
                             >
@@ -196,7 +197,7 @@
     </div>
 
     {{$replies}}
-        <div class="image-spacer mt-4 hidden inline-reply-container" data-region="in-line-reply-container"></div>
+        <div class="image-spacer inline-reply-container" data-region="inpage-reply-container"></div>
 
         <div class="image-spacer replies-container" data-region="replies-container">
             {{#hasreplies}}

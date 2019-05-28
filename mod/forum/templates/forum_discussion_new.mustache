@@ -83,6 +83,12 @@
 {{#js}}
 require(['jquery', 'mod_forum/discussion_new'], function($, Discussion) {
     var root = $('#discussion-container-{{uniqid}}');
-    Discussion.init(root);
+    Discussion.init(root, {
+        loggedinuser: {
+            profileimageurl: '{{{loggedinuser.profileimageurl}}}',
+            fullname: '{{loggedinuser.fullname}}',
+            firstname: '{{loggedinuser.firstname}}'
+        }
+    });
 });
 {{/js}}

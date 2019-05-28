@@ -83,7 +83,7 @@ define([
      *
      * @param {Object} root The discussion container element.
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, newPostConfig) {
         root.on('click', Selectors.post.inpageSubmitBtn, function(e) {
             e.preventDefault();
             var submitButton = $(e.currentTarget);
@@ -97,9 +97,10 @@ define([
             var topreferredformat = true;
             var postid = form.elements.reply.value;
             var subject = form.elements.subject.value;
-            var currentRoot = submitButton.parents(Selectors.post.forumContent);
+            var currentRoot = submitButton.closest(Selectors.post.post);
             var isprivatereply = form.elements.privatereply != undefined ? form.elements.privatereply.checked : false;
-            var mode = parseInt(root.find(Selectors.post.modeSelect).get(0).value);
+            var modeSelector = root.find(Selectors.post.modeSelect);
+            var mode = modeSelector.length ? parseInt(modeSelector.get(0).value) : null;
             var newid;
 
             if (message.length) {
@@ -124,27 +125,24 @@ define([
                     .then(function(context) {
                         form.reset();
                         var post = context.post;
+                        var templateContext = $.extend(post, newPostConfig.context);
                         newid = post.id;
-                        switch (mode) {
-                            case DISPLAYCONSTANTS.THREADED:
-                                return Templates.render('mod_forum/forum_discussion_threaded_post', post);
-                            case DISPLAYCONSTANTS.NESTED:
-                                return Templates.render('mod_forum/forum_discussion_nested_post', post);
-                            default:
-                                return Templates.render('mod_forum/forum_discussion_post', post);
+
+                        if (newPostConfig.template) {
+                            return Templates.render(newPostConfig.template, templateContext);
+                        } else {
+                            switch (mode) {
+                                case DISPLAYCONSTANTS.THREADED:
+                                    return Templates.render('mod_forum/forum_discussion_threaded_post', templateContext);
+                                case DISPLAYCONSTANTS.NESTED:
+                                    return Templates.render('mod_forum/forum_discussion_nested_post', templateContext);
+                                default:
+                                    return Templates.render('mod_forum/forum_discussion_post', templateContext);
+                            }
                         }
                     })
                     .then(function(html, js) {
-                        var repliesnode;
-
-                        // Try and get the replies-container which can either be a sibling OR parent if it's flat
-                        if (mode == DISPLAYCONSTANTS.FLAT_OLDEST_FIRST || mode == DISPLAYCONSTANTS.FLAT_NEWEST_FIRST) {
-                            repliesnode = currentRoot.parents(Selectors.post.repliesContainer).children().get(0);
-                        }
-
-                        if (repliesnode == undefined) {
-                            repliesnode = currentRoot.siblings(Selectors.post.repliesContainer).children().get(0);
-                        }
+                        var repliesnode = currentRoot.find(Selectors.post.repliesContainer).first();
 
                         if (mode == DISPLAYCONSTANTS.FLAT_NEWEST_FIRST) {
                             return Templates.prependNodeContents(repliesnode, html, js);
@@ -171,8 +169,12 @@ define([
     };
 
     return {
-        init: function(root) {
-            registerEventListeners(root);
+        init: function(root, newPostConfig) {
+            newPostConfig = newPostConfig ? newPostConfig : {};
+            newPostConfig.template = newPostConfig.template ? newPostConfig.template : null;
+            newPostConfig.context = newPostConfig.context ? newPostConfig.context : {};
+
+            registerEventListeners(root, newPostConfig);
         },
         CONTENT_FORMATS: CONTENT_FORMATS
     };

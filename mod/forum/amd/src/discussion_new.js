@@ -50,6 +50,7 @@ function(
 
         AutoRows.init(root);
 
+        /*
         var cancelReply = function(postContainer, postReplyFormContainer, replyButton, replyVisibilityToggleContainer) {
             postReplyFormContainer.addClass('hidden');
             postReplyFormContainer.empty();
@@ -63,7 +64,6 @@ function(
             }
         }
 
-        /*
         root.on('click', '[data-action="reply"]', function(e) {
             e.preventDefault();
 
@@ -99,7 +99,6 @@ function(
                 }
             }
         });
-        */
 
         root.on('click', '[data-cancel-reply]', function(e) {
             e.preventDefault();
@@ -112,6 +111,7 @@ function(
 
             cancelReply(postContainer, postReplyFormContainer, replyButton, replyVisibilityToggleContainer);
         });
+        */
 
         root.on('click', '[data-action="show-replies"]', function(e) {
             var showButton = $(e.target).closest('[data-action="show-replies"]');
@@ -139,10 +139,20 @@ function(
     };
 
     return {
-        init: function(root) {
+        init: function(root, context) {
             registerEventListeners(root);
             Discussion.init(root);
-            PostsList.init(root);
+            PostsList.init(
+                root,
+                {
+                    template: 'mod_forum/inpage_reply_new',
+                    context: context
+                },
+                {
+                    template: 'mod_forum/forum_discussion_post_new_reply',
+                    context: {}
+                }
+            );
 
             var discussionToolsContainer = $('[data-container="discussion-tools"]');
             LockToggle.init(discussionToolsContainer);

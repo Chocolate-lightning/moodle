@@ -39,7 +39,7 @@ define([
         InPageReply
     ) {
 
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, inpageReplyConfig) {
         root.on('click', Selectors.post.inpageReplyLink, function(e) {
             e.preventDefault();
             // After adding a reply a url hash is being generated that scrolls (points) to the newly added reply.
@@ -64,17 +64,38 @@ define([
                 postformat: InPageReply.CONTENT_FORMATS.MOODLE
             };
 
-            if (!currentRoot.find(Selectors.post.inpageReplyContent).length) {
-                Templates.render('mod_forum/inpage_reply', context)
+            var currentTarget = $(e.currentTarget);
+            var postContainer = currentTarget.closest(Selectors.post.post);
+            var postContainerChildren = postContainer.children().not(Selectors.post.repliesContainer);
+            var postContentContainer = postContainerChildren.find(Selectors.post.forumCoreContent);
+            var currentSubject = postContentContainer.find(Selectors.post.forumSubject);
+            // Is one of the immediate container chilren the inpage reply container?
+            var inpageReplyContainer = postContainerChildren.filter(Selectors.post.inpageReplyContainer);
+            if (!inpageReplyContainer.length) {
+                // If not then find the first instance of it that isn't in the list of replies.
+                inpageReplyContainer = postContainerChildren.find(Selectors.post.inpageReplyContainer).first();
+            }
+
+            if (!inpageReplyContainer.find(Selectors.post.inpageReplyContent).length) {
+                var context = $.extend({
+                    postid: postContainer.data('post-id'),
+                    "reply_url": currentTarget.attr('href'),
+                    sesskey: M.cfg.sesskey,
+                    parentsubject: currentSubject.html(),
+                    canreplyprivately: currentTarget.data('can-reply-privately'),
+                    postformat: InPageReply.CONTENT_FORMATS.MOODLE
+                }, inpageReplyConfig.context);
+
+                Templates.render(inpageReplyConfig.template, context)
                     .then(function(html, js) {
-                        return Templates.appendNodeContents(currentTarget, html, js);
+                        return Templates.appendNodeContents(inpageReplyContainer, html, js);
                     })
                     .then(function() {
-                        return currentRoot.find(Selectors.post.inpageReplyContent).slideToggle(300).find('textarea').focus();
+                        return inpageReplyContainer.find(Selectors.post.inpageReplyContent).slideToggle(300).find('textarea').focus();
                     })
                     .fail(Notification.exception);
             } else {
-                var form = currentRoot.find(Selectors.post.inpageReplyContent);
+                var form = inpageReplyContainer.find(Selectors.post.inpageReplyContent);
                 form.slideToggle(300);
                 if (form.is(':visible')) {
                     form.find('textarea').focus();
@@ -84,9 +105,13 @@ define([
     };
 
     return {
-        init: function(root) {
-            registerEventListeners(root);
-            InPageReply.init(root);
+        init: function(root, inpageReplyConfig, newPostConfig) {
+            inpageReplyConfig = inpageReplyConfig ? inpageReplyConfig : {};
+            inpageReplyConfig.template = inpageReplyConfig.template ? inpageReplyConfig.template : 'mod_forum/inpage_reply';
+            inpageReplyConfig.context = inpageReplyConfig.context ? inpageReplyConfig.context : {};
+
+            registerEventListeners(root, inpageReplyConfig);
+            InPageReply.init(root, newPostConfig);
         }
     };
 });

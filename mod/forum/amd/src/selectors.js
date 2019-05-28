@@ -38,6 +38,7 @@ define([], function() {
             forumSubject: "[data-region-content='forum-post-core-subject']",
             inpageReplyButton: "button",
             inpageReplyLink: "[data-action='collapsible-link']",
+            inpageReplyContainer: '[data-region="inpage-reply-container"]',
             inpageReplyContent: "[data-content='inpage-reply-content']",
             inpageReplyForm: "form[data-content='inpage-reply-form']",
             inpageSubmitBtn: "[data-action='forum-inpage-submit']",

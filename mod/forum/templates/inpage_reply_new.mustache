@@ -1,0 +1,88 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/inpage_reply_new
+
+    Template which defines a forum post for sending in a single-post HTML email.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+        "postid": 0,
+        "reply_url": "",
+        "sesskey": "",
+        "parentsubject": ""
+    }
+}}
+<div class="mt-4" data-content="inpage-reply-content" style="display: none;">
+    <div class="d-flex">
+        <div class="author-image-container">
+            <img
+                class="rounded-circle w-100"
+                src="{{{loggedinuser.profileimageurl}}}"
+                alt="{{#str}} pictureof, core, {{loggedinuser.fullname}} {{/str}}"
+                aria-hidden="true"
+            >
+        </div>
+        <div class="w-100">
+            <h4 class="h5 font-weight-bold reply-author">{{loggedinuser.firstname}} (you)</h4>
+            <form data-post-id="{{postid}}" data-content="inpage-reply-form" action="{{{reply_url}}}">
+                <textarea
+                    name="post"
+                    rows="3"
+                    class="w-100"
+                    data-auto-rows
+                    data-min-rows="3"
+                    data-max-rows="10"
+                ></textarea>
+                <input type="hidden" name="postformat" value="{{postformat}}"/>
+                <input type="hidden" name="subject" value="{{#str}} inpagereplysubject, forum, {{parentsubject}} {{/str}}"/>
+                <input type="hidden" name="reply" value="{{postid}}"/>
+                <input type="hidden" name="sesskey" value="{{sesskey}}"/>
+                <div class="d-flex">
+                    <button class="btn btn-primary" data-action="forum-inpage-submit">
+                        <span data-region="submit-text">Post</span>
+                        <span data-region="loading-icon-container" class="hidden">{{> core/loading }}</span>
+                    </button>
+                    <button data-action="forum-advanced-reply" class="btn btn-link mr-auto" type="submit">
+                        {{#str}} advanced, core {{/str}}
+                    </button>
+                    {{#canreplyprivately}}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" name="privatereply" type="checkbox" id="private-reply-checkbox-{{uniqid}}">
+                        <label class="form-check-label" for="private-reply-checkbox-{{uniqid}}">
+                            <span class="unchecked dimmed_text">Reply privately</span>
+                            <span class="checked text-danger">Replying privately</span>
+                        </label>
+                    </div>
+                    {{/canreplyprivately}}
+                    <button
+                        class="btn btn-link icon-no-margin icon-size-4 dimmed_text"
+                        data-action="collapsible-link"
+                    >
+                        {{#pix}} i/delete, core {{/pix}}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

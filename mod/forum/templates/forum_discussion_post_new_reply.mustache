@@ -42,7 +42,8 @@
                     href="{{{urls.reply}}}"
                     class="d-inline-block small dimmed_text font-weight-bold"
                     data-post-id="{{id}}"
-                    data-action="reply"
+                    data-action="collapsible-link"
+                    data-can-reply-privately="{{canreplyprivately}}"
                     title="{{#str}} reply, mod_forum {{/str}}"
                     role="button"
                 >
@@ -63,6 +64,6 @@
                 {{/replies}}
             {{/hasreplies}}
         </div>
-        <div class="mt-4 hidden image-spacer inline-reply-container" data-region="in-line-reply-container"></div>
+        <div class="image-spacer inline-reply-container" data-region="inpage-reply-container"></div>
     {{/replies}}
 {{/ mod_forum/forum_discussion_post_new_first_post }}
