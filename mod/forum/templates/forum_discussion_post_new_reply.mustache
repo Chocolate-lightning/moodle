@@ -30,6 +30,7 @@
     }
 }}
 {{< mod_forum/forum_discussion_post_new_first_post }}
+    {{$postclasses}}mt-4{{/postclasses}}
     {{$authorname}}
         <h4 class="h6 font-weight-bold d-inline-block mb-0" data-region="author-name">{{author.fullname}}</h4>
     {{/authorname}}
@@ -39,7 +40,7 @@
             {{#capabilities.reply}}
                 <a
                     href="{{{urls.reply}}}"
-                    class="d-inline-block small dimmed_text"
+                    class="d-inline-block small dimmed_text font-weight-bold"
                     data-post-id="{{id}}"
                     data-action="reply"
                     title="{{#str}} reply, mod_forum {{/str}}"
@@ -51,17 +52,17 @@
         </div>
     {{/footer}}
     {{$replies}}
-        <div class="hidden image-spacer" data-region="reply-visibility-toggle-container">
+        <div class="hidden image-spacer mt-4" data-region="reply-visibility-toggle-container">
             <button class="btn btn-link pl-0" data-action="show-replies">Show previous replies</button>
             <button class="btn btn-link hidden pl-0" data-action="hide-replies">Hide previous replies</button>
         </div>
-        <div class="image-spacer replies-container" data-region="replies-container">
+        <div class="image-spacer replies-container mt-4" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
                     {{> mod_forum/forum_discussion_post_new_reply }}
                 {{/replies}}
             {{/hasreplies}}
         </div>
-        <div class="mt-4 mb-4 hidden image-spacer inline-reply-container" data-region="in-line-reply-container"></div>
+        <div class="mt-4 hidden image-spacer inline-reply-container" data-region="in-line-reply-container"></div>
     {{/replies}}
 {{/ mod_forum/forum_discussion_post_new_first_post }}

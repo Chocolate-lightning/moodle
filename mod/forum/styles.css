@@ -368,47 +368,47 @@ span.unread {
     border: none;
 }
 
-.post-container .post-message p:last-of-type {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .post-message p:last-of-type {
     margin-bottom: 0;
 }
 
-.post-container .author-image-container {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .author-image-container {
     width: 70px;
     margin-right: 24px;
     flex-shrink: 0;
 }
 
-.post-container .inline-reply-container textarea {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .inline-reply-container textarea {
     border: 0;
     resize: none;
 }
 
-.post-container .image-spacer .image-spacer {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .image-spacer .image-spacer {
     padding-left: 94px;
 }
 
-.post-container .image-spacer .image-spacer .author-image-container {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .image-spacer .image-spacer .author-image-container {
     width: 30px;
     margin-right: 8px;
 }
 
-.post-container .image-spacer .image-spacer .image-spacer {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .image-spacer .image-spacer .image-spacer {
     padding-left: 38px;
 }
 
-.post-container .replies-container .inline-reply-container .reply-author {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .replies-container .inline-reply-container .reply-author {
     display: none;
 }
 
-.post-container .inline-reply-container input[type="checkbox"] {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .inline-reply-container input[type="checkbox"] {
     opacity: 0;
 }
 
-.post-container .inline-reply-container input[type="checkbox"]:not(:checked) + label .checked {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .inline-reply-container input[type="checkbox"]:not(:checked) + label .checked {
     display: none;
 }
 
-.post-container .inline-reply-container input[type="checkbox"]:checked + label .unchecked {
+#page-mod-forum-discuss.new-display-mode .forum-post-container .inline-reply-container input[type="checkbox"]:checked + label .unchecked {
     display: none;
 }
 

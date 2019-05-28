@@ -31,7 +31,7 @@
 }}
 <article
     id="p{{id}}"
-    class="post-container"
+    class="forum-post-container"
     data-post-id="{{id}}"
     data-region="post"
     data-target="{{id}}-target"
@@ -41,7 +41,7 @@
 >
     <!-- The firstpost and starter classes below aren't used for anything other than to identify the first post in behat -->
     <div
-        class="d-flex pb-4 {{#unread}}unread{{/unread}} {{#firstpost}}firstpost starter{{/firstpost}}"
+        class="d-flex focus-target {{#unread}}unread{{/unread}} {{#firstpost}}firstpost starter{{/firstpost}} {{$postclasses}}{{/postclasses}}"
         aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
         data-post-id="{{id}}" data-content="forum-post"
     >
@@ -72,7 +72,7 @@
                                 <h4 class="h5 font-weight-bold d-inline-block mb-0" data-region="author-name">{{author.fullname}}</h4>
                             {{/authorname}}
                             <time class="small ml-1 dimmed_text">
-                                {{#userdate}} {{timecreated}}, {{#str}} strftimedaydatetime, core_langconfig {{/str}} {{/userdate}}
+                                {{#userdate}} {{timecreated}}, {{#str}} strftimerecentfull, core_langconfig {{/str}} {{/userdate}}
                             </time>
                         </address>
                         {{#capabilities.view}}
@@ -85,7 +85,7 @@
                             </a>
                         {{/capabilities.view}}
                         <div class="dropdown">
-                            <button class="btn btn-sm dimmed_text icon-no-margin" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-sm dimmed_text icon-no-margin p-0 pl-2 pr-2" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{#pix}} i/moremenu {{/pix}}
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -93,7 +93,6 @@
                                     {{#controlreadstatus}}
                                         {{#unread}}
                                             <a
-                                                data-region="post-action"
                                                 href="{{{urls.markasread}}}"
                                                 class="dropdown-item"
                                                 role="menuitem"
@@ -103,7 +102,6 @@
                                         {{/unread}}
                                         {{^unread}}
                                             <a
-                                                data-region="post-action"
                                                 href="{{{urls.markasunread}}}"
                                                 class="dropdown-item"
                                                 role="menuitem"
@@ -114,7 +112,6 @@
                                     {{/controlreadstatus}}
                                     {{#urls.viewparent}}
                                         <a
-                                            data-region="post-action"
                                             href="{{{.}}}"
                                             class="dropdown-item"
                                             title="{{#str}} permanentlinktoparentpost, mod_forum {{/str}}"
@@ -125,7 +122,6 @@
                                     {{/urls.viewparent}}
                                     {{#edit}}
                                         <a
-                                            data-region="post-action"
                                             href="{{{urls.edit}}}"
                                             class="dropdown-item"
                                             role="menuitem"
@@ -135,7 +131,6 @@
                                     {{/edit}}
                                     {{#split}}
                                         <a
-                                            data-region="post-action"
                                             href="{{{urls.split}}}"
                                             class="dropdown-item"
                                             role="menuitem"
@@ -145,7 +140,6 @@
                                     {{/split}}
                                     {{#delete}}
                                         <a
-                                            data-region="post-action"
                                             href="{{{urls.delete}}}"
                                             class="dropdown-item"
                                             role="menuitem"
@@ -155,7 +149,6 @@
                                     {{/delete}}
                                     {{#export}}
                                         <a
-                                            data-region="post-action"
                                             href="{{{urls.export}}}"
                                             class="dropdown-item"
                                             role="menuitem"
@@ -203,12 +196,12 @@
     </div>
 
     {{$replies}}
-        <div class="image-spacer mb-4 hidden inline-reply-container" data-region="in-line-reply-container"></div>
+        <div class="image-spacer mt-4 hidden inline-reply-container" data-region="in-line-reply-container"></div>
 
         <div class="image-spacer replies-container" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
-                    <div class="border-top pt-4">
+                    <div class="border-top mt-4">
                         {{> mod_forum/forum_discussion_post_new_reply }}
                     </div>
                 {{/replies}}
