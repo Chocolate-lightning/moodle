@@ -368,6 +368,18 @@ span.unread {
     border: none;
 }
 
+#page-mod-forum-discuss.new-display-mode .forum-post-container .replies-container .forum-post-container  {
+    border-top: 1px solid #dee2e6;
+}
+
+#page-mod-forum-discuss.new-display-mode .forum-post-container .replies-container .forum-post-container .replies-container .forum-post-container {
+    border-top: none;
+}
+
+#page-mod-forum-discuss.new-display-mode .forum-post-container .replies-container .post-subject {
+    display: none;
+}
+
 #page-mod-forum-discuss.new-display-mode .forum-post-container .post-message p:last-of-type {
     margin-bottom: 0;
 }

@@ -77,11 +77,13 @@ define([
             }
 
             if (!inpageReplyContainer.find(Selectors.post.inpageReplyContent).length) {
+                var currentAuthorName = postContentContainer.find(Selectors.post.authorName).text();
                 var context = $.extend({
                     postid: postContainer.data('post-id'),
                     "reply_url": currentTarget.attr('href'),
                     sesskey: M.cfg.sesskey,
                     parentsubject: currentSubject.html(),
+                    parentauthorname: currentAuthorName,
                     canreplyprivately: currentTarget.data('can-reply-privately'),
                     postformat: InPageReply.CONTENT_FORMATS.MOODLE
                 }, inpageReplyConfig.context);

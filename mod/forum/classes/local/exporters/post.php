@@ -627,7 +627,8 @@ class post extends exporter {
         $fullname = $exportedauthor->fullname;
         $profileurl = $exportedauthor->urls['profile'] ?? null;
         $formatteddate = userdate($timecreated, get_string('strftimedaydatetime', 'core_langconfig'));
-        $name = $profileurl ? "<a href=\"{$profileurl}\">{$fullname}</a>" : $fullname;
+        $namehtml = "<span data-region='author-name'>{$fullname}</span>";
+        $name = $profileurl ? "<a href=\"{$profileurl}\">{$namehtml}</a>" : $namehtml;
         $date = "<time>{$formatteddate}</time>";
         return get_string('bynameondate', 'mod_forum', ['name' => $name, 'date' => $date]);
     }

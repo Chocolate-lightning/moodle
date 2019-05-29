@@ -33,6 +33,7 @@ define([], function() {
             post: '[data-region="post"]',
             action: '[data-region="post-action"]',
             actionsContainer: '[data-region="post-actions-container"]',
+            authorName: '[data-region="author-name"]',
             forumCoreContent: "[data-region-content='forum-post-core']",
             forumContent: "[data-content='forum-post']",
             forumSubject: "[data-region-content='forum-post-core-subject']",

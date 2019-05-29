@@ -163,7 +163,7 @@
                             <div class="text-danger small align-self-center">{{#str}}postisprivatereply, forum{{/str}}</div>
                         {{/isprivatereply}}
                     </div>
-                    <h3 class="h1 font-weight-bold mb-0" data-region-content="forum-post-core-subject">{{$subject}}{{{subject}}}{{/subject}}</h3>
+                    <h3 class="h1 font-weight-bold mb-0 post-subject" data-region-content="forum-post-core-subject">{{{subject}}}</h3>
                 {{/isdeleted}}
                 {{#hasreplycount}}
                     <span class="sr-only">{{#str}} numberofreplies, mod_forum, {{replycount}} {{/str}}</span>
@@ -199,12 +199,10 @@
     {{$replies}}
         <div class="image-spacer inline-reply-container" data-region="inpage-reply-container"></div>
 
-        <div class="image-spacer replies-container" data-region="replies-container">
+        <div class="image-spacer replies-container mt-4" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
-                    <div class="border-top mt-4">
-                        {{> mod_forum/forum_discussion_post_new_reply }}
-                    </div>
+                    {{> mod_forum/forum_discussion_post_new_reply }}
                 {{/replies}}
             {{/hasreplies}}
         </div>

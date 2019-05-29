@@ -50,6 +50,12 @@
                     name="post"
                     rows="3"
                     class="w-100"
+                    {{#parentauthorname}}
+                    placeholder="{{#str}} replyingtoauthor, forum, {{.}} {{/str}}"
+                    {{/parentauthorname}}
+                    {{^parentauthorname}}
+                    placeholder="{{#str}} replyplaceholder, forum {{/str}}"
+                    {{/parentauthorname}}
                     data-auto-rows
                     data-min-rows="3"
                     data-max-rows="10"

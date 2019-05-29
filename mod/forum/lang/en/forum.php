@@ -549,6 +549,7 @@ $string['replies'] = 'Replies';
 $string['repliesmany'] = '{$a} replies so far';
 $string['repliesone'] = '{$a} reply so far';
 $string['reply'] = 'Reply';
+$string['replyingtoauthor'] = 'Replying to {$a}...';
 $string['replyplaceholder'] = 'Write your reply...';
 $string['replyforum'] = 'Reply to forum';
 $string['replytopostbyemail'] = 'You can reply to this via email.';
