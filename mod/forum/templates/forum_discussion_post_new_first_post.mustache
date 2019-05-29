@@ -199,10 +199,12 @@
     {{$replies}}
         <div class="image-spacer inline-reply-container" data-region="inpage-reply-container"></div>
 
-        <div class="image-spacer replies-container mt-4" data-region="replies-container">
+        <div class="image-spacer replies-container" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
-                    {{> mod_forum/forum_discussion_post_new_reply }}
+                    <div class="mt-4">
+                        {{> mod_forum/forum_discussion_post_new_reply }}
+                    </div>
                 {{/replies}}
             {{/hasreplies}}
         </div>

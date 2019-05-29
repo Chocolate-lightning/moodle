@@ -46,93 +46,52 @@ function(
 ) {
 
     var registerEventListeners = function(root) {
-        var replyFormContainer = root.find('[data-region="inline-reply-content"]');
-
         AutoRows.init(root);
 
-        /*
-        var cancelReply = function(postContainer, postReplyFormContainer, replyButton, replyVisibilityToggleContainer) {
-            postReplyFormContainer.addClass('hidden');
-            postReplyFormContainer.empty();
-            replyButton.attr('data-active', false);
+        root.on(PostsList.events.IN_PAGE_REPLY_VISIBILITY_CHANGE, Selectors.post.inpageReplyContent, function(e, isVisible) {
+            var inpageReplyContent = $(e.target).closest(Selectors.post.inpageReplyContent);
+            var postContainer = inpageReplyContent.closest(Selectors.post.post);
+            var replyVisibilityToggleContainer = postContainer.children(Selectors.post.replyVisibilityToggleContainer);
+            var repliesContainer = postContainer.children(Selectors.post.repliesContainer);
+            var hasReplies = repliesContainer.children().length > 0;
 
-            if (replyVisibilityToggleContainer.length) {
-                var repliesContainer = postContainer.children('[data-region="replies-container"]');
+            if (replyVisibilityToggleContainer.length && hasReplies) {
+                var showButton = replyVisibilityToggleContainer.find(Selectors.post.showReplies);
+                var hideButton = replyVisibilityToggleContainer.find(Selectors.post.hideReplies);
 
-                replyVisibilityToggleContainer.addClass('hidden');
-                repliesContainer.removeClass('hidden');
-            }
-        }
-
-        root.on('click', '[data-action="reply"]', function(e) {
-            e.preventDefault();
-
-            var replyButton = $(e.target);
-            var active = replyButton.attr('data-active') == 'true';
-            var postContainer = replyButton.closest('[data-region="post"]');
-            var postReplyFormContainer = postContainer.children('[data-region="in-line-reply-container"]');
-            var replyVisibilityToggleContainer = postContainer.children('[data-region="reply-visibility-toggle-container"]');
-
-            if (active) {
-                cancelReply(postContainer, postReplyFormContainer, replyButton, replyVisibilityToggleContainer);
-            } else {
-                var postAuthorName = postContainer.children('[data-content="forum-post"]').find('[data-region="author-name"]').text();
-                var postRepliesContainer = postContainer.children('[data-region="replies-container"]');
-                var replyForm = replyFormContainer.children().first().clone();
-                replyForm.find('textarea').attr('placeholder', 'Replying to ' + postAuthorName + '...');
-                replyForm.appendTo(postReplyFormContainer);
-                postReplyFormContainer.removeClass('hidden');
-                replyButton.attr('data-active', true);
-                replyForm.find('textarea').focus();
-
-                if (replyVisibilityToggleContainer.length) {
-                    var showButton = replyVisibilityToggleContainer.find('[data-action="show-replies"]');
-                    var hideButton = replyVisibilityToggleContainer.find('[data-action="hide-replies"]');
-                    var repliesContainer = postContainer.children('[data-region="replies-container"]');
-
-                    if (repliesContainer.children().length) {
+                if (isVisible) {
+                    repliesContainer.slideUp(200, function() {
                         showButton.removeClass('hidden');
                         hideButton.addClass('hidden');
                         replyVisibilityToggleContainer.removeClass('hidden');
-                        repliesContainer.addClass('hidden');
-                    }
+                    });
+                } else {
+                    replyVisibilityToggleContainer.addClass('hidden');
+                    repliesContainer.slideDown(200);
                 }
             }
         });
 
-        root.on('click', '[data-cancel-reply]', function(e) {
-            e.preventDefault();
+        root.on('click', Selectors.post.showReplies, function(e) {
+            var showButton = $(e.target).closest(Selectors.post.showReplies);
+            var buttonContainer = showButton.closest(Selectors.post.replyVisibilityToggleContainer);
+            var hideButton = buttonContainer.find(Selectors.post.hideReplies);
+            var postContainer = buttonContainer.closest(Selectors.post.post);
+            var repliesContainer = postContainer.children(Selectors.post.repliesContainer);
 
-            var cancelButton = $(e.target);
-            var postContainer = cancelButton.closest('[data-region="post"]');
-            var postReplyFormContainer = postContainer.children('[data-region="in-line-reply-container"]');
-            var replyVisibilityToggleContainer = postContainer.children('[data-region="reply-visibility-toggle-container"]');
-            var replyButton = postContainer.children('[data-content="forum-post"]').find('[data-action="reply"]');
-
-            cancelReply(postContainer, postReplyFormContainer, replyButton, replyVisibilityToggleContainer);
-        });
-        */
-
-        root.on('click', '[data-action="show-replies"]', function(e) {
-            var showButton = $(e.target).closest('[data-action="show-replies"]');
-            var buttonContainer = showButton.parent();
-            var hideButton = buttonContainer.find('[data-action="hide-replies"]');
-            var postContainer = buttonContainer.closest('[data-region="post"]');
-            var repliesContainer = postContainer.children('[data-region="replies-container"]');
-
-            repliesContainer.removeClass('hidden');
+            repliesContainer.slideDown(200);
             hideButton.removeClass('hidden');
             showButton.addClass('hidden');
         });
 
-        root.on('click', '[data-action="hide-replies"]', function(e) {
-            var hideButton = $(e.target).closest('[data-action="hide-replies"]');
+        root.on('click', Selectors.post.hideReplies, function(e) {
+            var hideButton = $(e.target).closest(Selectors.post.hideReplies);
             var buttonContainer = hideButton.parent();
-            var showButton = buttonContainer.find('[data-action="show-replies"]');
-            var postContainer = buttonContainer.closest('[data-region="post"]');
-            var repliesContainer = postContainer.children('[data-region="replies-container"]');
+            var showButton = buttonContainer.find(Selectors.post.showReplies);
+            var postContainer = buttonContainer.closest(Selectors.post.post);
+            var repliesContainer = postContainer.children(Selectors.post.repliesContainer);
 
-            repliesContainer.addClass('hidden');
+            repliesContainer.slideUp(200);
             showButton.removeClass('hidden');
             hideButton.addClass('hidden');
         });

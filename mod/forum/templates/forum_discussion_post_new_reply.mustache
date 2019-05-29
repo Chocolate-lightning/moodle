@@ -53,10 +53,14 @@
     {{/footer}}
     {{$replies}}
         <div class="hidden image-spacer mt-4" data-region="reply-visibility-toggle-container">
-            <button class="btn btn-link pl-0" data-action="show-replies">Show previous replies</button>
-            <button class="btn btn-link hidden pl-0" data-action="hide-replies">Hide previous replies</button>
+            <button class="btn btn-link pl-0" data-action="show-replies">
+                {{#str}} showpreviousrepliescount, mod_forum, {{totalreplycount}} {{/str}}
+            </button>
+            <button class="btn btn-link hidden pl-0" data-action="hide-replies">
+                {{#str}} hidepreviousrepliescount, mod_forum, {{totalreplycount}} {{/str}}
+            </button>
         </div>
-        <div class="image-spacer replies-container mt-4" data-region="replies-container">
+        <div class="image-spacer replies-container" data-region="replies-container">
             {{#hasreplies}}
                 {{#replies}}
                     {{> mod_forum/forum_discussion_post_new_reply }}

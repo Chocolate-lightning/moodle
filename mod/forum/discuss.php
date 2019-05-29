@@ -291,7 +291,7 @@ if ($node && $post->get_id() != $discussion->get_first_post_id()) {
     $node->add(format_string($post->get_subject()), $PAGE->url);
 }
 
-$isnewdisplaymode = $mode === FORUM_MODE_NEW;
+$isnewdisplaymode = $displaymode == FORUM_MODE_NEW;
 $PAGE->set_title("$course->shortname: " . format_string($discussion->get_name()));
 if ($isnewdisplaymode) {
     $PAGE->add_body_class('new-display-mode');

@@ -36,49 +36,6 @@
     {{/notifications}}
 
     {{{html.posts}}}
-
-    <div class="hidden" data-region="inline-reply-content">
-        <div class="d-flex inline-reply-container">
-            <div class="author-image-container">
-                <img
-                    class="rounded-circle w-100"
-                    src="{{{loggedinuser.profileimageurl}}}"
-                    alt="{{#str}} pictureof, core, {{loggedinuser.fullname}} {{/str}}"
-                    aria-hidden="true"
-                >
-            </div>
-            <div class="w-100">
-                <h4 class="h5 font-weight-bold reply-author">{{loggedinuser.firstname}} (you)</h4>
-                <form>
-                    <textarea
-                        rows="3"
-                        class="w-100"
-                        data-auto-rows
-                        data-min-rows="3"
-                        data-max-rows="10"
-                    ></textarea>
-                    <div class="d-flex">
-                        <button class="btn btn-primary mr-auto" data-action="forum-inpage-submit">
-                            Post
-                        </button>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="private-reply-checkbox-{{uniqid}}">
-                            <label class="form-check-label" for="private-reply-checkbox-{{uniqid}}">
-                                <span class="unchecked dimmed_text">Reply privately</span>
-                                <span class="checked text-danger">Replying privately</span>
-                            </label>
-                        </div>
-                        <button
-                            class="btn btn-link icon-no-margin icon-size-4 dimmed_text"
-                            data-cancel-reply
-                        >
-                            {{#pix}} i/delete, core {{/pix}}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
 {{#js}}
 require(['jquery', 'mod_forum/discussion_new'], function($, Discussion) {

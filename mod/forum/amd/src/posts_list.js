@@ -39,6 +39,10 @@ define([
         InPageReply
     ) {
 
+    var EVENTS = {
+        IN_PAGE_REPLY_VISIBILITY_CHANGE: 'mod-forum-in-page-reply-visibility-change'
+    };
+
     var registerEventListeners = function(root, inpageReplyConfig) {
         root.on('click', Selectors.post.inpageReplyLink, function(e) {
             e.preventDefault();
@@ -93,15 +97,35 @@ define([
                         return Templates.appendNodeContents(inpageReplyContainer, html, js);
                     })
                     .then(function() {
-                        return inpageReplyContainer.find(Selectors.post.inpageReplyContent).slideToggle(300).find('textarea').focus();
+                        var form = inpageReplyContainer.find(Selectors.post.inpageReplyContent);
+                        form.attr('aria-hidden', 'false');
+                        form.trigger(EVENTS.IN_PAGE_REPLY_VISIBILITY_CHANGE, true);
+
+                        return form.slideToggle(200, function() {
+                            form.find('textarea').focus();
+                        });
                     })
                     .fail(Notification.exception);
             } else {
                 var form = inpageReplyContainer.find(Selectors.post.inpageReplyContent);
-                form.slideToggle(300);
-                if (form.is(':visible')) {
-                    form.find('textarea').focus();
+                var isVisible = form.attr('aria-hidden') == 'false';
+
+                if (isVisible) {
+                    // Going from visible to hidden.
+                    form.attr('aria-hidden', 'true');
+                    form.trigger(EVENTS.IN_PAGE_REPLY_VISIBILITY_CHANGE, false);
+                } else {
+                    // Going from hidden to visible.
+                    form.attr('aria-hidden', 'false');
+                    form.trigger(EVENTS.IN_PAGE_REPLY_VISIBILITY_CHANGE, true);
                 }
+
+                form.slideToggle(200, function() {
+                    if (!isVisible) {
+                        // Going from hidden to visible.
+                        form.find('textarea').focus();
+                    }
+                });
             }
         });
     };
@@ -114,6 +138,7 @@ define([
 
             registerEventListeners(root, inpageReplyConfig);
             InPageReply.init(root, newPostConfig);
-        }
+        },
+        events: EVENTS
     };
 });

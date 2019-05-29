@@ -46,7 +46,10 @@ define([], function() {
             inpageSubmitBtnText: "[data-region='submit-text']",
             loadingIconContainer: "[data-region='loading-icon-container']",
             repliesContainer: "[data-region='replies-container']",
-            modeSelect: "select[name='mode']"
+            modeSelect: "select[name='mode']",
+            showReplies: '[data-action="show-replies"]',
+            hideReplies: '[data-action="hide-replies"]',
+            replyVisibilityToggleContainer: '[data-region="reply-visibility-toggle-container"]',
         },
         lock: {
             toggle: "[data-action='toggle'][data-type='lock-toggle']",

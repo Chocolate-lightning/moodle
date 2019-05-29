@@ -238,21 +238,36 @@ class renderer {
                     $sortintoreplies = function($nestedposts) use (&$sortintoreplies) {
                         return array_map(function($postdata) use (&$sortintoreplies) {
                             [$post, $replies] = $postdata;
-                            $sortedreplies = $sortintoreplies($replies);
-                            // Set the parent author name on the replies. This is used for screen
-                            // readers to help them identify the structure of the discussion.
-                            $sortedreplies = array_map(function($reply) use ($post) {
-                                if (isset($post->author)) {
-                                    $reply->parentauthorname = $post->author->fullname;
-                                } else {
-                                    // The only time the author won't be set is for a single discussion
-                                    // forum. See above for where it gets unset.
-                                    $reply->parentauthorname = get_string('firstpost', 'mod_forum');
-                                }
-                                return $reply;
-                            }, $sortedreplies);
-                            $post->replies = $sortedreplies;
-                            $post->hasreplies = !empty($post->replies);
+                            $totalreplycount = 0;
+
+                            if (empty($replies)) {
+                                $post->replies = [];
+                                $post->hasreplies = false;
+                            } else {
+                                $sortedreplies = $sortintoreplies($replies);
+                                // Set the parent author name on the replies. This is used for screen
+                                // readers to help them identify the structure of the discussion.
+                                $sortedreplies = array_map(function($reply) use ($post) {
+                                    if (isset($post->author)) {
+                                        $reply->parentauthorname = $post->author->fullname;
+                                    } else {
+                                        // The only time the author won't be set is for a single discussion
+                                        // forum. See above for where it gets unset.
+                                        $reply->parentauthorname = get_string('firstpost', 'mod_forum');
+                                    }
+                                    return $reply;
+                                }, $sortedreplies);
+
+                                $totalreplycount = array_reduce($sortedreplies, function($carry, $reply) {
+                                    return $carry + 1 + $reply->totalreplycount;
+                                }, $totalreplycount);
+
+                                $post->replies = $sortedreplies;
+                                $post->hasreplies = true;
+                            }
+
+                            $post->totalreplycount = $totalreplycount;
+
                             return $post;
                         }, $nestedposts);
                     };
