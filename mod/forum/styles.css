@@ -368,6 +368,17 @@ span.unread {
     border: none;
 }
 
+#page-mod-forum-discuss.new-display-mode.path-mod-forum .discussionsubscription {
+    margin-top: 0;
+    text-align: inherit;
+    margin-bottom: 0;
+}
+
+#page-mod-forum-discuss.new-display-mode.path-mod-forum .preload-subscribe,
+#page-mod-forum-discuss.new-display-mode.path-mod-forum .preload-unsubscribe {
+    display: none;
+}
+
 #page-mod-forum-discuss.new-display-mode .forum-post-container .replies-container .forum-post-container  {
     border-top: 1px solid #dee2e6;
 }
