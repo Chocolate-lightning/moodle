@@ -155,7 +155,7 @@
                                                 class="rounded-circle userpicture"
                                                 src="{{urls.profileimage}}"
                                                 alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
-                                                title="{{fullname}}"
+                                                title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
                                             >
                                         </div>
                                         <div class="align-middle p-2">
@@ -174,14 +174,14 @@
                                                          aria-hidden="true"
                                                          class="border rounded h-auto rounded-circle grouppicture"
                                                          src="{{{urls.picture}}}"
-                                                         title="{{name}}">
+                                                         title="{{#str}} pictureof, core, {{name}} {{/str}}">
                                                 </a>
                                             {{/urls.userlist}}
                                             {{^urls.userlist}}
                                                 <img alt="{{#str}} pictureof, core, {{name}} {{/str}}"
                                                      class="border rounded h-auto rounded-circle grouppicture"
                                                      src="{{{urls.picture}}}"
-                                                     title="{{name}}">
+                                                     title="{{#str}} pictureof, core, {{name}} {{/str}}">
                                             {{/urls.userlist}}
                                         {{/urls.picture}}
                                         {{^urls.picture}}
@@ -228,7 +228,7 @@
                                                     class="rounded-circle userpicture"
                                                     src="{{latestpostauthor.urls.profileimage}}"
                                                     alt="{{#str}}pictureof, moodle, {{latestpostauthor.fullname}}{{/str}}"
-                                                    title="{{latestpostauthor.fullname}}"
+                                                    title="{{#str}}pictureof, moodle, {{latestpostauthor.fullname}}{{/str}}"
                                                 >
                                             </a>
                                         </div>
