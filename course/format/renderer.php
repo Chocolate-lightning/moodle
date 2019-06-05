@@ -253,6 +253,46 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         return $o;
     }
 
+    protected function render_section($section, $course, $onsectionpage, $sectionreturn = null, $content) {
+        $data = new stdClass();
+        $data->content = $content;
+
+        if ($section->section != 0) {
+            // Only in the non-general sections.
+            if (!$section->visible) {
+                $data->style = 'hidden';
+            }
+            if (course_get_format($course)->is_section_current($section)) {
+                $data->style = 'current';
+            }
+        }
+        $data->sectionid = $section->section;
+        $data->sectionname = get_section_name($course, $section);
+        $data->leftcontent = $this->section_left_content($section, $course, $onsectionpage);
+        $data->rightcontent = $this->section_right_content($section, $course, $onsectionpage);
+
+        // When not on a section page, we display the section titles except the general section if null
+        $hasnamenotsecpg = (!$onsectionpage && ($section->section != 0 || !is_null($section->name)));
+
+        // When on a section page, we only display the general section title, if title is not the default one
+        $hasnamesecpg = ($onsectionpage && ($section->section == 0 && !is_null($section->name)));
+
+        $data->headerclasses = ' accesshide';
+        if ($hasnamenotsecpg || $hasnamesecpg) {
+            $data->headerclasses = '';
+        }
+        $data->availability = $this->section_availability($section);
+
+        if ($section->uservisible || $section->visible) {
+            // Show summary if section is available or has availability restriction information.
+            // Do not show summary if section is hidden but we still display it because of course setting
+            // "Hidden sections are shown in collapsed form".
+            $data->summary = $this->format_summary_text($section);
+        }
+
+        return $this->render_from_template('core_course/section', $data);
+    }
+
     /**
      * Generate the edit controls of a section
      *
@@ -676,36 +716,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     }
 
     /**
-     * Generate the header html of a stealth section
-     *
-     * @param int $sectionno The section number in the course which is being displayed
-     * @return string HTML to output.
-     */
-    protected function stealth_section_header($sectionno) {
-        $o = '';
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix orphaned hidden'));
-        $o.= html_writer::tag('div', '', array('class' => 'left side'));
-        $course = course_get_format($this->page->course)->get_course();
-        $section = course_get_format($this->page->course)->get_section($sectionno);
-        $rightcontent = $this->section_right_content($section, $course, false);
-        $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
-        $o.= html_writer::start_tag('div', array('class' => 'content'));
-        $o.= $this->output->heading(get_string('orphanedactivitiesinsectionno', '', $sectionno), 3, 'sectionname');
-        return $o;
-    }
-
-    /**
-     * Generate footer html of a stealth section
-     *
-     * @return string HTML to output.
-     */
-    protected function stealth_section_footer() {
-        $o = html_writer::end_tag('div');
-        $o.= html_writer::end_tag('li');
-        return $o;
-    }
-
-    /**
      * Generate the html for a hidden section
      *
      * @param int $sectionno The section number in the course which is being displayed
@@ -713,22 +723,16 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_hidden($sectionno, $courseorid = null) {
+        $data = new stdClass();
         if ($courseorid) {
             $sectionname = get_section_name($courseorid, $sectionno);
-            $strnotavailable = get_string('notavailablecourse', '', $sectionname);
+            $data->strnotavailable = get_string('notavailablecourse', '', $sectionname);
         } else {
-            $strnotavailable = get_string('notavailable');
+            $data->strnotavailable = get_string('notavailable');
         }
+        $data->sectionno = $sectionno;
 
-        $o = '';
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix hidden'));
-        $o.= html_writer::tag('div', '', array('class' => 'left side'));
-        $o.= html_writer::tag('div', '', array('class' => 'right side'));
-        $o.= html_writer::start_tag('div', array('class' => 'content'));
-        $o.= html_writer::tag('div', $strnotavailable);
-        $o.= html_writer::end_tag('div');
-        $o.= html_writer::end_tag('li');
-        return $o;
+        return $this->render_from_template('core_course/section_hidden', $data);
     }
 
     /**
@@ -794,10 +798,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $thissection = $modinfo->get_section_info(0);
         if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
             echo $this->start_section_list();
-            echo $this->section_header($thissection, $course, true, $displaysection);
-            echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-            echo $this->courserenderer->course_section_add_cm_control($course, 0, $displaysection);
-            echo $this->section_footer();
+            $content = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+            $content .= $this->courserenderer->course_section_add_cm_control($course, 0, $displaysection);
+            echo $this->render_section($thissection, $course, true, $displaysection, $content);
             echo $this->end_section_list();
         }
 
@@ -827,14 +830,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         // Now the list of sections..
         echo $this->start_section_list();
 
-        echo $this->section_header($thissection, $course, true, $displaysection);
         // Show completion help icon.
         $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
+        $content = $completioninfo->display_help_icon();
 
-        echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-        echo $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
-        echo $this->section_footer();
+        $content .= $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+        $content .= $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
+        echo $this->render_section($thissection, $course, true, $displaysection, $content);
         echo $this->end_section_list();
 
         // Display section bottom navigation.
@@ -883,10 +885,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             if ($section == 0) {
                 // 0-section is displayed a little different then the others
                 if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
-                    echo $this->section_header($thissection, $course, false, 0);
-                    echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                    echo $this->courserenderer->course_section_add_cm_control($course, 0, 0);
-                    echo $this->section_footer();
+                    $content = $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                    $content .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
+                    echo $this->render_section($thissection, $course, false, 0, $content);
                 }
                 continue;
             }
@@ -908,12 +909,12 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 // Display section summary only.
                 echo $this->section_summary($thissection, $course, null);
             } else {
-                echo $this->section_header($thissection, $course, false, 0);
+                $content = '';
                 if ($thissection->uservisible) {
-                    echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                    echo $this->courserenderer->course_section_add_cm_control($course, $section, 0);
+                    $content .= $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                    $content .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
                 }
-                echo $this->section_footer();
+                echo $this->render_section($thissection, $course, false, 0, $content);
             }
         }
 
@@ -924,9 +925,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                     // this is not stealth section or it is empty
                     continue;
                 }
-                echo $this->stealth_section_header($section);
-                echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                echo $this->stealth_section_footer();
+                $data = new stdClass();
+                $data->sectionno = $section;
+                $course = course_get_format($this->page->course)->get_course();
+                $section = course_get_format($this->page->course)->get_section($section);
+                $data->rightcontent = $this->section_right_content($section, $course, false);
+                $data->coursecontent = $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+
+                echo $this->render_from_template('core_course/stealth_section', $data);
             }
 
             echo $this->end_section_list();
