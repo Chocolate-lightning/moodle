@@ -177,6 +177,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * Generate the display of the header part of a section before
      * course modules are included
      *
+     * @deprecated since Moodle 3.8
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
      * @param bool $onsectionpage true if being printed on a single-section page
@@ -184,6 +185,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_header($section, $course, $onsectionpage, $sectionreturn=null) {
+        debugging('Function section_header() is deprecated. Please use render_section()',
+                DEBUG_DEVELOPER);
         global $PAGE;
 
         $o = '';
@@ -244,13 +247,56 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate the display of the footer part of a section
      *
+     * @deprecated since Moodle 3.8
      * @return string HTML to output.
      */
     protected function section_footer() {
+        debugging('Function section_footer() is deprecated. Please use render_section()',
+                DEBUG_DEVELOPER);
         $o = html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
 
         return $o;
+    }
+
+    protected function render_section($section, $course, $onsectionpage, $sectionreturn = null, $content) {
+        $data = new stdClass();
+        $data->content = $content;
+
+        if ($section->section != 0) {
+            // Only in the non-general sections.
+            if (!$section->visible) {
+                $data->style = 'hidden';
+            }
+            if (course_get_format($course)->is_section_current($section)) {
+                $data->style = 'current';
+            }
+        }
+        $data->sectionid = $section->section;
+        $data->sectionname = get_section_name($course, $section);
+        $data->leftcontent = $this->section_left_content($section, $course, $onsectionpage);
+        $data->rightcontent = $this->section_right_content($section, $course, $onsectionpage);
+
+        // When not on a section page, we display the section titles except the general section if null
+        $hasnamenotsecpg = (!$onsectionpage && ($section->section != 0 || !is_null($section->name)));
+
+        // When on a section page, we only display the general section title, if title is not the default one
+        $hasnamesecpg = ($onsectionpage && ($section->section == 0 && !is_null($section->name)));
+
+        $data->headerclasses = ' accesshide';
+        if ($hasnamenotsecpg || $hasnamesecpg) {
+            $data->headerclasses = '';
+        }
+        $data->availability = $this->section_availability($section);
+
+        if ($section->uservisible || $section->visible) {
+            // Show summary if section is available or has availability restriction information.
+            // Do not show summary if section is hidden but we still display it because of course setting
+            // "Hidden sections are shown in collapsed form".
+            $data->summary = $this->format_summary_text($section);
+        }
+
+        return $this->render_from_template('core_course/section', $data);
     }
 
     /**
@@ -387,12 +433,15 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate a summary of a section for display on the 'course index page'
      *
+     * @deprecated since Moodle 3.8
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
      * @param array    $mods (argument not used)
      * @return string HTML to output.
      */
     protected function section_summary($section, $course, $mods) {
+        debugging('Function section_summary() is deprecated. Please use render_section_summary()',
+                DEBUG_DEVELOPER);
         $classattr = 'section main section-summary clearfix';
         $linkclasses = '';
 
@@ -435,6 +484,42 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o .= html_writer::end_tag('li');
 
         return $o;
+    }
+
+    protected function render_section_summary($section, $course, $mods) {
+        $data = new stdClass();
+
+        $linkclasses = '';
+
+        // If section is hidden then display grey section link
+        if (!$section->visible) {
+            $data->style = 'hidden';
+            $linkclasses .= ' dimmed_text';
+        } else if (course_get_format($course)->is_section_current($section)) {
+            $data->style = 'current';
+        }
+
+        $data->sectionid = $section->id;
+        $data->sectionname = get_section_name($course, $section);
+
+        if ($section->uservisible) {
+            $data->title = html_writer::tag('a', $data->sectionname,
+                    array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
+        } else {
+            $data->title = $data->sectionname;
+        }
+
+        $data->availability = $this->section_availability($section);
+
+        if ($section->uservisible || $section->visible) {
+            // Show summary if section is available or has availability restriction information.
+            // Do not show summary if section is hidden but we still display it because of course setting
+            // "Hidden sections are shown in collapsed form".
+            $data->summary = $this->format_summary_text($section);
+        }
+        $data->activitysummary = $this->section_activity_summary($section, $course, null);
+
+        return $this->render_from_template('core_course/section_summary', $data);
     }
 
     /**
@@ -650,10 +735,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate the header html of a stealth section
      *
+     * @deprecated since Moodle 3.8
      * @param int $sectionno The section number in the course which is being displayed
      * @return string HTML to output.
      */
     protected function stealth_section_header($sectionno) {
+        debugging('Function stealth_section_header() is deprecated. Please use render_stealth_section()',
+                DEBUG_DEVELOPER);
         $o = '';
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix orphaned hidden'));
         $o.= html_writer::tag('div', '', array('class' => 'left side'));
@@ -669,22 +757,39 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate footer html of a stealth section
      *
+     * @deprecated since Moodle 3.8
      * @return string HTML to output.
      */
     protected function stealth_section_footer() {
+        debugging('Function stealth_section_footer() is deprecated. Please use render_stealth_section()',
+                DEBUG_DEVELOPER);
         $o = html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
         return $o;
     }
 
+    protected function render_stealth_section($section) {
+        $data = new stdClass();
+        $data->sectionid = $section->id;
+        $course = course_get_format($this->page->course)->get_course();
+        $section = course_get_format($this->page->course)->get_section($section);
+        $data->rightcontent = $this->section_right_content($section, $course, false);
+        $data->coursecontent = $this->courserenderer->course_section_cm_list($course, $section, 0);
+
+        return $this->render_from_template('core_course/stealth_section', $data);
+    }
+
     /**
      * Generate the html for a hidden section
      *
+     * @deprecated since Moodle 3.8
      * @param int $sectionno The section number in the course which is being displayed
      * @param int|stdClass $courseorid The course to get the section name for (object or just course id)
      * @return string HTML to output.
      */
     protected function section_hidden($sectionno, $courseorid = null) {
+        debugging('Function section_hidden() is deprecated. Please use render_hidden_section()',
+                DEBUG_DEVELOPER);
         if ($courseorid) {
             $sectionname = get_section_name($courseorid, $sectionno);
             $strnotavailable = get_string('notavailablecourse', '', $sectionname);
@@ -701,6 +806,19 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
         return $o;
+    }
+
+    protected function render_hidden_section($sectionno, $courseorid = null) {
+        $data = new stdClass();
+        if ($courseorid) {
+            $sectionname = get_section_name($courseorid, $sectionno);
+            $data->strnotavailable = get_string('notavailablecourse', '', $sectionname);
+        } else {
+            $data->strnotavailable = get_string('notavailable');
+        }
+        $data->sectionid = $sectionno;
+
+        return $this->render_from_template('core_course/section_hidden', $data);
     }
 
     /**
@@ -740,6 +858,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Output the html for a single section page .
      *
+     * @deprecated since Moodle 3.8
      * @param stdClass $course The course entry from DB
      * @param array $sections (argument not used)
      * @param array $mods (argument not used)
@@ -748,6 +867,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param int $displaysection The section number in the course which is being displayed
      */
     public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
+        debugging('Function print_single_section_page() is deprecated. Please use render_single_section_page()',
+                DEBUG_DEVELOPER);
         global $PAGE;
 
         $modinfo = get_fast_modinfo($course);
@@ -766,10 +887,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $thissection = $modinfo->get_section_info(0);
         if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
             echo $this->start_section_list();
-            echo $this->section_header($thissection, $course, true, $displaysection);
-            echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-            echo $this->courserenderer->course_section_add_cm_control($course, 0, $displaysection);
-            echo $this->section_footer();
+            $content = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+            $content .= $this->courserenderer->course_section_add_cm_control($course, 0, $displaysection);
+            echo $this->render_section($thissection, $course, true, $displaysection, $content);
             echo $this->end_section_list();
         }
 
@@ -799,14 +919,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         // Now the list of sections..
         echo $this->start_section_list();
 
-        echo $this->section_header($thissection, $course, true, $displaysection);
         // Show completion help icon.
         $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
+        $content = $completioninfo->display_help_icon();
 
-        echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-        echo $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
-        echo $this->section_footer();
+        $content .= $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+        $content .= $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
+        echo $this->render_section($thissection, $course, true, $displaysection, $content);
         echo $this->end_section_list();
 
         // Display section bottom navigation.
@@ -823,9 +942,64 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         echo html_writer::end_tag('div');
     }
 
+    public function render_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
+        global $PAGE;
+
+        $data = new stdClass();
+        $modinfo = get_fast_modinfo($course);
+        $course = course_get_format($course)->get_course();
+
+        // Can we view the section in question?
+        if (!($sectioninfo = $modinfo->get_section_info($displaysection)) || !$sectioninfo->uservisible) {
+            // This section doesn't exist or is not available for the user.
+            // We actually already check this in course/view.php but just in case exit from this function as well.
+            print_error('unknowncoursesection', 'error', course_get_url($course),
+                    format_string($course->fullname));
+        }
+
+        // Copy activity clipboard..
+        $data->clipboard = $this->course_activity_clipboard($course, $displaysection);
+        $thissection = $modinfo->get_section_info(0);
+        if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
+            $data->startsection = $this->start_section_list();
+            $content = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+            $content .= $this->courserenderer->course_section_add_cm_control($course, 0, $displaysection);
+            $data->section = $this->render_section($thissection, $course, true, $displaysection, $content);
+            $data->endsection = $this->end_section_list();
+        }
+
+        // The requested section page.
+        $thissection = $modinfo->get_section_info($displaysection);
+
+        // Title with section navigation links.
+        $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection);
+
+        $data->linkprev = $sectionnavlinks['previous'];
+        $data->linknext = $sectionnavlinks['next'];
+
+        // Title attributes
+        if (!$thissection->visible) {
+            $data->classes = 'dimmed_text';
+        }
+        $data->sectionname = $this->section_title_without_link($thissection, $course);
+
+        // Show completion help icon.
+        $completioninfo = new completion_info($course);
+        $content = $completioninfo->display_help_icon();
+
+        $content .= $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+        $content .= $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
+        $data->coursesection = $this->render_section($thissection, $course, true, $displaysection, $content);
+
+        $data->navselection = $this->section_nav_selection($course, $sections, $displaysection);
+
+        return $this->render_from_template('core_course/single_section_page', $data);
+    }
+
     /**
      * Output the html for a multiple section page
      *
+     * @deprecated Since Moodle 3.8
      * @param stdClass $course The course entry from DB
      * @param array $sections (argument not used)
      * @param array $mods (argument not used)
@@ -833,6 +1007,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param array $modnamesused (argument not used)
      */
     public function print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused) {
+        debugging('Function print_multiple_section_page() is deprecated. Please use render_multiple_section_page()',
+                DEBUG_DEVELOPER);
         global $PAGE;
 
         $modinfo = get_fast_modinfo($course);
@@ -855,10 +1031,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             if ($section == 0) {
                 // 0-section is displayed a little different then the others
                 if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
-                    echo $this->section_header($thissection, $course, false, 0);
-                    echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                    echo $this->courserenderer->course_section_add_cm_control($course, 0, 0);
-                    echo $this->section_footer();
+                    $content = $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                    $content .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
+                    echo $this->render_section($thissection, $course, false, 0, $content);
                 }
                 continue;
             }
@@ -878,17 +1053,16 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
             if (!$PAGE->user_is_editing() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
                 // Display section summary only.
-                echo $this->section_summary($thissection, $course, null);
+                echo $this->render_section_summary($thissection, $course, null);
             } else {
-                echo $this->section_header($thissection, $course, false, 0);
+                $content = '';
                 if ($thissection->uservisible) {
-                    echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                    echo $this->courserenderer->course_section_add_cm_control($course, $section, 0);
+                    $content .= $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                    $content .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
                 }
-                echo $this->section_footer();
+                echo $this->render_section($thissection, $course, false, 0, $content);
             }
         }
-
         if ($PAGE->user_is_editing() and has_capability('moodle/course:update', $context)) {
             // Print stealth sections if present.
             foreach ($modinfo->get_section_info_all() as $section => $thissection) {
@@ -896,9 +1070,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                     // this is not stealth section or it is empty
                     continue;
                 }
-                echo $this->stealth_section_header($section);
-                echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                echo $this->stealth_section_footer();
+
+                echo $this->render_stealth_section($thissection);
             }
 
             echo $this->end_section_list();
@@ -908,6 +1081,91 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo $this->end_section_list();
         }
 
+    }
+
+    /**
+     * Output the html for a multiple section page
+     *
+     * @param stdClass $course The course entry from DB
+     * @param array $sections (argument not used)
+     * @param array $mods (argument not used)
+     * @param array $modnames (argument not used)
+     * @param array $modnamesused (argument not used)
+     */
+    public function render_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused) {
+        global $PAGE;
+
+        $data = new stdClass();
+
+        $modinfo = get_fast_modinfo($course);
+        $course = course_get_format($course)->get_course();
+
+        $context = context_course::instance($course->id);
+        // Title with completion help icon.
+        $completioninfo = new completion_info($course);
+        $data->completionhelp =  $completioninfo->display_help_icon();
+        $data->pagetitle = $this->page_title();
+
+        // Copy activity clipboard..
+        $data->clipboard = $this->course_activity_clipboard($course, 0);
+
+        // Now the list of sections..
+        $data->sectionstart = $this->start_section_list();
+        $data->sectionend = $this->end_section_list();
+        $numsections = course_get_format($course)->get_last_section_number();
+
+        foreach ($modinfo->get_section_info_all() as $section => $thissection) {
+            if ($section == 0) {
+                // 0-section is displayed a little different then the others
+                if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
+                    $content = $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                    $content .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
+                    $data->coursesection[] = $this->render_section($thissection, $course, false, 0, $content);
+                }
+                continue;
+            }
+            if ($section > $numsections) {
+                // activities inside this section are 'orphaned', this section will be printed as 'stealth' below
+                continue;
+            }
+            // Show the section if the user is permitted to access it, OR if it's not available
+            // but there is some available info text which explains the reason & should display,
+            // OR it is hidden but the course has a setting to display hidden sections as unavilable.
+            $showsection = $thissection->uservisible ||
+                    ($thissection->visible && !$thissection->available && !empty($thissection->availableinfo)) ||
+                    (!$thissection->visible && !$course->hiddensections);
+            if (!$showsection) {
+                continue;
+            }
+
+            if (!$PAGE->user_is_editing() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+                // Display section summary only.
+                $data->coursesection[] = $this->render_section_summary($thissection, $course, null);
+            } else {
+                $content = '';
+                if ($thissection->uservisible) {
+                    $content .= $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                    $content .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
+                }
+                $data->coursesection[] =  $this->render_section($thissection, $course, false, 0, $content);
+            }
+        }
+        if ($PAGE->user_is_editing() and has_capability('moodle/course:update', $context)) {
+            // Print stealth sections if present.
+            foreach ($modinfo->get_section_info_all() as $section => $thissection) {
+                if ($section <= $numsections or empty($modinfo->sections[$section])) {
+                    // this is not stealth section or it is empty
+                    continue;
+                }
+
+                $data->coursesection[] =  $this->render_stealth_section($thissection);
+            }
+
+            $data->sectionend = $this->end_section_list();
+
+            $data->sectionnum = $this->change_number_sections($course, 0);
+        }
+        return $this->render_from_template('core_course/multiple_section_page', $data);
     }
 
     /**

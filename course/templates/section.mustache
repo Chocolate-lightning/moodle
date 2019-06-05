@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/section
+
+    This template renders a course format section.
+
+    Example context (json):
+    {
+        "sectionid": "0",
+        "style": "",
+        "sectionname": "General",
+        "leftcontent": "",
+        "rightcontent": "<img class='icon spacer' aria-hidden='true' src='/theme/image.php/classic/core/1560131739/spacer'/>",
+        "headerclasses": "accesshide",
+        "availability": "<div class='section_availability'></div>",
+        "summary": "",
+        "content": "<ul class='section img-text'>
+                        <li class='activity forum modtype_forum' id='module-80'>
+                            <div class='mod-indent-outer'>
+                                <div class='activityinstance'>
+                                    <a class=' onclick=' href='/mod/forum/view.php?id=80'>
+                                        <img src='/theme/image.php/classic/forum/<unique>/icon' class='iconlarge activityicon' role='presentation' aria-hidden='true' />
+                                        <span class='instancename'>Forum</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>"
+    }
+}}
+<li id="section-{{sectionid}}" class="section main clearfix {{{style}}}" role="region" aria-label="{{{sectionname}}}">
+    <span class="hidden sectionname">{{{sectionname}}}</span>
+    <div class="left side">{{{leftcontent}}}</div>
+    <div class="right side">{{{rightcontent}}}</div>
+    <div class="content">
+        <h3 class="sectionname {{{headerclasses}}}">
+            <span>{{{sectionname}}}</span>
+        </h3>
+        {{{availability}}}
+        <div class="summary">
+            {{{summary}}}
+        </div>
+        {{{content}}}
+    </div>
+</li>
