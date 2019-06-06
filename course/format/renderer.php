@@ -184,6 +184,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_header($section, $course, $onsectionpage, $sectionreturn=null) {
+        debugging('Function section_header() is deprecated. Please use render_section()',
+                DEBUG_DEVELOPER);
         global $PAGE;
 
         $o = '';
@@ -247,6 +249,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_footer() {
+        debugging('Function section_footer() is deprecated. Please use render_section()',
+                DEBUG_DEVELOPER);
         $o = html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
 
@@ -461,6 +465,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_summary($section, $course, $mods) {
+        debugging('Function section_summary() is deprecated. Please use render_section_summary()',
+                DEBUG_DEVELOPER);
         $classattr = 'section main section-summary clearfix';
         $linkclasses = '';
 
@@ -752,6 +758,51 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     }
 
     /**
+     * Generate the header html of a stealth section
+     *
+     * @param int $sectionno The section number in the course which is being displayed
+     * @return string HTML to output.
+     */
+    protected function stealth_section_header($sectionno) {
+        debugging('Function stealth_section_header() is deprecated. Please use render_stealth_section()',
+                DEBUG_DEVELOPER);
+        $o = '';
+        $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix orphaned hidden'));
+        $o.= html_writer::tag('div', '', array('class' => 'left side'));
+        $course = course_get_format($this->page->course)->get_course();
+        $section = course_get_format($this->page->course)->get_section($sectionno);
+        $rightcontent = $this->section_right_content($section, $course, false);
+        $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
+        $o.= html_writer::start_tag('div', array('class' => 'content'));
+        $o.= $this->output->heading(get_string('orphanedactivitiesinsectionno', '', $sectionno), 3, 'sectionname');
+        return $o;
+    }
+
+    /**
+     * Generate footer html of a stealth section
+     *
+     * @return string HTML to output.
+     */
+    protected function stealth_section_footer() {
+        debugging('Function stealth_section_footer() is deprecated. Please use render_stealth_section()',
+                DEBUG_DEVELOPER);
+        $o = html_writer::end_tag('div');
+        $o.= html_writer::end_tag('li');
+        return $o;
+    }
+
+    protected function render_stealth_section($section) {
+        $data = new stdClass();
+        $data->sectionno = $section->id;
+        $course = course_get_format($this->page->course)->get_course();
+        $section = course_get_format($this->page->course)->get_section($section);
+        $data->rightcontent = $this->section_right_content($section, $course, false);
+        $data->coursecontent = $this->courserenderer->course_section_cm_list($course, $section, 0);
+
+        return $this->render_from_template('core_course/stealth_section', $data);
+    }
+
+    /**
      * Generate the html for a hidden section
      *
      * @param int $sectionno The section number in the course which is being displayed
@@ -953,7 +1004,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 echo $this->render_section($thissection, $course, false, 0, $content);
             }
         }
-
         if ($PAGE->user_is_editing() and has_capability('moodle/course:update', $context)) {
             // Print stealth sections if present.
             foreach ($modinfo->get_section_info_all() as $section => $thissection) {
@@ -961,14 +1011,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                     // this is not stealth section or it is empty
                     continue;
                 }
-                $data = new stdClass();
-                $data->sectionno = $section;
-                $course = course_get_format($this->page->course)->get_course();
-                $section = course_get_format($this->page->course)->get_section($section);
-                $data->rightcontent = $this->section_right_content($section, $course, false);
-                $data->coursecontent = $this->courserenderer->course_section_cm_list($course, $thissection, 0);
 
-                echo $this->render_from_template('core_course/stealth_section', $data);
+                echo $this->render_stealth_section($thissection);
             }
 
             echo $this->end_section_list();
