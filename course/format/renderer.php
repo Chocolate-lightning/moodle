@@ -527,7 +527,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             $data->style = 'current';
         }
 
-        $data->sectionid = $section->id;
+        $data->sectionno = $section->id;
         $data->sectionname = get_section_name($course, $section);
 
         if ($section->uservisible) {
@@ -886,6 +886,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Output the html for a single section page .
      *
+     * @deprecated since Moodle 3.8
      * @param stdClass $course The course entry from DB
      * @param array $sections (argument not used)
      * @param array $mods (argument not used)
@@ -894,6 +895,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param int $displaysection The section number in the course which is being displayed
      */
     public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
+        debugging('Function print_single_section_page() is deprecated. Please use render_single_section_page()',
+                DEBUG_DEVELOPER);
         global $PAGE;
 
         $modinfo = get_fast_modinfo($course);
@@ -965,6 +968,60 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         // Close single-section div.
         echo html_writer::end_tag('div');
+    }
+
+    public function render_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
+        global $PAGE;
+
+        $data = new stdClass();
+        $modinfo = get_fast_modinfo($course);
+        $course = course_get_format($course)->get_course();
+
+        // Can we view the section in question?
+        if (!($sectioninfo = $modinfo->get_section_info($displaysection)) || !$sectioninfo->uservisible) {
+            // This section doesn't exist or is not available for the user.
+            // We actually already check this in course/view.php but just in case exit from this function as well.
+            print_error('unknowncoursesection', 'error', course_get_url($course),
+                    format_string($course->fullname));
+        }
+
+        // Copy activity clipboard..
+        $data->clipboard = $this->course_activity_clipboard($course, $displaysection);
+        $thissection = $modinfo->get_section_info(0);
+        if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
+            $data->startsection = $this->start_section_list();
+            $content = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+            $content .= $this->courserenderer->course_section_add_cm_control($course, 0, $displaysection);
+            $data->section = $this->render_section($thissection, $course, true, $displaysection, $content);
+            $data->endsection = $this->end_section_list();
+        }
+
+        // The requested section page.
+        $thissection = $modinfo->get_section_info($displaysection);
+
+        // Title with section navigation links.
+        $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection);
+
+        $data->linkprev = $sectionnavlinks['previous'];
+        $data->linknext = $sectionnavlinks['next'];
+
+        // Title attributes
+        if (!$thissection->visible) {
+            $data->classes = 'dimmed_text';
+        }
+        $data->sectionname = $this->section_title_without_link($thissection, $course);
+
+        // Show completion help icon.
+        $completioninfo = new completion_info($course);
+        $content = $completioninfo->display_help_icon();
+
+        $content .= $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+        $content .= $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
+        $data->coursesection = $this->render_section($thissection, $course, true, $displaysection, $content);
+
+        $data->navselection = $this->section_nav_selection($course, $sections, $displaysection);
+
+        return $this->render_from_template('core_course/single_section_page', $data);
     }
 
     /**

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/section_summary
+    @template core_course/single_section_page
 
     This template renders a course format section.
 
@@ -24,17 +24,25 @@
 
     }
 }}
-<li id="section-{{sectionno}}" class="section main section-summary clearfix {{{style}}}" role="region" aria-label="{{{sectionname}}}">
-    <div class="left side"></div>
-    <div class="right side"></div>
-    <div class="content">
-        <h3 class="section-title">
-            {{{title}}}
+{{{clipboard}}}
+{{{startsection}}}
+{{{section}}}
+{{{endsection}}}
+<div class="single-section">
+    <div class="section-navigation navigationtitle">
+        <span class="mdl-left">{{{linkprev}}}</span>
+        <span class="mdl-right">{{{linknext}}}</span>
+        <h3 class="sectionname {{{classes}}}">
+            <span>{{{sectionname}}}</span>
         </h3>
-        {{{availability}}}
-        <div class="summarytext">
-            {{{summary}}}
-        </div>
-        {{{activitysummary}}}
     </div>
-</li>
+
+    {{{startsection}}}
+    {{{coursesection}}}
+    {{{endsection}}}
+    <div class="section-navigation mdl-bottom">
+        <span class="mdl-left">{{{linkprev}}}</span>
+        <span class="mdl-right">{{{linknext}}}</span>
+        <div class="mdl-align">{{{navselection}}}</div>
+    </div>
+</div>
