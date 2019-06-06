@@ -505,6 +505,42 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         return $o;
     }
 
+    protected function render_section_summary($section, $course, $mods) {
+        $data = new stdClass();
+
+        $linkclasses = '';
+
+        // If section is hidden then display grey section link
+        if (!$section->visible) {
+            $data->style = 'hidden';
+            $linkclasses .= ' dimmed_text';
+        } else if (course_get_format($course)->is_section_current($section)) {
+            $data->style = 'current';
+        }
+
+        $data->sectionid = $section->id;
+        $data->sectionname = get_section_name($course, $section);
+
+        if ($section->uservisible) {
+            $data->title = html_writer::tag('a', $data->sectionname,
+                    array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
+        } else {
+            $data->title = $data->sectionname;
+        }
+
+        $data->availability = $this->section_availability($section);
+
+        if ($section->uservisible || $section->visible) {
+            // Show summary if section is available or has availability restriction information.
+            // Do not show summary if section is hidden but we still display it because of course setting
+            // "Hidden sections are shown in collapsed form".
+            $data->summary = $this->format_summary_text($section);
+        }
+        $data->activitysummary = $this->section_activity_summary($section, $course, null);
+
+        return $this->render_from_template('core_course/section_summary', $data);
+    }
+
     /**
      * Generate a summary of the activites in a section
      *
@@ -907,7 +943,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
             if (!$PAGE->user_is_editing() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
                 // Display section summary only.
-                echo $this->section_summary($thissection, $course, null);
+                echo $this->render_section_summary($thissection, $course, null);
             } else {
                 $content = '';
                 if ($thissection->uservisible) {

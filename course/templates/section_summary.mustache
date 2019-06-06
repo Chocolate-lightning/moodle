@@ -15,19 +15,26 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/section_hidden
+    @template core_course/section_summary
 
-    This template renders the hidden section.
+    This template renders a course format section.
 
     Example context (json):
     {
-        "nocoursesimgurl": "https://moodlesite/theme/image.php/boost/block_recentlyaccessedcourses/1535727318/courses"
+
     }
 }}
-<li id="section-{{sectionno}}" class="section main clearfix hidden">
+<li id="section-{{sectionid}}" class="section main section-summary clearfix {{{style}}}" role="region" aria-label="{{{sectionname}}}">
     <div class="left side"></div>
     <div class="right side"></div>
     <div class="content">
-        {{{strnotavailable}}}
+        <h3 class="section-title">
+            {{{title}}}
+        </h3>
+        {{{availability}}}
+        <div class="summarytext">
+            {{{summary}}}
+        </div>
+        {{{activitysummary}}}
     </div>
 </li>
