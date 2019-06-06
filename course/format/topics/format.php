@@ -54,7 +54,7 @@ $renderer = $PAGE->get_renderer('format_topics');
 if (!empty($displaysection)) {
     echo $renderer->render_single_section_page($course, null, null, null, null, $displaysection);
 } else {
-    $renderer->print_multiple_section_page($course, null, null, null, null);
+    echo $renderer->render_multiple_section_page($course, null, null, null, null);
 }
 
 // Include course format js module
