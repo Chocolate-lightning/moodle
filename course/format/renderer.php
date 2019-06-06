@@ -177,6 +177,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * Generate the display of the header part of a section before
      * course modules are included
      *
+     * @deprecated since Moodle 3.8
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
      * @param bool $onsectionpage true if being printed on a single-section page
@@ -246,6 +247,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate the display of the footer part of a section
      *
+     * @deprecated since Moodle 3.8
      * @return string HTML to output.
      */
     protected function section_footer() {
@@ -459,6 +461,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate a summary of a section for display on the 'course index page'
      *
+     * @deprecated since Moodle 3.8
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
      * @param array    $mods (argument not used)
@@ -760,6 +763,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate the header html of a stealth section
      *
+     * @deprecated since Moodle 3.8
      * @param int $sectionno The section number in the course which is being displayed
      * @return string HTML to output.
      */
@@ -781,6 +785,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate footer html of a stealth section
      *
+     * @deprecated since Moodle 3.8
      * @return string HTML to output.
      */
     protected function stealth_section_footer() {
@@ -805,6 +810,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate the html for a hidden section
      *
+     * @deprecated since Moodle 3.8
      * @param int $sectionno The section number in the course which is being displayed
      * @param int|stdClass $courseorid The course to get the section name for (object or just course id)
      * @return string HTML to output.
