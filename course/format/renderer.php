@@ -810,6 +810,27 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_hidden($sectionno, $courseorid = null) {
+        debugging('Function section_hidden() is deprecated. Please use render_hidden_section()',
+                DEBUG_DEVELOPER);
+        if ($courseorid) {
+            $sectionname = get_section_name($courseorid, $sectionno);
+            $strnotavailable = get_string('notavailablecourse', '', $sectionname);
+        } else {
+            $strnotavailable = get_string('notavailable');
+        }
+
+        $o = '';
+        $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix hidden'));
+        $o.= html_writer::tag('div', '', array('class' => 'left side'));
+        $o.= html_writer::tag('div', '', array('class' => 'right side'));
+        $o.= html_writer::start_tag('div', array('class' => 'content'));
+        $o.= html_writer::tag('div', $strnotavailable);
+        $o.= html_writer::end_tag('div');
+        $o.= html_writer::end_tag('li');
+        return $o;
+    }
+
+    protected function render_hidden_section($sectionno, $courseorid = null) {
         $data = new stdClass();
         if ($courseorid) {
             $sectionname = get_section_name($courseorid, $sectionno);
