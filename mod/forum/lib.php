@@ -5199,7 +5199,8 @@ function forum_get_layout_modes() {
     return array (FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
                   FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
                   FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
-                  FORUM_MODE_NESTED     => get_string('modenested', 'forum'));
+                  FORUM_MODE_NESTED     => get_string('modenested', 'forum'),
+                  FORUM_MODE_NEW        => 'Ryans forum changes');
 }
 
 /**
