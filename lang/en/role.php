@@ -295,6 +295,7 @@ $string['morethan'] = 'More than {$a}';
 $string['multipleroles'] = 'Multiple roles';
 $string['my:manageblocks'] = 'Manage Dashboard page blocks';
 $string['my:configsyspages'] = 'Configure system templates for Dashboard pages';
+$string['admin:configthemes'] = 'Test Matt';
 $string['neededroles'] = 'Roles with permission';
 $string['nocapabilitiesincontext'] = 'No capabilities available in this context';
 $string['noneinthisx'] = 'None in this {$a}';

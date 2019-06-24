@@ -27,7 +27,7 @@ if (empty($settingspage) or !($settingspage instanceof admin_settingpage)) {
     }
     die;
 }
-
+print_object($settingspage);
 if (!($settingspage->check_access())) {
     print_error('accessdenied', 'admin');
     die;

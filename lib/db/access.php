@@ -647,6 +647,16 @@ $capabilities = array(
         )
     ),
 
+    // can the user manage the system default dashboard page?
+    'moodle/admin:configthemes' => array(
+        'riskbitmap' => RISK_SPAM | RISK_PERSONAL | RISK_CONFIG,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/role:assign' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
