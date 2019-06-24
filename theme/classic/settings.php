@@ -25,8 +25,8 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
-    $settings = new theme_boost_admin_settingspage_tabs('themesettingclassic', get_string('configtitle', 'theme_classic'));
-    $page = new admin_settingpage('theme_classic_general', get_string('generalsettings', 'theme_boost'));
+    $settings = new theme_boost_admin_settingspage_tabs('themesettingclassic', get_string('configtitle', 'theme_classic'), 'moodle/admin:configthemes');
+    $page = new admin_settingpage('theme_classic_general', get_string('generalsettings', 'theme_boost'), 'moodle/admin:configthemes');
 
     $name = 'theme_classic/navbardark';
     $title = get_string('navbardark', 'theme_classic');
@@ -88,7 +88,7 @@ if ($ADMIN->fulltree) {
     $settings->add($page);
 
     // Advanced settings.
-    $page = new admin_settingpage('theme_classic_advanced', get_string('advancedsettings', 'theme_boost'));
+    $page = new admin_settingpage('theme_classic_advanced', get_string('advancedsettings', 'theme_boost'), 'moodle/admin:configthemes');
 
     // Raw SCSS to include before the content.
     $setting = new admin_setting_scsscode('theme_classic/scsspre',

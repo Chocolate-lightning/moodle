@@ -11,7 +11,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext) or has_c
 
     $ADMIN->add('appearance', new admin_category('themes', new lang_string('themes')));
     // "themesettings" settingpage
-    $temp = new admin_settingpage('themesettings', new lang_string('themesettings', 'admin'), ['moodle/admin:configthemes']);
+    $temp = new admin_settingpage('themesettings', new lang_string('themesettings', 'admin'), 'moodle/admin:configthemes');
     $setting = new admin_setting_configtext('themelist', new lang_string('themelist', 'admin'),
             new lang_string('configthemelist', 'admin'), '', PARAM_NOTAGS);
     $setting->set_force_ltr(true);
@@ -51,13 +51,13 @@ preferences,moodle|/user/preferences.php|t/preferences',
             new lang_string('devicedetectregex_desc', 'admin'), ''));
     $ADMIN->add('themes', $temp);
     $ADMIN->add('themes',
-            new admin_externalpage('themeselector', new lang_string('themeselector', 'admin'), $CFG->wwwroot . '/theme/index.php', ['moodle/admin:configthemes']));
+            new admin_externalpage('themeselector', new lang_string('themeselector', 'admin'), $CFG->wwwroot . '/theme/index.php', 'moodle/admin:configthemes'));
 
     // settings for each theme
     foreach (core_component::get_plugin_list('theme') as $theme => $themedir) {
         $settings_path = "$themedir/settings.php";
         if (file_exists($settings_path)) {
-            $settings = new admin_settingpage('themesetting'.$theme, new lang_string('pluginname', 'theme_'.$theme), ['moodle/admin:configthemes']);
+            $settings = new admin_settingpage('themesetting'.$theme, new lang_string('pluginname', 'theme_'.$theme), 'moodle/admin:configthemes');
             include($settings_path);
             if ($settings) {
                 $ADMIN->add('themes', $settings);

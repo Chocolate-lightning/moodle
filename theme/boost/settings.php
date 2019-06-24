@@ -23,8 +23,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-    $settings = new theme_boost_admin_settingspage_tabs('themesettingboost', get_string('configtitle', 'theme_boost'));
-    $page = new admin_settingpage('theme_boost_general', get_string('generalsettings', 'theme_boost'));
+    $settings = new theme_boost_admin_settingspage_tabs('themesettingboost', get_string('configtitle', 'theme_boost'), 'moodle/admin:configthemes');
+    $page = new admin_settingpage('theme_boost_general', get_string('generalsettings', 'theme_boost'), 'moodle/admin:configthemes');
 
     // Preset.
     $name = 'theme_boost/preset';
@@ -78,7 +78,7 @@ if ($ADMIN->fulltree) {
     $settings->add($page);
 
     // Advanced settings.
-    $page = new admin_settingpage('theme_boost_advanced', get_string('advancedsettings', 'theme_boost'));
+    $page = new admin_settingpage('theme_boost_advanced', get_string('advancedsettings', 'theme_boost'), 'moodle/admin:configthemes');
 
     // Raw SCSS to include before the content.
     $setting = new admin_setting_scsscode('theme_boost/scsspre',

@@ -39,7 +39,7 @@ $PAGE->navigation->clear_cache();
 
 $adminroot = admin_get_root(); // need all settings
 $settingspage = $adminroot->locate($category, true);
-
+print_object($settingspage);
 if (empty($settingspage) or !($settingspage instanceof admin_category)) {
     print_error('categoryerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
 }
