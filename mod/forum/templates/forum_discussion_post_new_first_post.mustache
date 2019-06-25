@@ -162,6 +162,34 @@
                         {{#isprivatereply}}
                             <div class="text-danger small align-self-center">{{#str}}postisprivatereply, forum{{/str}}</div>
                         {{/isprivatereply}}
+                        {{#author}}
+                            <div class="mr-2 author-groups-container ml-auto" style="width: 25px; flex-shrink: 0">
+                                {{#groups}}
+                                    {{#urls.group}}
+                                        {{#urls.image}}
+                                            <a href="{{urls.group}}" role="button" aria-label='{{#str}} memberofgroup, group, {{name}}{{/str}}'>
+                                                <img
+                                                        class="rounded-circle w-100"
+                                                        src="{{{.}}}"
+                                                        alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                        aria-hidden="true"
+                                                        title="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                >
+                                            </a>
+                                        {{/urls.image}}
+                                    {{/urls.group}}
+                                    {{^urls.group}}
+                                        {{#urls.image}}
+                                            <img class="rounded-circle w-100"
+                                                 src="{{{.}}}"
+                                                 alt="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                                 title="{{#str}} pictureof, core, {{name}} {{/str}}"
+                                            >
+                                        {{/urls.image}}
+                                    {{/urls.group}}
+                                {{/groups}}
+                            </div>
+                        {{/author}}
                     </div>
                     <h3 class="h1 font-weight-bold mb-0 post-subject" data-region-content="forum-post-core-subject">{{{subject}}}</h3>
                 {{/isdeleted}}
