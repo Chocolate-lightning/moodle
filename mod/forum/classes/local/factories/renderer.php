@@ -37,6 +37,7 @@ use mod_forum\local\factories\builder as builder_factory;
 use mod_forum\local\factories\url as url_factory;
 use mod_forum\local\renderers\discussion as discussion_renderer;
 use mod_forum\local\renderers\discussion_list as discussion_list_renderer;
+use mod_forum\local\renderers\grader as grader_renderer;
 use mod_forum\local\renderers\posts as posts_renderer;
 use moodle_page;
 use core\output\notification;
@@ -427,6 +428,43 @@ class renderer {
                     $discussions
                 );
             }
+        );
+    }
+
+    /**
+     * TODO SOMETHING
+     */
+    public function get_grader_renderer(
+            forum_entity $forum
+    ) : grader_renderer {
+
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $rendererbase = $this->rendererbase;
+        $notifications = [];
+
+        $template = 'mod_assign/grading_app';
+        $template = 'mod_forum/grader_list';
+
+        return new grader_renderer(
+                $forum,
+                $rendererbase,
+                $this->legacydatamapperfactory,
+                $this->exporterfactory,
+                $this->vaultfactory,
+                $this->builderfactory,
+                $capabilitymanager,
+                $this->urlfactory,
+                $template,
+                $notifications,
+                function($discussions, $user, $forum) {
+
+                    $exporteddiscussionsummarybuilder = $this->builderfactory->get_exported_discussion_summaries_builder();
+                    return $exporteddiscussionsummarybuilder->build(
+                            $user,
+                            $forum,
+                            $discussions
+                    );
+                }
         );
     }
 
