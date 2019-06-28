@@ -37,7 +37,7 @@ use mod_forum\local\factories\builder as builder_factory;
 use mod_forum\local\factories\url as url_factory;
 use mod_forum\local\renderers\discussion as discussion_renderer;
 use mod_forum\local\renderers\discussion_list as discussion_list_renderer;
-use mod_forum\local\renderers\grader as grader_renderer;
+use core_grades\output\grader as grader_renderer;
 use mod_forum\local\renderers\posts as posts_renderer;
 use moodle_page;
 use core\output\notification;
