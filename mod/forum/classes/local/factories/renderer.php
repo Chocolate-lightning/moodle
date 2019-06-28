@@ -440,7 +440,6 @@ class renderer {
 
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
         $rendererbase = $this->rendererbase;
-        $notifications = [];
 
         $template = 'mod_assign/grading_app';
         $template = 'mod_forum/grader_list';
@@ -454,17 +453,7 @@ class renderer {
                 $this->builderfactory,
                 $capabilitymanager,
                 $this->urlfactory,
-                $template,
-                $notifications,
-                function($discussions, $user, $forum) {
-
-                    $exporteddiscussionsummarybuilder = $this->builderfactory->get_exported_discussion_summaries_builder();
-                    return $exporteddiscussionsummarybuilder->build(
-                            $user,
-                            $forum,
-                            $discussions
-                    );
-                }
+                $template
         );
     }
 

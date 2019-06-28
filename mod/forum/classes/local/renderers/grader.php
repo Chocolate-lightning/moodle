@@ -32,10 +32,8 @@ use mod_forum\local\factories\exporter as exporter_factory;
 use mod_forum\local\factories\vault as vault_factory;
 use mod_forum\local\factories\url as url_factory;
 use mod_forum\local\managers\capability as capability_manager;
-use mod_forum\local\vaults\discussion_list as discussion_list_vault;
 use renderer_base;
 use stdClass;
-use core\output\notification;
 use mod_forum\local\factories\builder as builder_factory;
 
 require_once($CFG->dirroot . '/mod/forum/lib.php');
@@ -72,14 +70,8 @@ class grader {
     /** @var url_factory $urlfactory URL factory */
     private $urlfactory;
 
-    /** @var array $notifications List of notification HTML */
-    private $notifications;
-
     /** @var builder_factory $builderfactory Builder factory */
     private $builderfactory;
-
-    /** @var callable $postprocessfortemplate Function to process exported posts before template rendering */
-    private $postprocessfortemplate;
 
     /** @var string $template The template to use when displaying */
     private $template;
@@ -96,8 +88,6 @@ class grader {
      * @param   capability_manager  $capabilitymanager The managed used to check capabilities on the forum
      * @param   url_factory         $urlfactory The factory used to create URLs in the forum
      * @param   string              $template
-     * @param   notification[]      $notifications A list of any notifications to be displayed within the page
-     * @param   callable|null       $postprocessfortemplate Callback function to process discussion lists for templates
      */
     public function __construct(
         forum_entity $forum,
@@ -108,9 +98,7 @@ class grader {
         builder_factory $builderfactory,
         capability_manager $capabilitymanager,
         url_factory $urlfactory,
-        string $template,
-        array $notifications = [],
-        callable $postprocessfortemplate = null
+        string $template
     ) {
         $this->forum = $forum;
         $this->renderer = $renderer;
@@ -121,8 +109,6 @@ class grader {
         $this->capabilitymanager = $capabilitymanager;
 
         $this->urlfactory = $urlfactory;
-        $this->notifications = $notifications;
-        $this->postprocessfortemplate = $postprocessfortemplate;
         $this->template = $template;
 
         $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
@@ -141,7 +127,6 @@ class grader {
      * @return  string      The rendered content for display
      */
     public function render(stdClass $user, \cm_info $cm, ?int $groupid, ?int $sortorder, ?int $pageno, ?int $pagesize) : string {
-        global $PAGE;
 
         $forum = $this->forum;
 
@@ -151,85 +136,19 @@ class grader {
             $groupid
         );
 
-        $pagesize = $this->get_page_size($pagesize);
-        $pageno = $this->get_page_number($pageno);
-
-        // Count all forum discussion posts.
-        $alldiscussionscount = mod_forum_count_all_discussions($forum, $user, $groupid);
-
-        // Get all forum discussion summaries.
-        $discussions = mod_forum_get_discussion_summaries($forum, $user, $groupid, $sortorder, $pageno, $pagesize);
-
-        $capabilitymanager = $this->capabilitymanager;
-        $hasanyactions = false;
-        $hasanyactions = $hasanyactions || $capabilitymanager->can_favourite_discussion($user);
-        $hasanyactions = $hasanyactions || $capabilitymanager->can_pin_discussions($user);
-        $hasanyactions = $hasanyactions || $capabilitymanager->can_manage_forum($user);
-
         $forumview = [
             'forum' => (array) $forumexporter->export($this->renderer),
-            'hasanyactions' => $hasanyactions,
             'groupchangemenu' => groups_print_activity_menu(
                 $cm,
                 $this->urlfactory->get_forum_view_url_from_forum($forum),
                 true
             ),
-            'hasmore' => ($alldiscussionscount > $pagesize),
             'settings' => [
                 'excludetext' => true,
                 'togglemoreicon' => true
-            ],
-            'totaldiscussioncount' => $alldiscussionscount,
-            'visiblediscussioncount' => count($discussions)
+            ]
         ];
 
-        if (!$discussions) {
-            return $this->renderer->render_from_template($this->template, $forumview);
-        }
-
-        if ($this->postprocessfortemplate !== null) {
-            // We've got some post processing to do!
-            $exportedposts = ($this->postprocessfortemplate) ($discussions, $user, $forum);
-        }
-
-        $baseurl = new \moodle_url($PAGE->url, array('o' => $sortorder));
-
-        $forumview = array_merge(
-            $forumview,
-            [
-                'pagination' => $this->renderer->render(new \paging_bar($alldiscussionscount, $pageno, $pagesize, $baseurl, 'p')),
-            ],
-            $exportedposts
-        );
-
         return $this->renderer->render_from_template($this->template, $forumview);
-    }
-
-    /**
-     * Fetch the page size to use when displaying the page.
-     *
-     * @param   int         $pagesize The number of discussions to show on the page
-     * @return  int         The normalised page size
-     */
-    private function get_page_size(?int $pagesize) : int {
-        if (null === $pagesize || $pagesize <= 0) {
-            $pagesize = discussion_list_vault::PAGESIZE_DEFAULT;
-        }
-
-        return $pagesize;
-    }
-
-    /**
-     * Fetch the current page number (zero-indexed).
-     *
-     * @param   int         $pageno The zero-indexed page number to use
-     * @return  int         The normalised page number
-     */
-    private function get_page_number(?int $pageno) : int {
-        if (null === $pageno || $pageno < 0) {
-            $pageno = 0;
-        }
-
-        return $pageno;
     }
 }
