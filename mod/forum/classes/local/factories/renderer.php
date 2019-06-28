@@ -441,8 +441,8 @@ class renderer {
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
         $rendererbase = $this->rendererbase;
 
-        $template = 'mod_assign/grading_app';
-        $template = 'mod_forum/grader_list';
+        $template = 'core_grades/grading_app';
+        //$template = 'mod_forum/grader_list';
 
         return new grader_renderer(
                 $forum,
