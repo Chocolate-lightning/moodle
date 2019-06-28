@@ -175,7 +175,6 @@ class grader {
                 true
             ),
             'hasmore' => ($alldiscussionscount > $pagesize),
-            'notifications' => $this->get_notifications($user, $groupid),
             'settings' => [
                 'excludetext' => true,
                 'togglemoreicon' => true
@@ -183,10 +182,6 @@ class grader {
             'totaldiscussioncount' => $alldiscussionscount,
             'visiblediscussioncount' => count($discussions)
         ];
-
-        if ($forumview['forum']['capabilities']['create']) {
-            $forumview['newdiscussionhtml'] = $this->get_discussion_form($user, $cm, $groupid);
-        }
 
         if (!$discussions) {
             return $this->renderer->render_from_template($this->template, $forumview);
@@ -208,65 +203,6 @@ class grader {
         );
 
         return $this->renderer->render_from_template($this->template, $forumview);
-    }
-
-    /**
-     * Get the mod_forum_post_form. This is the default boiler plate from mod_forum/post_form.php with the inpage flag caveat
-     *
-     * @param stdClass $user The user the form is being generated for
-     * @param \cm_info $cm
-     * @param int $groupid The groupid if any
-     *
-     * @return string The rendered html
-     */
-    private function get_discussion_form(stdClass $user, \cm_info $cm, ?int $groupid) {
-        $forum = $this->forum;
-        $forumrecord = $this->legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
-        $modcontext = \context_module::instance($cm->id);
-        $coursecontext = \context_course::instance($forum->get_course_id());
-        $post = (object) [
-            'course' => $forum->get_course_id(),
-            'forum' => $forum->get_id(),
-            'discussion' => 0,           // Ie discussion # not defined yet.
-            'parent' => 0,
-            'subject' => '',
-            'userid' => $user->id,
-            'message' => '',
-            'messageformat' => editors_get_preferred_format(),
-            'messagetrust' => 0,
-            'groupid' => $groupid,
-        ];
-        $thresholdwarning = forum_check_throttling($forumrecord, $cm);
-
-        $formparams = array(
-            'course' => $forum->get_course_record(),
-            'cm' => $cm,
-            'coursecontext' => $coursecontext,
-            'modcontext' => $modcontext,
-            'forum' => $forumrecord,
-            'post' => $post,
-            'subscribe' => \mod_forum\subscriptions::is_subscribed($user->id, $forumrecord,
-                null, $cm),
-            'thresholdwarning' => $thresholdwarning,
-            'inpagereply' => true,
-            'edit' => 0
-        );
-        $posturl = new \moodle_url('/mod/forum/post.php');
-        $mformpost = new \mod_forum_post_form($posturl, $formparams, 'post', '', array('id' => 'mformforum'));
-        $discussionsubscribe = \mod_forum\subscriptions::get_user_default_subscription($forumrecord, $coursecontext, $cm, null);
-
-        $params = array('reply' => 0, 'forum' => $forumrecord->id, 'edit' => 0) +
-            (isset($post->groupid) ? array('groupid' => $post->groupid) : array()) +
-            array(
-                'userid' => $post->userid,
-                'parent' => $post->parent,
-                'discussion' => $post->discussion,
-                'course' => $forum->get_course_id(),
-                'discussionsubscribe' => $discussionsubscribe
-            );
-        $mformpost->set_data($params);
-
-        return $mformpost->render();
     }
 
     /**
@@ -295,84 +231,5 @@ class grader {
         }
 
         return $pageno;
-    }
-
-    /**
-     * Get the list of notification for display.
-     *
-     * @param stdClass $user The viewing user
-     * @param int|null $groupid The forum's group id
-     * @return      array
-     */
-    private function get_notifications(stdClass $user, ?int $groupid) : array {
-        $notifications = $this->notifications;
-        $forum = $this->forum;
-        $renderer = $this->renderer;
-        $capabilitymanager = $this->capabilitymanager;
-
-        if ($forum->is_cutoff_date_reached()) {
-            $notifications[] = (new notification(
-                    get_string('cutoffdatereached', 'forum'),
-                    notification::NOTIFY_INFO
-            ))->set_show_closebutton();
-        } else if ($forum->is_due_date_reached()) {
-            $notifications[] = (new notification(
-                    get_string('thisforumisdue', 'forum', userdate($forum->get_due_date())),
-                    notification::NOTIFY_INFO
-            ))->set_show_closebutton();
-        } else if ($forum->has_due_date()) {
-            $notifications[] = (new notification(
-                    get_string('thisforumhasduedate', 'forum', userdate($forum->get_due_date())),
-                    notification::NOTIFY_INFO
-            ))->set_show_closebutton();
-        }
-
-        if ($forum->has_blocking_enabled()) {
-            $notifications[] = (new notification(
-                get_string('thisforumisthrottled', 'forum', [
-                    'blockafter' => $forum->get_block_after(),
-                    'blockperiod' => get_string('secondstotime' . $forum->get_block_period())
-                ])
-            ))->set_show_closebutton();
-        }
-
-        if ($forum->is_in_group_mode() && !$capabilitymanager->can_access_all_groups($user)) {
-            if ($groupid === null) {
-                if (!$capabilitymanager->can_post_to_my_groups($user)) {
-                    $notifications[] = (new notification(
-                        get_string('cannotadddiscussiongroup', 'mod_forum'),
-                        \core\output\notification::NOTIFY_WARNING
-                    ))->set_show_closebutton();
-                } else {
-                    $notifications[] = (new notification(
-                        get_string('cannotadddiscussionall', 'mod_forum'),
-                        \core\output\notification::NOTIFY_WARNING
-                    ))->set_show_closebutton();
-                }
-            } else if (!$capabilitymanager->can_access_group($user, $groupid)) {
-                $notifications[] = (new notification(
-                    get_string('cannotadddiscussion', 'mod_forum'),
-                    \core\output\notification::NOTIFY_WARNING
-                ))->set_show_closebutton();
-            }
-        }
-
-        if ('qanda' === $forum->get_type() && !$capabilitymanager->can_manage_forum($user)) {
-            $notifications[] = (new notification(
-                get_string('qandanotify', 'forum'),
-                notification::NOTIFY_INFO
-            ))->set_show_closebutton();
-        }
-
-        if ('eachuser' === $forum->get_type()) {
-            $notifications[] = (new notification(
-                get_string('allowsdiscussions', 'forum'),
-                notification::NOTIFY_INFO)
-            )->set_show_closebutton();
-        }
-
-        return array_map(function($notification) {
-            return $notification->export_for_template($this->renderer);
-        }, $notifications);
     }
 }
