@@ -52,7 +52,7 @@
     <button type="submit" class="btn btn-secondary" name="resetbutton">{{#str}}reset{{/str}}</button>
 </form>
 {{#js}}
-require(['mod_assign/grading_actions'], function(GradingActions) {
+require(['core_grades/grading_actions'], function(GradingActions) {
     new GradingActions('[data-region="grade-actions"]');
 });
 {{/js}}

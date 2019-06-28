@@ -32,7 +32,7 @@
 }}
 {{> core_grades/loading }}
 {{#js}}
-require(['mod_assign/grading_panel'], function(GradingPanel) {
+require(['core_grades/grading_panel'], function(GradingPanel) {
     new GradingPanel('[data-region="grade"]');
 });
 {{/js}}

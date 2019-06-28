@@ -34,7 +34,7 @@
 }}
 {{> core_grades/loading }}
 {{#js}}
-require(['mod_assign/grading_navigation_user_info'], function(UserInfo) {
+require(['core_grades/grading_navigation_user_info'], function(UserInfo) {
     new UserInfo('[data-region="user-info"]');
 });
 {{/js}}
