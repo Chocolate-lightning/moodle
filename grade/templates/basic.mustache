@@ -1,0 +1,21 @@
+<div class="container-fluid" data-region="unified-grader" data-first-userid="{{userid}}">
+    <button type="button" class="btn btn-secondary user-nav-toggle">user nav</button>
+    <div class="row-fluid">
+        {{> core_grades/user_navigation }}
+    </div>
+    <button type="button" class="btn btn-secondary module-content-toggle">module content</button>
+    <button type="button" class="btn btn-secondary grading-panel-toggle">grading panel</button>
+    <div class="row-fluid">
+        {{> core_grades/module_content }}
+        {{> core_grades/grading_panel }}
+    </div>
+    <button type="button" class="btn btn-secondary grading-actions-toggle">grading actions</button>
+    <div class="row-fluid">
+        {{> core_grades/grading_actions }}
+    </div>
+</div>
+{{#js}}
+    require(['core_grades/unified_grader'], function(UnifiedGrading) {
+        var grader = new UnifiedGrading('[data-region="unified-grader"]');
+    });
+{{/js}}
