@@ -16,7 +16,7 @@
 
 /**
  * @package   core_grades
- * @copyright 2019 Mathew May
+ * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core_grades\output;
@@ -56,8 +56,8 @@ class grade_interface implements renderable, templatable {
         $data->cmid = $this->cmid;
         $data->userid = $this->userid;
 
+        // This information will be converted in MDL-66080 to fetch via WS.
         if ($this->userid) {
-            // TODO move to grade_interface?
             $user = $DB->get_record('user', ['id' => (int)$this->userid], '*', IGNORE_MISSING);
 
             $data->userfirstname = $user->firstname;

@@ -15,30 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays the list of discussions in a forum.
+ * Displays the forum grading page.
  *
  * @package   core_grades
  * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
+require_once('../../config.php');
 
 $cmid = required_param('id', PARAM_INT);
-$mode = optional_param('mode', 0, PARAM_INT);
-$pageno = optional_param('page', 0, PARAM_INT);
-$activity = optional_param('activity', '', PARAM_ALPHA);
-$groupid = optional_param('groupid', 0, PARAM_INT);
-$userid = optional_param('userid', 0, PARAM_INT);
+$userid = required_param('userid',PARAM_INT);
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid);
 
 require_course_login($course, false, $cm);
 
 $PAGE->set_context(context_module::instance($cmid));
-$PAGE->set_title('Forum grader WIP');
+$PAGE->set_title(get_string('forumgrader', 'mod_forum'));
 
-$url = new moodle_url('/grade/grade.php', array('id' => $cmid));
+$url = new moodle_url('/mod/forum/grade.php', array('id' => $cmid, 'userid' => $userid));
 $PAGE->set_url($url);
 
 $PAGE->set_heading($course->fullname);
@@ -47,16 +43,7 @@ echo $OUTPUT->header();
 
 $output = $PAGE->get_renderer('core_grades');
 
-if ($mode) {
-    set_user_preference('grader_displaymode', $mode);
-}
-
-$displaymode = get_user_preferences('grader_displaymode', $CFG->forum_displaymode);
-
-// Fetch the current groupid.
-$groupid = groups_get_activity_group($cm, true) ?: null;
-
 $renderable = new \core_grades\output\grade_interface($cmid, $userid);
-echo $output->render_grader_interface($renderable);
+echo $output->render_grader_interface($renderable, 'mod_forum/forum_grader_wrapper');
 
 echo $OUTPUT->footer();

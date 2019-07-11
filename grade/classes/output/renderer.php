@@ -32,7 +32,7 @@ use plugin_renderer_base;
  * Renderer class.
  *
  * @package   core_grades
- * @copyright 2019 Mathew May
+ * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
@@ -40,11 +40,11 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param migrate_framework_results $page
+     * @param grade_interface $page
      * @return string
      */
-    public function render_grader_interface(grade_interface $page) {
+    public function render_grader_interface(grade_interface $page, string $moduletemplate) {
         $data = $page->export_for_template($this);
-        return $this->render_from_template('core_grades/basic', $data);
+        return $this->render_from_template($moduletemplate, $data);
     }
 }

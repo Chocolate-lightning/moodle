@@ -5346,6 +5346,11 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         $forumnode->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
     }
 
+    if (has_capability('mod/forum:gradeposts', $PAGE->cm->context)){
+        $url = new moodle_url('/mod/forum/grade.php', array('id'=>$PAGE->cm->id, 'userid' => $USER->id));
+        $forumnode->add(get_string('gradeusers', 'forum'), $url, navigation_node::TYPE_SETTING);
+    }
+
     if ($enrolled && forum_tp_can_track_forums($forumobject)) { // keep tracking info for users with suspended enrolments
         if ($forumobject->trackingtype == FORUM_TRACKING_OPTIONAL
                 || ((!$CFG->forum_allowforcedreadtracking) && $forumobject->trackingtype == FORUM_TRACKING_FORCED)) {

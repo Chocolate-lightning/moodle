@@ -1,0 +1,8 @@
+<div class="mod_forum-grader">
+    {{> core_grades/grading_app }}
+</div>
+{{#js}}
+    require(['mod_forum/forum_grader'], function(ForumGrader) {
+    var grader = new ForumGrader();
+    });
+{{/js}}

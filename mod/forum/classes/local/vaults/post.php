@@ -455,4 +455,36 @@ class post extends db_table_vault {
         $records = $this->get_db()->get_records_sql($sql, $params);
         return $this->transform_db_records_to_entities($records);
     }
+
+    /**
+     * Get the post ids for the given discussion.
+     *
+     * @param int $userid
+     * @param bool $canseeprivatereplies Whether this user can see all private replies or not
+     * @param string $orderby Order the results
+     * @return post_entity[]
+     */
+    public function get_from_user_id(
+            int $userid,
+            bool $canseeprivatereplies,
+            string $orderby = 'created ASC'
+    ) : array {
+        global $DB;
+        $user = $DB->get_record('user', ['id' => (int)$userid], '*', IGNORE_MISSING);
+        $alias = $this->get_table_alias();
+        [
+                'where' => $privatewhere,
+                'params' => $privateparams,
+        ] = $this->get_private_reply_sql($user, $canseeprivatereplies);
+
+        $wheresql = "{$alias}.userid = :authorid {$privatewhere}";
+        $orderbysql = $alias . '.' . $orderby;
+
+        $sql = $this->generate_get_records_sql($wheresql, $orderbysql);
+        $records = $this->get_db()->get_records_sql($sql, array_merge([
+                'authorid' => $userid,
+        ], $privateparams));
+
+        return $this->transform_db_records_to_entities($records);
+    }
 }

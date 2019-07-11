@@ -14,27 +14,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Javascript to handle changing users via the user selector in the header.
  *
  * @module     core_grades/unified_grader
  * @package    core_grades
  * @copyright  2019 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery'],
-    function($) {
+define(['jquery', 'core/ajax', 'core/notification', 'core/templates'],
+    function($, ajax, notification, Templates) {
 
         /**
-         * UnifiedGrading class.
+         * This will do the lifting for the JS hooks that are standardized.
          *
          * @class UnifiedGrading
-         * @param {String} selector
          */
-        var UnifiedGrading = function(selector) {
-            this._regionSelector = selector;
-            this._region = $(selector);
-
-            //var userid = $('[data-region="unified-grader"]').data('first-userid');
+        var UnifiedGrading = function() {
 
             $(".user-nav-toggle").click(function(){
                 $(".grader-user-navigation").toggle();
@@ -53,6 +47,19 @@ define(['jquery'],
             });
         };
 
+        /**
+         * This takes the content given to it by the module specific JS
+         * it'll then do a replace on the module content area in the grader.
+         *
+         * @class UnifiedGradingRenderModuleContent
+         */
+        var UnifiedGradingRenderModuleContent = function(html, js) {
+            Templates.replaceNode($(".grader-module-content-display"), html, js)
+                .catch(Notification.exception);
+        };
 
-        return UnifiedGrading;
+        return {
+            UnifiedGrading: UnifiedGrading,
+            UnifiedGradingRenderModuleContent : UnifiedGradingRenderModuleContent,
+        };
     });
