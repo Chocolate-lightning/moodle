@@ -2038,4 +2038,102 @@ class mod_forum_external extends external_api {
     public static function set_pin_state_returns() {
         return discussion_exporter::get_read_structure();
     }
+
+    /**
+     * Get the forum posts in the specified discussion.
+     *
+     * @param   int $discussionid
+     * @param   string $sortby
+     * @param   string $sortdirection
+     * @return  array
+     */
+    public static function get_discussion_posts_by_userid(int $discussionid, ?string $sortby, ?string $sortdirection) {
+        global $USER;
+        // Validate the parameter.
+        $params = self::validate_parameters(self::get_discussion_posts_parameters(), [
+                'discussionid' => $discussionid,
+                'sortby' => $sortby,
+                'sortdirection' => $sortdirection,
+        ]);
+        $warnings = [];
+
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+
+        $forumvault = $vaultfactory->get_forum_vault();
+        $forum = $forumvault->get_from_id($discussion->get_forum_id());
+
+        $sortby = $params['sortby'];
+        $sortdirection = $params['sortdirection'];
+        $sortallowedvalues = ['id', 'created', 'modified'];
+        $directionallowedvalues = ['ASC', 'DESC'];
+
+        if (!in_array(strtolower($sortby), $sortallowedvalues)) {
+            throw new invalid_parameter_exception('Invalid value for sortby parameter (value: ' . $sortby . '),' .
+                    'allowed values are: ' . implode(', ', $sortallowedvalues));
+        }
+
+        $sortdirection = strtoupper($sortdirection);
+        if (!in_array($sortdirection, $directionallowedvalues)) {
+            throw new invalid_parameter_exception('Invalid value for sortdirection parameter (value: ' . $sortdirection . '),' .
+                    'allowed values are: ' . implode(',', $directionallowedvalues));
+        }
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+
+        $postvault = $vaultfactory->get_post_vault();
+        $posts = $postvault->get_from_discussion_id(
+                $USER,
+                $discussion->get_id(),
+                $capabilitymanager->can_view_any_private_reply($USER),
+                "{$sortby} {$sortdirection}"
+        );
+
+        $builderfactory = mod_forum\local\container::get_builder_factory();
+        $postbuilder = $builderfactory->get_exported_posts_builder();
+
+        $legacydatamapper = mod_forum\local\container::get_legacy_data_mapper_factory();
+
+        return [
+                'posts' => $postbuilder->build($USER, [$forum], [$discussion], $posts),
+                'ratinginfo' => \core_rating\external\util::get_rating_info(
+                        $legacydatamapper->get_forum_data_mapper()->to_legacy_object($forum),
+                        $forum->get_context(),
+                        'mod_forum',
+                        'post',
+                        $legacydatamapper->get_post_data_mapper()->to_legacy_objects($posts)
+                ),
+                'warnings' => $warnings,
+        ];
+    }
+
+    /**
+     * Describe the post parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_discussion_posts_by_userid_parameters() {
+        return new external_function_parameters ([
+                'discussionid' => new external_value(PARAM_INT, 'The ID of the discussion from which to fetch posts.', VALUE_REQUIRED),
+                'sortby' => new external_value(PARAM_ALPHA, 'Sort by this element: id, created or modified', VALUE_DEFAULT, 'created'),
+                'sortdirection' => new external_value(PARAM_ALPHA, 'Sort direction: ASC or DESC', VALUE_DEFAULT, 'DESC')
+        ]);
+    }
+
+    /**
+     * Describe the post return format.
+     *
+     * @return external_single_structure
+     */
+    public static function get_discussion_posts_by_userid_returns() {
+        return new external_single_structure([
+                'posts' => new external_multiple_structure(\mod_forum\local\exporters\post::get_read_structure()),
+                'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
+                'warnings' => new external_warnings()
+        ]);
+    }
+
 }
