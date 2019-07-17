@@ -120,7 +120,7 @@ define(['core/ajax'], function(Ajax) {
      * @return {*|Promise}
      */
         // TODO add in sort order for posts/ discussions.
-    var getDiscussionByUserID = function (userid, cmid) {
+    var getDiscussionByUserID = function(userid, cmid) {
         var request = {
             methodname: 'mod_forum_get_discussion_posts_by_userid',
             args: {

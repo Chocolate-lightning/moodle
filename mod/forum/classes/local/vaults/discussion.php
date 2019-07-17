@@ -145,6 +145,7 @@ class discussion extends db_table_vault {
     }
 
     /**
+     * Get all discussions in a given forum.
      *
      * @param   forum_entity $forum
      * @return  discussion_entity|null

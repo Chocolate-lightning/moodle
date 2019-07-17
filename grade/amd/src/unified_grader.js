@@ -30,19 +30,19 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates'],
          */
         var UnifiedGrading = function() {
 
-            $(".user-nav-toggle").click(function(){
+            $(".user-nav-toggle").click(function() {
                 $(".grader-user-navigation").toggle();
             });
 
-            $(".module-content-toggle").click(function(){
+            $(".module-content-toggle").click(function() {
                 $(".grader-module-content").toggle();
             });
 
-            $(".grading-panel-toggle").click(function(){
+            $(".grading-panel-toggle").click(function() {
                 $(".grader-grading-panel").toggle();
             });
 
-            $(".grading-actions-toggle").click(function(){
+            $(".grading-actions-toggle").click(function() {
                 $(".grader-grading-actions").toggle();
             });
         };
@@ -52,6 +52,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates'],
          * it'll then do a replace on the module content area in the grader.
          *
          * @class UnifiedGradingRenderModuleContent
+         * @param {String} html - HTML to prepend
+         * @param {String} js - Javascript to run after we prepend the html
          */
         var UnifiedGradingRenderModuleContent = function(html, js) {
             Templates.replaceNode($(".grader-module-content-display"), html, js)
@@ -60,6 +62,6 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates'],
 
         return {
             UnifiedGrading: UnifiedGrading,
-            UnifiedGradingRenderModuleContent : UnifiedGradingRenderModuleContent,
+            UnifiedGradingRenderModuleContent: UnifiedGradingRenderModuleContent,
         };
     });

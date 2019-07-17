@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Build user content before we render it out.
+ *
  * @package   core_grades
  * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,16 +29,34 @@ use stdClass;
 use templatable;
 
 /**
+ * Callable class that we instantiated.
+ *
  * @package   core_grades
  * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grade_interface implements renderable, templatable {
 
+    /**
+     * The CMID of the module we are going to work with.
+     *
+     * @var int
+     */
     protected $cmid;
 
+    /**
+     * User id that we want to fetch content for.
+     *
+     * @var int
+     */
     protected $userid;
 
+    /**
+     * grade_interface constructor.
+     *
+     * @param int $cmid
+     * @param int $userid
+     */
     public function __construct($cmid, $userid) {
         $this->cmid = $cmid;
         $this->userid = $userid;

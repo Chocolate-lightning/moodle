@@ -41,6 +41,7 @@ class renderer extends plugin_renderer_base {
      * Defer to template.
      *
      * @param grade_interface $page
+     * @param string $moduletemplate
      * @return string
      */
     public function render_grader_interface(grade_interface $page, string $moduletemplate) {

@@ -17,7 +17,7 @@
 /**
  * Displays the forum grading page.
  *
- * @package   core_grades
+ * @package   mod_forum
  * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,7 +25,7 @@
 require_once('../../config.php');
 
 $cmid = required_param('id', PARAM_INT);
-$userid = required_param('userid',PARAM_INT);
+$userid = required_param('userid', PARAM_INT);
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid);
 
