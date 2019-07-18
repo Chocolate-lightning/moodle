@@ -457,7 +457,7 @@ class post extends db_table_vault {
     }
 
     /**
-     * Get the post ids for the given discussion.
+     * Get the posts for the given user.
      *
      * @param int $userid
      * @param bool $canseeprivatereplies Whether this user can see all private replies or not

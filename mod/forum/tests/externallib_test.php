@@ -2354,4 +2354,244 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 ],
             ]);
     }
+
+    /**
+     * Test get forum posts by user id.
+     */
+    public function test_mod_forum_get_discussion_posts_by_userid() {
+        global $CFG, $PAGE;
+
+        $this->resetAfterTest(true);
+
+        $urlfactory = mod_forum\local\container::get_url_factory();
+        $legacyfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+        $entityfactory = mod_forum\local\container::get_entity_factory();
+
+        $user1 = self::getDataGenerator()->create_user();
+        // Create a bunch of other users to post.
+        $user2 = self::getDataGenerator()->create_user();
+        $user2entity = $entityfactory->get_author_from_stdclass($user2);
+        $exporteduser2 = [
+                'id' => (int) $user2->id,
+                'fullname' => fullname($user2),
+                'groups' => [],
+                'urls' => [
+                        'profile' => $urlfactory->get_author_profile_url($user2entity),
+                        'profileimage' => $urlfactory->get_author_profile_image_url($user2entity),
+                ]
+        ];
+        $user2->fullname = $exporteduser2['fullname'];
+
+        $forumgenerator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+
+        // Set the first created user to the test user.
+        self::setUser($user1);
+
+        // Create course to add the module.
+        $course1 = self::getDataGenerator()->create_course();
+
+        // Forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+        $forum1context = context_module::instance($forum1->cmid);
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $discussion1 = $forumgenerator->create_discussion($record);
+
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $discussion2 = $forumgenerator->create_discussion($record);
+
+        // Add 1 reply to the discussion 1 from a different user.
+        $record = new stdClass();
+        $record->discussion = $discussion1->id;
+        $record->parent = $discussion1->firstpost;
+        $record->userid = $user2->id;
+        $discussion1reply1 = $forumgenerator->create_post($record);
+        $filename = 'shouldbeanimage.jpg';
+        // Add a fake inline image to the post.
+        $filerecordinline = array(
+                'contextid' => $forum1context->id,
+                'component' => 'mod_forum',
+                'filearea'  => 'post',
+                'itemid'    => $discussion1reply1->id,
+                'filepath'  => '/',
+                'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $timepost = time();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        // Add 1 reply to the discussion 2 from a different user.
+        $record = new stdClass();
+        $record->discussion = $discussion2->id;
+        $record->parent = $discussion2->firstpost;
+        $record->userid = $user2->id;
+        $discussion2reply1 = $forumgenerator->create_post($record);
+        $filename = 'shouldbeanimage.jpg';
+        // Add a fake inline image to the post.
+        $filerecordinline = array(
+                'contextid' => $forum1context->id,
+                'component' => 'mod_forum',
+                'filearea'  => 'post',
+                'itemid'    => $discussion2reply1->id,
+                'filepath'  => '/',
+                'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $timepost = time();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        // Following line enrol and assign default role id to the user.
+        // So the user automatically gets mod/forum:viewdiscussion on all forums of the course.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        // Create what we expect to be returned when querying the discussion.
+        $expectedposts = array(
+                'posts' => array(),
+                'warnings' => array(),
+        );
+
+        $isolatedurl = $urlfactory->get_discussion_view_url_from_discussion_id($discussion2reply1->discussion);
+        $isolatedurl->params(['parent' => $discussion2reply1->id]);
+
+        $expectedposts['posts'][0] = array(
+                'id' => $discussion2reply1->id,
+                'discussionid' => $discussion2reply1->discussion,
+                'parentid' => $discussion2reply1->parent,
+                'hasparent' => true,
+                'timecreated' => $discussion2reply1->created,
+                'subject' => $discussion2reply1->subject,
+                'replysubject' => get_string('re', 'mod_forum') . " {$discussion2reply1->subject}",
+                'message' => file_rewrite_pluginfile_urls($discussion2reply1->message, 'pluginfile.php',
+                        $forum1context->id, 'mod_forum', 'post', $discussion2reply1->id),
+                'messageformat' => 1,   // This value is usually changed by external_format_text() function.
+                'unread' => null,
+                'isdeleted' => false,
+                'isprivatereply' => false,
+                'haswordcount' => false,
+                'wordcount' => null,
+                'author' => $exporteduser2,
+                'attachments' => [],
+                'tags' => [],
+                'html' => [
+                        'rating' => null,
+                        'taglist' => null,
+                        'authorsubheading' => $forumgenerator->get_author_subheading_html(
+                                (object)$exporteduser2, $discussion2reply1->created)
+                ],
+                'capabilities' => [
+                        'view' => true,
+                        'edit' => true,
+                        'delete' => true,
+                        'split' => false,
+                        'reply' => true,
+                        'export' => false,
+                        'controlreadstatus' => false,
+                        'canreplyprivately' => false,
+                        'selfenrol' => false
+                ],
+                'urls' => [
+                        'view' => $urlfactory->get_view_post_url_from_post_id(
+                                $discussion2reply1->discussion, $discussion2reply1->id)->out(false),
+                        'viewisolated' => $isolatedurl->out(false),
+                        'viewparent' => $urlfactory->get_view_post_url_from_post_id(
+                                $discussion2reply1->discussion, $discussion2reply1->parent)->out(false),
+                        'edit' => (new moodle_url('/mod/forum/post.php', [
+                                'edit' => $discussion2reply1->id
+                        ]))->out(false),
+                        'delete' => (new moodle_url('/mod/forum/post.php', [
+                                'delete' => $discussion2reply1->id
+                        ]))->out(false),
+                        'split' => null,
+                        'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
+                                'reply' => $discussion2reply1->id
+                        ]))->out(false),
+                        'export' => null,
+                        'markasread' => null,
+                        'markasunread' => null,
+                        'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id(
+                                $discussion2reply1->discussion)->out(false),
+                ],
+        );
+
+        $isolatedurl = $urlfactory->get_discussion_view_url_from_discussion_id($discussion1reply1->discussion);
+        $isolatedurl->params(['parent' => $discussion1reply1->id]);
+
+        $expectedposts['posts'][1] = array(
+                'id' => $discussion1reply1->id,
+                'discussionid' => $discussion1reply1->discussion,
+                'parentid' => $discussion1reply1->parent,
+                'hasparent' => true,
+                'timecreated' => $discussion1reply1->created,
+                'subject' => $discussion1reply1->subject,
+                'replysubject' => get_string('re', 'mod_forum') . " {$discussion1reply1->subject}",
+                'message' => file_rewrite_pluginfile_urls($discussion1reply1->message, 'pluginfile.php',
+                        $forum1context->id, 'mod_forum', 'post', $discussion1reply1->id),
+                'messageformat' => 1,   // This value is usually changed by external_format_text() function.
+                'unread' => null,
+                'isdeleted' => false,
+                'isprivatereply' => false,
+                'haswordcount' => false,
+                'wordcount' => null,
+                'author' => $exporteduser2,
+                'attachments' => [],
+                'tags' => [],
+                'html' => [
+                        'rating' => null,
+                        'taglist' => null,
+                        'authorsubheading' => $forumgenerator->get_author_subheading_html(
+                                (object)$exporteduser2, $discussion1reply1->created)
+                ],
+                'capabilities' => [
+                        'view' => true,
+                        'edit' => true,
+                        'delete' => true,
+                        'split' => false,
+                        'reply' => true,
+                        'export' => false,
+                        'controlreadstatus' => false,
+                        'canreplyprivately' => false,
+                        'selfenrol' => false
+                ],
+                'urls' => [
+                        'view' => $urlfactory->get_view_post_url_from_post_id(
+                                $discussion1reply1->discussion, $discussion1reply1->id)->out(false),
+                        'viewisolated' => $isolatedurl->out(false),
+                        'viewparent' => $urlfactory->get_view_post_url_from_post_id(
+                                $discussion1reply1->discussion, $discussion1reply1->parent)->out(false),
+                        'edit' => (new moodle_url('/mod/forum/post.php', [
+                                'edit' => $discussion1reply1->id
+                        ]))->out(false),
+                        'delete' => (new moodle_url('/mod/forum/post.php', [
+                                'delete' => $discussion1reply1->id
+                        ]))->out(false),
+                        'split' => null,
+                        'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
+                                'reply' => $discussion1reply1->id
+                        ]))->out(false),
+                        'export' => null,
+                        'markasread' => null,
+                        'markasunread' => null,
+                        'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id(
+                                $discussion1reply1->discussion)->out(false),
+                ],
+        );
+
+        // Test discussions with one additional post each (total 2 posts).
+        $posts = mod_forum_external::get_discussion_posts_by_userid($user2->id, $forum1->cmid, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_by_userid_returns(), $posts);
+
+        $this->assertEquals(2, count($posts['posts']));
+
+        $this->assertEquals($expectedposts, $posts);
+    }
 }
