@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Define all of the selectors we will be using on the grading interface.
  *
- * @package   mod_forum
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module     core_grades/unified_grader
+ * @package    core_grades
+ * @copyright  2019 Mathew May <mathew.solutions>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+export default {
+    regions: {
+        moduleReplace: ".grader-module-content-display",
+    },
+    toggles: {
+    }
+};
 
-$plugin->version   = 2019071900;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;       // Requires this Moodle version
-$plugin->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)

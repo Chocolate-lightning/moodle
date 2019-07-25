@@ -2090,13 +2090,15 @@ class mod_forum_external extends external_api {
 
         $discussionvault = $vaultfactory->get_discussion_vault();
         $discussions = $discussionvault->get_all_discussions_in_forum($forum);
+        $discussionids = array_keys($discussions);
 
         $postvault = $vaultfactory->get_post_vault();
 
-        $posts = $postvault->get_from_user_id(
-                $params['userid'],
-                $capabilitymanager->can_view_any_private_reply($USER),
-                "{$sortby} {$sortdirection}"
+        $posts = $postvault->get_posts_in_forum_for_user_id(
+            $discussionids,
+            $params['userid'],
+            $capabilitymanager->can_view_any_private_reply($USER),
+            "{$sortby} {$sortdirection}"
         );
 
         $builderfactory = mod_forum\local\container::get_builder_factory();

@@ -14,54 +14,51 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This module will tie together all of the different calls the gradable module will make.
  *
  * @module     core_grades/unified_grader
  * @package    core_grades
  * @copyright  2019 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/notification', 'core/templates'],
-    function($, ajax, notification, Templates) {
+import Templates from 'core/templates';
+import Selectors from './selectors';
 
-        /**
-         * This will do the lifting for the JS hooks that are standardized.
-         *
-         * @class UnifiedGrading
-         */
-        var UnifiedGrading = function() {
+const getHelpers = (config) => {
+    const displayContent = (html, js) => {
+        return Templates.replaceNode(Selectors.regions.moduleReplace, html, js);
+    };
 
-            $(".user-nav-toggle").click(function() {
-                $(".grader-user-navigation").toggle();
-            });
+    const showUser = (userid) => {
+        config
+            .getContentForUserId(userid)
+            .then(displayContent)
+            .catch(Notification.exception);
+    };
 
-            $(".module-content-toggle").click(function() {
-                $(".grader-module-content").toggle();
-            });
 
-            $(".grading-panel-toggle").click(function() {
-                $(".grader-grading-panel").toggle();
-            });
+    const registerEventListeners = () => {
+        // We have no event listeners to register yet.
+    };
 
-            $(".grading-actions-toggle").click(function() {
-                $(".grader-grading-actions").toggle();
-            });
-        };
+    return {
+        registerEventListeners,
+        showUser,
+    };
+};
 
-        /**
-         * This takes the content given to it by the module specific JS
-         * it'll then do a replace on the module content area in the grader.
-         *
-         * @class UnifiedGradingRenderModuleContent
-         * @param {String} html - HTML to prepend
-         * @param {String} js - Javascript to run after we prepend the html
-         */
-        var UnifiedGradingRenderModuleContent = function(html, js) {
-            Templates.replaceNode($(".grader-module-content-display"), html, js)
-                .catch(Notification.exception);
-        };
+export const init = (config) => {
+    const {
+        showUser,
+        registerEventListeners,
+    } = getHelpers(config);
 
-        return {
-            UnifiedGrading: UnifiedGrading,
-            UnifiedGradingRenderModuleContent: UnifiedGradingRenderModuleContent,
-        };
-    });
+    if (config.initialUserId) {
+        showUser(config.initialUserId);
+    }
+
+    registerEventListeners();
+
+    // You might instantiate the user selector here, and pass it the function displayContentForUser as the thing to call
+    // when it has selected a user.
+};

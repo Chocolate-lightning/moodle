@@ -31,20 +31,11 @@
     }
 }}
 <div class="container-fluid" data-region="unified-grader" data-first-userid="{{userid}}" data-cmid="{{cmid}}">
-    <div class="row-fluid">
-        {{> core_grades/user_navigation }}
-    </div>
-    <div class="row-fluid">
-        {{> core_grades/module_content }}
-        {{> core_grades/grading_panel }}
-    </div>
-    <div class="row-fluid">
-        {{> core_grades/grading_actions }}
-    </div>
-    <div class="row-fluid testing-buttons">
-        <button type="button" class="btn btn-secondary user-nav-toggle mr-1">user nav</button>
-        <button type="button" class="btn btn-secondary module-content-toggle mr-1">module content</button>
-        <button type="button" class="btn btn-secondary grading-panel-toggle mr-1">grading panel</button>
-        <button type="button" class="btn btn-secondary grading-actions-toggle">grading actions</button>
-    </div>
+<div class="row-fluid">
+    {{> core_grades/grading_navigation }}
+</div>
+<div class="row-fluid">
+    {{> core_grades/module_content }}
+    {{> core_grades/grading_panel }}
+</div>
 </div>

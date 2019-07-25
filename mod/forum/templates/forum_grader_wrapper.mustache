@@ -30,11 +30,11 @@
     {
     }
 }}
-<div class="mod_forum-grader">
+<div class="mod_forum-grader" id="forum-grader-{{uniqid}}">
     {{> core_grades/grading_app }}
 </div>
 {{#js}}
     require(['mod_forum/forum_grader'], function(ForumGrader) {
-        new ForumGrader();
+        ForumGrader.init("forum-grader-{{uniqid}}");
     });
 {{/js}}

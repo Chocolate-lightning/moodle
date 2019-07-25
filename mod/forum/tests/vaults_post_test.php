@@ -903,9 +903,10 @@ class mod_forum_vaults_post_testcase extends advanced_testcase {
         $post2 = $this->helper_reply_to_post($post1, $user);
         $post3 = $this->helper_reply_to_post($post1, $user);
         [$discussion2, $post4] = $this->helper_post_to_forum($forum, $user);
+        $discussionkeys = [$discussion1->id, $discussion2->id];
 
         $viewhidden = $capabilitymanager->can_view_any_private_reply($user);
-        $entities = $this->vault->get_from_user_id($user->id, $viewhidden, 'modified DESC');
+        $entities = $this->vault->get_posts_in_forum_for_user_id($discussionkeys, $user->id, $viewhidden, 'modified DESC');
         $this->assertCount(4, $entities);
         $this->assertArrayHasKey($post1->id, $entities); // Order is not guaranteed, so just verify element existence.
         $this->assertArrayHasKey($post2->id, $entities);
