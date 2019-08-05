@@ -26,18 +26,13 @@ import Templates from 'core/templates';
 import * as UnifiedGrader from 'core_grades/unified_grader';
 
 import Repository from './repository';
+import CourseRepository from 'core_course/repository';
 
 const templateNames = {
-    contentRegion: 'mod_forum/forum_discussion_posts',
+    contentRegion: 'mod_forum/forum_grader_discussion_posts',
+    userRegion: 'mod_forum/user_navigator',
 };
 
-/**
- * UnifiedGrading class.
- *
- * @function getPostContextFunction
- * @param {Number} cmid The id of the forum we will be using
- * @return {Function}
- */
 const getPostContextFunction = (cmid) => {
     return (userid) => {
         return Repository.getDiscussionByUserID(userid, cmid);
@@ -55,6 +50,16 @@ const getContentForUserIdFunction = (cmid, templateName) => {
     };
 };
 
+const getUsersForCmidFunction = () => {
+    return (cmid) => {
+        return CourseRepository.getUsersFromCourseModuleID(cmid)
+            .then((context) => {
+                return context;
+            })
+            .catch(Notification.exception);
+    };
+};
+
 export const init = (rootElementId) => {
     const rootNode = document.querySelector(`#${rootElementId}`).querySelector('[data-region="unified-grader"]');
     const cmid = rootNode.dataset.cmid;
@@ -64,6 +69,7 @@ export const init = (rootElementId) => {
         cmid: cmid,
         initialUserId: rootNode.dataset.firstUserid,
         getContentForUserId: getContentForUserIdFunction(cmid, templateNames.contentRegion),
+        getUsersForCmidFunction: getUsersForCmidFunction(),
 
         // Example for future.
         // saveGradeForUser: getGradeFunction(cmid),

@@ -23,12 +23,26 @@
  */
 import Templates from 'core/templates';
 import Selectors from './selectors';
+import * as UserPaginator from './unified_grader_user_paginator';
 
 const getHelpers = (config) => {
     const displayContent = (html, js) => {
-        return Templates.replaceNode(Selectors.regions.moduleReplace, html, js);
+        let widget = document.createElement('div');
+        widget.className = "grader-module-content-display col-sm-12";
+        widget.dataset.replace = "grader-module-content";
+        widget.innerHTML = html;
+        return Templates.replaceNode(Selectors.regions.moduleReplace, widget, js);
     };
 
+    const displayUsers = (html) => {
+        return Templates.replaceNode(Selectors.regions.gradingReplace, html);
+    };
+
+    const getUsers = (cmid) => {
+        return config
+            .getUsersForCmidFunction(cmid)
+            .catch(Notification.exception);
+    };
     const showUser = (userid) => {
         config
             .getContentForUserId(userid)
@@ -36,26 +50,57 @@ const getHelpers = (config) => {
             .catch(Notification.exception);
     };
 
+    const renderUserContent = (index, user) => {
+        config.getContentForUserId(user.id)
+            .then((html, js) => {
+                let widget = document.createElement('div');
+                widget.className = "grader-module-content-display col-sm-12";
+                widget.dataset.replace = "grader-module-content";
+                widget.innerHTML = html;
+                return Templates.replaceNode(Selectors.regions.moduleReplace, widget, js);
+            });
+    };
 
+    const renderUserPicker = (state) => {
+        const userNames = state.map(user => ({firstname: user.firstname, lastname: user.lastname, userid: user.id}));
+        const picker = UserPaginator.createPicker(userNames, 0, renderUserContent);
+        return picker;
+
+    };
     const registerEventListeners = () => {
         // We have no event listeners to register yet.
     };
 
     return {
-        registerEventListeners,
         showUser,
+        getUsers,
+        renderUserPicker,
+        displayUsers,
+        registerEventListeners,
     };
 };
 
 export const init = (config) => {
     const {
         showUser,
+        getUsers,
+        renderUserPicker,
+        displayUsers,
         registerEventListeners,
     } = getHelpers(config);
 
     if (config.initialUserId) {
         showUser(config.initialUserId);
     }
+
+    getUsers(config.cmid)
+        .then(state => {
+            renderUserPicker(state.users)
+                .then((picker) => {
+                    displayUsers(picker);
+            });
+        })
+        .catch();
 
     registerEventListeners();
 

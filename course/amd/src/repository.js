@@ -94,8 +94,22 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         return Ajax.call([request])[0];
     };
 
+    var getUsersFromCourseModuleID = function (cmid) {
+        var args = {};
+
+        args.cmid = cmid;
+
+        var request = {
+            methodname: 'core_course_get_users_by_cmid',
+            args: args
+        };
+
+        return Ajax.call([request])[0];
+    };
+
     return {
         getEnrolledCoursesByTimelineClassification: getEnrolledCoursesByTimelineClassification,
-        getLastAccessedCourses: getLastAccessedCourses
+        getLastAccessedCourses: getLastAccessedCourses,
+        getUsersFromCourseModuleID: getUsersFromCourseModuleID
     };
 });

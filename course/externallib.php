@@ -4023,4 +4023,77 @@ class core_course_external extends external_api {
     public static function get_recent_courses_returns() {
         return new external_multiple_structure(course_summary_exporter::get_read_structure(), 'Courses');
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_users_by_cmid_parameters() {
+        return new external_function_parameters(
+                array(
+                    'cmid' => new external_value(PARAM_INT, 'id of the course module', VALUE_REQUIRED),
+                )
+        );
+    }
+
+    /**
+     * Get all users in a course for a given cmid.
+     *
+     * @param int $cmid Course Module id from which the users will be obtained
+     * @return array List of courses
+     * @throws  invalid_parameter_exception
+     */
+    public static function get_users_by_cmid(int $cmid) {
+
+        $params = self::validate_parameters(self::get_users_by_cmid_parameters(),
+            array(
+                'cmid' => $cmid,
+            )
+        );
+        $warnings = [];
+        $cmid = $params['cmid'];
+
+        list($course, $cm) = get_course_and_cm_from_cmid($cmid);
+
+        $coursecontext = context_course::instance($course->id);
+
+        self::validate_context($coursecontext);
+        $users = get_enrolled_users($coursecontext);
+        return [
+                'users' => $users,
+                'warnings' => $warnings,
+        ];
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function get_users_by_cmid_returns() {
+        return new external_single_structure([
+                'users' => new external_multiple_structure(self::user_description()),
+                'warnings' => new external_warnings(),
+        ]);
+    }
+
+    /**
+     * Create user return value description.
+     *
+     * @param array $additionalfields some additional field
+     * @return single_structure_description
+     */
+    public static function user_description() {
+        $userfields = array(
+                'id'    => new external_value(core_user::get_property_type('id'), 'ID of the user'),
+                'username'    => new external_value(core_user::get_property_type('username'), 'The username', VALUE_OPTIONAL),
+                'firstname'   => new external_value(core_user::get_property_type('firstname'), 'The first name(s) of the user', VALUE_OPTIONAL),
+                'lastname'    => new external_value(core_user::get_property_type('lastname'), 'The family name of the user', VALUE_OPTIONAL),
+
+                'email'       => new external_value(core_user::get_property_type('email'), 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
+
+        );
+        return new external_single_structure($userfields);
+    }
 }

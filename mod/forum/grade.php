@@ -25,7 +25,7 @@
 require_once('../../config.php');
 
 $cmid = required_param('id', PARAM_INT);
-$userid = required_param('userid', PARAM_INT);
+$userid = optional_param('userid', 0, PARAM_INT);
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid);
 

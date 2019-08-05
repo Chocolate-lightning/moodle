@@ -2048,7 +2048,7 @@ class mod_forum_external extends external_api {
      * @param   string $sortdirection
      * @return  array
      */
-    public static function get_discussion_posts_by_userid(int $userid, int $cmid, ?string $sortby, ?string $sortdirection) {
+    public static function get_discussion_posts_by_userid(int $userid = 0, int $cmid, ?string $sortby, ?string $sortdirection) {
         global $USER, $DB;
         // Validate the parameter.
         $params = self::validate_parameters(self::get_discussion_posts_by_userid_parameters(), [
@@ -2094,6 +2094,7 @@ class mod_forum_external extends external_api {
 
         $postvault = $vaultfactory->get_post_vault();
 
+        // Handle events where there are no posts for a given user. Return empty array and handle it with template maybe.
         $posts = $postvault->get_posts_in_forum_for_user_id(
             $discussionids,
             $params['userid'],
@@ -2104,10 +2105,14 @@ class mod_forum_external extends external_api {
         $builderfactory = mod_forum\local\container::get_builder_factory();
         $postbuilder = $builderfactory->get_exported_posts_builder();
 
-        $legacydatamapper = mod_forum\local\container::get_legacy_data_mapper_factory();
+        if (!empty($posts)) {
+            $builtposts = $postbuilder->build($user, [$forum], $discussions, $posts);
+        } else {
+            $builtposts = [];
+        }
 
         return [
-                'posts' => $postbuilder->build($user, [$forum], $discussions, $posts),
+                'posts' => $builtposts,
                 'warnings' => $warnings,
         ];
     }

@@ -15,26 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_grades/grading_panel
+    @template mod_forum/forum_grader_discussion_posts
+
+    Template to render a list of posts for a discussion.
 
     Classes required for JS:
-    * TODO
+    * none
 
     Data attributes required for JS:
-    * TODO
-
-    Context variables required for this template:
-    * TODO
+    * none
 
     Example context (json):
     {
     }
 }}
-<div class="grader-grading-panel col-md-4">
-    <div class="col-md-12">
-        <h4 class="font-weight-bold">Grading</h4>
-    </div>
-    <div data-graderreplace="grading-panel-display" class="grader-grading-panel-display col-sm-12">
-        {{> core/loading }}
-    </div>
-</div>
+{{#posts}}
+    {{> mod_forum/forum_discussion_post }}
+{{/posts}}
+{{^posts}}
+    <h3>{{#str}} noposts, forum {{/str}}</h3>
+{{/posts}}
