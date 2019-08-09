@@ -57,7 +57,7 @@ class grade_interface implements renderable, templatable {
      * @param int $cmid
      * @param int $userid
      */
-    public function __construct($cmid, $userid) {
+    public function __construct(int $cmid, int $userid) {
         $this->cmid = $cmid;
         $this->userid = $userid;
     }
@@ -78,11 +78,10 @@ class grade_interface implements renderable, templatable {
 
         // This information will be converted in MDL-66080 to fetch via WS.
         if ($this->userid) {
-            $user = $DB->get_record('user', ['id' => (int)$this->userid], '*', IGNORE_MISSING);
+            $user = $DB->get_record('user', ['id' => $this->userid], '*', IGNORE_MISSING);
 
             $data->userfirstname = $user->firstname;
             $data->userlastname = $user->lastname;
-            $data->useremail = $user->email;
         }
 
         return $data;

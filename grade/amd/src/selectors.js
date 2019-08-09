@@ -24,9 +24,7 @@
 
 export default {
     regions: {
-        moduleReplace: ".grader-module-content-display",
-    },
-    toggles: {
+        moduleReplace: '[data-replace="grader-module-content"]',
     }
 };
 

@@ -35,6 +35,7 @@ $PAGE->set_context(context_module::instance($cmid));
 $PAGE->set_title(get_string('forumgrader', 'mod_forum'));
 
 $url = new moodle_url('/mod/forum/grade.php', array('id' => $cmid, 'userid' => $userid));
+
 $PAGE->set_url($url);
 
 $PAGE->set_heading($course->fullname);
@@ -44,6 +45,7 @@ echo $OUTPUT->header();
 $output = $PAGE->get_renderer('core_grades');
 
 $renderable = new \core_grades\output\grade_interface($cmid, $userid);
+
 echo $output->render_grader_interface($renderable, 'mod_forum/forum_grader_wrapper');
 
 echo $OUTPUT->footer();
