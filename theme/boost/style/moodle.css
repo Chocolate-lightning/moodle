@@ -17653,6 +17653,19 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     left: 50%;
     transform: translate(-50%, -50%); }
 
+.layout.fullscreen {
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  overflow-x: hidden;
+  transition: 0.5s;
+  width: 100%;
+  margin: 0;
+  opacity: 1;
+  background-color: #fff; }
+
 body {
   -webkit-font-smoothing: antialiased; }
 
