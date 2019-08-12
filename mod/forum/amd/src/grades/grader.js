@@ -24,7 +24,7 @@
 import * as Selectors from './grader/selectors';
 import Repository from 'mod_forum/repository';
 import Templates from 'core/templates';
-import * as Grader from 'core_grades/unified_grader';
+import * as Grader from 'mod_forum/grades/unified_grader';
 import Notification from 'core/notification';
 import CourseRepository from 'core_course/repository';
 
