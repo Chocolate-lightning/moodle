@@ -18,6 +18,9 @@ export const createPicker = (items, startIndex, callback) => {
             const nextButton = widget.querySelector('[data-action="next-user"]');
             const previousButton = widget.querySelector('[data-action="previous-user"]');
 
+            nameElement.innerText = `${items[currentIndex].firstname} ${items[currentIndex].lastname}`;
+            indexNumber.innerText = currentIndex;
+            callback(currentIndex,  {id: items[currentIndex].userid});
             nextButton.addEventListener('click', () => {
                 currentIndex++;
                 nameElement.innerText = `${items[currentIndex].firstname} ${items[currentIndex].lastname}`;
