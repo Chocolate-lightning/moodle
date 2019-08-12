@@ -208,6 +208,9 @@ class discussion_list {
             $exportedposts
         );
 
+        $firstdiscussion = reset($discussions);
+        $forumview['firstgradeduserid'] = $firstdiscussion->get_latest_post_author()->get_id();
+
         return $this->renderer->render_from_template($this->template, $forumview);
     }
 

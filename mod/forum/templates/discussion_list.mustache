@@ -32,8 +32,12 @@
     {
     }
 }}
-<div id="discussion-list-{{uniqid}}" data-cmid="{{cmid}}" data-group="{{forum.groupid}}"
-  data-gradable-itemtype="forum" data-initialuserid="126">
+<div id="discussion-list-{{uniqid}}" {{!
+    }}data-cmid="{{cmid}}" {{!
+    }}data-group="{{forum.groupid}}" {{!
+    }}data-gradable-itemtype="forum" {{!
+    }}{{#firstgradeduserid}}data-initialuserid="{{firstgradeduserid}}" {{/firstgradeduserid}}{{!
+    }}>
     {{{groupchangemenu}}}
 
     {{#notifications}}
