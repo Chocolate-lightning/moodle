@@ -64,7 +64,7 @@ export const init = (rootElementId) => {
     const rootNode = document.querySelector(`#${rootElementId}`).querySelector('[data-region="unified-grader"]');
     const cmid = rootNode.dataset.cmid;
 
-    return UnifiedGrader.init({
+    return UnifiedGrader.launch({
         root: rootNode,
         cmid: cmid,
         initialUserId: rootNode.dataset.firstUserid,
