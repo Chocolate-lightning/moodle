@@ -29,7 +29,7 @@ import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/ful
 
 const templateNames = {
     grader: {
-        app: 'mod_forum/local/grades/grading_app',
+        app: 'core_grades/grading_app',
     },
 };
 
