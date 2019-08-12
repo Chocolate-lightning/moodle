@@ -26,9 +26,10 @@ import Repository from 'mod_forum/repository';
 import Templates from 'core/templates';
 import * as Grader from 'core_grades/unified_grader';
 import Notification from 'core/notification';
+import CourseRepository from 'core_course/repository';
 
 const templateNames = {
-    contentRegion: 'mod_forum/forum_discussion_posts',
+    contentRegion: 'mod_forum/forum_grader_discussion_posts',
 };
 
 const getWholeForumFunctions = (cmid) => {
@@ -49,9 +50,20 @@ const getWholeForumFunctions = (cmid) => {
         };
     };
 
+    const getUsersForCmidFunction = () => {
+        return (cmid) => {
+            return CourseRepository.getUsersFromCourseModuleID(cmid)
+                .then((context) => {
+                    return context;
+                })
+                .catch(Notification.exception);
+        };
+    };
+
     return {
         getPostContext: getPostContextFunction(),
         getContentForUserId: getContentForUserIdFunction(),
+        getUsersForCmidFunction: getUsersForCmidFunction()
     };
 };
 
@@ -76,6 +88,7 @@ export const registerLaunchListeners = () => {
                     groupid: rootNode.dataset.groupid,
                     initialUserId: rootNode.dataset.initialuserid,
                     getContentForUserId: wholeForumFunctions.getContentForUserId,
+                    getUsersForCmidFunction: wholeForumFunctions.getUsersForCmidFunction,
                 });
 
                 e.preventDefault();
