@@ -14,26 +14,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define all of the selectors we will be using on the grading interface.
+ * This module will tie together all of the different calls the gradable module will make.
  *
- * @module     core_grades/unified_grader
- * @package    core_grades
- * @copyright  2019 Mathew May <mathew.solutions>
+ * @module     mod_forum/grades/grader/selectors
+ * @package    mod_forum
+ * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-const getDataSelector = (name, value) => {
-    return `[data-${name}="${value}"]`;
-};
-
 export default {
-    buttons: {
-        toggleFullscreen: getDataSelector('action', 'togglefullscreen'),
-        closeGrader: getDataSelector('action', 'closegrader'),
-    },
-    regions: {
-        moduleReplace: '[data-replace="grader-module-content"]',
-        gradingReplace: '[data-graderreplace="grading-panel-display"]',
+    launch: '[data-grade-action="launch"]',
+    gradableItem: '[data-gradable-itemtype]',
+    gradableItems: {
+        wholeForum: '[data-gradable-itemtype="forum"]',
     },
 };
-

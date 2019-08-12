@@ -20,19 +20,32 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import {addIconToContainer} from 'core/loadingicon';
+
 /**
  * @param {string} templateName
  * @param {object} context
  * @return {object}
  */
-const getComposedLayout = ({fullscreen = true} = {}) => {
+const getComposedLayout = ({
+    fullscreen = true,
+    showLoader = true,
+} = {}) => {
     const container = document.createElement('div');
     document.body.append(container);
     container.classList.add('layout');
     container.classList.add('fullscreen');
     container.setAttribute('aria-role', 'application');
 
+    // Lock scrolling on the document body.
+    lockBodyScroll();
+
     const helpers = getLayoutHelpers(container);
+
+    if (showLoader) {
+        helpers.showLoadingIcon();
+    }
+
     if (fullscreen) {
         helpers.requestFullscreen();
     }
@@ -41,11 +54,18 @@ const getComposedLayout = ({fullscreen = true} = {}) => {
 };
 
 const getLayoutHelpers = (layoutNode) => {
+    const contentNode = document.createElement('div');
+    layoutNode.append(contentNode);
+
+    const loadingNode = document.createElement('div');
+    layoutNode.append(loadingNode);
+
     /**
      * Close and destroy the window container.
      */
     const close = () => {
         exitFullscreen();
+        unlockBodyScroll();
 
         layoutNode.remove();
     };
@@ -96,13 +116,66 @@ const getLayoutHelpers = (layoutNode) => {
         }
     };
 
+    const toggleFullscreen = () => {
+        if (document.exitRequestFullScreen) {
+            if (document.fullScreenElement === layoutNode) {
+                exitFullscreen();
+            } else {
+                requestFullscreen();
+            }
+        } else if (document.msExitFullscreen) {
+            if (document.msFullscreenElement === layoutNode) {
+                exitFullscreen();
+            } else {
+                requestFullscreen();
+            }
+        } else if (document.mozCancelFullScreen) {
+            if (document.mozFullScreenElement === layoutNode) {
+                exitFullscreen();
+            } else {
+                requestFullscreen();
+            }
+        } else if (document.webkitExitFullscreen) {
+            if (document.webkitFullscreenElement === layoutNode) {
+                exitFullscreen();
+            } else {
+                requestFullscreen();
+            }
+        }
+    };
+
     /**
      * Get the Node which is fullscreen.
      *
      * @return {Element}
      */
     const getContainer = () => {
-        return layoutNode;
+        return contentNode;
+    };
+
+    const setContent = (content) => {
+        hideLoadingIcon();
+
+        // Note: It would be better to use replaceWith, but this is not compatible with IE.
+        let child = contentNode.lastElementChild;
+        while (child) {
+            contentNode.removeChild(child);
+            child = contentNode.lastElementChild;
+        }
+        contentNode.append(content);
+    };
+
+    const showLoadingIcon = () => {
+        addIconToContainer(loadingNode);
+    };
+
+    const hideLoadingIcon = () => {
+        // Hide the loading container.
+        let child = loadingNode.lastElementChild;
+        while (child) {
+            loadingNode.removeChild(child);
+            child = loadingNode.lastElementChild;
+        }
     };
 
     /**
@@ -110,10 +183,25 @@ const getLayoutHelpers = (layoutNode) => {
      */
     return {
         close,
+
+        toggleFullscreen,
         requestFullscreen,
         exitFullscreen,
+
         getContainer,
+        setContent,
+
+        showLoadingIcon,
+        hideLoadingIcon,
     };
 };
 
-export const createFullScreenWindow = getComposedLayout;
+const lockBodyScroll = () => {
+    document.querySelector('body').classList.add('overflow-hidden');
+};
+
+const unlockBodyScroll = () => {
+    document.querySelector('body').classList.remove('overflow-hidden');
+};
+
+export const createLayout = getComposedLayout;

@@ -17945,6 +17945,18 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   margin: 0;
   opacity: 1;
   background-color: #fff; }
+  .layout.fullscreen .loading-icon {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    top: 40%;
+    position: fixed; }
+    .layout.fullscreen .loading-icon .icon {
+      width: 1em;
+      height: 1em;
+      font-size: 4em; }
 
 .navbar {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); }

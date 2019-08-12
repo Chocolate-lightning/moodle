@@ -11,5 +11,20 @@
         margin: 0;
         opacity: 1;
         background-color: $modal-content-bg;
+
+        .loading-icon {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            display: inline-block;
+            width: 100%;
+            top: 40%;
+            position: fixed;
+            .icon {
+                width: 1em;
+                height: 1em;
+                font-size: 4em;
+            }
+        }
     }
 }

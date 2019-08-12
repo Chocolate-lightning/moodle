@@ -30,12 +30,18 @@
     {
     }
 }}
-<div class="container-fluid" data-region="unified-grader" data-first-userid="{{userid}}" data-cmid="{{cmid}}">
-<div class="row-fluid">
-    {{> core_grades/grading_navigation }}
-</div>
-<div class="row-fluid">
-    {{> core_grades/module_content }}
-    {{> core_grades/grading_panel }}
-</div>
+<div class="container-fluid" {{!
+    }}data-region="unified-grader" {{!
+    }}{{#userid}}data-first-userid="{{userid}}"{{/userid}} {{!
+    }}data-cmid="{{cmid}}" {{!
+    }}>
+    <a href="#" class="btn btn-outline-dark float-right" data-action="closegrader">{{#str}}closebuttontitle, moodle{{/str}}</a>
+    <a href="#" class="btn" data-action="togglefullscreen">Toggle fullscreen</a>
+    <div class="row-fluid">
+        {{> core_grades/grading_navigation }}
+    </div>
+    <div class="row-fluid">
+        {{> core_grades/module_content }}
+        {{> core_grades/grading_panel }}
+    </div>
 </div>

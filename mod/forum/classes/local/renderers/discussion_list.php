@@ -168,6 +168,7 @@ class discussion_list {
 
         $forumview = [
             'forum' => (array) $forumexporter->export($this->renderer),
+            'cmid' => $cm->id,
             'hasanyactions' => $hasanyactions,
             'groupchangemenu' => groups_print_activity_menu(
                 $cm,
