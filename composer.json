@@ -4,10 +4,22 @@
     "description": "Moodle - the world's open source learning platform",
     "type": "project",
     "homepage": "https://moodle.org",
+    "repositories": [
+      {
+        "type": "vcs",
+        "url": "https://github.com/Chocolate-lightning/moodle-behat-extension.git"
+      }
+    ],
     "require-dev": {
+        "doctrine/instantiator": "1.0.5",
+        "symfony/browser-kit": "3.4.30",
+        "symfony/config": "3.4.30",
+        "symfony/dom-crawler": "3.4.30",
+        "symfony/filesystem": "3.4.30",
+        "myclabs/deep-copy": "1.7.0",
         "phpunit/phpunit": "6.5.*",
         "phpunit/dbunit": "3.0.*",
-        "moodlehq/behat-extension": "3.35.2",
+        "moodlehq/behat-extension": "dev-MDL-66184-35 as 1.x-dev",
         "mikey179/vfsstream": "^1.6"
     }
 }
