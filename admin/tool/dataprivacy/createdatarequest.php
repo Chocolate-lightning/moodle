@@ -77,6 +77,10 @@ if ($data = $mform->get_data()) {
     }
 
     if ($data->type == \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE) {
+        if (is_primary_admin($data->userid)) {
+            throw new moodle_exception('nopermissions', 'error', '',
+                    get_string('primaryadmindelete', 'tool_dataprivacy'));
+        }
         if ($data->userid == $USER->id) {
             if (!\tool_dataprivacy\api::can_create_data_deletion_request_for_self()) {
                 throw new moodle_exception('nopermissions', 'error', '',
