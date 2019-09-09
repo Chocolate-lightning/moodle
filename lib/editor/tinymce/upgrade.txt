@@ -1,6 +1,10 @@
 This files describes API changes in /lib/editor/tinymce/* - TinyMCE editor,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+
+* Remove spellchecker plugin that was only compatible with < IE9
+
 === 2.8 ===
 
 * Removed the 'DragMath' plugin as it is incompatible with GNU GPL license - see MDL-32450.

@@ -14,7 +14,6 @@ lib/editor/atto/plugins/html/yui/src/codemirror/
 lib/editor/atto/plugins/html/yui/src/beautify/
 lib/editor/atto/yui/src/rangy/js/*.*
 lib/editor/tinymce/plugins/pdw/tinymce/
-lib/editor/tinymce/plugins/spellchecker/rpc.php
 lib/editor/tinymce/tiny_mce/
 lib/mlbackend/php/phpml/
 lib/adodb/

@@ -1,0 +1,10 @@
+spellchecker:desc,editor_tinymce
+spellchecker:ignore_word,editor_tinymce
+spellchecker:ignore_words,editor_tinymce
+spellchecker:langs,editor_tinymce
+spellchecker:learn_word,editor_tinymce
+spellchecker:menu,editor_tinymce
+spellchecker:no_mpell,editor_tinymce
+spellchecker:no_sug,editor_tinymce
+spellchecker:sug,editor_tinymce
+spellchecker:wait,editor_tinymce

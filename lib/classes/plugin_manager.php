@@ -1652,7 +1652,7 @@ class core_plugin_manager {
             'enrol' => array('authorize'),
             'report' => array('search'),
             'repository' => array('alfresco'),
-            'tinymce' => array('dragmath'),
+            'tinymce' => array('dragmath', 'spellchecker'),
             'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport', 'assignmentupgrade'),
             'theme' => array('bootstrapbase', 'clean', 'more', 'afterburner', 'anomaly', 'arialist', 'base',
                 'binarius', 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor', 'fusion', 'leatherbound',
@@ -1902,7 +1902,7 @@ class core_plugin_manager {
 
             'tinymce' => array(
                 'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
-                'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
+                'moodlemedia', 'moodlenolink', 'pdw', 'wrap'
             ),
 
             'theme' => array(

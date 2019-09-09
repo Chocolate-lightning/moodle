@@ -3551,5 +3551,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019090500.01);
     }
 
+    if ($oldversion < 2019091300.01) {
+        // Clean config.
+        unset_all_config_for_plugin('tinymce_spellchecker');
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019091300.01);
+    }
+
     return true;
 }
