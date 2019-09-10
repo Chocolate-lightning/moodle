@@ -4339,7 +4339,7 @@ class settings_navigation extends navigation_node {
      * @return mixed A key to access the admin tree by
      */
     protected function load_administration_settings(navigation_node $referencebranch=null, part_of_admin_tree $adminbranch=null) {
-        global $CFG;
+        global $CFG, $ADMIN;
 
         // Check if we are just starting to generate this navigation.
         if ($referencebranch === null) {
@@ -4382,8 +4382,18 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/'.$CFG->admin.'/settings.php', array('section'=>$adminbranch->name));
             } else if ($adminbranch instanceof admin_externalpage) {
                 $url = $adminbranch->url;
-            } else if (!empty($CFG->linkadmincategories) && $adminbranch instanceof admin_category) {
-                $url = new moodle_url('/'.$CFG->admin.'/category.php', array('category' => $adminbranch->name));
+            } else if ($adminbranch instanceof admin_category) {
+                if (!empty($CFG->linkadmincategories)) {
+                    $url = new moodle_url('/'.$CFG->admin.'/category.php', array('category' => $adminbranch->name));
+                }
+                $children = $ADMIN->children;
+                foreach ($children as $k => $child) {
+                    if ($child->name === $adminbranch->name) {
+                        $url = new moodle_url('/'.$CFG->admin.'/search.php', [], 'link' . $adminbranch->name);
+                        break;
+                    }
+                }
+
             }
 
             // Add the branch

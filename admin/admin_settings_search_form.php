@@ -44,5 +44,6 @@ class admin_settings_search_form extends moodleform {
         $mform->addGroup($elements);
         $mform->setType('query', PARAM_RAW);
         $mform->setDefault('query', optional_param('query', '', PARAM_RAW));
+        $mform->disable_form_change_checker();
     }
 }
