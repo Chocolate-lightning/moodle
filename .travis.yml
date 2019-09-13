@@ -15,6 +15,7 @@ dist: xenial
 
 services:
     - mysql
+    - docker
 
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
@@ -63,6 +64,7 @@ cache:
 before_install:
     # Avoid IPv6 default binding as service (causes redis not to start).
     sudo service redis-server start --bind 127.0.0.1
+    docker pull moodlehq/moodle-exttests
 
 install:
     - >
@@ -116,6 +118,11 @@ before_script:
       then
         # Copy generic configuration in place.
         cp config-dist.php config.php ;
+
+        # Add in exttests docker image
+        sed -i \
+          -e "s%define('TEST_EXTERNAL_FILES_HTTP_URL', 'http://example.com/moodle%https://localhost/moodle-exttests');%" \
+                  config.php ;
 
         # Create the moodledata directory.
         mkdir -p "$HOME"/roots/base
