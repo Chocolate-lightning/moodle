@@ -1,0 +1,45 @@
+<div id="root-{{uniqid}}">
+    <input type="text" data-region="user-search-input" class="form-control" placeholder="TODO">
+    <button
+        class="btn btn-icon text-muted icon-no-margin icon-size-3"
+        type="button"
+        id="search-actions-menu-{{uniqid}}"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        aria-label="TODO"
+    >
+        <i class="icon fa fa-sliders fa-fw" aria-hidden="true"></i>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="search-actions-menu-{{uniqid}}">
+        <form id="filtering" class="form-check" data-region="filter-search">
+            <div class="w-100">
+                <input id="a-1" type="checkbox" name="checks" data-restrict="name">
+                <label class="" for="a-1">Name</label>
+            </div>
+            <div class="w-100">
+                <input id="a-2" type="checkbox" name="checks" data-restrict="modUrl">
+                <label class="" for="a-2">URL</label>
+            </div>
+            <div class="w-100">
+                <input id="a-3" type="checkbox" name="checks" data-restrict="someAttr">
+                <label class="" for="a-3">Some Attribute</label>
+            </div>
+            <div class="w-100">
+                <input id="a-4" type="checkbox" name="checks" data-restrict="anotherAttr">
+                <label class="" for="a-4">Another Attribute</label>
+            </div>
+        </form>
+    </div>
+    <h1>Search results</h1>
+    <div data-region="search-results"></div>
+    <br/>
+    <h1>All values</h1>
+    <div id="matt-{{uniqid}}" data-region="testing-div"></div>
+</div>
+
+{{#js}}
+    require(['core_course/testing_js'], function(Test) {
+    Test.init('#root-{{uniqid}}');
+    });
+{{/js}}
