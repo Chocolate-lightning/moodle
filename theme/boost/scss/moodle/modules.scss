@@ -588,16 +588,16 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
             }
 
             .toggle-search-button {
-                &.expand {
+                &.expanded {
                     animation-name: expandSearchButton;
                     animation-duration: $grading-animation-duration;
                     animation-timing-function: ease-in-out;
                 }
 
-                &.collapse {
-                    display: block;
+                &.collapsed {
                     animation-name: collapseSearchButton;
                     animation-duration: $grading-animation-duration;
+                    animation-timing-function: ease-in-out;
                 }
             }
 
@@ -681,7 +681,7 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
                     }
                 }
 
-                &.collapsed {
+                &.collapsed-box {
                     width: calc(#{$grading-icon-button-size} + #{map-get($spacers, 2)} + #{map-get($spacers, 2)});
                     transition: width $grading-animation-duration ease-in-out;
 

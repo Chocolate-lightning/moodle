@@ -72,6 +72,7 @@ $string['regrademessage5'] = 'You are about to save significant changes to a rub
 $string['regradeoption0'] = 'Do not mark for regrade';
 $string['regradeoption1'] = 'Mark for regrade';
 $string['restoredfromdraft'] = 'NOTE: The last attempt to grade this person was not saved properly so draft grades have been restored. If you want to cancel these changes use the \'Cancel\' button below.';
+$string['remark'] = '{$a} remark';
 $string['rubric'] = 'Rubric';
 $string['rubricmapping'] = 'Score to grade mapping rules';
 $string['rubricmappingexplained'] = 'The minimum possible score for this rubric is <b>{$a->minscore} points</b>. It will be converted to the minimum grade available for the activity (which is 0 unless a scale is used). The maximum score of <b>{$a->maxscore} points</b> will be converted to the maximum grade. Intermediate scores will be converted respectively.
