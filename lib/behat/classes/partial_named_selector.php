@@ -81,6 +81,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'autocomplete' => 'autocomplete',
         'iframe' => 'iframe',
         'option_role' => 'option_role',
+        'Fullscreen interface' => 'fullscreen_interface',
     );
 
     /**
@@ -133,6 +134,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'autocomplete_suggestions' => 'autocomplete_suggestions',
         'autocomplete' => 'autocomplete',
         'iframe' => 'iframe',
+        'Fullscreen interface' => 'fullscreen_interface',
     );
 
     /**
@@ -296,6 +298,9 @@ XPATH
 XPATH
         , 'iframe' => <<<XPATH
 .//iframe[(%idOrNameMatch% or (contains(concat(' ', normalize-space(@class), ' '), %locator% )))]
+XPATH
+        , 'fullscreen_interface' => <<<XPATH
+.//div[contains(concat(' ', normalize-space(@class), ' '), ' fullscreen ')][%ariaLabelMatch%]
 XPATH
     );
 
