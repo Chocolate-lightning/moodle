@@ -760,6 +760,8 @@ $string['nousersmatch'] = 'No user(s) found for given criteria';
 $string['showmoreusers'] = 'Show more users';
 $string['viewconversation'] = 'View conversation';
 $string['viewgrades'] = 'View grades';
+$string['actionsforgraderinterface'] = 'Additional options';
+$string['closegrader'] = 'Close grading';
 
 // Deprecated since Moodle 3.8.
 $string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';

@@ -62,6 +62,7 @@ $string['err_shortnametoolong'] = 'Criterion name must be less than 256 characte
 $string['err_scoreinvalid'] = 'The score given to \'{$a->criterianame}\' is not valid, the max score is: {$a->maxscore}';
 $string['err_scoreisnegative'] = 'The score given to \'{$a->criterianame}\' is not valid, negative values are not allowed';
 $string['gradingof'] = '{$a} grading';
+$string['grade'] = '{$a} grade';
 $string['guide'] = 'Marking guide';
 $string['guidemappingexplained'] = 'WARNING: Your marking guide has a maximum grade of <b>{$a->maxscore} points</b> but the maximum grade set in your activity is {$a->modulegrade}  The maximum score set in your marking guide will be scaled to the maximum grade in the module.<br />
     Intermediate scores will be converted respectively and rounded to the nearest available grade.';
@@ -88,6 +89,7 @@ $string['regrademessage1'] = 'You are about to save changes to a marking guide t
 $string['regrademessage5'] = 'You are about to save significant changes to a marking guide that has already been used for grading. The gradebook value will be unchanged, but the marking guide will be hidden from students until their item is regraded.';
 $string['regradeoption0'] = 'Do not mark for regrade';
 $string['regradeoption1'] = 'Mark for regrade';
+$string['remark'] = '{$a} remark';
 $string['restoredfromdraft'] = 'NOTE: The last attempt to grade this person was not saved properly so draft grades have been restored. If you want to cancel these changes use the \'Cancel\' button below.';
 $string['save'] = 'Save';
 $string['saveguide'] = 'Save marking guide and make it ready';

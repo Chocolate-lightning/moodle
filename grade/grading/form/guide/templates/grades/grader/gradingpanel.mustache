@@ -104,6 +104,7 @@
           <label for="gradingform_guide-{{uniqid}}-criteria-{{id}}-score">{{#str}}outof, gradingform_guide, {{maxscore}}{{/str}}</label>
           <input class="form-control" type="number" name="advancedgrading[criteria][{{id}}][score]" value="{{score}}"
               id="gradingform_guide-{{uniqid}}-criteria-{{id}}-score"
+              aria-label="{{#str}}grade, gradingform_guide, {{name}}{{/str}}"
               aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-score">
           <small id="gradingform_guide-{{uniqid}}-help-{{id}}-score" class="sr-only">{{#str}}grade_help, gradingform_guide{{/str}}</small>
         </div>
@@ -113,6 +114,7 @@
             <textarea class="form-control" type="text" name="advancedgrading[criteria][{{id}}][remark]"
                 id="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark"
                 aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-remark"
+                aria-label="{{#str}}remark, gradingform_guide, {{name}}{{/str}}"
                 data-gradingform-guide-role="remark"
                 rows="2"
                 data-max-rows="5"
