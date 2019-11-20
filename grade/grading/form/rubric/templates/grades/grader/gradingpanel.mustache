@@ -83,6 +83,7 @@
                                    type="radio"
                                    name="advancedgrading[criteria][{{criterionid}}][levelid]"
                                    id="advancedgrading-criteria-{{criterionid}}-levels-{{id}}-definition"
+                                   name="{{{definition}}}"
                                    value="{{id}}"
                                     {{#checked}}
                                         aria-checked="true"
@@ -107,6 +108,7 @@
                     <div class="form-group">
                         <label class="text-muted" for="advancedgrading-criteria-{{id}}-remark">{{#str}} additionalfeedback, core_grades {{/str}}</label>
                         <textarea class="form-control"
+                                  aria-label="{{#str}}remark, gradingform_rubric, {{description}}{{/str}}"
                                   name="advancedgrading[criteria][{{id}}][remark]"
                                   id="advancedgrading-criteria-{{id}}-remark"
                                   cols="10"

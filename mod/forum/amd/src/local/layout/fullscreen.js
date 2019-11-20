@@ -38,12 +38,14 @@ export const createLayout = ({
     fullscreen = true,
     showLoader = false,
     focusOnClose = null,
+    callerName = 'Fullscreen application'
 } = {}) => {
     const container = document.createElement('div');
     document.body.append(container);
     container.classList.add('layout');
     container.classList.add('fullscreen');
     container.setAttribute('role', 'application');
+    container.setAttribute('aria-label', callerName);
     addToastRegion(container);
 
     // Lock scrolling on the document body.

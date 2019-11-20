@@ -64,6 +64,7 @@ $string['err_shortnametoolong'] = 'Criterion name must be less than 256 characte
 $string['err_scoreinvalid'] = 'The score given to \'{$a->criterianame}\' is not valid, the max score is: {$a->maxscore}';
 $string['err_scoreisnegative'] = 'The score given to \'{$a->criterianame}\' is not valid, negative values are not allowed';
 $string['gradingof'] = '{$a} grading';
+$string['grade'] = '{$a} grade';
 $string['guide'] = 'Marking guide';
 $string['guidemappingexplained'] = 'WARNING: Your marking guide has a maximum grade of <b>{$a->maxscore} points</b> but the maximum grade set in your activity is {$a->modulegrade}  The maximum score set in your marking guide will be scaled to the maximum grade in the module.<br />
     Intermediate scores will be converted respectively and rounded to the nearest available grade.';

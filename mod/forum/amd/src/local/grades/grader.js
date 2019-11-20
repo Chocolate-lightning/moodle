@@ -231,19 +231,9 @@ const renderSearchResults = async(searchResultsContainer, users) => {
  * Add click handlers to the buttons in the header of the grading interface.
  *
  * @param {HTMLElement} graderLayout
- * @param {Object} userPicker
- * @param {Function} saveGradeFunction
- * @param {Array} userList List of users for the grader.
  */
-const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, userList) => {
+const registerStaticEventListeners = (graderLayout) => {
     const graderContainer = graderLayout.getContainer();
-    const toggleSearchButton = graderContainer.querySelector(Selectors.buttons.toggleSearch);
-    const searchInputContainer = graderContainer.querySelector(Selectors.regions.userSearchContainer);
-    const searchInput = searchInputContainer.querySelector(Selectors.regions.userSearchInput);
-    const bodyContainer = graderContainer.querySelector(Selectors.regions.bodyContainer);
-    const userPickerContainer = graderContainer.querySelector(Selectors.regions.pickerRegion);
-    const searchResultsContainer = graderContainer.querySelector(Selectors.regions.searchResultsContainer);
-
     graderContainer.addEventListener('click', (e) => {
         if (e.target.closest(Selectors.buttons.toggleFullscreen)) {
             e.stopImmediatePropagation();
@@ -261,6 +251,27 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, use
 
             return;
         }
+    });
+};
+
+/**
+ * Add click handlers to the buttons that often have their content changed.
+ *
+ * @param {HTMLElement} graderLayout
+ * @param {Object} userPicker
+ * @param {Function} saveGradeFunction
+ * @param {Array} userList List of users for the grader.
+ */
+const registerDynamicEventListeners = (graderLayout, userPicker, saveGradeFunction, userList) => {
+    const graderContainer = graderLayout.getContainer();
+    const toggleSearchButton = graderContainer.querySelector(Selectors.buttons.toggleSearch);
+    const searchInputContainer = graderContainer.querySelector(Selectors.regions.userSearchContainer);
+    const searchInput = searchInputContainer.querySelector(Selectors.regions.userSearchInput);
+    const bodyContainer = graderContainer.querySelector(Selectors.regions.bodyContainer);
+    const userPickerContainer = graderContainer.querySelector(Selectors.regions.pickerRegion);
+    const searchResultsContainer = graderContainer.querySelector(Selectors.regions.searchResultsContainer);
+
+    graderContainer.addEventListener('click', (e) => {
 
         if (e.target.closest(Selectors.buttons.saveGrade)) {
             saveGradeFunction(userPicker.currentUser);
@@ -428,6 +439,7 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
             fullscreen: false,
             showLoader: false,
             focusOnClose,
+            callerName: await getString('forumgrader', 'mod_forum'),
         }),
         Templates.renderForPromise(templateNames.grader.app, {
             moduleName,
@@ -437,6 +449,8 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
             defaultsendnotifications: sendStudentNotifications,
         }),
     ]);
+
+    registerStaticEventListeners(graderLayout);
 
     const graderContainer = graderLayout.getContainer();
 
@@ -469,7 +483,7 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     );
 
     // Register all event listeners.
-    registerEventListeners(graderLayout, userPicker, saveGradeFunction, userList);
+    registerDynamicEventListeners(graderLayout, userPicker, saveGradeFunction, userList);
 
     // Display the newly created user picker.
     displayUserPicker(graderContainer, userPicker.rootNode);
