@@ -37,6 +37,7 @@ import * as Modal from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
 import {subscribe} from 'core/pubsub';
 import DrawerEvents from 'core/drawer_events';
+import Pending from 'core/pending';
 
 const templateNames = {
     grader: {
@@ -93,7 +94,7 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser, 
             getContentForUser(user.id).then(fetchContentFromRender),
             getGradeForUser(user.id),
         ]);
-        Templates.replaceNodeContents(root.querySelector(Selectors.regions.moduleReplace), html, js);
+        await Templates.replaceNodeContents(root.querySelector(Selectors.regions.moduleReplace), html, js);
 
         const [
             gradingPanelHtml,
@@ -101,7 +102,7 @@ const getUpdateUserContentFunction = (root, getContentForUser, getGradeForUser, 
         ] = await Templates.render(userGrade.templatename, userGrade.grade).then(fetchContentFromRender);
         const panelContainer = root.querySelector(Selectors.regions.gradingPanelContainer);
         const panel = panelContainer.querySelector(Selectors.regions.gradingPanel);
-        Templates.replaceNodeContents(panel, gradingPanelHtml, gradingPanelJS);
+        await Templates.replaceNodeContents(panel, gradingPanelHtml, gradingPanelJS);
 
         const form = panel.querySelector('form');
         fillInitialValues(form);
@@ -225,26 +226,16 @@ const searchForUsers = (userList, searchTerm) => {
  */
 const renderSearchResults = async(searchResultsContainer, users) => {
     const {html, js} = await Templates.renderForPromise(templateNames.grader.searchResults, {users});
-    Templates.replaceNodeContents(searchResultsContainer, html, js);
+    await Templates.replaceNodeContents(searchResultsContainer, html, js);
 };
 
 /**
  * Add click handlers to the buttons in the header of the grading interface.
  *
  * @param {HTMLElement} graderLayout
- * @param {Object} userPicker
- * @param {Function} saveGradeFunction
- * @param {Array} userList List of users for the grader.
  */
-const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, userList) => {
+const registerStaticEventListeners = (graderLayout) => {
     const graderContainer = graderLayout.getContainer();
-    const toggleSearchButton = graderContainer.querySelector(Selectors.buttons.toggleSearch);
-    const searchInputContainer = graderContainer.querySelector(Selectors.regions.userSearchContainer);
-    const searchInput = searchInputContainer.querySelector(Selectors.regions.userSearchInput);
-    const bodyContainer = graderContainer.querySelector(Selectors.regions.bodyContainer);
-    const userPickerContainer = graderContainer.querySelector(Selectors.regions.pickerRegion);
-    const searchResultsContainer = graderContainer.querySelector(Selectors.regions.searchResultsContainer);
-
     graderContainer.addEventListener('click', (e) => {
         if (e.target.closest(Selectors.buttons.toggleFullscreen)) {
             e.stopImmediatePropagation();
@@ -262,6 +253,27 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, use
 
             return;
         }
+    });
+};
+
+/**
+ * Add click handlers to the buttons that often have their content changed.
+ *
+ * @param {HTMLElement} graderLayout
+ * @param {Object} userPicker
+ * @param {Function} saveGradeFunction
+ * @param {Array} userList List of users for the grader.
+ */
+const registerDynamicEventListeners = (graderLayout, userPicker, saveGradeFunction, userList) => {
+    const graderContainer = graderLayout.getContainer();
+    const toggleSearchButton = graderContainer.querySelector(Selectors.buttons.toggleSearch);
+    const searchInputContainer = graderContainer.querySelector(Selectors.regions.userSearchContainer);
+    const searchInput = searchInputContainer.querySelector(Selectors.regions.userSearchInput);
+    const bodyContainer = graderContainer.querySelector(Selectors.regions.bodyContainer);
+    const userPickerContainer = graderContainer.querySelector(Selectors.regions.pickerRegion);
+    const searchResultsContainer = graderContainer.querySelector(Selectors.regions.searchResultsContainer);
+
+    graderContainer.addEventListener('click', (e) => {
 
         if (e.target.closest(Selectors.buttons.saveGrade)) {
             saveGradeFunction(userPicker.currentUser);
@@ -379,7 +391,7 @@ const displayGradingError = async(root, user, err) => {
         await getString('grades:gradesavefailed', 'mod_forum', {error: err.message, ...user}),
     ]);
 
-    Templates.replaceNodeContents(root.querySelector(Selectors.regions.gradingPanelErrors), html, js);
+    await Templates.replaceNodeContents(root.querySelector(Selectors.regions.gradingPanelErrors), html, js);
     addToast(errorString);
 };
 
@@ -414,6 +426,7 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
         return;
     }
 
+    const pendingPromise = new Pending();
     // Now that we have confirmed there are at least some users let's boot up the grader interface.
     const [
         graderLayout,
@@ -423,6 +436,7 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
             fullscreen: false,
             showLoader: false,
             focusOnClose,
+            callerName: await getString('forumgrader', 'mod_forum'),
         }),
         Templates.renderForPromise(templateNames.grader.app, {
             moduleName,
@@ -433,12 +447,19 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
         }),
     ]);
 
+    registerStaticEventListeners(graderLayout);
+
     const graderContainer = graderLayout.getContainer();
 
     const saveGradeFunction = getSaveUserGradeFunction(graderContainer, setGradeForUser);
 
-    Templates.replaceNodeContents(graderContainer, html, js);
-    const updateUserContent = getUpdateUserContentFunction(graderContainer, getContentForUser, getGradeForUser, saveGradeFunction);
+    await Templates.replaceNodeContents(graderContainer, html, js);
+    const updateUserContent = await getUpdateUserContentFunction(
+        graderContainer,
+        getContentForUser,
+        getGradeForUser,
+        saveGradeFunction
+    );
 
     const userIds = userList.map(user => user.id);
     const statusContainer = graderContainer.querySelector(Selectors.regions.statusContainer);
@@ -446,16 +467,18 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
     const userPicker = await getUserPicker(
         userList,
         async(user) => {
+            const pendingPromise = new Pending();
             const userGrade = await updateUserContent(user);
             const renderContext = {
                 status: userGrade.hasgrade,
                 index: userIds.indexOf(user.id) + 1,
                 total: userList.length
             };
-            Templates.render(templateNames.grader.status, renderContext).then(html => {
+            await Templates.render(templateNames.grader.status, renderContext).then(html => {
                 statusContainer.innerHTML = html;
                 return html;
             }).catch();
+            pendingPromise.resolve();
         },
         saveGradeFunction,
         {
@@ -463,13 +486,20 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
         },
     );
 
+    pendingPromise.resolve();
     // Register all event listeners.
-    registerEventListeners(graderLayout, userPicker, saveGradeFunction, userList);
+    registerDynamicEventListeners(graderLayout, userPicker, saveGradeFunction, userList);
 
     // Display the newly created user picker.
     displayUserPicker(graderContainer, userPicker.rootNode);
 };
 
+const renderGradeTemplate = async(userGrade) => {
+    const {html, js} = await Templates.renderForPromise(userGrade.templatename, userGrade.grade);
+    return [html, js];
+};
+
+export {getGradingPanelFunctions};
 /**
  * Show the grade for a specific user.
  *
@@ -509,20 +539,8 @@ export const view = async(getGradeForUser, userid, moduleName, {
     });
 
     modal.show();
-    const output = document.createElement('div');
-    const {html, js} = await Templates.renderForPromise('mod_forum/local/grades/view_grade', userGrade);
-    Templates.replaceNodeContents(output, html, js);
-
-    // Note: We do not use await here because it messes with the Modal transitions.
-    const [gradeHTML, gradeJS] = await renderGradeTemplate(userGrade);
-    const gradeReplace = output.querySelector('[data-region="grade-template"]');
-    Templates.replaceNodeContents(gradeReplace, gradeHTML, gradeJS);
-    modal.setBody(output.outerHTML);
+    const [{html, js}] = await Promise.all([modal.getBodyPromise(), renderGradeTemplate(userGrade)]);
+    const gradeReplace = modal.getRoot()[0].querySelector('[data-region="grade-template"]');
+    await Templates.replaceNodeContents(gradeReplace, html, js);
     spinner.resolve();
 };
-
-const renderGradeTemplate = async(userGrade) => {
-    const {html, js} = await Templates.renderForPromise(userGrade.templatename, userGrade.grade);
-    return [html, js];
-};
-export {getGradingPanelFunctions};
