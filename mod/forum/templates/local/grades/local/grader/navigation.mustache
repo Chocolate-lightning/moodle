@@ -41,9 +41,9 @@
                 <h5 class="d-inline px-0 mb-0">{{courseName}}</h5>
             </a>
             <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
-            <button class="btn btn-link px-2 colour-inherit" data-action="closegrader">
+            <a href="#" class="btn btn-link px-2 colour-inherit" data-action="closegrader">
                 <h5 class="d-inline px-0 mb-0">{{moduleName}}</h5>
-            </button>
+            </a>
             <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
             <h5 class="d-inline px-2 mb-0 font-weight-bold">{{#str}}grading, forum{{/str}}</h5>
         </div>
@@ -94,6 +94,7 @@
                     aria-haspopup="true"
                     aria-expanded="false"
                     aria-label="{{#str}} actionsforgraderinterface, mod_forum {{/str}}"
+                    data-action="togglefullscreen"
                 >
                     {{#pix}} i/menu, core {{/pix}}
                 </button>
@@ -102,7 +103,6 @@
                         class="dropdown-item"
                         type="button"
                         data-action="togglefullscreen"
-                        type="button"
                     >
                         {{#str}} togglefullscreen, mod_forum {{/str}}
                     </button>
