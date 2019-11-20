@@ -85,12 +85,10 @@
                                    id="advancedgrading-criteria-{{criterionid}}-levels-{{id}}-definition"
                                    value="{{id}}"
                                     {{#checked}}
-                                        aria-checked="true"
                                         tabindex="0"
                                         checked
                                     {{/checked}}
                                     {{^checked}}
-                                        aria-checked="false"
                                         tabindex="-1"
                                     {{/checked}}
                             >
@@ -107,6 +105,7 @@
                     <div class="form-group">
                         <label class="text-muted" for="advancedgrading-criteria-{{id}}-remark">{{#str}} additionalfeedback, core_grades {{/str}}</label>
                         <textarea class="form-control"
+                                  aria-label="{{#str}}remark, gradingform_rubric, {{description}}{{/str}}"
                                   name="advancedgrading[criteria][{{id}}][remark]"
                                   id="advancedgrading-criteria-{{id}}-remark"
                                   cols="10"
