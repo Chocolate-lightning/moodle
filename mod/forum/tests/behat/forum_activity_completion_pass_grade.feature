@@ -1,5 +1,5 @@
 @mod @mod_forum @core_completion
-Feature: Completion pass grade  view activity completion in the forum activity
+Feature: Completion pass grade view activity completion in the forum activity
   In order to have visibility of forum completion requirements
   As a student
   I need to be able to view my forum completion progress
@@ -81,7 +81,8 @@ Feature: Completion pass grade  view activity completion in the forum activity
     And I press "Grade users"
     And I set the field "grade" to "33"
     And I press "Save"
-    And I press "Close grader"
+    And I click on "Close grader" "button" in the "Forum grader" "Fullscreen interface"
+    And I log out
     # All conditions should now be completed.
     When I am on the "Music history" "forum activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"
@@ -125,7 +126,8 @@ Feature: Completion pass grade  view activity completion in the forum activity
     And I press "Grade users"
     And I set the field "grade" to "60"
     And I press "Save"
-    And I press "Close grader"
+    And I click on "Close grader" "button" in the "Forum grader" "Fullscreen interface"
+    And I log out
     # All conditions should now be completed.
     When I am on the "Music history" "forum activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"

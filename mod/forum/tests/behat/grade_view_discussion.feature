@@ -27,7 +27,7 @@ Feature: View discussion while grading in a forum
       | grade_forum | 100                        |
       | scale       | 100                        |
     # If there is more than one pots for Student 1 the test will not be able to select the
-    # correct View discussion link, as there is no selector for thier container.
+    # correct View discussion link, as there is no selector for their container.
     And the following forum discussions exist in course "Course 1":
       | forum          | user     | name     | message                          |
       | Gradable forum | student1 | My topic | This is the thing I posted about |
@@ -46,8 +46,7 @@ Feature: View discussion while grading in a forum
   Scenario: Viewing a discussion while grading is fullscreen
     Given I am on the "Gradable forum" "forum activity" page logged in as teacher
     And I press "Grade users"
-    # Uses the aria-label for the menu in in the grading interface.
-    And I press "Actions for the grader interface"
+    And I click on "Actions for the grader interface" "button" in the "Forum grader" "Fullscreen interface"
     And I press "Toggle full screen"
     When I press "View discussion"
     Then I should see "I disagree" in the "My topic" "dialogue"

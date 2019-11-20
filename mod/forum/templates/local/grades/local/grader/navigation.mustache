@@ -35,16 +35,18 @@
     }
 }}
 <nav id="nav-container-{{uniqid}}" class="grader-grading_navigation navbar px-0 px-sm-3" aria-label="{{#str}} forumgradingnavigation, mod_forum {{/str}}">
-    <div class="d-none d-sm-flex align-items-center">
-        <a href="{{{courseUrl}}}" class="btn btn-link px-2 colour-inherit">
-            <h5 class="d-inline px-0 mb-0">{{courseName}}</h5>
-        </a>
-        <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
-        <button class="btn btn-link px-2 colour-inherit" data-action="closegrader">
-            <h5 class="d-inline px-0 mb-0">{{moduleName}}</h5>
-        </button>
-        <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
-        <h5 class="d-inline px-2 mb-0 font-weight-bold">{{#str}}grading, forum{{/str}}</h5>
+    <div class="container-fluid p-0">
+        <div class="d-none d-sm-flex align-items-center">
+            <a href="{{{courseUrl}}}" class="btn btn-link px-2 colour-inherit">
+                <h5 class="d-inline px-0 mb-0">{{courseName}}</h5>
+            </a>
+            <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
+            <a href="#" class="btn btn-link px-2 colour-inherit" data-action="closegrader">
+                <h5 class="d-inline px-0 mb-0">{{moduleName}}</h5>
+            </a>
+            <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
+            <h5 class="d-inline px-2 mb-0 font-weight-bold">{{#str}}grading, forum{{/str}}</h5>
+        </div>
     </div>
 
     <div class="ml-1 ml-sm-auto">
@@ -102,6 +104,12 @@
                     type="button"
                     data-action="togglefullscreen"
                     type="button"
+                    id="grader-actions-menu-{{uniqid}}"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-label="{{#str}} actionsforgraderinterface, mod_forum {{/str}}"
+                    data-action="togglefullscreen"
                 >
                     {{#str}} togglefullscreen, mod_forum {{/str}}
                 </button>

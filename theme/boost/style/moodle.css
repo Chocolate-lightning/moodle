@@ -33295,15 +33295,15 @@ select {
   transition: left 0.3s ease-in-out;
   z-index: 1;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.expand {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.expanded {
   animation-name: expandSearchButton;
   animation-duration: 0.3s;
   animation-timing-function: ease-in-out;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.collapse {
-  display: block;
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.collapsed {
   animation-name: collapseSearchButton;
   animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
 }
 .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container {
   overflow: hidden;
@@ -33367,24 +33367,24 @@ select {
   overflow: hidden;
   transition: opacity 0s linear 0.3s, max-height 0s linear 0.3s, max-width 0s linear 0.3s, visibility 0s linear 0.3s;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box {
   width: calc(36px + 0.5rem + 0.5rem);
   transition: width 0.3s ease-in-out;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container {
   flex-wrap: nowrap;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container input,
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .search-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container input,
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .search-icon {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0s linear, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container input {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container input {
   padding-left: 0;
   padding-right: 0;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .toggle-search-button .expanded-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .toggle-search-button .expanded-icon {
   opacity: 0;
   visibility: hidden;
   max-height: 0;
@@ -33392,7 +33392,7 @@ select {
   overflow: hidden;
   transition: opacity 0s linear, max-height 0s linear, max-width 0s linear, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .toggle-search-button .collapsed-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .toggle-search-button .collapsed-icon {
   opacity: 1;
   visibility: visible;
   max-width: 50px;

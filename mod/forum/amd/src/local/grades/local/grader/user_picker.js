@@ -80,7 +80,7 @@ class UserPicker {
         this.root = document.createElement('div');
 
         const {html, js} = await this.renderNavigator();
-        Templates.replaceNodeContents(this.root, html, js);
+        await Templates.replaceNodeContents(this.root, html, js);
 
         // Call the showUser function to show the first user immediately.
         await this.showUser(this.currentUser);
@@ -116,7 +116,7 @@ class UserPicker {
     async showUser(user) {
         const [{html, js}] = await Promise.all([this.renderUserChange(user), this.showUserCallback(user)]);
         const userRegion = this.root.querySelector(Selectors.regions.userRegion);
-        Templates.replaceNodeContents(userRegion, html, js);
+        await Templates.replaceNodeContents(userRegion, html, js);
 
         // Update the hidden now-grading region so screen readers can announce the user that's currently being graded.
         const currentUserRegion = this.root.querySelector(Selectors.regions.currentUser);
