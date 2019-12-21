@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/chooser_item
+
+    Chooser item.
+
+    Example context (json):
+    {
+        "label": "Option name",
+        "description": "Option description",
+        "urls": {
+            addoption: "http://addoptionurl.com"
+        },
+        "icon": "<img class="icon" src="http://urltooptionicon">"
+    }
+}}
+<div class="option" data-region="chooser-option-container">
+    <div class="optioninfo" data-region="chooser-option-info-container">
+        <a href="{{urls.addoption}}" tabindex="0" data-action="add-chooser-option">
+            <span class="optionicon">
+                {{#icon}}
+                    {{>core/pix_icon}}
+                {{/icon}}
+            </span>
+            <span class="optionname">{{label}}</span>
+        </a>
+        <div class="optionactions" data-region="chooser-option-actions-container">
+            <span class="optionaction" data-action="show-option-summary">
+                {{#pix}} docs, core {{/pix}}
+            </span>
+        </div>
+    </div>
+    <div class="optionsummary" data-region="chooser-option-summary-container">
+        <div class="content" data-region="chooser-option-summary-content-container">
+            <div class="heading">
+                <h5>
+                    {{#icon}}
+                        {{>core/pix_icon}}
+                    {{/icon}}
+                    {{label}}
+                </h5>
+            </div>
+            <div class="description">
+                {{{description}}}
+            </div>
+        </div>
+        <div class="actions" data-region="chooser-option-summary-actions-container">
+            <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary">
+                {{#str}} back {{/str}}
+            </button>
+            <a href="{{urls.addoption}}" data-action="add-chooser-option" class="addoption btn btn-primary">
+                {{#str}} add {{/str}}
+            </a>
+        </div>
+    </div>
+</div>

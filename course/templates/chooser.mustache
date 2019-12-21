@@ -15,24 +15,27 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Course module chooser.
+    @template core_course/chooser
+
+    Chooser dialog template.
+
+    Example context (json):
+    {
+        "title": "Chooser title"
+        "options": {
+            "label": "Option name",
+            "description": "Option description",
+            "urls": {
+                addoption: "http://addoptionurl.com"
+            },
+            "icon": "<img class='icon' src='http://urltooptionicon'>"
+        }
+    }
 }}
-{{> core/chooser }}
-{{#js}}
-require([
-    'core/yui',
-    'core/str'
-], function(Y, Str) {
-    Str.get_strings([
-        { key: 'addresourceoractivity', component: 'moodle' },
-        { key: 'close', component: 'editor' },
-    ]).then(function(add, close) {
-        Y.use('moodle-course-modchooser', function() {
-            M.course.init_chooser({
-                courseid: {{courseid}},
-                closeButtonTitle: close
-            });
-        });
-    });
-});
-{{/js}}
+<div class="modchoosercontainer" data-region="chooser-container">
+    <div class="optionscontainer" data-region="chooser-options-container">
+        {{#options}}
+            {{>core_course/chooser_item}}
+        {{/options}}
+    </div>
+</div>

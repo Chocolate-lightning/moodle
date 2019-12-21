@@ -133,7 +133,7 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Build the HTML for the module chooser javascript popup
+     * Build the HTML for the module chooser javascript popup.
      *
      * @param array $modules A set of modules as returned form @see
      * get_module_metadata
@@ -141,11 +141,28 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string The composed HTML for the module
      */
     public function course_modchooser($modules, $course) {
+        global $OUTPUT;
+
         if (!$this->page->requires->should_create_one_time_item_now('core_course_modchooser')) {
             return '';
         }
-        $modchooser = new \core_course\output\modchooser($course, $modules);
-        return $this->render($modchooser);
+
+        $title = get_string('addresourceoractivity');
+        $related = [
+            'context' => context_course::instance($course->id)
+        ];
+        // Export the module chooser data.
+        $modchooserdata = new \core_course\external\course_module_chooser_exporter($title, $modules, $related);
+        $data = json_encode($modchooserdata->export($OUTPUT));
+
+        $script = "
+            require(['core_course/modchooser'], function(ModChooser) {
+                    var modChooserData = {$data};
+                    ModChooser.init(modChooserData);
+                }
+            );";
+
+        $this->page->requires->js_amd_inline($script);
     }
 
     /**
