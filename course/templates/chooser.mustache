@@ -32,8 +32,8 @@
         }
     }
 }}
-<div class="modchoosercontainer" data-region="chooser-container">
-    <div class="optionscontainer" data-region="chooser-options-container">
+<div class="modchoosercontainer" data-region="chooser-container" tabindex="0" role="grid" aria-rowcount="1">
+    <div class="optionscontainer" role="row" data-region="chooser-options-container">
         {{#options}}
             {{>core_course/chooser_item}}
         {{/options}}
