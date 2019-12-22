@@ -17,7 +17,7 @@
 {{!
     @template core_course/chooser_item
 
-    Chooser item.
+    Chooser item template.
 
     Example context (json):
     {
@@ -29,9 +29,9 @@
         "icon": "<img class="icon" src="http://urltooptionicon">"
     }
 }}
-<div class="option" data-region="chooser-option-container">
+<div role="gridcell" tabindex="0" aria-label="{{label}}" class="option" data-region="chooser-option-container">
     <div class="optioninfo" data-region="chooser-option-info-container">
-        <a href="{{urls.addoption}}" tabindex="0" data-action="add-chooser-option">
+        <a href="{{urls.addoption}}" aria-label="{{#str}} addnew, moodle, {{label}} {{/str}}" tabindex="0" data-action="add-chooser-option">
             <span class="optionicon">
                 {{#icon}}
                     {{>core/pix_icon}}
@@ -39,31 +39,31 @@
             </span>
             <span class="optionname">{{label}}</span>
         </a>
-        <div class="optionactions" data-region="chooser-option-actions-container">
-            <span class="optionaction" data-action="show-option-summary">
+        <div class="optionactions" role="menubar" data-region="chooser-option-actions-container">
+            <span class="optionaction" data-action="show-option-summary" tabindex="0" aria-label="{{#str}} moreinfo {{/str}}">
                 {{#pix}} docs, core {{/pix}}
             </span>
         </div>
     </div>
-    <div class="optionsummary" data-region="chooser-option-summary-container">
+    <div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container" aria-labelledby="optionsummary_label" aria-describedby="optionsumary_desc">
         <div class="content" data-region="chooser-option-summary-content-container">
             <div class="heading">
-                <h5>
+                <h5 id="optionsummary_label">
                     {{#icon}}
                         {{>core/pix_icon}}
                     {{/icon}}
                     {{label}}
                 </h5>
             </div>
-            <div class="description">
+            <div id="optionsumary_desc" class="description">
                 {{{description}}}
             </div>
         </div>
         <div class="actions" data-region="chooser-option-summary-actions-container">
-            <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary">
+            <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="-1">
                 {{#str}} back {{/str}}
             </button>
-            <a href="{{urls.addoption}}" data-action="add-chooser-option" class="addoption btn btn-primary">
+            <a href="{{urls.addoption}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="-1">
                 {{#str}} add {{/str}}
             </a>
         </div>

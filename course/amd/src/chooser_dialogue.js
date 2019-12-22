@@ -93,6 +93,106 @@ define(
             optionSummaryElement.removeClass('open');
             $(SELECTORS.CHOOSER_CONTAINER).removeClass('noscroll');
         });
+
+        // Register event listeners related to the keyboard navigation controls.
+        initKeyboardNavigation();
+    };
+
+    /**
+     * Initialise the keyboard navigation controls for the chooser.
+     *
+     * @method initKeyboardNavigation
+     */
+    var initKeyboardNavigation = function() {
+
+        var chooserOption = $(SELECTORS.CHOOSER_OPTION_CONTAINER);
+
+        CustomEvents.define(chooserOption, [
+            CustomEvents.events.next,
+            CustomEvents.events.previous,
+            CustomEvents.events.home,
+            CustomEvents.events.end
+        ]);
+
+        chooserOption.on(CustomEvents.events.next, function(e) {
+            var currentOption = $(e.target);
+            var nextOption = currentOption.next();
+            if (typeof nextOption === 'undefined') {
+                return;
+            }
+            nextOption.focus();
+        });
+
+        chooserOption.on(CustomEvents.events.previous, function(e) {
+            var currentOption = $(e.target);
+            var previousOption = currentOption.prev();
+            if (typeof previousOption === 'undefined') {
+                return;
+            }
+            previousOption.focus();
+        });
+
+        chooserOption.on(CustomEvents.events.next, SELECTORS.ADD_CHOOSER_OPTION, function(e, data) {
+            var currentOption = $(data.originalEvent.currentTarget);
+            var nextOption = currentOption.next();
+            if (typeof nextOption === 'undefined') {
+                return;
+            }
+            nextOption.focus();
+        });
+
+        chooserOption.on(CustomEvents.events.previous, SELECTORS.ADD_CHOOSER_OPTION, function(e, data) {
+            var currentOption = $(data.originalEvent.currentTarget);
+            var previousOption = currentOption.prev();
+            if (typeof previousOption === 'undefined') {
+                return;
+            }
+            previousOption.focus();
+        });
+
+        chooserOption.on(CustomEvents.events.next, SELECTORS.CHOOSER_OPTION_ACTIONS.SHOW_CHOOSER_OPTION_SUMMARY,
+            function(e, data) {
+                var currentOption = $(data.originalEvent.currentTarget);
+                var nextOption = currentOption.next();
+                if (typeof nextOption === 'undefined') {
+                    return;
+                }
+                nextOption.focus();
+            });
+
+        chooserOption.on(CustomEvents.events.previous, SELECTORS.CHOOSER_OPTION_ACTIONS.SHOW_CHOOSER_OPTION_SUMMARY,
+            function(e, data) {
+                var currentOption = $(data.originalEvent.currentTarget);
+                var previousOption = currentOption.prev();
+                if (typeof previousOption === 'undefined') {
+                    return;
+                }
+                previousOption.focus();
+            });
+
+        chooserOption.on(CustomEvents.events.home, function() {
+            var chooserOptions = $(SELECTORS.CHOOSER_OPTIONS_CONTAINER).find(SELECTORS.CHOOSER_OPTION_CONTAINER);
+            var previousOption = $(chooserOptions).first();
+            previousOption.focus();
+        });
+
+        chooserOption.on(CustomEvents.events.end, function() {
+            var chooserOptions = $(SELECTORS.CHOOSER_OPTIONS_CONTAINER).find(SELECTORS.CHOOSER_OPTION_CONTAINER);
+            var nextOption = $(chooserOptions).last();
+            nextOption.focus();
+        });
+
+        var showChooserOptionSummary = $(SELECTORS.SHOW_CHOOSER_OPTION_SUMMARY);
+
+        CustomEvents.define(showChooserOptionSummary, [
+            CustomEvents.events.keyboardActivate
+        ]);
+
+        showChooserOptionSummary.on(CustomEvents.events.keyboardActivate, function(e) {
+            var optionSummaryElement = $(e.target).closest(SELECTORS.CHOOSER_OPTION_CONTAINER)
+                .find(SELECTORS.CHOOSER_OPTION_SUMMARY_CONTAINER);
+            showOptionSummary(optionSummaryElement);
+        });
     };
 
     /**
@@ -118,6 +218,13 @@ define(
         }
         // Show the particular summary overlay.
         optionSummaryElement.addClass('open');
+        var cancelAction = optionSummaryElement.find(SELECTORS.CLOSE_CHOOSER_OPTION_SUMMARY);
+        var addAction = optionSummaryElement.find(SELECTORS.ADD_CHOOSER_OPTION);
+
+        optionSummaryElement.attr('tabindex', 0);
+        cancelAction.attr('tabindex', 0);
+        addAction.attr('tabindex', 0);
+        optionSummaryElement.focus();
     };
 
     /**
@@ -158,8 +265,19 @@ define(
                 }).then(function(modal) {
                     modal.getRoot().on(ModalEvents.shown, function(e) {
                         $(e.target).addClass('modchooser');
+                        // Initially, omit any anchor elements from the focus order in the summary content container.
+                        var optionSummaryContentAnchors = $(SELECTORS.CHOOSER_OPTION_SUMMARY_CONTENT_CONTAINER).find('a');
+                        optionSummaryContentAnchors.each(function(key, anchor) {
+                            $(anchor).attr('tabindex', -1);
+                        });
                         // Register event listeners.
                         registerListenerEvents();
+                    });
+
+                    // We want to focus on the action select when the dialog is closed.
+                    modal.getRoot().on(ModalEvents.hidden, function() {
+                        $(e.target.closest('.chooser-link')).focus();
+                        modal.getRoot().remove();
                     });
 
                     modal.show();

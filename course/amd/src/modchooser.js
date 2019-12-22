@@ -95,14 +95,20 @@ define(
         if (!chooserspan.length) {
             return;
         }
-        var modchooserlink = $(chooserspan).children().wrapAll("<a href='#' class='chooser-link' />");
+        var modchooserlink = $(chooserspan).children().wrapAll("<a href='#' />");
 
         CustomEvents.define(modchooserlink, [
-            CustomEvents.events.activate
+            CustomEvents.events.activate,
+            CustomEvents.events.keyboardActivate
         ]);
 
-        // Display module chooser event listener.
+        // Display module chooser event listeners.
         modchooserlink.on(CustomEvents.events.activate, function(e) {
+            e.preventDefault();
+            displayModChooser(e, data);
+        });
+
+        modchooserlink.on(CustomEvents.events.keyboardActivate, function(e) {
             e.preventDefault();
             displayModChooser(e, data);
         });
