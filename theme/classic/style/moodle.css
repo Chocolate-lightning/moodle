@@ -11153,10 +11153,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .modchooser .modal-body {
   padding: 0; }
 
-.modchoosercontainer {
-  height: 450px;
-  overflow-y: auto; }
-
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
 

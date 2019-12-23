@@ -20,274 +20,240 @@
  * @package    core
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.8
+ * @since      3.9
  */
 
-define(
-    [
-        'jquery',
-        'core/modal_factory',
-        'core/modal_events',
-        'core/templates',
-        'core/custom_interaction_events',
-    ],
-    function(
-        $,
-        ModalFactory,
-        ModalEvents,
-        Templates,
-        CustomEvents
-    ) {
+import $ from 'jquery';
+import * as ModalEvents from 'core/modal_events';
+import * as CustomEvents from 'core/custom_interaction_events';
+import selectors from 'core_course/local/chooser/selectors';
+import * as ModalFactory from 'core/modal_factory';
+import * as Templates from 'core/templates';
+import {get_string as getString} from 'core/str';
 
-    /**
-     * Class names for different elements.
-     *
-     * @private
-     * @type {Object}
-     */
-    var SELECTORS = {
-        CHOOSER_CONTAINER: '[data-region="chooser-container"]',
-        CHOOSER_OPTIONS_CONTAINER: '[data-region="chooser-options-container"]',
-        CHOOSER_OPTION_CONTAINER: '[data-region="chooser-option-container"]',
-        CHOOSER_OPTION_ACTIONS_CONTAINER: '[data-region="chooser-option-actions-container"]',
-        CHOOSER_OPTION_INFO_CONTAINER: '[data-region="chooser-option-info-container"]',
-        CHOOSER_OPTION_SUMMARY_CONTAINER: '[data-region="chooser-option-summary-container"]',
-        CHOOSER_OPTION_SUMMARY_CONTENT_CONTAINER: '[data-region="chooser-option-summary-content-container"]',
-        CHOOSER_OPTION_SUMMARY_ACTIONS_CONTAINER: '[data-region="chooser-option-summary-actions-container"]',
-        CHOOSER_OPTION_ACTIONS: {
-            SHOW_CHOOSER_OPTION_SUMMARY: '[data-action="show-option-summary"]',
-        },
-        ADD_CHOOSER_OPTION: '[data-action="add-chooser-option"]',
-        CLOSE_CHOOSER_OPTION_SUMMARY: '[data-action="close-chooser-option-summary"]',
-    };
+/**
+ * Register chooser related event listeners.
+ *
+ * @method registerListenerEvents
+ */
+const registerListenerEvents = () => {
+    const showChooserOptionSummary = $(selectors.actions.option_actions.show_summary);
+    CustomEvents.define(showChooserOptionSummary, [
+        CustomEvents.events.activate
+    ]);
 
-    /**
-     * Register chooser related event listeners.
-     *
-     * @method registerListenerEvents
-     */
-    var registerListenerEvents = function() {
+    // Show the chooser option summary.
+    showChooserOptionSummary.on(CustomEvents.events.activate, (e) => {
+        const optionSummaryElement = $(e.target).closest(selectors.regions.chooser_option.container)
+            .find(selectors.regions.chooser_summary.container);
+        showOptionSummary(optionSummaryElement);
+    });
 
-        var showChooserOptionSummary = $(SELECTORS.CHOOSER_OPTION_ACTIONS.SHOW_CHOOSER_OPTION_SUMMARY);
+    const closeChooserOptionSummary = $(selectors.actions.close_option);
 
-        CustomEvents.define(showChooserOptionSummary, [
-            CustomEvents.events.activate
-        ]);
+    CustomEvents.define(closeChooserOptionSummary, [
+        CustomEvents.events.activate
+    ]);
 
-        // Show the chooser option summary.
-        showChooserOptionSummary.on(CustomEvents.events.activate, function(e) {
-            var optionSummaryElement = $(e.target).closest(SELECTORS.CHOOSER_OPTION_CONTAINER)
-                .find(SELECTORS.CHOOSER_OPTION_SUMMARY_CONTAINER);
-            showOptionSummary(optionSummaryElement);
-        });
+    // Close the chooser option summary.
+    closeChooserOptionSummary.on(CustomEvents.events.activate, (e) => {
+        const optionSummaryElement = $(e.target).closest(selectors.regions.chooser_summary.container);
+        optionSummaryElement.removeClass('open');
+        $(selectors.regions.chooser).removeClass('noscroll');
+    });
 
-        var closeChooserOptionSummary = $(SELECTORS.CLOSE_CHOOSER_OPTION_SUMMARY);
+    // Register event listeners related to the keyboard navigation controls.
+    initKeyboardNavigation(showChooserOptionSummary);
+};
 
-        CustomEvents.define(closeChooserOptionSummary, [
-            CustomEvents.events.activate
-        ]);
+/**
+ * Initialise the keyboard navigation controls for the chooser.
+ *
+ * @method initKeyboardNavigation
+ * @param {jQuery} showChooserOptionSummary selector for activating the summary
+ */
+const initKeyboardNavigation = (showChooserOptionSummary) => {
 
-        // Close the chooser option summary.
-        closeChooserOptionSummary.on(CustomEvents.events.activate, function(e) {
-            var optionSummaryElement = $(e.target).closest(SELECTORS.CHOOSER_OPTION_SUMMARY_CONTAINER);
-            optionSummaryElement.removeClass('open');
-            $(SELECTORS.CHOOSER_CONTAINER).removeClass('noscroll');
-        });
+    const chooserOption = $(selectors.regions.chooser_option.container);
 
-        // Register event listeners related to the keyboard navigation controls.
-        initKeyboardNavigation();
-    };
+    CustomEvents.define(chooserOption, [
+        CustomEvents.events.next,
+        CustomEvents.events.previous,
+        CustomEvents.events.home,
+        CustomEvents.events.end
+    ]);
 
-    /**
-     * Initialise the keyboard navigation controls for the chooser.
-     *
-     * @method initKeyboardNavigation
-     */
-    var initKeyboardNavigation = function() {
+    chooserOption.on(CustomEvents.events.next, (e) => {
+        const currentOption = $(e.target);
+        const nextOption = currentOption.next();
+        clickErrorHandler(nextOption);
+        nextOption.focus();
+    });
 
-        var chooserOption = $(SELECTORS.CHOOSER_OPTION_CONTAINER);
+    chooserOption.on(CustomEvents.events.previous, (e) => {
+        const currentOption = $(e.target);
+        const previousOption = currentOption.prev();
+        clickErrorHandler(previousOption);
+        previousOption.focus();
+    });
 
-        CustomEvents.define(chooserOption, [
-            CustomEvents.events.next,
-            CustomEvents.events.previous,
-            CustomEvents.events.home,
-            CustomEvents.events.end
-        ]);
+    chooserOption.on(CustomEvents.events.next, selectors.actions.add_chooser, (e, data) => {
+        const currentOption = $(data.originalEvent.currentTarget);
+        const nextOption = currentOption.next();
+        clickErrorHandler(nextOption);
+        nextOption.focus();
+    });
 
-        chooserOption.on(CustomEvents.events.next, function(e) {
-            var currentOption = $(e.target);
-            var nextOption = currentOption.next();
-            if (typeof nextOption === 'undefined') {
-                return;
-            }
+    chooserOption.on(CustomEvents.events.previous, selectors.actions.add_chooser, (e, data) => {
+        const currentOption = $(data.originalEvent.currentTarget);
+        const previousOption = currentOption.prev();
+        clickErrorHandler(previousOption);
+        previousOption.focus();
+    });
+
+    chooserOption.on(CustomEvents.events.next, selectors.actions.option_actions.show_summary,
+        (e, data) => {
+            const currentOption = $(data.originalEvent.currentTarget);
+            const nextOption = currentOption.next();
+            clickErrorHandler(nextOption);
             nextOption.focus();
         });
 
-        chooserOption.on(CustomEvents.events.previous, function(e) {
-            var currentOption = $(e.target);
-            var previousOption = currentOption.prev();
-            if (typeof previousOption === 'undefined') {
-                return;
-            }
+    chooserOption.on(CustomEvents.events.previous, selectors.actions.option_actions.show_summary,
+        (e, data) => {
+            const currentOption = $(data.originalEvent.currentTarget);
+            const previousOption = currentOption.prev();
+            clickErrorHandler(previousOption);
             previousOption.focus();
         });
 
-        chooserOption.on(CustomEvents.events.next, SELECTORS.ADD_CHOOSER_OPTION, function(e, data) {
-            var currentOption = $(data.originalEvent.currentTarget);
-            var nextOption = currentOption.next();
-            if (typeof nextOption === 'undefined') {
-                return;
-            }
-            nextOption.focus();
+    chooserOption.on(CustomEvents.events.home, () => {
+        const chooserOptions = $(selectors.regions.chooser_options).find(selectors.regions.chooser_option.container);
+        const previousOption = $(chooserOptions).first();
+        previousOption.focus();
+    });
+
+    chooserOption.on(CustomEvents.events.end, () => {
+        const chooserOptions = $(selectors.regions.chooser_options).find(selectors.regions.chooser_option.container);
+        const nextOption = $(chooserOptions).last();
+        nextOption.focus();
+    });
+
+    CustomEvents.define(showChooserOptionSummary, [
+        CustomEvents.events.keyboardActivate
+    ]);
+
+    showChooserOptionSummary.on(CustomEvents.events.keyboardActivate, (e) => {
+        const optionSummaryElement = $(e.target).closest(selectors.regions.chooser_option.container)
+            .find(selectors.regions.chooser_summary.container);
+        showOptionSummary(optionSummaryElement);
+    });
+};
+
+/**
+ * Small error handling function to make sure the navigated to object exists
+ *
+ * @method clickErrorHandler
+ * @param {jQuery} item What we want to check exists
+ */
+const clickErrorHandler = (item) => {
+    if (typeof item === 'undefined') {
+        return;
+    }
+};
+
+/**
+ * Show the option summary for a particular chooser option.
+ *
+ * @method showOptionSummary
+ * @param {jQuery} optionSummaryElement The option summary container element
+ */
+const showOptionSummary = (optionSummaryElement) => {
+    // Get the current scroll position of the chooser container element.
+    const topPosition = $(selectors.regions.chooser).scrollTop();
+    // Get the height of the chooser container element.
+    const height = $(selectors.regions.chooser).outerHeight();
+    // Disable the scroll of the chooser container element.
+    $(selectors.regions.chooser).addClass('noscroll');
+
+    // TODO: This is mutating optionSummaryElement.
+    setOptionSummaryPositionAndHeight(optionSummaryElement, topPosition, height);
+
+    const optionSummaryContentElement = optionSummaryElement.find(selectors.regions.chooser_summary.content);
+    // Set the scroll of the type summary content element to top.
+    if (optionSummaryContentElement.scrollTop() > 0) {
+        optionSummaryContentElement.scrollTop(0);
+    }
+    // Show the particular summary overlay.
+    optionSummaryElement.addClass('open');
+    const cancelAction = optionSummaryElement.find(selectors.actions.close_option);
+    const addAction = optionSummaryElement.find(selectors.actions.add_chooser);
+
+    optionSummaryElement.attr('tabindex', 0);
+    cancelAction.attr('tabindex', 0);
+    addAction.attr('tabindex', 0);
+    optionSummaryElement.focus();
+};
+
+/**
+ * Set the top position and height of the option summary container.
+ * This is used to align the top position and height of the option summary container
+ * with the chooser options container.
+ *
+ * @method setOptionSummaryPositionAndHeight
+ * @param {jQuery} optionSummaryElement The option summary container element
+ * @param {int} positionTop The top position attributed to the option summary container element
+ * @param {int} height The height attributed to the option summary container element
+ */
+const setOptionSummaryPositionAndHeight = (optionSummaryElement, positionTop, height) => {
+    const optionSummaryContentElement = optionSummaryElement.find(selectors.regions.chooser_summary.container);
+    const optionSumaryActionsElement = optionSummaryElement.find(selectors.regions.chooser_summary.actions);
+    const contentHeight = height - optionSumaryActionsElement.outerHeight();
+    optionSummaryContentElement.css({'height': `${contentHeight}px`});
+
+    optionSummaryElement.css({'top': `${positionTop}px`, 'height': `${height}px`});
+};
+
+/**
+ * Display the module chooser.
+ *
+ * @method displayChooser
+ * @param {EventFacade} e Triggering Event
+ * @param {Object} moduleInfo Object containing the data required by the chooser template
+ */
+export const displayChooser = async(e, moduleInfo) => {
+    const [
+        modal,
+    ] = await Promise.all([
+        ModalFactory.create({
+            type: ModalFactory.types.DEFAULT,
+            title: await getString('addresourceoractivity'),
+            body: Templates.render('core_course/chooser', moduleInfo),
+            large: true
+        })
+    ]);
+
+    modal.getRoot().on(ModalEvents.bodyRendered, (e) => {
+        $(e.target).addClass('modchooser');
+        // Initially, omit any anchor elements from the focus order in the summary content container.
+        const optionSummaryContentAnchors = $(selectors.regions.chooser_summary.content).find('a');
+        optionSummaryContentAnchors.each((key, anchor) => {
+            $(anchor).attr('tabindex', -1);
         });
+        // Register event listeners.
+        registerListenerEvents();
+    });
 
-        chooserOption.on(CustomEvents.events.previous, SELECTORS.ADD_CHOOSER_OPTION, function(e, data) {
-            var currentOption = $(data.originalEvent.currentTarget);
-            var previousOption = currentOption.prev();
-            if (typeof previousOption === 'undefined') {
-                return;
-            }
-            previousOption.focus();
-        });
-
-        chooserOption.on(CustomEvents.events.next, SELECTORS.CHOOSER_OPTION_ACTIONS.SHOW_CHOOSER_OPTION_SUMMARY,
-            function(e, data) {
-                var currentOption = $(data.originalEvent.currentTarget);
-                var nextOption = currentOption.next();
-                if (typeof nextOption === 'undefined') {
-                    return;
-                }
-                nextOption.focus();
-            });
-
-        chooserOption.on(CustomEvents.events.previous, SELECTORS.CHOOSER_OPTION_ACTIONS.SHOW_CHOOSER_OPTION_SUMMARY,
-            function(e, data) {
-                var currentOption = $(data.originalEvent.currentTarget);
-                var previousOption = currentOption.prev();
-                if (typeof previousOption === 'undefined') {
-                    return;
-                }
-                previousOption.focus();
-            });
-
-        chooserOption.on(CustomEvents.events.home, function() {
-            var chooserOptions = $(SELECTORS.CHOOSER_OPTIONS_CONTAINER).find(SELECTORS.CHOOSER_OPTION_CONTAINER);
-            var previousOption = $(chooserOptions).first();
-            previousOption.focus();
-        });
-
-        chooserOption.on(CustomEvents.events.end, function() {
-            var chooserOptions = $(SELECTORS.CHOOSER_OPTIONS_CONTAINER).find(SELECTORS.CHOOSER_OPTION_CONTAINER);
-            var nextOption = $(chooserOptions).last();
-            nextOption.focus();
-        });
-
-        var showChooserOptionSummary = $(SELECTORS.SHOW_CHOOSER_OPTION_SUMMARY);
-
-        CustomEvents.define(showChooserOptionSummary, [
-            CustomEvents.events.keyboardActivate
-        ]);
-
-        showChooserOptionSummary.on(CustomEvents.events.keyboardActivate, function(e) {
-            var optionSummaryElement = $(e.target).closest(SELECTORS.CHOOSER_OPTION_CONTAINER)
-                .find(SELECTORS.CHOOSER_OPTION_SUMMARY_CONTAINER);
-            showOptionSummary(optionSummaryElement);
-        });
-    };
-
-    /**
-      * Show the option summary for a particular chooser option.
-      *
-      * @method showOptionSummary
-      * @param {jQuery} optionSummaryElement The option summary container element
-      */
-    var showOptionSummary = function(optionSummaryElement) {
-        // Get the current scroll position of the chooser container element.
-        var topPosition = $(SELECTORS.CHOOSER_CONTAINER).scrollTop();
-        // Get the height of the chooser container element.
-        var height = $(SELECTORS.CHOOSER_CONTAINER).outerHeight();
-        // Disable the scroll of the chooser container element.
-        $(SELECTORS.CHOOSER_CONTAINER).addClass('noscroll');
-
-        setOptionSummaryPositionAndHeight(optionSummaryElement, topPosition, height);
-
-        var optionSummaryContentElement = optionSummaryElement.find(SELECTORS.CHOOSER_OPTION_SUMMARY_CONTENT_CONTAINER);
-        // Set the scroll of the type summary content element to top.
-        if (optionSummaryContentElement.scrollTop() > 0) {
-            optionSummaryContentElement.scrollTop(0);
+    // We want to focus on the action select when the dialog is closed.
+    modal.getRoot().on(ModalEvents.hidden, () => {
+        modal.destroy();
+        try {
+            // Does not seem to work.
+            $(e.target.closest('.chooser-link')).focus();
+        } catch (e) {
+            // eslint-disable-line
         }
-        // Show the particular summary overlay.
-        optionSummaryElement.addClass('open');
-        var cancelAction = optionSummaryElement.find(SELECTORS.CLOSE_CHOOSER_OPTION_SUMMARY);
-        var addAction = optionSummaryElement.find(SELECTORS.ADD_CHOOSER_OPTION);
+    });
+    modal.show();
+};
 
-        optionSummaryElement.attr('tabindex', 0);
-        cancelAction.attr('tabindex', 0);
-        addAction.attr('tabindex', 0);
-        optionSummaryElement.focus();
-    };
-
-    /**
-      * Set the top position and height of the option summary container.
-      * This is used to align the top position and height of the option summary container
-      * with the chooser options container.
-      *
-      * @method setOptionSummaryPositionAndHeight
-      * @param {jQuery} optionSummaryElement The option summary container element
-      * @param {int} positionTop The top position attributed to the option summary container element
-      * @param {int} height The height attributed to the option summary container element
-      */
-    var setOptionSummaryPositionAndHeight = function(optionSummaryElement, positionTop, height) {
-        var optionSummaryContentElement = optionSummaryElement.find(SELECTORS.CHOOSER_OPTION_SUMMARY_CONTENT_CONTAINER);
-        var optionSumaryActionsElement = optionSummaryElement.find(SELECTORS.CHOOSER_OPTION_SUMMARY_ACTIONS_CONTAINER);
-        var contentHeight = height - optionSumaryActionsElement.outerHeight();
-        optionSummaryContentElement.css({'height': contentHeight + 'px'});
-
-        optionSummaryElement.css({'top': positionTop + 'px', 'height': height + 'px'});
-    };
-
-    /**
-      * Display the module chooser.
-      *
-      * @method displayChooser
-      * @param {EventFacade} e Triggering Event
-      * @param {Object} data Object containing the data required by the chooser template
-      * @returns {Promise}
-      */
-    var displayChooser = function(e, data) {
-        return Templates.render('core_course/chooser', data)
-            .then(function(html) {
-                return ModalFactory.create({
-                    type: ModalFactory.types.DEFAULT,
-                    body: html,
-                    title: data.title,
-                    large: true
-                }).then(function(modal) {
-                    modal.getRoot().on(ModalEvents.shown, function(e) {
-                        $(e.target).addClass('modchooser');
-                        // Initially, omit any anchor elements from the focus order in the summary content container.
-                        var optionSummaryContentAnchors = $(SELECTORS.CHOOSER_OPTION_SUMMARY_CONTENT_CONTAINER).find('a');
-                        optionSummaryContentAnchors.each(function(key, anchor) {
-                            $(anchor).attr('tabindex', -1);
-                        });
-                        // Register event listeners.
-                        registerListenerEvents();
-                    });
-
-                    // We want to focus on the action select when the dialog is closed.
-                    modal.getRoot().on(ModalEvents.hidden, function() {
-                        $(e.target.closest('.chooser-link')).focus();
-                        modal.getRoot().remove();
-                    });
-
-                    modal.show();
-
-                    return modal;
-                });
-            });
-    };
-
-    return /** @alias module:core/chooser_dialogue */{
-        displayChooser: displayChooser
-    };
-});

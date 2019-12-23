@@ -20,147 +20,109 @@
  * @package    core_course
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.8
+ * @since      3.9
  */
-define(
-    [
-        'core/yui',
-        'jquery',
-        'core_course/chooser_dialogue',
-        'core/custom_interaction_events',
-    ],
-    function(
-        Y,
-        $,
-        ChooserDialogue,
-        CustomEvents
-    ) {
+import $ from 'jquery';
+import * as ChooserDialogue from 'core_course/chooser_dialogue';
+import CustomEvents from 'core/custom_interaction_events';
+import * as Repository from 'core_course/local/chooser/repository';
+import selectors from 'core_course/local/chooser/selectors';
 
-    /**
-     * Class names for different elements.
-     *
-     * @private
-     * @type {Object}
-     */
-    var CSS = {
-        PAGECONTENT: 'body',
-        SECTION: null,
-        SECTIONMODCHOOSER: 'span.section-modchooser-link',
-        SITEMENU: '.block_site_main_menu',
-        SITETOPIC: 'div.sitetopic'
-    };
+/**
+ * Mutate the moduleInfo {} to add the section onto the addoption url.
+ *
+ * @method displayModChooser
+ * @param {EventFacade} e Triggering Event
+ * @param {Object} moduleInfo Object containing the data required by the chooser template
+ *
+ * @return {Object} moduleInfo Object that now has the section information attached
+ */
+const moduleInfoFormatter = (e, moduleInfo) => {
+    let sectionid;
+    // Set the section for this version of the dialogue.
+    if ($(e.currentTarget).parents(selectors.elements.sitetopic).length) {
+        // The site topic has a sectionid of 1.
+        sectionid = 1;
+    } else if ($(e.currentTarget).parents(selectors.elements.sitemenu).length) {
+        // The block site menu has a sectionid of 0.
+        sectionid = 0;
+    } else {
+        sectionid = $(e.currentTarget).attr('data-sectionid');
+    }
+    // If the sectionid exists, append the section parameter to the add module url.
+    if (sectionid !== undefined) {
+        moduleInfo.allmodules.forEach((module) => {
+            module.urls.addoption += '&section=' + sectionid;
+        });
+    }
+    return moduleInfo;
+};
 
-    /**
-     * Display the module chooser.
-     *
-     * @method displayModChooser
-     * @param {EventFacade} e Triggering Event
-     * @param {Object} data Object containing the data required by the chooser template
-     */
-    var displayModChooser = function(e, data) {
-        var sectionid;
-        // Set the section for this version of the dialogue.
-        if ($(e.currentTarget).parents(CSS.SITETOPIC).length) {
-            // The site topic has a sectionid of 1.
-            sectionid = 1;
-        } else if ($(e.currentTarget).parents(CSS.SECTION).length) {
-            var section = $(e.currentTarget).parents(CSS.SECTION);
-            sectionid = section.attr('id').replace('section-', '');
-        } else if ($(e.currentTarget).parents(CSS.SITEMENU).length) {
-            // The block site menu has a sectionid of 0.
-            sectionid = 0;
-        }
-        // If the sectionid exists, append the section parameter to the add module url.
-        if (sectionid !== undefined) {
-            data.options.forEach(function(option) {
-                option.urls.addoption += '&section=' + sectionid;
-            });
-        }
+/**
+ * For each sections 'Add activity or resource' we want to wrap the dom into a link
+ * and add some event handlers for click and keyboards
+ *
+ * @method sectionEventHandler
+ * @param {HTMLElement} section The selector to limit scope to
+ * @param {Object} moduleInfo Object containing the data required by the chooser template
+ */
+const sectionEventHandler = (section, moduleInfo) => {
+    const chooserspan = $(section).find(selectors.elements.sectionmodchooser);
+    if (!chooserspan.length) {
+        return;
+    }
+    const modchooserlink = $(chooserspan).children().wrapAll("<a href='#' />");
 
-        ChooserDialogue.displayChooser(e, data);
-    };
+    const events = [
+        CustomEvents.events.activate,
+        CustomEvents.events.keyboardActivate
+    ];
+    CustomEvents.define(modchooserlink, events);
 
-    /**
-     * Update any section areas within the scope of the specified
-     * selector with AJAX equivalents.
-     *
-     * @method _setupForSection
-     * @private
-     * @param {jQuery} section The selector to limit scope to
-     * @param {Object} data Object containing the data required by the chooser template
-     * @return void
-     */
-    var _setupForSection = function(section, data) {
-        var chooserspan = $(section).find(CSS.SECTIONMODCHOOSER);
-        if (!chooserspan.length) {
-            return;
-        }
-        var modchooserlink = $(chooserspan).children().wrapAll("<a href='#' />");
-
-        CustomEvents.define(modchooserlink, [
-            CustomEvents.events.activate,
-            CustomEvents.events.keyboardActivate
-        ]);
-
-        // Display module chooser event listeners.
-        modchooserlink.on(CustomEvents.events.activate, function(e) {
+    // Display module chooser event listeners.
+    events.forEach((event) => {
+        modchooserlink.on(event, (e) => {
             e.preventDefault();
-            displayModChooser(e, data);
+            const builtModuleInfo = moduleInfoFormatter(e, moduleInfo);
+            ChooserDialogue.displayChooser(e, builtModuleInfo);
         });
+    });
+};
 
-        modchooserlink.on(CustomEvents.events.keyboardActivate, function(e) {
-            e.preventDefault();
-            displayModChooser(e, data);
-        });
-    };
+/**
+ * Find all instances of sections on the current course page and then fire off to our event builder
+ *
+ * @method setupForSection
+ * @param {Object} moduleInfo Object containing the data required by the chooser template
+ */
+const setupForSection = (moduleInfo) => {
+    // TODO: check if needed.
+    document.querySelectorAll(selectors.elements.sitetopic).forEach((section) => {
+        sectionEventHandler(section, moduleInfo);
+    });
 
-    /**
-     * Update any section areas within the scope of the specified
-     * selector with AJAX equivalents.
-     *
-     * @method setupForSection
-     * @param {Object} data Object containing the data required by the chooser template
-     * @param {String} baseselector The selector to limit scope to
-     */
-    var setupForSection = function(data, baseselector) {
-        if (!baseselector) {
-            baseselector = CSS.PAGECONTENT;
-        }
-        // Setup for site topics.
-        $(baseselector).find(CSS.SITETOPIC).each(function() {
-            _setupForSection(this, data);
-        });
-        // Setup for standard course topics.
-        if (CSS.SECTION) {
-            $(baseselector).find(CSS.SECTION).each(function() {
-                _setupForSection(this, data);
-            });
-        }
+    // Setup for standard course topics.
+    document.querySelectorAll(selectors.elements.section).forEach((section) => {
+        sectionEventHandler(section, moduleInfo);
+    });
 
-        // Setup for the block site menu.
-        $(baseselector).find(CSS.SITEMENU).each(function() {
-            _setupForSection(this, data);
-        });
-    };
+    // TODO: check if needed.
+    document.querySelectorAll(selectors.elements.sitemenu).forEach((section) => {
+        sectionEventHandler(section, moduleInfo);
+    });
+};
 
-    /**
-     * Set up the activity chooser.
-     *
-     * @method initializer
-     * @param {Object} data Object containing the data required by the chooser template
-     */
-    var initializer = function(data) {
-        Y.use('moodle-course-coursebase', function() {
-            var sectionclass = M.course.format.get_sectionwrapperclass();
-            if (sectionclass) {
-                CSS.SECTION = '.' + sectionclass;
-            }
-            // Initialize existing sections and register for dynamically created sections.
-            setupForSection(data);
-        });
-    };
-
-    return /** @alias module:core_course/modchooser */{
-        init: initializer
-    };
-});
+/**
+ * Set up the activity chooser.
+ *
+ * @method initializer
+ * @param {int} courseid Course ID for the course we want modules for
+ */
+export const init = async(courseid) => {
+    const [
+        moduleInfo
+    ] = await Promise.all([
+        Repository.activityModules(courseid)
+    ]);
+    setupForSection(moduleInfo);
+};
