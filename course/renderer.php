@@ -135,25 +135,16 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Build the HTML for the module chooser javascript popup.
      *
-     * @param array $modules A set of modules as returned form @see
-     * get_module_metadata
-     * @param object $course The course that will be displayed
+     * @param int $courseid The course id to fetch modules for.
      * @return string The composed HTML for the module
      */
-    public function course_modchooser($modules, $course) {
-        global $OUTPUT;
+    public function course_modchooser($courseid) {
 
         if (!$this->page->requires->should_create_one_time_item_now('core_course_modchooser')) {
             return '';
         }
 
-        $title = get_string('addresourceoractivity');
-        $related = [
-            'context' => context_course::instance($course->id)
-        ];
-        // Export the module chooser data.
-        $modchooserdata = new \core_course\external\course_module_chooser_exporter($title, $modules, $related);
-        $data = json_encode($modchooserdata->export($OUTPUT));
+        $data = json_encode($courseid);
 
         $script = "
             require(['core_course/modchooser'], function(ModChooser) {
@@ -339,7 +330,7 @@ class core_course_renderer extends plugin_renderer_base {
             $modchooser = html_writer::start_tag('div', array('class' => 'mdl-right'));
             $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
             $icon = $this->output->pix_icon('t/add', '');
-            $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
+            $span = html_writer::tag('span', $straddeither, ['class' => 'section-modchooser-text', 'data-sectionid' => $section]);
             $modchooser .= html_writer::tag('span', $icon . $span, array('class' => 'section-modchooser-link'));
             $modchooser.= html_writer::end_tag('div');
             $modchooser.= html_writer::end_tag('div');
@@ -354,7 +345,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $output = html_writer::tag('div', $output, array('class' => 'show addresourcedropdown'));
                 $modchooser = html_writer::tag('div', $modchooser, array('class' => 'hide addresourcemodchooser'));
             }
-            $output = $this->course_modchooser($modules, $course) . $modchooser . $output;
+            $output = $this->course_modchooser($course->id) . $modchooser . $output;
         }
 
         return $output;
