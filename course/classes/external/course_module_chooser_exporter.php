@@ -27,7 +27,6 @@ namespace core_course\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
-use message_email\output\email_digest;
 use renderer_base;
 
 /**
@@ -38,20 +37,16 @@ use renderer_base;
  */
 class course_module_chooser_exporter extends exporter {
 
-    /** @var string $title The title of the module chooser */
-    private $title;
     /** @var array $modules Array containing the available modules */
     private $modules;
 
     /**
      * Constructor.
      *
-     * @param string $title The title of the chooser
      * @param array $modules The available course modules
      * @param array $related The related data for the export
      */
-    public function __construct(string $title, array $modules, array $related = []) {
-        $this->title = $title;
+    public function __construct(array $modules, array $related = []) {
         $this->modules = $modules;
         return parent::__construct([], $related);
     }
@@ -63,17 +58,12 @@ class course_module_chooser_exporter extends exporter {
      */
     protected static function define_other_properties() {
         return [
-            'title' => [
-                'type' => PARAM_TEXT,
-                'optional' => true,
-                'default' => null,
-                'null' => NULL_ALLOWED
-            ],
             'options' => [
                 'multiple' => true,
                 'optional' => true,
                 'type' => [
                     'label' => ['type' => PARAM_TEXT],
+                    'modulename' => ['type' => PARAM_TEXT],
                     'description' => ['type' => PARAM_TEXT],
                     'urls' => [
                         'type' => [
@@ -100,7 +90,6 @@ class course_module_chooser_exporter extends exporter {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
-        $title = $this->title;
 
         $options = new \stdClass();
         $options->trusted = false;
@@ -132,8 +121,10 @@ class course_module_chooser_exporter extends exporter {
 
             $icon = new \pix_icon('icon', '', $modulename);
 
+            // When exporting check if the title is an object, we assume it's a lang string object otherwise we send the raw string.
             $modulesdata[] = [
-                'label' => $module->title->out(),
+                'label' => $module->title instanceof \lang_string ? $module->title->out() : $module->title,
+                'modulename' => $modulename,
                 'description' => $description,
                 'urls' => [
                     'addoption' => $module->link->out(false),
@@ -143,7 +134,6 @@ class course_module_chooser_exporter extends exporter {
         }
 
         return [
-            'title' => $title,
             'options' => $modulesdata
         ];
     }

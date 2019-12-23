@@ -10832,45 +10832,29 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
  * without javascript enabled
  */
 .modchooser .modal-body {
-  padding: 0; }
-
-.modchoosercontainer {
-  height: 450px;
+  padding: 0;
+  height: 590px;
   overflow-y: auto; }
 
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
 
 .modchoosercontainer .optionscontainer {
-  position: relative;
-  overflow-x: hidden;
-  max-width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  padding: 1rem; }
-
-.modchoosercontainer .optionscontainer .option {
-  display: block;
-  padding: 1em 0.5em 1em 0.5em;
-  width: 118px;
-  text-align: center; }
-
-.modchoosercontainer .optionscontainer .option .optioninfo {
-  width: 100%; }
-  .modchoosercontainer .optionscontainer .option .optioninfo a {
-    display: block;
-    width: 100%;
-    color: #495057; }
-    .modchoosercontainer .optionscontainer .option .optioninfo a:hover {
-      text-decoration: none; }
-    .modchoosercontainer .optionscontainer .option .optioninfo a .optionname {
-      display: block;
-      margin-top: 0.5em;
-      vertical-align: middle;
-      width: 100%; }
-    .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon {
-      display: block;
-      width: 100%; }
+  overflow-x: hidden; }
+  .modchoosercontainer .optionscontainer .option {
+    flex-basis: 16%; }
+    .modchoosercontainer .optionscontainer .option .optionactions .optionaction {
+      cursor: pointer;
+      margin: 0.2rem;
+      color: #868e96; }
+      .modchoosercontainer .optionscontainer .option .optionactions .optionaction i {
+        margin: 0; }
+    .modchoosercontainer .optionscontainer .option .optioninfo a {
+      color: #495057; }
+      .modchoosercontainer .optionscontainer .option .optioninfo a:hover {
+        text-decoration: none; }
+      .modchoosercontainer .optionscontainer .option .optioninfo a .optionname {
+        margin-top: 0.5em; }
       .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon .icon {
         margin: 0;
         padding: 0;
@@ -10878,51 +10862,42 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         height: 32px;
         font-size: 32px; }
 
-.modchoosercontainer .optionscontainer .option .optionactions {
-  margin-top: .3rem; }
-  .modchoosercontainer .optionscontainer .option .optionactions .optionaction {
-    cursor: pointer;
-    margin: 0.2rem;
-    color: #868e96; }
-    .modchoosercontainer .optionscontainer .option .optionactions .optionaction i {
-      margin: 0; }
-
-.modchoosercontainer .optionscontainer .option .optionsummary {
-  visibility: hidden;
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 100%;
-  margin: 0;
+.modchooser .modal-body .optionsummary {
   background-color: #fff;
   overflow-x: hidden;
   overflow-y: auto;
   line-height: 2em;
-  transition: visibility 0.3s linear, left 0.3s linear;
-  width: 100%; }
-  .modchoosercontainer .optionscontainer .option .optionsummary .content {
-    padding: 2rem 3rem;
-    text-align: left;
+  height: 590px; }
+  .modchooser .modal-body .optionsummary .content {
     overflow-y: auto; }
-    .modchoosercontainer .optionscontainer .option .optionsummary .content .heading {
-      margin-bottom: 1.5rem; }
-      .modchoosercontainer .optionscontainer .option .optionsummary .content .heading .icon {
-        height: 32px;
-        width: 32px;
-        font-size: 32px;
-        padding: 0; }
-  .modchoosercontainer .optionscontainer .option .optionsummary .actions {
-    width: 100%;
-    padding: 1rem 2rem;
+    .modchooser .modal-body .optionsummary .content .heading .icon {
+      height: 32px;
+      width: 32px;
+      font-size: 32px;
+      padding: 0; }
+  .modchooser .modal-body .optionsummary .actions {
     border-top: 1px solid #dee2e6;
-    display: flex;
-    justify-content: space-between; }
+    background: #fff; }
 
-.modchoosercontainer .optionscontainer .option .optionsummary.open {
-  visibility: visible;
-  left: 0; }
+@media (max-width: 1199.98px) {
+  .modchoosercontainer .optionscontainer .option {
+    flex-basis: 20%; } }
+
+@media (max-width: 575.98px) {
+  .path-course-view .modal-dialog.modal-lg,
+  .path-course-view .modal-content,
+  .modchooser .modal-body,
+  .modchooser .modal-body .carousel,
+  .modchooser .modal-body .carousel-inner,
+  .modchooser .modal-body .carousel-item,
+  .modchooser .modal-body .optionsummary,
+  .modchoosercontainer,
+  .optionscontainer {
+    height: 100%; }
+  .path-course-view .modal-dialog.modal-lg {
+    margin: 0; }
+  .modchoosercontainer .optionscontainer .option {
+    flex-basis: 25%; } }
 
 /* Form element: listing */
 .formlistingradio {
@@ -12699,11 +12674,6 @@ table.calendartable caption {
 
 /* course.less */
 /* COURSE CONTENT */
-.section-modchooser-link img {
-  margin-right: 0.5rem;
-  width: 16px;
-  height: 16px; }
-
 .section_add_menus {
   text-align: right;
   clear: both; }

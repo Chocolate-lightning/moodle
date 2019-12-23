@@ -18,149 +18,224 @@
  *
  * @module     core_course/modchooser
  * @package    core_course
- * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
+ * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.8
  */
-define(
-    [
-        'core/yui',
-        'jquery',
-        'core_course/chooser_dialogue',
-        'core/custom_interaction_events',
-    ],
-    function(
-        Y,
-        $,
-        ChooserDialogue,
-        CustomEvents
-    ) {
 
-    /**
-     * Class names for different elements.
-     *
-     * @private
-     * @type {Object}
-     */
-    var CSS = {
-        PAGECONTENT: 'body',
-        SECTION: null,
-        SECTIONMODCHOOSER: 'span.section-modchooser-link',
-        SITEMENU: '.block_site_main_menu',
-        SITETOPIC: 'div.sitetopic'
-    };
+import * as ChooserDialogue from 'core_course/chooser_dialogue';
+import CustomEvents from 'core/custom_interaction_events';
+import * as Repository from 'core_course/local/chooser/repository';
+import selectors from 'core_course/local/chooser/selectors';
+import * as Templates from 'core/templates';
+import * as ModalFactory from 'core/modal_factory';
+import {get_string as getString} from 'core/str';
 
-    /**
-     * Display the module chooser.
-     *
-     * @method displayModChooser
-     * @param {EventFacade} e Triggering Event
-     * @param {Object} data Object containing the data required by the chooser template
-     */
-    var displayModChooser = function(e, data) {
-        var sectionid;
-        // Set the section for this version of the dialogue.
-        if ($(e.currentTarget).parents(CSS.SITETOPIC).length) {
-            // The site topic has a sectionid of 1.
-            sectionid = 1;
-        } else if ($(e.currentTarget).parents(CSS.SECTION).length) {
-            var section = $(e.currentTarget).parents(CSS.SECTION);
-            sectionid = section.attr('id').replace('section-', '');
-        } else if ($(e.currentTarget).parents(CSS.SITEMENU).length) {
-            // The block site menu has a sectionid of 0.
-            sectionid = 0;
+/**
+ * Set up the activity chooser.
+ *
+ * @method init
+ * @param {int} courseid Course ID to use later on in fetchModules()
+ */
+export const init = async(courseid) => {
+
+    // Fetch all the modules available for a given course.
+    const webserviceData = await fetchModules(courseid);
+
+    const allSections = fetchSections();
+
+    const sectionIds = fetchSectionIds(allSections);
+
+    const builtModuleData = sectionIdMapper(webserviceData, sectionIds);
+
+    const modalMap = await modalMapper(builtModuleData);
+
+    // User interaction handlers.
+    registerEventHandlers(modalMap, builtModuleData);
+
+    enableInteraction(allSections);
+};
+
+/**
+ * Call the activity webservice so we get an array of modules
+ *
+ * @method fetchModules
+ * @param {int} courseid Course ID for the course we want modules for
+ * @return {Object} The result of the Web service
+ */
+const fetchModules = async(courseid) => {
+    const [
+        data
+    ] = await Promise.all([
+        Repository.activityModules(courseid)
+    ]);
+    return data;
+};
+
+/**
+ * Find all the sections on a page
+ *
+ * @method fetchModules
+ * @return {Array} The result of querySelectors that have been spread into a array
+ */
+const fetchSections = () => {
+    const sections = document.querySelectorAll(`${selectors.elements.section}[role="region"]`);
+    const siteTopic = document.querySelectorAll(selectors.elements.sitetopic);
+    const siteMenu = document.querySelectorAll(selectors.elements.sitemenu);
+
+    return [...sections, ...siteTopic, ...siteMenu];
+};
+
+/**
+ * Given a NodeList of HTMLElement nodes find their ID's
+ *
+ * @method fetchSectionIds
+ * @param {Array} sections The sections to fetch ID's for
+ * @return {Array} Array of section ID's we'll use for maps
+ */
+const fetchSectionIds = (sections) => {
+    const sectionIds = Array.from(sections).map((section) => {
+        const button = section.querySelector(`${selectors.elements.sectionmodchooser}`);
+        try {
+            return button.dataset.sectionid;
+        } catch (e) {
+            // eslint-disable-line
         }
-        // If the sectionid exists, append the section parameter to the add module url.
-        if (sectionid !== undefined) {
-            data.options.forEach(function(option) {
-                option.urls.addoption += '&section=' + sectionid;
-            });
-        }
+    });
+    return sectionIds;
+};
 
-        ChooserDialogue.displayChooser(e, data);
-    };
-
-    /**
-     * Update any section areas within the scope of the specified
-     * selector with AJAX equivalents.
-     *
-     * @method _setupForSection
-     * @private
-     * @param {jQuery} section The selector to limit scope to
-     * @param {Object} data Object containing the data required by the chooser template
-     * @return void
-     */
-    var _setupForSection = function(section, data) {
-        var chooserspan = $(section).find(CSS.SECTIONMODCHOOSER);
-        if (!chooserspan.length) {
-            return;
-        }
-        var modchooserlink = $(chooserspan).children().wrapAll("<a href='#' />");
-
-        CustomEvents.define(modchooserlink, [
-            CustomEvents.events.activate,
-            CustomEvents.events.keyboardActivate
-        ]);
-
-        // Display module chooser event listeners.
-        modchooserlink.on(CustomEvents.events.activate, function(e) {
-            e.preventDefault();
-            displayModChooser(e, data);
+/**
+ * Given the web service data and an array of section ID's we want to make deep copies
+ * of the WS data then add on the section ID to the addoption URL
+ *
+ * @method sectionIdMapper
+ * @param {Object} webServiceData Our original data from the Web service call
+ * @param {Array} sectionIds All of the sections we need to build modal data for
+ * @return {Map} A map of K: sectionID V: [modules] with URL's built
+ */
+const sectionIdMapper = (webServiceData, sectionIds) => {
+    const builtDataMap = new Map();
+    sectionIds.forEach((id) => {
+        // We need to take a fresh deep copy of the original data as an object is a reference type.
+        let newData = JSON.parse(JSON.stringify(webServiceData));
+        newData.allmodules.forEach((module) => {
+            module.urls.addoption += '&section=' + id;
         });
+        builtDataMap.set(id, newData.allmodules);
+    });
+    return builtDataMap;
+};
 
-        modchooserlink.on(CustomEvents.events.keyboardActivate, function(e) {
-            e.preventDefault();
-            displayModChooser(e, data);
-        });
+/**
+ * Build a modal for each section ID and store it into a map for quick access
+ *
+ * @method modalMapper
+ * @param {Map} builtModuleData our map of section ID's & modules to generate modals for
+ * @return {Map} A map of K: sectionID V: {Modal} with the modal being prebuilt
+ */
+const modalMapper = async(builtModuleData) => {
+    const modalMap = new Map();
+    const iter = builtModuleData.entries();
+    // We need to use a iterator structure as it is a blocking structure.
+    let result = iter.next();
+    while (!result.done) {
+        let sectionId = result.value[0];
+        let modules = result.value[1];
+
+        // Run a call off to a new func for filtering favs & recommended.
+        const templateData = templateDataBuilder(modules);
+        // This may be stuck here :/
+        const modal = await buildModal(templateData);
+        modalMap.set(sectionId, modal);
+
+        result = iter.next();
+    }
+
+    return modalMap;
+};
+
+/**
+ * Given an array of modules we want to figure out where & how to place them into our template object
+ *
+ * @method templateDataBuilder
+ * @param {Array} data our modules to manipulate into a Templatable object
+ * @return {Object} Our built object ready to render out
+ */
+const templateDataBuilder = (data) => {
+    // const recommended = data.filter(mod => mod.recommended === true);
+    // const favourites = data.filter(mod => mod.favourite === true);
+    // Switching for the active tab.
+    // foo ? foo : bar
+    const builtData = {
+        default: data,
     };
+    return builtData;
+};
 
-    /**
-     * Update any section areas within the scope of the specified
-     * selector with AJAX equivalents.
-     *
-     * @method setupForSection
-     * @param {Object} data Object containing the data required by the chooser template
-     * @param {String} baseselector The selector to limit scope to
-     */
-    var setupForSection = function(data, baseselector) {
-        if (!baseselector) {
-            baseselector = CSS.PAGECONTENT;
-        }
-        // Setup for site topics.
-        $(baseselector).find(CSS.SITETOPIC).each(function() {
-            _setupForSection(this, data);
-        });
-        // Setup for standard course topics.
-        if (CSS.SECTION) {
-            $(baseselector).find(CSS.SECTION).each(function() {
-                _setupForSection(this, data);
-            });
-        }
-
-        // Setup for the block site menu.
-        $(baseselector).find(CSS.SITEMENU).each(function() {
-            _setupForSection(this, data);
-        });
-    };
-
-    /**
-     * Set up the activity chooser.
-     *
-     * @method initializer
-     * @param {Object} data Object containing the data required by the chooser template
-     */
-    var initializer = function(data) {
-        Y.use('moodle-course-coursebase', function() {
-            var sectionclass = M.course.format.get_sectionwrapperclass();
-            if (sectionclass) {
-                CSS.SECTION = '.' + sectionclass;
+/**
+ * Given an object we want to prebuild a modal ready to store into a map
+ *
+ * @method buildModal
+ * @param {Object} data The template data which contains arrays of modules
+ * @return {Object} The modal for the calling section with everything already set up
+ */
+const buildModal = async(data) => {
+    const [
+        modal,
+    ] = await Promise.all([
+        ModalFactory.create({
+            type: ModalFactory.types.DEFAULT,
+            title: getString('addresourceoractivity'),
+            body: Templates.render('core_course/chooser', data),
+            large: true,
+            templateContext: {
+                classes: 'modchooser'
             }
-            // Initialize existing sections and register for dynamically created sections.
-            setupForSection(data);
-        });
-    };
+        })
+    ]);
+    return modal;
+};
 
-    return /** @alias module:core_course/modchooser */{
-        init: initializer
-    };
-});
+/**
+ * Now all of our setup is done we want to ensure a user can actually select a section to add a module to
+ * Once a selection has been made pick out the modal & module information and pass it along
+ *
+ * @method registerEventHandlers
+ * @param {Map} modalMap The map of modals ready to pick from when a user clicks 'Add activity'
+ * @param {Map} modulesMap The map of K: sectionID V: [modules] we need to pass along so we can fetch a specific modules data
+ */
+const registerEventHandlers = (modalMap, modulesMap) => {
+    const events = [
+        'click',
+        CustomEvents.events.activate,
+        CustomEvents.events.keyboardActivate
+    ];
+
+    CustomEvents.define(document, events);
+
+    // Display module chooser event listeners.
+    events.forEach((event) => {
+        document.addEventListener(event, (e) => {
+            if (e.target.closest(selectors.elements.sectionmodchooser)) {
+                const caller = e.target.closest(selectors.elements.sectionmodchooser);
+                const sectionid = caller.dataset.sectionid;
+                const modal = modalMap.get(sectionid);
+                ChooserDialogue.displayChooser(caller, modal, modulesMap.get(sectionid));
+            }
+        });
+    });
+};
+
+/**
+ * We run this last in the file as this will now allow users to select a section to add a module to
+ * The assumption is that everything is set up and ready to go
+ *
+ * @method enableInteraction
+ * @param {Array} sections The sections we need to find buttons in so we can enable the button
+ */
+const enableInteraction = (sections) => {
+    Array.from(sections).map((section) => {
+        const button = section.querySelector(`${selectors.elements.sectionmodchooser}`);
+        button.disabled = false;
+    });
+};
