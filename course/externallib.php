@@ -4150,7 +4150,8 @@ class core_course_external extends external_api {
         return new external_single_structure([
             'allmodules' => new external_multiple_structure(
                 new external_single_structure([
-                    'label' => new external_value(PARAM_TEXT, 'Module name', VALUE_OPTIONAL),
+                    'label' => new external_value(PARAM_TEXT, 'Human readable module name', VALUE_OPTIONAL),
+                    'modulename' => new external_value(PARAM_TEXT, 'Module name', VALUE_OPTIONAL),
                     'description' => new external_value(PARAM_RAW, 'Help panel information', VALUE_OPTIONAL),
                     'urls' => new external_single_structure([
                         'addoption' => new external_value(PARAM_URL, 'The edit link for the module', VALUE_OPTIONAL),

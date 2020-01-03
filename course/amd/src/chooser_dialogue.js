@@ -30,7 +30,6 @@ import selectors from 'core_course/local/chooser/selectors';
 import * as ModalFactory from 'core/modal_factory';
 import * as Templates from 'core/templates';
 import {get_string as getString} from 'core/str';
-import PagedContentFactory from 'core/paged_content_factory';
 
 /**
  * Register chooser related event listeners.
@@ -255,24 +254,23 @@ export const displayChooser = async(e, moduleInfo) => {
             // eslint-disable-line
         }
     });
-    modal.setBody(PagedContentFactory.createFromAjax(
-        2,
-        1,
-        // Callback function to render the requested pages.
-        function(pagesData) {
-            return pagesData.map(function(pageData) {
-                var offset = pageData.offset;
+    const deferred = $.Deferred();
 
-                if (offset == 0) {
-                    // The first page is being requested and we've already got
-                    // that data so we can just render it immediately.
-                    return Templates.render('core_course/chooser', moduleInfo);
-                } else {
-                    return Templates.render('core_course/chooser_help', {});
-                }
-            });
-        }
-    ));
+    modal.setBody(deferred);
+    myTest(deferred, moduleInfo);
     modal.show();
 };
-
+// Double check hoisting
+const myTest = (deferred, moduleInfo) => {
+    Templates.render('core_course/chooser', moduleInfo)
+        .then((html, js) => {
+            return deferred.resolve(html, js);
+        })
+        .then(() => {
+            // event listeners
+            // modal.getbody
+        })
+        .catch((e) => {
+            deferred.reject(e);
+        });
+};

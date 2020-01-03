@@ -27,9 +27,11 @@
             addoption: "http://addoptionurl.com"
         },
         "icon": "<img class="icon" src="http://urltooptionicon">"
+
     }
 }}
-<div role="gridcell" tabindex="0" aria-label="{{label}}" class="option" data-region="chooser-option-container">
+
+<div role="gridcell" tabindex="0" aria-label="{{label}}" class="option" data-region="chooser-option-container" data-modname="{{modulename}}">
     <div class="optioninfo" data-region="chooser-option-info-container">
         <a href="{{urls.addoption}}" aria-label="{{#str}} addnew, moodle, {{label}} {{/str}}" tabindex="0" data-action="add-chooser-option">
             <span class="optionicon">

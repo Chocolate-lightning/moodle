@@ -64,6 +64,7 @@ class course_module_chooser_exporter extends exporter {
                 'optional' => true,
                 'type' => [
                     'label' => ['type' => PARAM_TEXT],
+                    'modulename' => ['type' => PARAM_TEXT],
                     'description' => ['type' => PARAM_TEXT],
                     'urls' => [
                         'type' => [
@@ -123,6 +124,7 @@ class course_module_chooser_exporter extends exporter {
 
             $modulesdata[] = [
                 'label' => $module->title->out(),
+                'modulename' => $modulename,
                 'description' => $description,
                 'urls' => [
                     'addoption' => $module->link->out(false),
