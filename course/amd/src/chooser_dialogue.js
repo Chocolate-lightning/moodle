@@ -254,14 +254,21 @@ export const displayChooser = async(e, moduleInfo) => {
             // eslint-disable-line
         }
     });
-    const deferred = $.Deferred();
+    /*const deferred = $.Deferred();
 
     modal.setBody(deferred);
-    myTest(deferred, moduleInfo);
+    myTest(deferred, moduleInfo);*/
+    modal.setBody(Templates.render('core_course/chooser', moduleInfo));
     modal.show();
+    modal.getBody()[0].addEventListener('click', (e) => {
+        window.console.log(e);
+        if (e.target.matches('[data-action="show-option-summary"]')) {
+            window.console.log(e.target.closest('[data-region="chooser-option-container"]'));
+        }
+    }, true);
 };
 // Double check hoisting
-const myTest = (deferred, moduleInfo) => {
+/*const myTest = (deferred, moduleInfo) => {
     Templates.render('core_course/chooser', moduleInfo)
         .then((html, js) => {
             return deferred.resolve(html, js);
@@ -273,4 +280,4 @@ const myTest = (deferred, moduleInfo) => {
         .catch((e) => {
             deferred.reject(e);
         });
-};
+};*/
