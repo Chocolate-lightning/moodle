@@ -35,13 +35,13 @@ const getDataSelector = (name, value) => {
 export default {
     regions: {
         chooser: getDataSelector('region', 'chooser-container'),
-        chooser_options: getDataSelector('region', 'chooser-options-container'),
-        chooser_option: {
+        chooserOptions: getDataSelector('region', 'chooser-options-container'),
+        chooserOption: {
             container: getDataSelector('region', 'chooser-option-container'),
             actions: getDataSelector('region', 'chooser-option-actions-container'),
             info: getDataSelector('region', 'chooser-option-info-container'),
         },
-        chooser_summary: {
+        chooserSummary: {
             container: getDataSelector('region', 'chooser-option-summary-container'),
             content: getDataSelector('region', 'chooser-option-summary-content-container'),
             actions: getDataSelector('region', 'chooser-option-summary-actions-container'),
@@ -50,11 +50,11 @@ export default {
         help: getDataSelector('region', 'help'),
     },
     actions: {
-        option_actions: {
-            show_summary: getDataSelector('action', 'show-option-summary'),
+        optionActions: {
+            showSummary: getDataSelector('action', 'show-option-summary'),
         },
-        add_chooser: getDataSelector('action', 'add-chooser-option'),
-        close_option: getDataSelector('action', 'close-chooser-option-summary'),
+        addChooser: getDataSelector('action', 'add-chooser-option'),
+        closeOption: getDataSelector('action', 'close-chooser-option-summary'),
     },
     elements: {
         section: '.section',

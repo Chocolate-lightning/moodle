@@ -31,8 +31,8 @@
     }
 }}
 
-<div role="gridcell" tabindex="0" aria-label="{{label}}" class="option d-block text-center" data-region="chooser-option-container" data-modname="{{modulename}}">
-    <div class="optioninfo" data-region="chooser-option-info-container">
+<div role="gridcell" tabindex="0" aria-label="{{label}}" class="option d-block text-center py-3 px-2" data-region="chooser-option-container" data-modname="{{modulename}}">
+    <div class="optioninfo w-100" data-region="chooser-option-info-container">
         <a class="d-block" href="{{urls.addoption}}" aria-label="{{#str}} addnew, moodle, {{label}} {{/str}}" tabindex="0" data-action="add-chooser-option">
             <span class="optionicon d-block">
                 {{#icon}}
@@ -41,10 +41,11 @@
             </span>
             <span class="optionname d-block">{{label}}</span>
         </a>
-        <div class="optionactions" role="menubar" data-region="chooser-option-actions-container">
-            <span class="optionaction" data-action="show-option-summary" tabindex="0" aria-label="{{#str}} moreinfo {{/str}}">
-                {{#pix}} docs, core {{/pix}}
-            </span>
+        <div class="optionactions mt-1" role="menubar" data-region="chooser-option-actions-container">
+            <button class="btn btn-icon icon-no-margin icon-size-3 optionaction" data-action="show-option-summary" aria-label="{{#str}} moreinfo {{/str}}">
+                <span aria-hidden="true">{{#pix}} docs, core {{/pix}}</span>
+                <span class="sr-only">{{#str}} moreinfo {{/str}}</span>
+            </button>
         </div>
     </div>
 </div>

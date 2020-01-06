@@ -11152,40 +11152,34 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
  */
 .modchooser .modal-body {
   padding: 0;
-  height: 550px; }
+  height: 550px;
+  overflow-y: auto; }
 
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
 
 .modchoosercontainer .optionscontainer {
-  position: relative;
-  overflow-x: hidden;
-  padding: 1rem; }
+  overflow-x: hidden; }
   .modchoosercontainer .optionscontainer .option {
-    padding: 1em 0.5em 1em 0.5em;
-    width: 118px; }
-    .modchoosercontainer .optionscontainer .option .optionactions {
-      margin-top: .3rem; }
-      .modchoosercontainer .optionscontainer .option .optionactions .optionaction {
-        cursor: pointer;
-        margin: 0.2rem;
-        color: #868e96; }
-        .modchoosercontainer .optionscontainer .option .optionactions .optionaction i {
-          margin: 0; }
-    .modchoosercontainer .optionscontainer .option .optioninfo {
-      width: 100%; }
-      .modchoosercontainer .optionscontainer .option .optioninfo a {
-        color: #495057; }
-        .modchoosercontainer .optionscontainer .option .optioninfo a:hover {
-          text-decoration: none; }
-        .modchoosercontainer .optionscontainer .option .optioninfo a .optionname {
-          margin-top: 0.5em; }
-        .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon .icon {
-          margin: 0;
-          padding: 0;
-          width: 32px;
-          height: 32px;
-          font-size: 32px; }
+    flex-basis: 16%; }
+    .modchoosercontainer .optionscontainer .option .optionactions .optionaction {
+      cursor: pointer;
+      margin: 0.2rem;
+      color: #868e96; }
+      .modchoosercontainer .optionscontainer .option .optionactions .optionaction i {
+        margin: 0; }
+    .modchoosercontainer .optionscontainer .option .optioninfo a {
+      color: #495057; }
+      .modchoosercontainer .optionscontainer .option .optioninfo a:hover {
+        text-decoration: none; }
+      .modchoosercontainer .optionscontainer .option .optioninfo a .optionname {
+        margin-top: 0.5em; }
+      .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon .icon {
+        margin: 0;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        font-size: 32px; }
 
 .modchooser .modal-body .optionsummary {
   background-color: #fff;
@@ -11194,19 +11188,14 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   line-height: 2em;
   height: 550px; }
   .modchooser .modal-body .optionsummary .content {
-    padding: 2rem 3rem;
     overflow-y: auto; }
-    .modchooser .modal-body .optionsummary .content .heading {
-      margin-bottom: 1.5rem; }
-      .modchooser .modal-body .optionsummary .content .heading .icon {
-        height: 32px;
-        width: 32px;
-        font-size: 32px;
-        padding: 0; }
+    .modchooser .modal-body .optionsummary .content .heading .icon {
+      height: 32px;
+      width: 32px;
+      font-size: 32px;
+      padding: 0; }
   .modchooser .modal-body .optionsummary .actions {
-    padding: 1rem 2rem;
     border-top: 1px solid #dee2e6;
-    bottom: 0;
     background: #fff; }
 
 /* Form element: listing */

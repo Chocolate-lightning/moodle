@@ -34,15 +34,15 @@
 }}
 <div data-region="carousel" class="carousel slide">
     <div class="carousel-inner">
-    <div class="carousel-item active">
-        <div class="modchoosercontainer" data-region="chooser-container" tabindex="0" role="grid" aria-rowcount="1">
-            <div class="optionscontainer d-flex flex-wrap mw-100" role="row" data-region="chooser-options-container">
-                {{#allmodules}}
-                    {{>core_course/chooser_item}}
-                {{/allmodules}}
+        <div class="carousel-item active">
+            <div class="modchoosercontainer" data-region="chooser-container" tabindex="0" role="grid" aria-rowcount="1">
+                <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="row" data-region="chooser-options-container">
+                    {{#allmodules}}
+                        {{>core_course/chooser_item}}
+                    {{/allmodules}}
+                </div>
             </div>
         </div>
-    </div>
-    <div class="carousel-item" data-region="help"></div>
+        <div class="carousel-item" data-region="help"></div>
     </div>
 </div>

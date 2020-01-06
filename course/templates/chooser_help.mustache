@@ -15,18 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/chooser
+    @template core_course/chooser_help
 
-    Chooser dialog template.
+    Chooser help / more information template.
 
     Example context (json):
     {
-        TODO
+        "label": "Option name",
+        "description": "Option description",
+        "urls": {
+            addoption: "http://addoptionurl.com"
+        },
+        "icon": "<img class='icon' src='http://urltooptionicon'>"
     }
 }}
 <div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container" aria-labelledby="optionsummary_label" aria-describedby="optionsumary_desc">
-    <div class="content text-left" data-region="chooser-option-summary-content-container">
-        <div class="heading">
+    <div class="content text-left px-5 py-4" data-region="chooser-option-summary-content-container">
+        <div class="heading mb-4">
             <h5 id="optionsummary_label">
                 {{#icon}}
                     {{>core/pix_icon}}
@@ -38,7 +43,7 @@
             {{{description}}}
         </div>
     </div>
-    <div class="actions w-100 d-flex justify-content-between position-absolute" data-region="chooser-option-summary-actions-container">
+    <div class="actions fixed-bottom w-100 d-flex justify-content-between position-absolute py-3 px-4" data-region="chooser-option-summary-actions-container">
         <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="-1">
             {{#str}} back {{/str}}
         </button>

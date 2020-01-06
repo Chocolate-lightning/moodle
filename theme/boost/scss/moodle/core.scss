@@ -1489,6 +1489,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .modchooser .modal-body {
     padding: 0;
     height: 550px;
+    overflow-y: auto;
 }
 
 .modchoosercontainer.noscroll {
@@ -1496,39 +1497,28 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .modchoosercontainer .optionscontainer {
-    position: relative;
     overflow-x: hidden;
-    padding: 1rem;
     .option {
-        padding: 1em 0.5em 1em 0.5em;
-        width: 118px;
+        flex-basis: 16%;
         .optionactions {
-            margin-top: .3rem;
-
             .optionaction {
                 cursor: pointer;
                 margin: 0.2rem;
                 color: $gray-600;
-
                 i {
                     margin: 0;
                 }
             }
         }
         .optioninfo {
-            width: 100%;
-
             a {
                 color: $gray-700;
-
                 &:hover {
                     text-decoration: none;
                 }
-
                 .optionname {
                     margin-top: 0.5em;
                 }
-
                 .optionicon {
                     .icon {
                         margin: 0;
@@ -1551,12 +1541,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     height: 550px;
 
     .content {
-        padding: 2rem 3rem;
         overflow-y: auto;
-
         .heading {
-            margin-bottom: 1.5rem;
-
             .icon {
                 height: 32px;
                 width: 32px;
@@ -1567,9 +1553,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     }
 
     .actions {
-        padding: 1rem 2rem;
         border-top: 1px solid $gray-300;
-        bottom: 0;
         background: $white;
     }
 }

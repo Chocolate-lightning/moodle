@@ -34,47 +34,48 @@ import {get_string as getString} from 'core/str';
 /**
  * Register chooser related event listeners.
  *
+ * @param {Promise} modal Our modal that we are working with
+ * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  * @method registerListenerEvents
  */
-const registerListenerEvents = () => {
-    const showChooserOptionSummary = $(selectors.actions.option_actions.show_summary);
-    CustomEvents.define(showChooserOptionSummary, [
-        CustomEvents.events.activate
-    ]);
-
-    // Show the chooser option summary.
-    showChooserOptionSummary.on(CustomEvents.events.activate, (e) => {
-        const optionSummaryElement = $(e.target).closest(selectors.regions.chooser_option.container)
-            .find(selectors.regions.chooser_summary.container);
-        showOptionSummary(optionSummaryElement);
-    });
-
-    const closeChooserOptionSummary = $(selectors.actions.close_option);
-
-    CustomEvents.define(closeChooserOptionSummary, [
-        CustomEvents.events.activate
-    ]);
-
-    // Close the chooser option summary.
-    closeChooserOptionSummary.on(CustomEvents.events.activate, (e) => {
-        const optionSummaryElement = $(e.target).closest(selectors.regions.chooser_summary.container);
-        optionSummaryElement.removeClass('open');
-        $(selectors.regions.chooser).removeClass('noscroll');
+const registerListenerEvents = (modal, mappedModules) => {
+    modal.getBody()[0].addEventListener('click', async(e) => {
+        if (e.target.matches(selectors.actions.optionActions.showSummary)) {
+            // Get the systems name for the module just clicked.
+            const module = e.target.closest(selectors.regions.chooserOption.container);
+            const moduleName = module.dataset.modname;
+            // Build up the html & js ready to place into the help section.
+            const {html, js} = await Templates.renderForPromise('core_course/chooser_help', mappedModules.get(moduleName));
+            const help = modal.getBody()[0].querySelector(selectors.regions.help);
+            Templates.replaceNodeContents(help, html, js);
+            // Trigger the transition between 'pages'.
+            const carousel = $(selectors.regions.carousel);
+            carousel.carousel();
+            carousel.carousel('next');
+            carousel.carousel('pause');
+        }
+        // From the help screen go back to the module overview.
+        if (e.target.matches(selectors.actions.closeOption)) {
+            // Trigger the transition between 'pages'.
+            const carousel = $(selectors.regions.carousel);
+            carousel.carousel();
+            carousel.carousel('prev');
+            carousel.carousel('pause');
+        }
     });
 
     // Register event listeners related to the keyboard navigation controls.
-    initKeyboardNavigation(showChooserOptionSummary);
+    initKeyboardNavigation();
 };
 
 /**
  * Initialise the keyboard navigation controls for the chooser.
  *
  * @method initKeyboardNavigation
- * @param {jQuery} showChooserOptionSummary selector for activating the summary
  */
-const initKeyboardNavigation = (showChooserOptionSummary) => {
+const initKeyboardNavigation = () => {
 
-    const chooserOption = $(selectors.regions.chooser_option.container);
+    const chooserOption = $(selectors.regions.chooserOption.container);
 
     CustomEvents.define(chooserOption, [
         CustomEvents.events.next,
@@ -97,21 +98,21 @@ const initKeyboardNavigation = (showChooserOptionSummary) => {
         previousOption.focus();
     });
 
-    chooserOption.on(CustomEvents.events.next, selectors.actions.add_chooser, (e, data) => {
+    chooserOption.on(CustomEvents.events.next, selectors.actions.addChooser, (e, data) => {
         const currentOption = $(data.originalEvent.currentTarget);
         const nextOption = currentOption.next();
         clickErrorHandler(nextOption);
         nextOption.focus();
     });
 
-    chooserOption.on(CustomEvents.events.previous, selectors.actions.add_chooser, (e, data) => {
+    chooserOption.on(CustomEvents.events.previous, selectors.actions.addChooser, (e, data) => {
         const currentOption = $(data.originalEvent.currentTarget);
         const previousOption = currentOption.prev();
         clickErrorHandler(previousOption);
         previousOption.focus();
     });
 
-    chooserOption.on(CustomEvents.events.next, selectors.actions.option_actions.show_summary,
+    chooserOption.on(CustomEvents.events.next, selectors.actions.optionActions.showSummary,
         (e, data) => {
             const currentOption = $(data.originalEvent.currentTarget);
             const nextOption = currentOption.next();
@@ -119,7 +120,7 @@ const initKeyboardNavigation = (showChooserOptionSummary) => {
             nextOption.focus();
         });
 
-    chooserOption.on(CustomEvents.events.previous, selectors.actions.option_actions.show_summary,
+    chooserOption.on(CustomEvents.events.previous, selectors.actions.optionActions.showSummary,
         (e, data) => {
             const currentOption = $(data.originalEvent.currentTarget);
             const previousOption = currentOption.prev();
@@ -128,25 +129,15 @@ const initKeyboardNavigation = (showChooserOptionSummary) => {
         });
 
     chooserOption.on(CustomEvents.events.home, () => {
-        const chooserOptions = $(selectors.regions.chooser_options).find(selectors.regions.chooser_option.container);
+        const chooserOptions = $(selectors.regions.chooserOptions).find(selectors.regions.chooserOption.container);
         const previousOption = $(chooserOptions).first();
         previousOption.focus();
     });
 
     chooserOption.on(CustomEvents.events.end, () => {
-        const chooserOptions = $(selectors.regions.chooser_options).find(selectors.regions.chooser_option.container);
+        const chooserOptions = $(selectors.regions.chooserOptions).find(selectors.regions.chooserOption.container);
         const nextOption = $(chooserOptions).last();
         nextOption.focus();
-    });
-
-    CustomEvents.define(showChooserOptionSummary, [
-        CustomEvents.events.keyboardActivate
-    ]);
-
-    showChooserOptionSummary.on(CustomEvents.events.keyboardActivate, (e) => {
-        const optionSummaryElement = $(e.target).closest(selectors.regions.chooser_option.container)
-            .find(selectors.regions.chooser_summary.container);
-        showOptionSummary(optionSummaryElement);
     });
 };
 
@@ -163,37 +154,11 @@ const clickErrorHandler = (item) => {
 };
 
 /**
- * Show the option summary for a particular chooser option.
- *
- * @method showOptionSummary
- * @param {jQuery} optionSummaryElement The option summary container element
- */
-const showOptionSummary = (optionSummaryElement) => {
-    // Disable the scroll of the chooser container element.
-    $(selectors.regions.chooser).addClass('noscroll');
-
-    const optionSummaryContentElement = optionSummaryElement.find(selectors.regions.chooser_summary.content);
-    // Set the scroll of the type summary content element to top.
-    if (optionSummaryContentElement.scrollTop() > 0) {
-        optionSummaryContentElement.scrollTop(0);
-    }
-    // Show the particular summary overlay.
-    optionSummaryElement.addClass('open');
-    const cancelAction = optionSummaryElement.find(selectors.actions.close_option);
-    const addAction = optionSummaryElement.find(selectors.actions.add_chooser);
-
-    optionSummaryElement.attr('tabindex', 0);
-    cancelAction.attr('tabindex', 0);
-    addAction.attr('tabindex', 0);
-    optionSummaryElement.focus();
-};
-
-/**
  * Display the module chooser.
  *
  * @method displayChooser
  * @param {EventFacade} e Triggering Event
- * @param {Object} moduleInfo Object containing the data required by the chooser template
+ * @param {Object} data Object containing the data required by the chooser template
  */
 export const displayChooser = async(e, data) => {
     const [
@@ -202,25 +167,27 @@ export const displayChooser = async(e, data) => {
         ModalFactory.create({
             type: ModalFactory.types.DEFAULT,
             title: await getString('addresourceoractivity'),
-            //body: Templates.render('core_course/chooser', moduleInfo),
+            body: Templates.render('core_course/chooser', data),
             large: true
         })
     ]);
 
+    // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
     let mappedModules = new Map();
     data.allmodules.forEach((module) => {
         mappedModules.set(module.modulename, module);
     });
 
+    // Modal has rendered our initial content, we can allow users to interact.
     modal.getRoot().on(ModalEvents.bodyRendered, (e) => {
         $(e.target).addClass('modchooser');
         // Initially, omit any anchor elements from the focus order in the summary content container.
-        const optionSummaryContentAnchors = $(selectors.regions.chooser_summary.content).find('a');
+        const optionSummaryContentAnchors = $(selectors.regions.chooserSummary.content).find('a');
         optionSummaryContentAnchors.each((key, anchor) => {
             $(anchor).attr('tabindex', -1);
         });
         // Register event listeners.
-        registerListenerEvents();
+        registerListenerEvents(modal, mappedModules);
     });
 
     // We want to focus on the action select when the dialog is closed.
@@ -234,25 +201,5 @@ export const displayChooser = async(e, data) => {
         }
     });
 
-    modal.setBody(Templates.render('core_course/chooser', data));
     modal.show();
-    modal.getBody()[0].addEventListener('click', async(e) => {
-        if (e.target.matches('[data-region="chooser-option-actions-container"]')) {
-            const module = e.target.closest(selectors.regions.chooser_option.container);
-            const moduleName = module.dataset.modname;
-            const {html, js} = await Templates.renderForPromise('core_course/chooser_help', mappedModules.get(moduleName));
-            const help = modal.getBody()[0].querySelector(selectors.regions.help);
-            Templates.replaceNodeContents(help, html, js);
-            const carousel = $(selectors.regions.carousel);
-            carousel.carousel();
-            carousel.carousel('next');
-            carousel.carousel('pause');
-        }
-        if (e.target.matches(selectors.actions.close_option)) {
-            const carousel = $(selectors.regions.carousel);
-            carousel.carousel();
-            carousel.carousel('prev');
-            carousel.carousel('pause');
-        }
-    });
 };
