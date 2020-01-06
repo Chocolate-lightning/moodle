@@ -232,7 +232,12 @@ export const displayChooser = async(e, moduleInfo) => {
             large: true
         })
     ]);
-
+window.console.log(moduleInfo);
+    let mappedData = new Map();
+    moduleInfo.allmodules.forEach((module) => {
+       mappedData.set(module.modulename, module);
+    });
+    window.console.log(mappedData);
     modal.getRoot().on(ModalEvents.bodyRendered, (e) => {
         $(e.target).addClass('modchooser');
         // Initially, omit any anchor elements from the focus order in the summary content container.
@@ -260,12 +265,20 @@ export const displayChooser = async(e, moduleInfo) => {
     myTest(deferred, moduleInfo);*/
     modal.setBody(Templates.render('core_course/chooser', moduleInfo));
     modal.show();
-    modal.getBody()[0].addEventListener('click', (e) => {
+    modal.getBody()[0].addEventListener('click', async(e) => {
         window.console.log(e);
-        if (e.target.matches('[data-action="show-option-summary"]')) {
-            window.console.log(e.target.closest('[data-region="chooser-option-container"]'));
+        if (e.target.matches('[data-region="chooser-option-actions-container"]')) {
+            const module = e.target.closest('[data-region="chooser-option-container"]');
+            window.console.log(module);
+            const mappedName = module.dataset.modname;
+            window.console.log(mappedName);
+            window.console.log(mappedData.get(mappedName));
+            const {html, js} = await Templates.renderForPromise('core_course/chooser_help', mappedData.get(mappedName));
+            window.console.log(html);
+            const help = modal.getBody()[0].querySelector('[data-test="perth"]');
+            Templates.replaceNodeContents(help, html, js);
         }
-    }, true);
+    });
 };
 // Double check hoisting
 /*const myTest = (deferred, moduleInfo) => {
