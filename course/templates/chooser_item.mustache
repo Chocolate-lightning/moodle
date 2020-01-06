@@ -31,15 +31,15 @@
     }
 }}
 
-<div role="gridcell" tabindex="0" aria-label="{{label}}" class="option" data-region="chooser-option-container" data-modname="{{modulename}}">
+<div role="gridcell" tabindex="0" aria-label="{{label}}" class="option d-block text-center" data-region="chooser-option-container" data-modname="{{modulename}}">
     <div class="optioninfo" data-region="chooser-option-info-container">
-        <a href="{{urls.addoption}}" aria-label="{{#str}} addnew, moodle, {{label}} {{/str}}" tabindex="0" data-action="add-chooser-option">
-            <span class="optionicon">
+        <a class="d-block" href="{{urls.addoption}}" aria-label="{{#str}} addnew, moodle, {{label}} {{/str}}" tabindex="0" data-action="add-chooser-option">
+            <span class="optionicon d-block">
                 {{#icon}}
                     {{>core/pix_icon}}
                 {{/icon}}
             </span>
-            <span class="optionname">{{label}}</span>
+            <span class="optionname d-block">{{label}}</span>
         </a>
         <div class="optionactions" role="menubar" data-region="chooser-option-actions-container">
             <span class="optionaction" data-action="show-option-summary" tabindex="0" aria-label="{{#str}} moreinfo {{/str}}">

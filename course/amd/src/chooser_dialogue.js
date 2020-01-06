@@ -169,15 +169,8 @@ const clickErrorHandler = (item) => {
  * @param {jQuery} optionSummaryElement The option summary container element
  */
 const showOptionSummary = (optionSummaryElement) => {
-    // Get the current scroll position of the chooser container element.
-    const topPosition = $(selectors.regions.chooser).scrollTop();
-    // Get the height of the chooser container element.
-    const height = $(selectors.regions.chooser).outerHeight();
     // Disable the scroll of the chooser container element.
     $(selectors.regions.chooser).addClass('noscroll');
-
-    // TODO: This is mutating optionSummaryElement.
-    setOptionSummaryPositionAndHeight(optionSummaryElement, topPosition, height);
 
     const optionSummaryContentElement = optionSummaryElement.find(selectors.regions.chooser_summary.content);
     // Set the scroll of the type summary content element to top.
@@ -196,32 +189,13 @@ const showOptionSummary = (optionSummaryElement) => {
 };
 
 /**
- * Set the top position and height of the option summary container.
- * This is used to align the top position and height of the option summary container
- * with the chooser options container.
- *
- * @method setOptionSummaryPositionAndHeight
- * @param {jQuery} optionSummaryElement The option summary container element
- * @param {int} positionTop The top position attributed to the option summary container element
- * @param {int} height The height attributed to the option summary container element
- */
-const setOptionSummaryPositionAndHeight = (optionSummaryElement, positionTop, height) => {
-    const optionSummaryContentElement = optionSummaryElement.find(selectors.regions.chooser_summary.container);
-    const optionSumaryActionsElement = optionSummaryElement.find(selectors.regions.chooser_summary.actions);
-    const contentHeight = height - optionSumaryActionsElement.outerHeight();
-    optionSummaryContentElement.css({'height': `${contentHeight}px`});
-
-    optionSummaryElement.css({'top': `${positionTop}px`, 'height': `${height}px`});
-};
-
-/**
  * Display the module chooser.
  *
  * @method displayChooser
  * @param {EventFacade} e Triggering Event
  * @param {Object} moduleInfo Object containing the data required by the chooser template
  */
-export const displayChooser = async(e, moduleInfo) => {
+export const displayChooser = async(e, data) => {
     const [
         modal,
     ] = await Promise.all([
@@ -232,12 +206,12 @@ export const displayChooser = async(e, moduleInfo) => {
             large: true
         })
     ]);
-window.console.log(moduleInfo);
-    let mappedData = new Map();
-    moduleInfo.allmodules.forEach((module) => {
-       mappedData.set(module.modulename, module);
+
+    let mappedModules = new Map();
+    data.allmodules.forEach((module) => {
+        mappedModules.set(module.modulename, module);
     });
-    window.console.log(mappedData);
+
     modal.getRoot().on(ModalEvents.bodyRendered, (e) => {
         $(e.target).addClass('modchooser');
         // Initially, omit any anchor elements from the focus order in the summary content container.
@@ -259,38 +233,26 @@ window.console.log(moduleInfo);
             // eslint-disable-line
         }
     });
-    /*const deferred = $.Deferred();
 
-    modal.setBody(deferred);
-    myTest(deferred, moduleInfo);*/
-    modal.setBody(Templates.render('core_course/chooser', moduleInfo));
+    modal.setBody(Templates.render('core_course/chooser', data));
     modal.show();
     modal.getBody()[0].addEventListener('click', async(e) => {
-        window.console.log(e);
         if (e.target.matches('[data-region="chooser-option-actions-container"]')) {
-            const module = e.target.closest('[data-region="chooser-option-container"]');
-            window.console.log(module);
-            const mappedName = module.dataset.modname;
-            window.console.log(mappedName);
-            window.console.log(mappedData.get(mappedName));
-            const {html, js} = await Templates.renderForPromise('core_course/chooser_help', mappedData.get(mappedName));
-            window.console.log(html);
-            const help = modal.getBody()[0].querySelector('[data-test="perth"]');
+            const module = e.target.closest(selectors.regions.chooser_option.container);
+            const moduleName = module.dataset.modname;
+            const {html, js} = await Templates.renderForPromise('core_course/chooser_help', mappedModules.get(moduleName));
+            const help = modal.getBody()[0].querySelector(selectors.regions.help);
             Templates.replaceNodeContents(help, html, js);
+            const carousel = $(selectors.regions.carousel);
+            carousel.carousel();
+            carousel.carousel('next');
+            carousel.carousel('pause');
+        }
+        if (e.target.matches(selectors.actions.close_option)) {
+            const carousel = $(selectors.regions.carousel);
+            carousel.carousel();
+            carousel.carousel('prev');
+            carousel.carousel('pause');
         }
     });
 };
-// Double check hoisting
-/*const myTest = (deferred, moduleInfo) => {
-    Templates.render('core_course/chooser', moduleInfo)
-        .then((html, js) => {
-            return deferred.resolve(html, js);
-        })
-        .then(() => {
-            // event listeners
-            // modal.getbody
-        })
-        .catch((e) => {
-            deferred.reject(e);
-        });
-};*/

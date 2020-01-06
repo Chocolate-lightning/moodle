@@ -46,6 +46,8 @@ export default {
             content: getDataSelector('region', 'chooser-option-summary-content-container'),
             actions: getDataSelector('region', 'chooser-option-summary-actions-container'),
         },
+        carousel: getDataSelector('region', 'carousel'),
+        help: getDataSelector('region', 'help'),
     },
     actions: {
         option_actions: {
