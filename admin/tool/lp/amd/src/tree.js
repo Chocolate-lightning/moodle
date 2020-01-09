@@ -26,7 +26,7 @@
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/url', 'core/log'], function($, url, log) {
+define(['jquery', 'core/url', 'core/log', 'ramda'], function($, url, log, R) {
     // Private variables and functions.
     /** @var {String} expandedImage The html for an expanded tree node twistie. */
     var expandedImage = $('<img alt="" src="' + url.imageUrl('t/expanded') + '"/>');
@@ -580,7 +580,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
      * @return {Boolean}
      */
     Tree.prototype.handleBlur = function() {
-        return true;
+        return R.T;
     };
 
     /**

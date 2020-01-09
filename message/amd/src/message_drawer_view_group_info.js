@@ -27,13 +27,15 @@ define(
     'core/templates',
     'core_message/message_repository',
     'core_message/message_drawer_lazy_load_list',
+    'ramda'
 ],
 function(
     $,
     Str,
     Templates,
     Repository,
-    LazyLoadList
+    LazyLoadList,
+    R
 ) {
 
     var LOAD_MEMBERS_LIMIT = 50;
@@ -69,7 +71,7 @@ function(
     var render = function(root, conversation, loggedInUserId) {
         var placeholderCount = conversation.totalMemberCount > 50 ? 50 : conversation.totalMemberCount;
         var placeholders = Array.apply(null, Array(placeholderCount)).map(function() {
-            return true;
+            return R.T;
         });
         var templateContext = {
             name: conversation.name,

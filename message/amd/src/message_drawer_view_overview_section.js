@@ -35,7 +35,8 @@ define(
     'core_message/message_drawer_router',
     'core_message/message_drawer_routes',
     'core_message/message_drawer_lazy_load_list',
-    'core_message/message_drawer_view_conversation_constants'
+    'core_message/message_drawer_view_conversation_constants',
+    'ramda'
 ],
 function(
     $,
@@ -51,7 +52,8 @@ function(
     MessageDrawerRouter,
     MessageDrawerRoutes,
     LazyLoadList,
-    MessageDrawerViewConversationContants
+    MessageDrawerViewConversationContants,
+    R
 ) {
 
     var SELECTORS = {
@@ -125,7 +127,7 @@ function(
         var numPlaceholders = count > 20 ? 20 : count;
         // Array of "true" up to the number of placeholders we want.
         var placeholders = Array.apply(null, Array(numPlaceholders)).map(function() {
-            return true;
+            return R.T;
         });
 
         // Replace the current placeholder (loading spinner) with some nicer placeholders that

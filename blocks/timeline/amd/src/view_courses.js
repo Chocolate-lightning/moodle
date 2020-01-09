@@ -30,7 +30,8 @@ define(
     'core/templates',
     'block_timeline/event_list',
     'core_course/repository',
-    'block_timeline/calendar_events_repository'
+    'block_timeline/calendar_events_repository',
+    'ramda'
 ],
 function(
     $,
@@ -40,7 +41,8 @@ function(
     Templates,
     EventList,
     CourseRepository,
-    EventsRepository
+    EventsRepository,
+    R
 ) {
 
     var SELECTORS = {
@@ -107,7 +109,7 @@ function(
             })
             .catch(function() {
                 // It's not important if this false so just do so silently.
-                return false;
+                return R.F;
             });
     };
 

@@ -24,8 +24,9 @@
 define(['jquery',
         'core/str',
         'tool_lp/competency_rule',
+        'ramda',
         ],
-        function($, Str, RuleBase) {
+        function($, Str, RuleBase, R) {
 
     /**
      * Competency rule all class.
@@ -52,7 +53,7 @@ define(['jquery',
      * @method isValid
      */
     Rule.prototype.isValid = function() {
-        return true;
+        return R.T;
     };
 
     return /** @alias module:tool_lp/competency_rule_all */ Rule;

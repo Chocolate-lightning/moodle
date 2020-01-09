@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function($) {
+define(['jquery', 'ramda'], function($, R) {
 
     /**
      * Competency rule abstract class.
@@ -114,7 +114,7 @@ define(['jquery'], function($) {
      * @method _isValid
      */
     Rule.prototype.isValid = function() {
-        return false;
+        return R.F;
     };
 
     /**

@@ -2,6 +2,7 @@
   'plugins': [
     'babel',
     'promise',
+    'ramda'
   ],
   'env': {
     'browser': true,
@@ -193,6 +194,7 @@
     }],
 
   },
+  "extends": "plugin:ramda/recommended",
   overrides: [
     {
       files: ["**/yui/src/**/*.js"],

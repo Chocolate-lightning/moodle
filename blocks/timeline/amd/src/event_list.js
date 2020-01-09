@@ -30,7 +30,8 @@ define(
     'core/paged_content_factory',
     'core/str',
     'core/user_date',
-    'block_timeline/calendar_events_repository'
+    'block_timeline/calendar_events_repository',
+    'ramda'
 ],
 function(
     $,
@@ -39,7 +40,8 @@ function(
     PagedContentFactory,
     Str,
     UserDate,
-    CalendarEventsRepository
+    CalendarEventsRepository,
+    R
 ) {
 
     var SECONDS_IN_DAY = 60 * 60 * 24;
@@ -460,7 +462,7 @@ function(
                     return hasContent;
                 })
                 .catch(function() {
-                    return false;
+                    return R.F;
                 });
 
                 return html;
