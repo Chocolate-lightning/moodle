@@ -35,6 +35,7 @@ import {debounce} from 'core/utils';
 import {fillInitialValues} from 'core_grades/grades/grader/gradingpanel/comparison';
 import * as Modal from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
+import * as R from 'ramda';
 
 const templateNames = {
     grader: {
@@ -355,7 +356,7 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
 
     // We need this promise to resolve separately so that we can avoid loading the whole interface if there are no users.
     const userList = await getListOfUsers();
-    if (!userList.length) {
+    if (!R.isEmpty(userList)) {
         addNotification({
             message: await getString('nouserstograde', 'core_grades'),
             type: "error",
@@ -445,7 +446,7 @@ export const view = async(getGradeForUser, userid, moduleName, {
     const spinner = addIconToContainerWithPromise(modal.getRoot());
 
     // Handle hidden event.
-    modal.getRoot().on(ModalEvents.hidden, function() {
+    modal.getRoot().on(ModalEvents.hidden, () => {
         // Destroy when hidden.
         modal.destroy();
         if (focusOnClose) {

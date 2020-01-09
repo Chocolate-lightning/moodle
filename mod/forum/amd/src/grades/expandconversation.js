@@ -85,7 +85,7 @@ const showPostInContext = async(rootNode, {
     });
 
     // Handle hidden event.
-    modal.getRoot().on(ModalEvents.hidden, function() {
+    modal.getRoot().on(ModalEvents.hidden, () => {
         // Destroy when hidden.
         modal.destroy();
         try {

@@ -24,6 +24,7 @@
 
 import Templates from 'core/templates';
 import Selectors from './user_picker/selectors';
+import * as R from 'ramda';
 
 const templatePath = 'mod_forum/local/grades/local/grader';
 
@@ -56,10 +57,10 @@ class UserPicker {
     setUserId(userId) {
         // Determine the current index based on the user ID.
         const userIndex = this.userList.findIndex(user => {
-            return user.id === parseInt(userId);
+            return R.equal(user.id, parseInt(userId));
         });
 
-        if (userIndex === -1) {
+        if (R.equal(userIndex, -1)) {
             throw Error(`User with id ${userId} not found`);
         }
 
@@ -196,6 +197,5 @@ export default async(
         userPicker.setUserId(initialUserId);
     }
     await userPicker.render();
-
     return userPicker;
 };
