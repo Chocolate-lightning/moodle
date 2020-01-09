@@ -12530,11 +12530,6 @@ table.calendartable caption {
 
 /* course.less */
 /* COURSE CONTENT */
-.section-modchooser-link img {
-  margin-right: 0.5rem;
-  width: 16px;
-  height: 16px; }
-
 .section_add_menus {
   text-align: right;
   clear: both; }

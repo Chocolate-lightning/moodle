@@ -136,7 +136,7 @@ class core_course_renderer extends plugin_renderer_base {
      * Build the HTML for the module chooser javascript popup.
      *
      * @param int $courseid The course id to fetch modules for.
-     * @return string The composed HTML for the module
+     * @return string
      */
     public function course_modchooser($courseid) {
 
@@ -144,16 +144,8 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $data = json_encode($courseid);
-
-        $script = "
-            require(['core_course/modchooser'], function(ModChooser) {
-                    var modChooserData = {$data};
-                    ModChooser.init(modChooserData);
-                }
-            );";
-
-        $this->page->requires->js_amd_inline($script);
+        $this->page->requires->js_call_amd('core_course/modchooser', 'init', [$courseid]);
+        return '';
     }
 
     /**
@@ -331,7 +323,7 @@ class core_course_renderer extends plugin_renderer_base {
             $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
             $icon = $this->output->pix_icon('t/add', '');
             $span = html_writer::tag('span', $straddeither, ['class' => 'section-modchooser-text', 'data-sectionid' => $section]);
-            $modchooser .= html_writer::tag('span', $icon . $span, array('class' => 'section-modchooser-link'));
+            $modchooser .= html_writer::tag('button', $icon . $span, array('class' => 'section-modchooser-link btn btn-link', 'data-action' => 'open-chooser'));
             $modchooser.= html_writer::end_tag('div');
             $modchooser.= html_writer::end_tag('div');
 

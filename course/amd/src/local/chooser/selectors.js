@@ -24,6 +24,7 @@
 
 /**
  * A small helper function to build queryable data selectors.
+ * @method getDataSelector
  * @param {String} name
  * @param {String} value
  * @return {string}
@@ -58,7 +59,7 @@ export default {
     },
     elements: {
         section: '.section',
-        sectionmodchooser: 'span.section-modchooser-link',
+        sectionmodchooser: 'button.section-modchooser-link',
         sitemenu: '.block_site_main_menu',
         sitetopic: 'div.sitetopic',
     },

@@ -30,7 +30,7 @@
     }
 }}
 <div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container" aria-labelledby="optionsummary_label" aria-describedby="optionsumary_desc">
-    <div class="content text-left px-5 py-4" data-region="chooser-option-summary-content-container">
+    <div class="content text-left mb-5 px-5 py-4" data-region="chooser-option-summary-content-container">
         <div class="heading mb-4">
             <h5 id="optionsummary_label">
                 {{#icon}}
@@ -44,10 +44,10 @@
         </div>
     </div>
     <div class="actions fixed-bottom w-100 d-flex justify-content-between position-absolute py-3 px-4" data-region="chooser-option-summary-actions-container">
-        <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="-1">
+        <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="0">
             {{#str}} back {{/str}}
         </button>
-        <a href="{{urls.addoption}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="-1">
+        <a href="{{urls.addoption}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="0">
             {{#str}} add {{/str}}
         </a>
     </div>

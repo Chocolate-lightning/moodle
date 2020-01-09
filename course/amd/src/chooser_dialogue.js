@@ -25,18 +25,43 @@
 
 import $ from 'jquery';
 import * as ModalEvents from 'core/modal_events';
-import * as CustomEvents from 'core/custom_interaction_events';
 import selectors from 'core_course/local/chooser/selectors';
 import * as ModalFactory from 'core/modal_factory';
 import * as Templates from 'core/templates';
 import {get_string as getString} from 'core/str';
+import {end, arrowLeft, arrowRight, home} from 'core/key_codes';
+
+/**
+ * Given an event from the main module 'page' navigate to it's help section via a carousel.
+ *
+ * @method registerListenerEvents
+ * @param {EventFacade} e Triggering Event
+ * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
+ * @param {Promise} modal Our modal that we are working with
+ * @param {jQuery} carousel Our initialized carousel to manipulate
+ */
+const carouselPageTo = async(e, mappedModules, modal, carousel) => {
+    // Get the systems name for the module just clicked.
+    const module = e.target.closest(selectors.regions.chooserOption.container);
+    const moduleName = module.dataset.modname;
+    // Build up the html & js ready to place into the help section.
+    const {html, js} = await Templates.renderForPromise('core_course/chooser_help', mappedModules.get(moduleName));
+    const help = modal.getBody()[0].querySelector(selectors.regions.help);
+    await Templates.replaceNodeContents(help, html, js);
+    // Trigger the transition between 'pages'.
+    carousel.carousel('next');
+    carousel.carousel('pause');
+
+    const helpContent = help.querySelector(selectors.regions.chooserSummary.content);
+    helpContent.focus();
+};
 
 /**
  * Register chooser related event listeners.
  *
+ * @method registerListenerEvents
  * @param {Promise} modal Our modal that we are working with
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
- * @method registerListenerEvents
  */
 const registerListenerEvents = (modal, mappedModules) => {
     modal.getBody()[0].addEventListener('click', async(e) => {
@@ -44,16 +69,7 @@ const registerListenerEvents = (modal, mappedModules) => {
         carousel.carousel();
         carousel.carousel('pause');
         if (e.target.closest(selectors.actions.optionActions.showSummary)) {
-            // Get the systems name for the module just clicked.
-            const module = e.target.closest(selectors.regions.chooserOption.container);
-            const moduleName = module.dataset.modname;
-            // Build up the html & js ready to place into the help section.
-            const {html, js} = await Templates.renderForPromise('core_course/chooser_help', mappedModules.get(moduleName));
-            const help = modal.getBody()[0].querySelector(selectors.regions.help);
-            Templates.replaceNodeContents(help, html, js);
-            // Trigger the transition between 'pages'.
-            carousel.carousel('next');
-            carousel.carousel('pause');
+            await carouselPageTo(e, mappedModules, modal, carousel);
         }
         // From the help screen go back to the module overview.
         if (e.target.matches(selectors.actions.closeOption)) {
@@ -64,79 +80,63 @@ const registerListenerEvents = (modal, mappedModules) => {
     });
 
     // Register event listeners related to the keyboard navigation controls.
-    initKeyboardNavigation();
+    initKeyboardNavigation(modal, mappedModules);
 };
 
 /**
  * Initialise the keyboard navigation controls for the chooser.
  *
  * @method initKeyboardNavigation
+ * @param {Promise} modal Our modal that we are working with
+ * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  */
-const initKeyboardNavigation = () => {
+const initKeyboardNavigation = (modal, mappedModules) => {
 
-    const chooserOption = $(selectors.regions.chooserOption.container);
+    const chooserOptions = document.querySelectorAll(selectors.regions.chooserOption.container);
 
-    CustomEvents.define(chooserOption, [
-        CustomEvents.events.next,
-        CustomEvents.events.previous,
-        CustomEvents.events.home,
-        CustomEvents.events.end
-    ]);
+    Array.from(chooserOptions).forEach((element) => {
+        return element.addEventListener('keyup', async(e) => {
 
-    chooserOption.on(CustomEvents.events.next, (e) => {
-        const currentOption = $(e.target);
-        const nextOption = currentOption.next();
-        clickErrorHandler(nextOption);
-        nextOption.focus();
-    });
+            // Check for left/ right triggers for showing the help.
+            if (e.keyCode === arrowRight || e.keyCode === arrowLeft) {
+                if (e.target.matches(selectors.actions.optionActions.showSummary)) {
+                    const carousel = $(selectors.regions.carousel);
+                    carousel.carousel();
+                    carousel.carousel('pause');
+                    await carouselPageTo(e, mappedModules, modal, carousel);
+                }
+            }
 
-    chooserOption.on(CustomEvents.events.previous, (e) => {
-        const currentOption = $(e.target);
-        const previousOption = currentOption.prev();
-        clickErrorHandler(previousOption);
-        previousOption.focus();
-    });
+            // Next.
+            if (e.keyCode === arrowRight) {
+                if (!e.target.matches(selectors.actions.optionActions.showSummary)) {
+                    const currentOption = e.target.closest(selectors.regions.chooserOption.container);
+                    const nextOption = currentOption.nextElementSibling;
+                    clickErrorHandler(nextOption);
+                }
+            }
 
-    chooserOption.on(CustomEvents.events.next, selectors.actions.addChooser, (e, data) => {
-        const currentOption = $(data.originalEvent.currentTarget);
-        const nextOption = currentOption.next();
-        clickErrorHandler(nextOption);
-        nextOption.focus();
-    });
+            // Previous.
+            if (e.keyCode === arrowLeft) {
+                if (!e.target.matches(selectors.actions.optionActions.showSummary)) {
+                    const currentOption = e.target.closest(selectors.regions.chooserOption.container);
+                    const previousOption = currentOption.previousElementSibling;
+                    clickErrorHandler(previousOption);
+                }
+            }
 
-    chooserOption.on(CustomEvents.events.previous, selectors.actions.addChooser, (e, data) => {
-        const currentOption = $(data.originalEvent.currentTarget);
-        const previousOption = currentOption.prev();
-        clickErrorHandler(previousOption);
-        previousOption.focus();
-    });
+            if (e.keyCode === home) {
+                const chooserOptions = document.querySelector(selectors.regions.chooserOptions);
+                const firstOption = chooserOptions.firstElementChild;
+                firstOption.focus();
+            }
 
-    chooserOption.on(CustomEvents.events.next, selectors.actions.optionActions.showSummary,
-        (e, data) => {
-            const currentOption = $(data.originalEvent.currentTarget);
-            const nextOption = currentOption.next();
-            clickErrorHandler(nextOption);
-            nextOption.focus();
+            if (e.keyCode === end) {
+                const chooserOptions = document.querySelector(selectors.regions.chooserOptions);
+                const lastOption = chooserOptions.lastElementChild;
+                lastOption.focus();
+            }
         });
-
-    chooserOption.on(CustomEvents.events.previous, selectors.actions.optionActions.showSummary,
-        (e, data) => {
-            const currentOption = $(data.originalEvent.currentTarget);
-            const previousOption = currentOption.prev();
-            clickErrorHandler(previousOption);
-            previousOption.focus();
-        });
-
-    chooserOption.on(CustomEvents.events.home, () => {
-        const chooserOptions = $(selectors.regions.chooserOptions).find(selectors.regions.chooserOption.container);
-        const previousOption = $(chooserOptions).first();
-        previousOption.focus();
-    });
-
-    chooserOption.on(CustomEvents.events.end, () => {
-        const chooserOptions = $(selectors.regions.chooserOptions).find(selectors.regions.chooserOption.container);
-        const nextOption = $(chooserOptions).last();
-        nextOption.focus();
     });
 };
 
@@ -144,11 +144,11 @@ const initKeyboardNavigation = () => {
  * Small error handling function to make sure the navigated to object exists
  *
  * @method clickErrorHandler
- * @param {jQuery} item What we want to check exists
+ * @param {HTMLElement} item What we want to check exists
  */
 const clickErrorHandler = (item) => {
-    if (typeof item === 'undefined') {
-        return;
+    if (item !== null) {
+        item.focus();
     }
 };
 
@@ -160,6 +160,9 @@ const clickErrorHandler = (item) => {
  * @param {Object} data Object containing the data required by the chooser template
  */
 export const displayChooser = async(e, data) => {
+    // Combine a class with the section id to avoid other sectionid data attributes.
+    const origin = document.querySelector(`.section-modchooser-text[data-sectionid="${e.target.dataset.sectionid}"]`);
+
     const [
         modal,
     ] = await Promise.all([
@@ -172,19 +175,17 @@ export const displayChooser = async(e, data) => {
     ]);
 
     // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
-    let mappedModules = new Map();
+    const mappedModules = new Map();
     data.allmodules.forEach((module) => {
         mappedModules.set(module.modulename, module);
     });
 
     // Modal has rendered our initial content, we can allow users to interact.
     modal.getRoot().on(ModalEvents.bodyRendered, (e) => {
-        $(e.target).addClass('modchooser');
-        // Initially, omit any anchor elements from the focus order in the summary content container.
-        const optionSummaryContentAnchors = $(selectors.regions.chooserSummary.content).find('a');
-        optionSummaryContentAnchors.each((key, anchor) => {
-            $(anchor).attr('tabindex', -1);
-        });
+        // Region data attr used as ID fetching was patchy.
+        const modalWrap = document.querySelector(`[data-region="${e.target.dataset.region}"]`);
+        modalWrap.classList.add('modchooser');
+
         // Register event listeners.
         registerListenerEvents(modal, mappedModules);
     });
@@ -193,8 +194,7 @@ export const displayChooser = async(e, data) => {
     modal.getRoot().on(ModalEvents.hidden, () => {
         modal.destroy();
         try {
-            // Does not seem to work.
-            $(e.target.closest('.chooser-link')).focus();
+            origin.closest('.section-modchooser-link').focus();
         } catch (e) {
             // eslint-disable-line
         }

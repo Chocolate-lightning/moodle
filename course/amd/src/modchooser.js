@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.9
  */
-import $ from 'jquery';
+
 import * as ChooserDialogue from 'core_course/chooser_dialogue';
 import CustomEvents from 'core/custom_interaction_events';
 import * as Repository from 'core_course/local/chooser/repository';
@@ -31,24 +31,31 @@ import selectors from 'core_course/local/chooser/selectors';
 /**
  * Mutate the moduleInfo {} to add the section onto the addoption url.
  *
- * @method displayModChooser
+ * @method moduleInfoFormatter
  * @param {EventFacade} e Triggering Event
  * @param {Object} moduleInfo Object containing the data required by the chooser template
+ * @param {HTMLElement} section The selector to limit scope to
  *
  * @return {Object} moduleInfo Object that now has the section information attached
  */
-const moduleInfoFormatter = (e, moduleInfo) => {
+const moduleInfoFormatter = (e, moduleInfo, section) => {
     let sectionid;
     // Set the section for this version of the dialogue.
-    if ($(e.currentTarget).parents(selectors.elements.sitetopic).length) {
+
+    const siteTopic = document.querySelector(`${selectors.elements.sitetopic}`);
+    const siteMenu = document.querySelector(`${selectors.elements.sitemenu}`);
+
+    if (siteTopic !== null) {
         // The site topic has a sectionid of 1.
         sectionid = 1;
-    } else if ($(e.currentTarget).parents(selectors.elements.sitemenu).length) {
+    } else if (siteMenu !== null) {
         // The block site menu has a sectionid of 0.
         sectionid = 0;
-    } else {
-        sectionid = $(e.currentTarget).attr('data-sectionid');
+    } else if (e.target.id) {
+        const caller = section.querySelector(`#${e.target.id}`);
+        sectionid = caller.dataset.sectionid;
     }
+
     // If the sectionid exists, append the section parameter to the add module url.
     if (sectionid !== undefined) {
         moduleInfo.allmodules.forEach((module) => {
@@ -67,23 +74,24 @@ const moduleInfoFormatter = (e, moduleInfo) => {
  * @param {Object} moduleInfo Object containing the data required by the chooser template
  */
 const sectionEventHandler = (section, moduleInfo) => {
-    const chooserspan = $(section).find(selectors.elements.sectionmodchooser);
-    if (!chooserspan.length) {
+    const chooserSpan = section.querySelector(selectors.elements.sectionmodchooser);
+    if (chooserSpan === null) {
         return;
     }
-    const modchooserlink = $(chooserspan).children().wrapAll("<a href='#' />");
 
     const events = [
+        'click',
         CustomEvents.events.activate,
         CustomEvents.events.keyboardActivate
     ];
-    CustomEvents.define(modchooserlink, events);
+
+    CustomEvents.define(chooserSpan, events);
 
     // Display module chooser event listeners.
     events.forEach((event) => {
-        modchooserlink.on(event, (e) => {
+        chooserSpan.addEventListener(event, (e) => {
             e.preventDefault();
-            const builtModuleInfo = moduleInfoFormatter(e, moduleInfo);
+            const builtModuleInfo = moduleInfoFormatter(e, moduleInfo, section);
             ChooserDialogue.displayChooser(e, builtModuleInfo);
         });
     });
@@ -115,7 +123,7 @@ const setupForSection = (moduleInfo) => {
 /**
  * Set up the activity chooser.
  *
- * @method initializer
+ * @method init
  * @param {int} courseid Course ID for the course we want modules for
  */
 export const init = async(courseid) => {
@@ -124,5 +132,6 @@ export const init = async(courseid) => {
     ] = await Promise.all([
         Repository.activityModules(courseid)
     ]);
+
     setupForSection(moduleInfo);
 };

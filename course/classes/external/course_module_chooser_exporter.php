@@ -121,8 +121,9 @@ class course_module_chooser_exporter extends exporter {
 
             $icon = new \pix_icon('icon', '', $modulename);
 
+            // When exporting check if the title is an object, we assume it's a lang string object otherwise we send the raw string.
             $modulesdata[] = [
-                'label' => $module->title->out(),
+                'label' => $module->title instanceof \lang_string ? $module->title->out() : $module->title,
                 'modulename' => $modulename,
                 'description' => $description,
                 'urls' => [
