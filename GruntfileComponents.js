@@ -21,7 +21,7 @@
  */
 
 "use strict";
-/* eslint-env node */
+/* eslint-env es6, node */
 
 /** @var {Object} A list of subsystems in Moodle */
 const componentData = {};
@@ -40,23 +40,27 @@ const fetchComponentData = () => {
     if (!Object.entries(componentData).length) {
         componentData.subsystems = {};
         componentData.pathList = [];
+        componentData.componentsByName = {};
+        componentData.componentsByPath = {};
 
         // Fetch the component definiitions from the distributed JSON file.
         const components = JSON.parse(fs.readFileSync(`${gruntFilePath}/lib/components.json`));
 
         // Build the list of moodle subsystems.
         componentData.subsystems.lib = 'core';
+        componentData.componentsByName.core = 'lib';
         componentData.pathList.push(process.cwd() + path.sep + 'lib');
         for (const [component, thisPath] of Object.entries(components.subsystems)) {
             if (thisPath) {
                 // Prefix "core_" to the front of the subsystems.
                 componentData.subsystems[thisPath] = `core_${component}`;
                 componentData.pathList.push(process.cwd() + path.sep + thisPath);
+                componentData.componentsByName[`core_${component}`] = thisPath;
             }
         }
 
         // The list of components incldues the list of subsystems.
-        componentData.components = componentData.subsystems;
+        componentData.componentsByPath = componentData.subsystems;
 
         // Go through each of the plugintypes.
         Object.entries(components.plugintypes).forEach(([pluginType, pluginTypePath]) => {
@@ -65,7 +69,8 @@ const fetchComponentData = () => {
                 const componentPath = fs.realpathSync(path.dirname(versionPath));
                 const componentName = path.basename(componentPath);
                 const frankenstyleName = `${pluginType}_${componentName}`;
-                componentData.components[`${pluginTypePath}/${componentName}`] = frankenstyleName;
+                componentData.componentsByPath[`${pluginTypePath}/${componentName}`] = frankenstyleName;
+                componentData.componentsByName[frankenstyleName] = `${pluginTypePath}/${componentName}`;
                 componentData.pathList.push(componentPath);
 
                 // Look for any subplugins.
@@ -79,7 +84,8 @@ const fetchComponentData = () => {
                             const componentName = path.basename(componentPath);
                             const frankenstyleName = `${subpluginType}_${componentName}`;
 
-                            componentData.components[`${subpluginTypePath}/${componentName}`] = frankenstyleName;
+                            componentData.componentsByPath[`${subpluginTypePath}/${componentName}`] = frankenstyleName;
+                            componentData.componentsByName[frankenstyleName] = `${subpluginTypePath}/${componentName}`;
                             componentData.pathList.push(componentPath);
                         });
                     });
@@ -106,6 +112,13 @@ const getAmdSrcGlobList = () => {
 
     return globList;
 };
+
+/**
+ * Get an object of frankenstyle names to paths.
+ *
+ * @returns {Object}
+ */
+const getComponentsByName = () => fetchComponentData().componentsByName;
 
 /**
  * Get the list of paths to build YUI sources.
@@ -147,7 +160,7 @@ const getThirdPartyLibsList = relativeTo => {
  * @returns {String|null} Name of matching component.
  */
 const getComponentFromPath = path => {
-    const componentList = fetchComponentData().components;
+    const componentList = fetchComponentData().componentsByPath;
 
     if (componentList.hasOwnProperty(path)) {
         return componentList[path];
@@ -167,7 +180,7 @@ const getOwningComponentDirectory = checkPath => {
 
     // Fetch all components into a reverse sorted array.
     // This ensures that components which are within the directory of another component match first.
-    const pathList = Object.keys(fetchComponentData().components).sort().reverse();
+    const pathList = Object.keys(fetchComponentData().componentsByPath).sort().reverse();
     for (const componentPath of pathList) {
         // If the componentPath is the directory being checked, it will be empty.
         // If the componentPath is a parent of the directory being checked, the relative directory will not start with ..
@@ -181,6 +194,7 @@ const getOwningComponentDirectory = checkPath => {
 
 module.exports = {
     getAmdSrcGlobList,
+    getComponentsByName,
     getComponentFromPath,
     getOwningComponentDirectory,
     getYuiSrcGlobList,

@@ -1,0 +1,9 @@
+inline-diffs: false
+opts: false
+recursive: true
+retries: 0
+# spec dot nyan
+reporter: dot
+spec: "*/**/tests/mocha/**/*.spec.js"
+timeout: false # same as "no-timeout: true" or "timeout: 0"
+require: ./mochaHelper.js
