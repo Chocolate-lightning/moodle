@@ -203,17 +203,18 @@ class behat_course extends behat_base {
 
             // Clicks add activity or resource section link.
             $sectionxpath = $sectionxpath . "/descendant::div" .
-                    "[contains(concat(' ', normalize-space(@class) , ' '), ' section-modchooser ')]/span/a";
+                    "[contains(concat(' ', normalize-space(@class) , ' '), ' section-modchooser ')]/button";
             $sectionnode = $this->find('xpath', $sectionxpath);
             $sectionnode->click();
 
             // Clicks the selected activity if it exists.
-            $activityxpath = "//div[@id='chooseform']/descendant::label" .
-                    "/descendant::span[contains(concat(' ', normalize-space(@class), ' '), ' typename ')]" .
+            $activityxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' modchooser ')]" .
+                    "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
+                    "/descendant::span[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
                     "[normalize-space(.)=$activityliteral]" .
-                    "/parent::label/child::input";
+                    "/parent::a";
             $activitynode = $this->find('xpath', $activityxpath);
-            $activitynode->doubleClick();
+            $activitynode->click();
 
         } else {
             // Without Javascript.
