@@ -163,6 +163,14 @@ export const displayChooser = async(e, data) => {
     // Combine a class with the section id to avoid other sectionid data attributes.
     const origin = document.querySelector(`.section-modchooser-text[data-sectionid="${e.target.dataset.sectionid}"]`);
 
+    // TODO: This is to mock lists activities.
+    /**
+     * templateData.recommended = data.allmodules.filter(mod => mod.recommended === true);
+     * templateData.favourites = data.allmodules.filter(mod => mod.favourite === true);
+     */
+    data.recommended = data.allmodules.slice(12);
+    data.favourites = data.allmodules.slice(0, 5);
+    window.console.log(data);
     const [
         modal,
     ] = await Promise.all([
