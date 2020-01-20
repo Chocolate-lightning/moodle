@@ -41,7 +41,6 @@ import selectors from 'core_course/local/chooser/selectors';
 const moduleInfoFormatter = (e, moduleInfo, section) => {
     let sectionid;
     // Set the section for this version of the dialogue.
-
     const siteTopic = document.querySelector(`${selectors.elements.sitetopic}`);
     const siteMenu = document.querySelector(`${selectors.elements.sitemenu}`);
 
@@ -51,8 +50,8 @@ const moduleInfoFormatter = (e, moduleInfo, section) => {
     } else if (siteMenu !== null) {
         // The block site menu has a sectionid of 0.
         sectionid = 0;
-    } else if (e.target.id) {
-        const caller = section.querySelector(`#${e.target.id}`);
+    } else if (e.currentTarget.id) {
+        const caller = section.querySelector(`#${e.currentTarget.id}`);
         sectionid = caller.dataset.sectionid;
     }
 
@@ -89,9 +88,9 @@ const sectionEventHandler = (section, moduleInfo) => {
 
     // Display module chooser event listeners.
     events.forEach((event) => {
-        chooserSpan.addEventListener(event, (e) => {
+        chooserSpan.addEventListener(event, async(e) => {
             e.preventDefault();
-            const builtModuleInfo = moduleInfoFormatter(e, moduleInfo, section);
+            const builtModuleInfo = await moduleInfoFormatter(e, moduleInfo, section);
             ChooserDialogue.displayChooser(e, builtModuleInfo);
         });
     });

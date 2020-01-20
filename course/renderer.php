@@ -322,8 +322,13 @@ class core_course_renderer extends plugin_renderer_base {
             $modchooser = html_writer::start_tag('div', array('class' => 'mdl-right'));
             $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
             $icon = $this->output->pix_icon('t/add', '');
-            $span = html_writer::tag('span', $straddeither, ['class' => 'section-modchooser-text', 'data-sectionid' => $section]);
-            $modchooser .= html_writer::tag('button', $icon . $span, array('class' => 'section-modchooser-link btn btn-link', 'data-action' => 'open-chooser'));
+            $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
+            $modchooser .= html_writer::tag('button', $icon . $span, array(
+                    'class' => 'section-modchooser-link btn btn-link',
+                    'data-action' => 'open-chooser',
+                    'data-sectionid' => $section
+                )
+            );
             $modchooser.= html_writer::end_tag('div');
             $modchooser.= html_writer::end_tag('div');
 

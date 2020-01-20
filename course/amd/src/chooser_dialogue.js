@@ -161,7 +161,8 @@ const clickErrorHandler = (item) => {
  */
 export const displayChooser = async(e, data) => {
     // Combine a class with the section id to avoid other sectionid data attributes.
-    const origin = document.querySelector(`.section-modchooser-text[data-sectionid="${e.target.dataset.sectionid}"]`);
+    const origin =
+        document.querySelector(`${selectors.elements.sectionmodchooser}[data-sectionid="${e.currentTarget.dataset.sectionid}"]`);
 
     const [
         modal,
@@ -194,7 +195,7 @@ export const displayChooser = async(e, data) => {
     modal.getRoot().on(ModalEvents.hidden, () => {
         modal.destroy();
         try {
-            origin.closest('.section-modchooser-link').focus();
+            origin.focus();
         } catch (e) {
             // eslint-disable-line
         }
