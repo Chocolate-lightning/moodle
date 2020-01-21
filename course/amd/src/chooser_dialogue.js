@@ -29,13 +29,13 @@ import selectors from 'core_course/local/chooser/selectors';
 import * as ModalFactory from 'core/modal_factory';
 import * as Templates from 'core/templates';
 import {get_string as getString} from 'core/str';
-import {end, arrowLeft, arrowRight, home} from 'core/key_codes';
+import {end, arrowLeft, arrowRight, arrowUp, arrowDown, home} from 'core/key_codes';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
  *
  * @method carouselPageTo
- * @param {EventFacade} e Triggering Event
+ * @param {Event} e Triggering Event
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  * @param {Promise} modal Our modal that we are working with
  * @param {jQuery} carousel Our initialized carousel to manipulate
@@ -97,8 +97,9 @@ const initKeyboardNavigation = (modal, mappedModules) => {
     Array.from(chooserOptions).forEach((element) => {
         return element.addEventListener('keyup', async(e) => {
 
+            const chooserOptions = document.querySelector(selectors.regions.chooserOptions);
             // Check for left/ right triggers for showing the help.
-            if (e.keyCode === arrowRight || e.keyCode === arrowLeft) {
+            if (e.keyCode === arrowRight || e.keyCode === arrowLeft || e.keyCode === arrowUp || e.keyCode === arrowDown) {
                 if (e.target.matches(selectors.actions.optionActions.showSummary)) {
                     const carousel = $(selectors.regions.carousel);
                     carousel.carousel();
@@ -108,31 +109,31 @@ const initKeyboardNavigation = (modal, mappedModules) => {
             }
 
             // Next.
-            if (e.keyCode === arrowRight) {
+            if (e.keyCode === arrowRight || e.keyCode === arrowDown) {
                 if (!e.target.matches(selectors.actions.optionActions.showSummary)) {
                     const currentOption = e.target.closest(selectors.regions.chooserOption.container);
                     const nextOption = currentOption.nextElementSibling;
-                    clickErrorHandler(nextOption);
+                    const firstOption = chooserOptions.firstElementChild;
+                    clickErrorHandler(nextOption, firstOption);
                 }
             }
 
             // Previous.
-            if (e.keyCode === arrowLeft) {
+            if (e.keyCode === arrowLeft || e.keyCode === arrowUp) {
                 if (!e.target.matches(selectors.actions.optionActions.showSummary)) {
                     const currentOption = e.target.closest(selectors.regions.chooserOption.container);
                     const previousOption = currentOption.previousElementSibling;
-                    clickErrorHandler(previousOption);
+                    const lastOption = chooserOptions.lastElementChild;
+                    clickErrorHandler(previousOption, lastOption);
                 }
             }
 
             if (e.keyCode === home) {
-                const chooserOptions = document.querySelector(selectors.regions.chooserOptions);
                 const firstOption = chooserOptions.firstElementChild;
                 firstOption.focus();
             }
 
             if (e.keyCode === end) {
-                const chooserOptions = document.querySelector(selectors.regions.chooserOptions);
                 const lastOption = chooserOptions.lastElementChild;
                 lastOption.focus();
             }
@@ -145,10 +146,13 @@ const initKeyboardNavigation = (modal, mappedModules) => {
  *
  * @method clickErrorHandler
  * @param {HTMLElement} item What we want to check exists
+ * @param {HTMLElement} fallback If we dont match anything fallback the focus
  */
-const clickErrorHandler = (item) => {
+const clickErrorHandler = (item, fallback) => {
     if (item !== null) {
         item.focus();
+    } else {
+        fallback.focus();
     }
 };
 
