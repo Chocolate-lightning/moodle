@@ -145,6 +145,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
 
         $this->page->requires->js_call_amd('core_course/modchooser', 'init', [$courseid]);
+        $this->page->requires->js_call_amd('core_course/newmodchooser', 'init', [$courseid]);
         return '';
     }
 
