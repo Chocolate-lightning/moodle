@@ -202,14 +202,8 @@ const registerEventHandlers = (modalMap, modulesMap) => {
     // Display module chooser event listeners.
     events.forEach((event) => {
         document.addEventListener(event, (e) => {
-            if (e.target.matches(selectors.elements.sectionmodchooser)) {
-                const caller = document.querySelector(`#${e.target.id}`);
-                const sectionid = caller.dataset.sectionid;
-                const modal = modalMap.get(sectionid);
-                ChooserDialogue.displayChooser(caller, modal, modulesMap.get(sectionid));
-            } else if (e.target.parentNode.matches(selectors.elements.sectionmodchooser)) {
-                // Dirty hack as e.currentTarget.matches() is not playing nice.
-                const caller = document.querySelector(`#${e.target.parentNode.id}`);
+            if (e.target.closest(selectors.elements.sectionmodchooser)) {
+                const caller = e.target.closest(selectors.elements.sectionmodchooser);
                 const sectionid = caller.dataset.sectionid;
                 const modal = modalMap.get(sectionid);
                 ChooserDialogue.displayChooser(caller, modal, modulesMap.get(sectionid));
