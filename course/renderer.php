@@ -144,7 +144,7 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $this->page->requires->js_call_amd('core_course/modchooser', 'init', [$courseid]);
+        //$this->page->requires->js_call_amd('core_course/modchooser', 'init', [$courseid]);
         $this->page->requires->js_call_amd('core_course/newmodchooser', 'init', [$courseid]);
         return '';
     }
@@ -327,7 +327,8 @@ class core_course_renderer extends plugin_renderer_base {
             $modchooser .= html_writer::tag('button', $icon . $span, array(
                     'class' => 'section-modchooser-link btn btn-link',
                     'data-action' => 'open-chooser',
-                    'data-sectionid' => $section
+                    'data-sectionid' => $section,
+                    'disabled' => true
                 )
             );
             $modchooser.= html_writer::end_tag('div');

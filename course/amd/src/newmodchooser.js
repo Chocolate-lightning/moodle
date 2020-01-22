@@ -38,15 +38,14 @@ export const init = async(courseid) => {
 
     const sectionIds = fetchSectionIds();
 
-    const builtModuleData = sectionIdMapper(webserviceData, sectionIds);
+    const builtModuleData = await sectionIdMapper(webserviceData, sectionIds);
 
     const modalMap = await modalMapper(builtModuleData);
-    window.console.log("modalMap");
-    window.console.log(modalMap.get("1"));
-    const modal = modalMap.get("1");
-    modal.show();
-    // Click handlers TODO
-    // registerEventHandlers(modalMap);
+
+    // User interaction handlers.
+    registerEventHandlers(modalMap);
+
+    enableInteraction();
 };
 
 const fetchModules = async(courseid) => {
@@ -85,13 +84,14 @@ const buildBaseModal = async() => {
 };
 
 const sectionIdMapper = (webServiceData, sectionIds) => {
-    // TODO FIX IT FROM ALWAYS APPENDING.
     const builtDataMap = new Map();
-    sectionIds.map((id) => {
-        webServiceData.allmodules.map((module) => {
+    sectionIds.forEach((id) => {
+        // We need to take a fresh deep copy of the original data as an object is a reference type.
+        let newData = JSON.parse(JSON.stringify(webServiceData));
+        newData.allmodules.forEach((module) => {
             module.urls.addoption += '&section=' + id;
         });
-        builtDataMap.set(id, webServiceData.allmodules);
+        builtDataMap.set(id, newData.allmodules);
     });
     return builtDataMap;
 };
@@ -99,6 +99,7 @@ const sectionIdMapper = (webServiceData, sectionIds) => {
 const modalMapper = async(builtModuleData) => {
     const modalMap = new Map();
     const iter = builtModuleData.entries();
+    // We need to use a iterator structure as it is a blocking structure.
     let result = iter.next();
     while (!result.done) {
         let key = result.value[0];
@@ -106,19 +107,73 @@ const modalMapper = async(builtModuleData) => {
 
         // This may be stuck here :/
         const modal = await buildBaseModal();
-        const dummy = {};
+
         // Run a call off to a new func for filtering favs & recommended.
-        dummy.default = value;
-        const body = await Templates.render('core_course/chooser', dummy);
+        const templateData = templateDataBuilder(value);
+        const body = await Templates.render('core_course/chooser', templateData);
         await modal.setBody(body);
-        window.console.log(key);
-        window.console.log(modal);
         modalMap.set(key, modal);
 
         result = iter.next();
     }
 
-    window.console.log('running before map built');
-    window.console.log(modalMap);
     return modalMap;
+};
+
+const templateDataBuilder = (data) => {
+    // const recommended = data.filter(mod => mod.recommended === true);
+    // const favourites = data.filter(mod => mod.favourite === true);
+    // Switching for the active tab.
+    // foo ? foo : bar
+    const builtData = {
+        default: data,
+    };
+    return builtData;
+};
+
+const registerEventHandlers = (modalMap) => {
+    /*const events = [
+        'click',
+        CustomEvents.events.activate,
+        CustomEvents.events.keyboardActivate
+    ];
+
+    CustomEvents.define(document, events);
+
+    // Display module chooser event listeners.
+    events.forEach((event) => {
+        document.addEventListener(event, async(e) => {
+            window.console.log(e.currentTarget);
+            if (e.currentTarget.matches(selectors.elements.sectionmodchooser)) {
+                window.console.log(e);
+                window.console.log(modalMap);
+                const caller = document.querySelector(`#${e.currentTarget.id}`);
+                //const sectionid = caller.dataset.sectionid;
+                window.console.log(caller);
+                //ChooserDialogue.displayChooser(e, builtModuleInfo);
+            }
+        });
+    });*/
+    document.addEventListener('click', (e) => {
+        if (e.target.matches(selectors.elements.sectionmodchooser)) {
+            window.console.log(e);
+            window.console.log(modalMap);
+            const caller = document.querySelector(`#${e.target.id}`);
+            const sectionid = caller.dataset.sectionid;
+            window.console.log(sectionid);
+            const temp = modalMap.get(sectionid);
+            temp.show();
+        } else {
+            window.console.log("e");
+            window.console.log(e);
+        }
+    });
+};
+
+const enableInteraction = () => {
+    const sections = document.querySelectorAll(`${selectors.elements.section}[role="region"]`);
+    Array.from(sections).map((section) => {
+        const button = section.querySelector(`${selectors.elements.sectionmodchooser}`);
+        button.disabled = false;
+    });
 };
