@@ -56,6 +56,7 @@ export default {
         },
         addChooser: getDataSelector('action', 'add-chooser-option'),
         closeOption: getDataSelector('action', 'close-chooser-option-summary'),
+        hide: getDataSelector('action', 'hide')
     },
     elements: {
         section: '.section',

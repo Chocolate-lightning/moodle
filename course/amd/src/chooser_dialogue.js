@@ -26,7 +26,7 @@ import $ from 'jquery';
 import * as ModalEvents from 'core/modal_events';
 import selectors from 'core_course/local/chooser/selectors';
 import * as Templates from 'core/templates';
-import {end, arrowLeft, arrowRight, arrowUp, arrowDown, home} from 'core/key_codes';
+import {end, arrowLeft, arrowRight, arrowUp, arrowDown, home, tab} from 'core/key_codes';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -89,7 +89,7 @@ const registerListenerEvents = (modal, mappedModules) => {
  */
 const initKeyboardNavigation = (modal, mappedModules) => {
 
-    const chooserOptions = document.querySelectorAll(selectors.regions.chooserOption.container);
+    const chooserOptions = modal.getBody()[0].querySelectorAll(selectors.regions.chooserOption.container);
 
     Array.from(chooserOptions).forEach((element) => {
         return element.addEventListener('keyup', async(e) => {
@@ -134,6 +134,14 @@ const initKeyboardNavigation = (modal, mappedModules) => {
                 const lastOption = chooserOptions.lastElementChild;
                 lastOption.focus();
             }
+
+            if (e.keyCode === tab) {
+                // We want the user to get focus on the close button if they tab through an entire module.
+                if (e.target.matches(selectors.regions.chooserOption.container) && e.target !== chooserOptions.firstElementChild) {
+                    const closeBtn = modal.getModal()[0].querySelector(selectors.actions.hide);
+                    closeBtn.focus();
+                }
+            }
         });
     });
 };
@@ -170,7 +178,7 @@ export const displayChooser = async(origin, modal, sectionModules) => {
     });
 
     // Register event listeners.
-    registerListenerEvents(modal, mappedModules);
+    await registerListenerEvents(modal, mappedModules);
 
     // We want to focus on the action select when the dialog is closed.
     modal.getRoot().on(ModalEvents.hidden, () => {
