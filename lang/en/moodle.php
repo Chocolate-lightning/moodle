@@ -43,6 +43,7 @@ $string['activityselect'] = 'Select this activity to be moved elsewhere';
 $string['activitysince'] = 'Activity since {$a}';
 $string['activitytypetitle'] = '{$a->activity} - {$a->type}';
 $string['activityweighted'] = 'Activity per user';
+$string['actionsfor'] = 'Actions for {$a}';
 $string['add'] = 'Add';
 $string['addactivity'] = 'Add an activity...';
 $string['addactivitytosection'] = 'Add an activity to section \'{$a}\'';
