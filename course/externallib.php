@@ -4185,7 +4185,7 @@ class core_course_external extends external_api {
     /**
      * Given a course ID fetch all accessible modules for that course
      *
-     * @param int courseid The course we want to fetch the modules for
+     * @param int $courseid The course we want to fetch the modules for
      * @return array Contains array of modules and their metadata
      * @throws moodle_exception
      */
