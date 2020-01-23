@@ -26,7 +26,7 @@ import $ from 'jquery';
 import * as ModalEvents from 'core/modal_events';
 import selectors from 'core_course/local/chooser/selectors';
 import * as Templates from 'core/templates';
-import {end, arrowLeft, arrowRight, arrowUp, arrowDown, home} from 'core/key_codes';
+import {end, arrowLeft, arrowRight, arrowUp, arrowDown, home, tab, enter, space} from 'core/key_codes';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -49,8 +49,10 @@ const carouselPageTo = async(e, mappedModules, modal, carousel) => {
     carousel.carousel('next');
     carousel.carousel('pause');
 
-    const helpContent = help.querySelector(selectors.regions.chooserSummary.content);
-    helpContent.focus();
+    carousel.on('slid.bs.carousel', () => {
+        const helpContent = help.querySelector(selectors.regions.chooserSummary.description);
+        helpContent.focus();
+    });
 };
 
 /**
@@ -61,18 +63,26 @@ const carouselPageTo = async(e, mappedModules, modal, carousel) => {
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  */
 const registerListenerEvents = (modal, mappedModules) => {
+
     modal.getBody()[0].addEventListener('click', async(e) => {
         const carousel = $(selectors.regions.carousel);
         carousel.carousel();
+        carousel.off('keydown.bs.carousel');
         carousel.carousel('pause');
         if (e.target.closest(selectors.actions.optionActions.showSummary)) {
             await carouselPageTo(e, mappedModules, modal, carousel);
         }
+
         // From the help screen go back to the module overview.
         if (e.target.matches(selectors.actions.closeOption)) {
             // Trigger the transition between 'pages'.
             carousel.carousel('prev');
-            carousel.carousel('dispose');
+            carousel.on('slid.bs.carousel', async() => {
+                const module = e.target.dataset.modname;
+                const allModules = document.querySelector(selectors.regions.modules);
+                const caller = allModules.querySelector(`[role="gridcell"][data-modname=${module}]`);
+                await caller.focus();
+            });
         }
     });
 
@@ -89,17 +99,18 @@ const registerListenerEvents = (modal, mappedModules) => {
  */
 const initKeyboardNavigation = (modal, mappedModules) => {
 
-    const chooserOptions = document.querySelectorAll(selectors.regions.chooserOption.container);
+    const chooserOptions = modal.getBody()[0].querySelectorAll(selectors.regions.chooserOption.container);
 
     Array.from(chooserOptions).forEach((element) => {
         return element.addEventListener('keyup', async(e) => {
 
             const chooserOptions = document.querySelector(selectors.regions.chooserOptions);
-            // Check for left/ right triggers for showing the help.
-            if (e.keyCode === arrowRight || e.keyCode === arrowLeft || e.keyCode === arrowUp || e.keyCode === arrowDown) {
+            // Check for enter/ space triggers for showing the help.
+            if (e.keyCode === enter || e.keyCode === space) {
                 if (e.target.matches(selectors.actions.optionActions.showSummary)) {
                     const carousel = $(selectors.regions.carousel);
                     carousel.carousel();
+                    carousel.off('keydown.bs.carousel');
                     carousel.carousel('pause');
                     await carouselPageTo(e, mappedModules, modal, carousel);
                 }
@@ -133,6 +144,14 @@ const initKeyboardNavigation = (modal, mappedModules) => {
             if (e.keyCode === end) {
                 const lastOption = chooserOptions.lastElementChild;
                 lastOption.focus();
+            }
+
+            if (e.keyCode === tab) {
+                // We want the user to get focus on the close button if they tab through an entire module.
+                if (e.target.matches(selectors.regions.chooserOption.container) && e.target !== chooserOptions.firstElementChild) {
+                    const closeBtn = modal.getModal()[0].querySelector(selectors.actions.hide);
+                    closeBtn.focus();
+                }
             }
         });
     });
@@ -170,16 +189,22 @@ export const displayChooser = async(origin, modal, sectionModules) => {
     });
 
     // Register event listeners.
-    registerListenerEvents(modal, mappedModules);
+    await registerListenerEvents(modal, mappedModules);
 
     // We want to focus on the action select when the dialog is closed.
     modal.getRoot().on(ModalEvents.hidden, () => {
         try {
+            // Just in case a user shuts the chooser on the help screen set it back to default.
+            const carousel = $(selectors.regions.carousel);
+            carousel.carousel();
+            carousel.carousel(0);
+
             origin.focus();
         } catch (e) {
             // eslint-disable-line
         }
     });
+
 
     modal.show();
 };
