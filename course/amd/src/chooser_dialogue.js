@@ -181,9 +181,14 @@ export const displayChooser = async(origin, modal, sectionModules) => {
     await registerListenerEvents(modal, mappedModules);
 
     // We want to focus on the action select when the dialog is closed.
-    // TODO: fix the scenario where summary is open when modal is closed
     modal.getRoot().on(ModalEvents.hidden, () => {
         try {
+            // Just in case a user shuts the chooser on the help screen set to back to default.
+            const carousel = $(selectors.regions.carousel);
+            carousel.carousel();
+            carousel.carousel(0);
+            carousel.carousel('dispose');
+
             origin.focus();
         } catch (e) {
             // eslint-disable-line

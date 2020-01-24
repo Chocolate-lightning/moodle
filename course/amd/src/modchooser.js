@@ -167,7 +167,7 @@ const templateDataBuilder = (data) => {
     // Switching for the active tab.
     // foo ? foo : bar
     const builtData = {
-        default: data,
+        'default': data,
     };
     return builtData;
 };
