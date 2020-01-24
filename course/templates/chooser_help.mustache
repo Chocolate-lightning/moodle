@@ -39,7 +39,7 @@
                 {{label}}
             </h5>
         </div>
-        <div id="optionsumary_desc" class="description">
+        <div id="optionsumary_desc" class="description" data-region="summary-description" tabindex="0">
             {{{description}}}
         </div>
     </div>
@@ -47,7 +47,7 @@
         <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="0">
             {{#str}} back {{/str}}
         </button>
-        <a href="{{urls.addoption}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="0">
+        <a href="{{urls.addoption}}" aria-label="{{#str}} addnew, moodle, {{label}} {{/str}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="0">
             {{#str}} add {{/str}}
         </a>
     </div>

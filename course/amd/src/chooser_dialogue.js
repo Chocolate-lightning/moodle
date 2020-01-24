@@ -49,8 +49,8 @@ const carouselPageTo = async(e, mappedModules, modal, carousel) => {
     carousel.carousel('next');
     carousel.carousel('pause');
 
-    const helpContent = help.querySelector(selectors.regions.chooserSummary.content);
-    helpContent.focus();
+    const helpContent = help.querySelector(selectors.regions.chooserSummary.description);
+    await helpContent.focus();
 };
 
 /**
@@ -181,6 +181,7 @@ export const displayChooser = async(origin, modal, sectionModules) => {
     await registerListenerEvents(modal, mappedModules);
 
     // We want to focus on the action select when the dialog is closed.
+    // TODO: fix the scenario where summary is open when modal is closed
     modal.getRoot().on(ModalEvents.hidden, () => {
         try {
             origin.focus();
