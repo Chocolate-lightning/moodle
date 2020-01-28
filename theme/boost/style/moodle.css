@@ -10611,17 +10611,111 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   margin-top: -1px;
   padding-top: 1px; }
 
-.chooserdialogue-course-modchooser .modicon .icon {
-  width: 24px;
-  height: 24px;
-  font-size: 24px; }
-
 @media (max-width: 575.98px) {
   .jsenabled .choosercontainer #chooseform .alloptions {
     max-width: 100%; }
   .jsenabled .choosercontainer #chooseform .instruction,
   .jsenabled .choosercontainer #chooseform .typesummary {
     position: static; } }
+
+/**
+ * Module chooser dialogue (moodle-core-chooserdialogue)
+ *
+ * This CSS belong to the chooser dialogue which should work both with, and
+ * without javascript enabled
+ */
+.modchooser .modal-body {
+  padding: 0; }
+
+.modchoosercontainer {
+  height: 450px;
+  overflow-y: auto; }
+
+.modchoosercontainer.noscroll {
+  overflow-y: hidden; }
+
+.modchoosercontainer .optionscontainer {
+  position: relative;
+  overflow-x: hidden;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1rem; }
+
+.modchoosercontainer .optionscontainer .option {
+  display: block;
+  padding: 1em 0.5em 1em 0.5em;
+  width: 118px;
+  text-align: center; }
+
+.modchoosercontainer .optionscontainer .option .optioninfo {
+  width: 100%; }
+  .modchoosercontainer .optionscontainer .option .optioninfo a {
+    display: block;
+    width: 100%;
+    color: #495057; }
+    .modchoosercontainer .optionscontainer .option .optioninfo a:hover {
+      text-decoration: none; }
+    .modchoosercontainer .optionscontainer .option .optioninfo a .optionname {
+      display: block;
+      margin-top: 0.5em;
+      vertical-align: middle;
+      width: 100%; }
+    .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon {
+      display: block;
+      width: 100%; }
+      .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon .icon {
+        margin: 0;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        font-size: 32px; }
+
+.modchoosercontainer .optionscontainer .option .optionactions {
+  margin-top: .3rem; }
+  .modchoosercontainer .optionscontainer .option .optionactions .optionaction {
+    cursor: pointer;
+    margin: 0.2rem;
+    color: #868e96; }
+    .modchoosercontainer .optionscontainer .option .optionactions .optionaction i {
+      margin: 0; }
+
+.modchoosercontainer .optionscontainer .option .optionsummary {
+  visibility: hidden;
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 100%;
+  margin: 0;
+  background-color: #fff;
+  overflow-x: hidden;
+  overflow-y: auto;
+  line-height: 2em;
+  transition: visibility 0.3s linear, left 0.3s linear;
+  width: 100%; }
+  .modchoosercontainer .optionscontainer .option .optionsummary .content {
+    padding: 2rem 3rem;
+    text-align: left;
+    overflow-y: auto; }
+    .modchoosercontainer .optionscontainer .option .optionsummary .content .heading {
+      margin-bottom: 1.5rem; }
+      .modchoosercontainer .optionscontainer .option .optionsummary .content .heading .icon {
+        height: 32px;
+        width: 32px;
+        font-size: 32px;
+        padding: 0; }
+  .modchoosercontainer .optionscontainer .option .optionsummary .actions {
+    width: 100%;
+    padding: 1rem 2rem;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between; }
+
+.modchoosercontainer .optionscontainer .option .optionsummary.open {
+  visibility: visible;
+  left: 0; }
 
 /* Form element: listing */
 .formlistingradio {
