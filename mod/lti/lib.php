@@ -245,27 +245,41 @@ function lti_get_shortcuts($defaultitem) {
  */
 function lti_get_course_content_items(\core_course\local\entity\content_item $defaultmodulecontentitem, \stdClass $user,
         \stdClass $course) {
+
+    $allitems = mod_lti_get_all_content_items($defaultmodulecontentitem);
+    if ($allitems[0]->get_id() == 1) {
+        // We need a cap to view the 'external tool' item in a course.
+        if (!has_capability('mod/lti:addmanualinstance', context_course::instance($course->id), $user)) {
+            unset($allitems[0]);
+        }
+    }
+    return $allitems;
+}
+
+/**
+ * Return all content items which can be added to any course.
+ *
+ * @param \core_course\local\entity\content_item $defaultmodulecontentitem
+ * @return array the array of content items.
+ */
+function mod_lti_get_all_content_items(\core_course\local\entity\content_item $defaultmodulecontentitem): array {
     global $CFG;
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-    $types = [];
-
     // The 'External tool' entry (the main module content item), should always take the id of 1.
-    if (has_capability('mod/lti:addmanualinstance', context_course::instance($course->id), $user)) {
-        $types = [new \core_course\local\entity\content_item(
-            1,
-            $defaultmodulecontentitem->get_name(),
-            $defaultmodulecontentitem->get_title(),
-            $defaultmodulecontentitem->get_link(),
-            $defaultmodulecontentitem->get_icon(),
-            $defaultmodulecontentitem->get_help(),
-            $defaultmodulecontentitem->get_archetype(),
-            $defaultmodulecontentitem->get_component_name()
-        )];
-    }
+    $types = [new \core_course\local\entity\content_item(
+        1,
+        $defaultmodulecontentitem->get_name(),
+        $defaultmodulecontentitem->get_title(),
+        $defaultmodulecontentitem->get_link(),
+        $defaultmodulecontentitem->get_icon(),
+        $defaultmodulecontentitem->get_help(),
+        $defaultmodulecontentitem->get_archetype(),
+        $defaultmodulecontentitem->get_component_name()
+    )];
 
     // Other, preconfigured tools take their own id + 1, so we'll never clash with the module's entry.
-    $preconfiguredtools = lti_get_configured_types($course->id, $defaultmodulecontentitem->get_link()->param('sr'));
+    $preconfiguredtools = lti_get_configured_types(SITEID);
     foreach ($preconfiguredtools as $preconfiguredtool) {
         $types[] = new \core_course\local\entity\content_item(
             $preconfiguredtool->id + 1,
