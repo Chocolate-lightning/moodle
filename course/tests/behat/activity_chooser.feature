@@ -51,5 +51,6 @@ Feature: Display and choose from the available activities in course
     And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
     And I should see "Back"
     When I click on "Back" "button"
-    And "Back" "button" in the "//div[@class='carousel-item active']" "xpath_element" should not be visible
+    And I should see "Forum" in the "//div[@class='carousel-item active']" "xpath_element"
+    And "Back" "button" should not exist in the "//div[@class='carousel-item active']" "xpath_element"
     Then I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
