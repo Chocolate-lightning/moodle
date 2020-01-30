@@ -1939,4 +1939,36 @@ class behat_course extends behat_base {
             throw new ExpectationException($msg, $this->getSession());
         }
     }
+
+    /**
+     * Open the activity chooser in a course.
+     *
+     * TODO: Add a section id?
+     * @Given /^I open the activity chooser$/
+     */
+    public function i_open_the_activity_chooser() {
+        $this->execute('behat_general::i_click_on',
+            array('.section-modchooser-link', 'css_element'));
+
+        $node = $this->get_selected_node('css_element', '.modal-dialog.modchooser');
+        $this->ensure_node_is_visible($node);
+    }
+
+    /**
+     * Click on an activity in the activity chooser.
+     * @param string $module The module name that we want to add
+     *
+     * @Given /^I add the "(?P<module>(?:[^"]|\\")*)" module in the activity chooser$/
+     */
+    public function i_add_an_activity_in_the_activity_chooser(string $module) {
+        $selector = "//div[@aria-label='{$module}']";
+
+        return $this->execute('behat_general::i_click_on_in_the',
+            ["//a[@data-action='add-chooser-option']", "xpath_element", $this->escape($selector), "xpath_element"]
+        );
+    }
+
+    /**
+     * Get more information on a module within the activity chooser.
+     */
 }
