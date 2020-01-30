@@ -1939,4 +1939,57 @@ class behat_course extends behat_base {
             throw new ExpectationException($msg, $this->getSession());
         }
     }
+
+    /**
+     * Open the activity chooser in a course.
+     *
+     * @Given /^I open the activity chooser$/
+     */
+    public function i_open_the_activity_chooser() {
+        $this->execute('behat_general::i_click_on',
+            array('//button[@data-action="open-chooser"]', 'xpath_element'));
+
+        $node = $this->get_selected_node('xpath_element', '//div[@data-region="modules"]');
+        $this->ensure_node_is_visible($node);
+    }
+
+    /**
+     * Click on an activity in the activity chooser.
+     * @param string $module The module name that we want to add
+     *
+     * @Given /^I add the "(?P<module>(?:[^"]|\\")*)" module in the activity chooser$/
+     */
+    public function i_add_an_activity_in_the_activity_chooser(string $module) {
+        $node = $this->get_node_in_container("xpath_element", "//a[@data-action='add-chooser-option']", "xpath_element", "//div[@aria-label='{$module}']");
+        $this->ensure_node_is_visible($node);
+        $node->click();
+
+    }
+
+    /**
+     * Perform an action on a module within the activity chooser.
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @param string $module The module name that we want to add
+     *
+     * @Given /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" in the "(?P<module>(?:[^"]|\\")*)" module cell in the activity chooser$/
+     */
+    public function i_click_on_an_activity_in_the_activity_chooser(string $element, string $selectortype, string $module) {
+        $node = $this->get_node_in_container($selectortype, $element, "xpath_element", "//div[@aria-label='{$module}']");
+        $this->ensure_node_is_visible($node);
+        $node->click();
+    }
+
+    /**
+     * Click an item in the open activity chooser carousel panel.
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     *
+     * @Given /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" in the active carousel panel$/
+     */
+    public function i_click_on_an_in_a_active_carousel(string $element, string $selectortype) {
+        $node = $this->get_node_in_container($selectortype, $element, "xpath_element", "//div[@class='carousel-item active']");
+        $this->ensure_node_is_visible($node);
+        $node->click();
+    }
 }
