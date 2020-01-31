@@ -80,7 +80,7 @@ const registerListenerEvents = (modal, mappedModules) => {
             carousel.on('slid.bs.carousel', async() => {
                 const module = e.target.dataset.modname;
                 const allModules = document.querySelector(selectors.regions.modules);
-                const caller = allModules.querySelector(`[role="gridcell"][data-modname=${module}]`);
+                const caller = allModules.querySelector(`[role="gridcell"][data-modname="${module}"]`);
                 await caller.focus();
             });
         }
@@ -185,7 +185,7 @@ export const displayChooser = async(origin, modal, sectionModules) => {
     // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
     const mappedModules = new Map();
     sectionModules.forEach((module) => {
-        mappedModules.set(module.modulename, module);
+        mappedModules.set(module.componentname + '_' + module.link, module);
     });
 
     // Register event listeners.
