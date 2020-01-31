@@ -29,15 +29,13 @@
         "icon": "<img class='icon' src='http://urltooptionicon'>"
     }
 }}
-<div role="gridcell" tabindex="0" aria-label="{{label}}" class="option d-block text-center py-3 px-2" data-region="chooser-option-container" data-modname="{{modulename}}">
+<div role="gridcell" tabindex="0" aria-label="{{title}}" class="option d-block text-center py-3 px-2" data-region="chooser-option-container" data-modname="{{componentname}}_{{link}}">
     <div class="optioninfo w-100" data-region="chooser-option-info-container">
-        <a class="d-block" href="{{urls.addoption}}" aria-label="{{#str}} addnew, moodle, {{label}} {{/str}}" tabindex="0" data-action="add-chooser-option">
+        <a class="d-block" href="{{link}}" aria-label="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="0" data-action="add-chooser-option">
             <span class="optionicon d-block">
-                {{#icon}}
-                    {{>core/pix_icon}}
-                {{/icon}}
+                {{{icon}}}
             </span>
-            <span class="optionname d-block">{{label}}</span>
+            <span class="optionname d-block">{{title}}</span>
         </a>
         <div class="optionactions btn-group" role="group" aria-label="{{#str}} actionsfor, moodle, {{label}}{{/str}}" data-region="chooser-option-actions-container">
             <button class="btn btn-icon icon-no-margin icon-size-3 m-0 optionaction" data-action="show-option-summary" aria-label="{{#str}} moreinfo {{/str}}">

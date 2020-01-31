@@ -118,10 +118,10 @@ const sectionIdMapper = (webServiceData, sectionIds) => {
     sectionIds.forEach((id) => {
         // We need to take a fresh deep copy of the original data as an object is a reference type.
         let newData = JSON.parse(JSON.stringify(webServiceData));
-        newData.allmodules.forEach((module) => {
-            module.urls.addoption += '&section=' + id;
+        newData.content_items.forEach((module) => {
+            module.link += '&section=' + id;
         });
-        builtDataMap.set(id, newData.allmodules);
+        builtDataMap.set(id, newData.content_items);
     });
     return builtDataMap;
 };
