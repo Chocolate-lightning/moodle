@@ -166,8 +166,12 @@ const templateDataBuilder = (data) => {
     // const favourites = data.filter(mod => mod.favourite === true);
     // Switching for the active tab.
     // foo ? foo : bar
+    const example = data.slice(12);
+    const example2 = data.slice(1, 5);
     const builtData = {
         'default': data,
+        'recommended': example,
+        'favourites': example2,
     };
     return builtData;
 };
