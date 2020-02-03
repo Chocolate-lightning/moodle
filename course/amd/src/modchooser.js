@@ -168,14 +168,27 @@ const modalMapper = async(builtModuleData) => {
  * @return {Object} Our built object ready to render out
  */
 const templateDataBuilder = (data) => {
-    // const recommended = data.filter(mod => mod.recommended === true);
-    // const favourites = data.filter(mod => mod.favourite === true);
-    // Switching for the active tab.
-    // foo ? foo : bar
-    const builtData = {
+    // Filter the incoming data to find favourite & recommended modules.
+    const favourites = []; // data.filter(mod => mod.recommended === true);
+    const recommended = []; // data.filter(mod => mod.favourite === true);
+
+    // Given the results of the above filters lets figure out what tab to set active.
+
+    // We have some favourites.
+    const favouritesFirst = !!favourites.length;
+    // Check if we have no favourites but have some recommended.
+    const recommendedFirst = !!(recommended.length && favouritesFirst === false);
+    // We have nothing fallback to show all modules.
+    const fallback = favouritesFirst === false && recommendedFirst === false;
+
+    return {
         'default': data,
+        favourites: favourites,
+        recommended: recommended,
+        favouritesFirst: favouritesFirst,
+        recommendedFirst: recommendedFirst,
+        fallback: fallback,
     };
-    return builtData;
 };
 
 /**
