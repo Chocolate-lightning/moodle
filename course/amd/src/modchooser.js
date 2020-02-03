@@ -163,8 +163,8 @@ const modalMapper = async(builtModuleData) => {
  */
 const templateDataBuilder = (data) => {
     // Filter the incoming data to find favourite & recommended modules.
-    const favourites = data.splice(1, 5); // data.filter(mod => mod.recommended === true);
-    const recommended = data.slice(12); // data.filter(mod => mod.favourite === true);
+    const favourites = []; // data.filter(mod => mod.recommended === true);
+    const recommended = []; // data.filter(mod => mod.favourite === true);
 
     // Given the results of the above filters lets figure out what tab to set active.
 
