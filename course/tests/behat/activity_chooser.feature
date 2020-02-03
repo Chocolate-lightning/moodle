@@ -1,4 +1,4 @@
-@core @core_course @javascript
+@core @core_course @javascript @testing
 Feature: Display and choose from the available activities in course
   In order to add activities to a course
   As a teacher
@@ -51,6 +51,11 @@ Feature: Display and choose from the available activities in course
     And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
     And I should see "Back"
     When I click on "Back" "button"
-    And I should see "Forum" in the "//div[@class='carousel-item active']" "xpath_element"
-    And "Back" "button" should not exist in the "//div[@class='carousel-item active']" "xpath_element"
+    And I should see "Forum" in the "//div[@class='tab-pane fade show active']" "xpath_element"
+    And "Back" "button" should not exist in the "//div[@class='tab-pane fade show active']" "xpath_element"
     Then I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
+
+  # Currently stubbed out in MDL-67321 as further issues will add more tabs.
+  Scenario: Navigate between module tabs
+    Given I open the activity chooser
+    Then I should see "Modules" in the ".modal-body" "css_element"
