@@ -170,11 +170,11 @@ const templateDataBuilder = (data) => {
     const example2 = data.slice(1, 5);
     return {
         'default': data,
-        recommended: example,
         favourites: example2,
-        favactive: false,
+        recommended: example,
+        favactive: true,
         recoactive: false,
-        fallback: true,
+        fallback: false,
     };
 };
 
