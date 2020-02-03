@@ -4255,12 +4255,7 @@ class core_course_external extends external_api {
             )
         );
 
-        $contentitemservice = new \core_course\local\service\content_item_service(
-            new \core_course\local\repository\caching_content_item_readonly_repository(
-                \cache::make('core', 'user_course_content_items'),
-                new \core_course\local\repository\content_item_readonly_repository()
-            )
-        );
+        $contentitemservice = \core_course\service_factory::get_content_item_service_with_cache();
 
         return $contentitemservice->add_to_user_favourites($USER, $componentname, $contentitemid);
     }
@@ -4307,12 +4302,7 @@ class core_course_external extends external_api {
             )
         );
 
-        $contentitemservice = new \core_course\local\service\content_item_service(
-            new \core_course\local\repository\caching_content_item_readonly_repository(
-                \cache::make('core', 'user_course_content_items'),
-                new \core_course\local\repository\content_item_readonly_repository()
-            )
-        );
+        $contentitemservice = \core_course\service_factory::get_content_item_service_with_cache();
 
         return $contentitemservice->remove_from_user_favourites($USER, $componentname, $contentitemid);
     }
@@ -4370,9 +4360,7 @@ class core_course_external extends external_api {
         self::validate_context($coursecontext);
         $course = get_course($courseid);
 
-        $contentitemservice = new \core_course\local\service\content_item_service(
-            new \core_course\local\repository\content_item_readonly_repository()
-        );
+        $contentitemservice = \core_course\service_factory::get_content_item_service_no_cache();
 
         $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course);
         return ['content_items' => $contentitems];
