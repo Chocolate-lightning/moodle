@@ -1,4 +1,4 @@
-@core @core_course @javascript @testing
+@core @core_course @javascript
 Feature: Display and choose from the available activities in course
   In order to add activities to a course
   As a teacher
