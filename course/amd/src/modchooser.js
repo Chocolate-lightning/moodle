@@ -168,12 +168,14 @@ const templateDataBuilder = (data) => {
     // foo ? foo : bar
     const example = data.slice(12);
     const example2 = data.slice(1, 5);
-    const builtData = {
+    return {
         'default': data,
-        'recommended': example,
-        'favourites': example2,
+        recommended: example,
+        favourites: example2,
+        favactive: false,
+        recoactive: false,
+        fallback: true,
     };
-    return builtData;
 };
 
 /**

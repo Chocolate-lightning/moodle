@@ -34,40 +34,40 @@
 }}
 <div data-region="carousel" class="carousel slide">
     <div class="carousel-inner" aria-live="polite">
-        <div class="carousel-item active" data-region="modules">
-            <ul class="nav nav-tabs" id="TODO" role="tablist">
+        <div class="carousel-item p-4 active" data-region="modules">
+            <ul class="nav nav-tabs" id="activities-{{uniqid}}" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link" id="starred-tab" data-toggle="tab" href="#starred" role="tab" aria-controls="starred" aria-selected="false">Starred</a>
+                    <a class="nav-link {{#favactive}}active{{/favactive}}" id="starred-tab-{{uniqid}}" data-toggle="tab" href="#starred" role="tab" aria-controls="starred" aria-selected="false">Starred</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" id="recommended-tab" data-toggle="tab" href="#recommended" role="tab" aria-controls="recommended" aria-selected="true">Recommended</a>
+                    <a class="nav-link {{#recoactive}}active{{/recoactive}}" id="recommended-tab-{{uniqid}}" data-toggle="tab" href="#recommended" role="tab" aria-controls="recommended" aria-selected="true">Recommended</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="all" aria-selected="false">Modules</a>
+                    <a class="nav-link {{#fallback}}active{{/fallback}}" id="all-tab-{{uniqid}}" data-toggle="tab" href="#all" role="tab" aria-controls="all" aria-selected="false">Modules</a>
                 </li>
             </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade" id="starred" role="tabpanel" aria-labelledby="starred-tab">
+            <div class="tab-content" id="tabbed-activities-{{uniqid}}">
+                <div class="tab-pane fade {{#favactive}}show active{{/favactive}}" id="starred" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
                     <div class="modchoosercontainer" data-region="chooser-container" tabindex="0" role="grid" aria-rowcount="1" aria-label="{{#str}} activitymodules {{/str}}">
-                        <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="row" data-region="chooser-options-container">
+                        <div class="optionscontainer d-flex flex-wrap mw-100 position-relative" role="row" data-region="chooser-options-container">
                             {{#favourites}}
                                 {{>core_course/chooser_item}}
                             {{/favourites}}
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade show active" id="recommended" role="tabpanel" aria-labelledby="recommended-tab">
+                <div class="tab-pane fade {{#recoactive}}show active{{/recoactive}}" id="recommended" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
                     <div class="modchoosercontainer" data-region="chooser-container" tabindex="0" role="grid" aria-rowcount="1" aria-label="{{#str}} activitymodules {{/str}}">
-                        <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="row" data-region="chooser-options-container">
+                        <div class="optionscontainer d-flex flex-wrap mw-100 position-relative" role="row" data-region="chooser-options-container">
                             {{#recommended}}
                                 {{>core_course/chooser_item}}
                             {{/recommended}}
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="all" role="tabpanel" aria-labelledby="all-tab">
+                <div class="tab-pane fade {{#fallback}}show active{{/fallback}}" id="all" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
                     <div class="modchoosercontainer" data-region="chooser-container" tabindex="0" role="grid" aria-rowcount="1" aria-label="{{#str}} activitymodules {{/str}}">
-                        <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="row" data-region="chooser-options-container">
+                        <div class="optionscontainer d-flex flex-wrap mw-100 position-relative" role="row" data-region="chooser-options-container">
                             {{#default}}
                                 {{>core_course/chooser_item}}
                             {{/default}}
