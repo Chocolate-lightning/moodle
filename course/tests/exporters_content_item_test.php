@@ -61,7 +61,7 @@ class exporters_course_content_item_testcase extends \advanced_testcase {
         $this->assertObjectHasAttribute('title', $exporteditem);
         $this->assertEquals($exporteditem->title, $contentitem->get_title()->get_value());
         $this->assertObjectHasAttribute('link', $exporteditem);
-        $this->assertEquals($exporteditem->link, $contentitem->get_link()->out(true));
+        $this->assertEquals($exporteditem->link, $contentitem->get_link()->out(false));
         $this->assertObjectHasAttribute('icon', $exporteditem);
         $this->assertEquals($exporteditem->icon, $contentitem->get_icon());
         $this->assertObjectHasAttribute('help', $exporteditem);

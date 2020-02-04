@@ -4151,6 +4151,7 @@ class core_course_external extends external_api {
             'componentname' => new external_value(PARAM_TEXT,
                 'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
             'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            'courseid' => new external_value(PARAM_INT, 'course id for this favourite', VALUE_REQUIRED)
         ]);
     }
 
@@ -4159,20 +4160,25 @@ class core_course_external extends external_api {
      *
      * @param string $componentname the name of the component from which this content item originates.
      * @param int $contentitemid the id of the content item.
+     * @param int $courseid The course id for the course we are in.
      * @return stdClass the exporter content item.
      */
-    public static function add_content_item_to_user_favourites(string $componentname, int $contentitemid, int $userid) {
+    public static function add_content_item_to_user_favourites(string $componentname, int $contentitemid, int $courseid) {
         global $USER;
 
         [
             'componentname' => $componentname,
             'contentitemid' => $contentitemid,
+            'courseid' => $courseid,
         ] = self::validate_parameters(self::add_content_item_to_user_favourites_parameters(),
             array(
                 'componentname' => $componentname,
                 'contentitemid' => $contentitemid,
+                'courseid' => $courseid,
             )
         );
+
+        self::validate_context(context_course::instance($courseid));
 
         $contentitemservice = \core_course\service_factory::get_content_item_service_with_cache();
 
@@ -4198,6 +4204,7 @@ class core_course_external extends external_api {
             'componentname' => new external_value(PARAM_TEXT,
                 'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
             'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            'courseid' => new external_value(PARAM_INT, 'course id for this favourite', VALUE_REQUIRED)
         ]);
     }
 
@@ -4206,20 +4213,25 @@ class core_course_external extends external_api {
      *
      * @param string $componentname the name of the component from which this content item originates.
      * @param int $contentitemid the id of the content item.
+     * @param int $courseid The course id for the course we are in.
      * @return stdClass the exporter content item.
      */
-    public static function remove_content_item_from_user_favourites(string $componentname, int $contentitemid) {
+    public static function remove_content_item_from_user_favourites(string $componentname, int $contentitemid, int $courseid) {
         global $USER;
 
         [
             'componentname' => $componentname,
             'contentitemid' => $contentitemid,
+            'courseid' => $courseid,
         ] = self::validate_parameters(self::remove_content_item_from_user_favourites_parameters(),
             array(
                 'componentname' => $componentname,
                 'contentitemid' => $contentitemid,
+                'courseid' => $courseid
             )
         );
+
+        self::validate_context(context_course::instance($courseid));
 
         $contentitemservice = \core_course\service_factory::get_content_item_service_with_cache();
 
@@ -4262,16 +4274,15 @@ class core_course_external extends external_api {
     /**
      * Given a course ID fetch all accessible modules for that course
      *
-     * @param int courseid The course we want to fetch the modules for
+     * @param int $courseid The course we want to fetch the modules for
      * @return array Contains array of modules and their metadata
-     * @throws moodle_exception
      */
     public static function get_course_content_items(int $courseid) {
         global $USER;
 
         [
             'courseid' => $courseid,
-        ] = self::validate_parameters(self::fetch_modules_activity_chooser_parameters(), [
+        ] = self::validate_parameters(self::get_course_content_items_parameters(), [
             'courseid' => $courseid,
         ]);
 

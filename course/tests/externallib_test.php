@@ -3072,7 +3072,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Using the external API, favourite a content item for the user.
         $assign = $contentitems[array_search('assign', array_column($contentitems, 'name'))];
-        $contentitem = core_course_external::add_content_item_to_user_favourites('mod_assign', $assign->id, $user->id);
+        $contentitem = core_course_external::add_content_item_to_user_favourites('mod_assign', $assign->id, $course->id);
         $contentitem = external_api::clean_returnvalue(core_course_external::add_content_item_to_user_favourites_returns(),
             $contentitem);
 
@@ -3113,7 +3113,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $favourited);
 
         // Now, verify the external API can remove the favourite.
-        $contentitem = core_course_external::remove_content_item_from_user_favourites('mod_assign', $assign->id);
+        $contentitem = core_course_external::remove_content_item_from_user_favourites('mod_assign', $assign->id, $course->id);
         $contentitem = external_api::clean_returnvalue(core_course_external::remove_content_item_from_user_favourites_returns(),
             $contentitem);
 

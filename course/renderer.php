@@ -135,7 +135,8 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Build the HTML for the module chooser javascript popup
      *
-     * @param array $modules A set of modules as returned by \core_course\local\service\content_item_service.
+     * @param array $modules A set of modules as returned form @see
+     * get_module_metadata
      * @param object $course The course that will be displayed
      * @return string The composed HTML for the module
      */
