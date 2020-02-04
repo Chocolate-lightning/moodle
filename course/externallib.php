@@ -4271,7 +4271,7 @@ class core_course_external extends external_api {
 
         [
             'courseid' => $courseid,
-        ] = self::validate_parameters(self::fetch_modules_activity_chooser_parameters(), [
+        ] = self::validate_parameters(self::get_course_content_items_parameters(), [
             'courseid' => $courseid,
         ]);
 
