@@ -27,6 +27,7 @@ import * as ModalEvents from 'core/modal_events';
 import selectors from 'core_course/local/chooser/selectors';
 import * as Templates from 'core/templates';
 import {end, arrowLeft, arrowRight, arrowUp, arrowDown, home, tab, enter, space} from 'core/key_codes';
+import {debounce} from 'core/utils';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -172,6 +173,42 @@ const clickErrorHandler = (item, fallback) => {
     }
 };
 
+const search = (moduleMap) => {
+    const searchInput = document.querySelector(selectors.actions.search);
+
+    const moduleList = [...moduleMap.keys()];
+    window.console.log(moduleMap);
+    window.console.log(searchInput);
+    window.console.log(moduleList);
+
+    // Debounce the search input so that it only executes 300 milliseconds after the user has finished typing.
+    searchInput.addEventListener('input', debounce(() => {
+        window.console.log(searchInput.value);
+        const modules = searchForUsers(moduleList, searchInput.value);
+        //renderSearchResults(searchResultsContainer, users);
+        window.console.log(modules);
+    }, 300));
+};
+
+/**
+ * Find the list of users who's names include the given search term.
+ *
+ * @param {Array} userList List of users for the grader
+ * @param {String} searchTerm The search term to match
+ * @return {Array}
+ */
+const searchForUsers = (userList, searchTerm) => {
+    if (searchTerm === '') {
+        return userList;
+    }
+
+    searchTerm = searchTerm.toLowerCase();
+
+    return userList.filter((user) => {
+        return user.toLowerCase().includes(searchTerm);
+    });
+};
+
 /**
  * Display the module chooser.
  *
@@ -207,4 +244,6 @@ export const displayChooser = async(origin, modal, sectionModules) => {
 
 
     modal.show();
+
+    search(mappedModules);
 };

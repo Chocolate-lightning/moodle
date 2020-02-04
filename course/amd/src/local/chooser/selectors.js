@@ -58,7 +58,8 @@ export default {
         },
         addChooser: getDataSelector('action', 'add-chooser-option'),
         closeOption: getDataSelector('action', 'close-chooser-option-summary'),
-        hide: getDataSelector('action', 'hide')
+        hide: getDataSelector('action', 'hide'),
+        search: getDataSelector('action', 'searchme'),
     },
     elements: {
         section: '.section',
