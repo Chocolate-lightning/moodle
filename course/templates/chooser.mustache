@@ -73,7 +73,7 @@
             <div class="tab-content" id="tabbed-activities-{{uniqid}}">
                 <div class="tab-pane fade {{#favouritesFirst}}show active{{/favouritesFirst}}" id="starred" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
                     <div class="modchoosercontainer" data-region="chooser-container" tabindex="0" role="grid" aria-rowcount="1" aria-label="{{#str}} activitymodules {{/str}}">
-                        <div class="optionscontainer d-flex flex-wrap mw-100 position-relative" role="row" data-region="chooser-options-container">
+                        <div class="optionscontainer d-flex flex-wrap mw-100 position-relative" role="row" data-region="chooser-options-container" data-render="favourites-area">
                             {{#favourites}}
                                 {{>core_course/chooser_item}}
                             {{/favourites}}

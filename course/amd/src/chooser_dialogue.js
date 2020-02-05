@@ -27,6 +27,7 @@ import * as ModalEvents from 'core/modal_events';
 import selectors from 'core_course/local/chooser/selectors';
 import * as Templates from 'core/templates';
 import {end, arrowLeft, arrowRight, arrowUp, arrowDown, home, tab, enter, space} from 'core/key_codes';
+import * as Repository from 'core_course/local/chooser/repository';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -55,14 +56,58 @@ const carouselPageTo = async(e, mappedModules, modal, carousel) => {
     });
 };
 
+const manageFavouriteState = async(e, courseid, foo) => {
+    const caller = e.target.closest(selectors.actions.optionActions.manageFavourite);
+    const isFavourite = caller.dataset.favourited;
+    const id = caller.dataset.id;
+    const name = caller.dataset.name;
+
+    // Switch on fave or not.
+    if (isFavourite === 'true') {
+        //const container = e.target.closest(selectors.regions.chooserOption.container);
+        const [
+            data
+        ] = await Promise.all([
+            Repository.unfavouriteModule(name, id, courseid)
+        ]);
+
+        // Call of to the curried function to change all modals.
+        foo(false);
+
+        if (!data.favourite) {
+            window.console.log('fav removed');
+        }
+        // Error handling.
+    } else {
+        window.console.log('Not a fave yet');
+        const [
+            data
+        ] = await Promise.all([
+            Repository.favouriteModule(name, id, courseid)
+        ]);
+
+        // Call of to the curried function to change all modals.
+        foo(true);
+
+        if (data.favourite) {
+            window.console.log('fav added');
+        }
+        // Push new module to the map?
+        // Re-render with new map.
+        // Replace existing contents with new render.
+        // Go back and handle this stuff in modchooser.
+    }
+
+};
 /**
  * Register chooser related event listeners.
  *
  * @method registerListenerEvents
  * @param {Promise} modal Our modal that we are working with
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
+ * @param {int} courseid The ID of the course, we need to know the course for context verification.
  */
-const registerListenerEvents = (modal, mappedModules) => {
+const registerListenerEvents = (modal, mappedModules, courseid, foo) => {
 
     modal.getBody()[0].addEventListener('click', async(e) => {
         const carousel = $(selectors.regions.carousel);
@@ -71,6 +116,9 @@ const registerListenerEvents = (modal, mappedModules) => {
         carousel.carousel('pause');
         if (e.target.closest(selectors.actions.optionActions.showSummary)) {
             await carouselPageTo(e, mappedModules, modal, carousel);
+        }
+        if (e.target.closest(selectors.actions.optionActions.manageFavourite)) {
+            manageFavouriteState(e, courseid, foo);
         }
 
         // From the help screen go back to the module overview.
@@ -179,8 +227,9 @@ const clickErrorHandler = (item, fallback) => {
  * @param {HTMLElement} origin The calling button
  * @param {Object} modal Our created modal for the section
  * @param {Array} sectionModules An array of all of the built module information
+ * @param {int} courseid The ID of the course, we need to know the course for context verification.
  */
-export const displayChooser = async(origin, modal, sectionModules) => {
+export const displayChooser = async(origin, modal, sectionModules, courseid, foo) => {
 
     // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
     const mappedModules = new Map();
@@ -189,7 +238,7 @@ export const displayChooser = async(origin, modal, sectionModules) => {
     });
 
     // Register event listeners.
-    await registerListenerEvents(modal, mappedModules);
+    await registerListenerEvents(modal, mappedModules, courseid, foo);
 
     // We want to focus on the action select when the dialog is closed.
     modal.getRoot().on(ModalEvents.hidden, () => {
