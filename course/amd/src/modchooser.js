@@ -52,8 +52,10 @@ export const init = async(courseid) => {
 
     const modalMap = await modalMapper(builtModuleData);
 
+    const partial = foo(modalMap);
+
     // User interaction handlers.
-    registerEventHandlers(modalMap, builtModuleData);
+    registerEventHandlers(modalMap, builtModuleData, courseid, partial);
 
     enableInteraction(allSections);
 
@@ -169,8 +171,8 @@ const modalMapper = async(builtModuleData) => {
  */
 const templateDataBuilder = (data) => {
     // Filter the incoming data to find favourite & recommended modules.
-    const favourites = []; // data.filter(mod => mod.recommended === true);
-    const recommended = []; // data.filter(mod => mod.favourite === true);
+    const favourites = data.filter(mod => mod.favourite === true);
+    const recommended = []; // data.filter(mod => mod.recommended === true);
 
     // Given the results of the above filters lets figure out what tab to set active.
 
@@ -222,8 +224,9 @@ const buildModal = async(data) => {
  * @method registerEventHandlers
  * @param {Map} modalMap The map of modals ready to pick from when a user clicks 'Add activity'
  * @param {Map} modulesMap The map of K: sectionID V: [modules] we need to pass along so we can fetch a specific modules data
+ * @param {int} courseid The ID of the course, we need to know the course for context verification.
  */
-const registerEventHandlers = (modalMap, modulesMap) => {
+const registerEventHandlers = (modalMap, modulesMap, courseid, foo) => {
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -239,7 +242,7 @@ const registerEventHandlers = (modalMap, modulesMap) => {
                 const caller = e.target.closest(selectors.elements.sectionmodchooser);
                 const sectionid = caller.dataset.sectionid;
                 const modal = modalMap.get(sectionid);
-                ChooserDialogue.displayChooser(caller, modal, modulesMap.get(sectionid));
+                ChooserDialogue.displayChooser(caller, modal, modulesMap.get(sectionid), courseid, foo);
             }
         });
     });
@@ -257,4 +260,22 @@ const enableInteraction = (sections) => {
         const button = section.querySelector(`${selectors.elements.sectionmodchooser}`);
         button.disabled = false;
     });
+};
+
+// Export a curried function where the modalMap has been applied.
+const foo = (modalMap) => {
+    return (addFavourite) => {
+        window.console.log('foo()()');
+        window.console.log(modalMap);
+        if (addFavourite) {
+            window.console.log('Add this module to all modal faves');
+            // Also change the classes or just re-render the faves tab
+        } else {
+            window.console.log('Remove this module to all modal faves');
+            // Also change the classes or just re-render the faves tab
+            // if (!data.favourite) {
+            //     container.parentNode.removeChild(container);
+            // }
+        }
+    };
 };

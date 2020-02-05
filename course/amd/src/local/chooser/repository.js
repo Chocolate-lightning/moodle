@@ -38,3 +38,45 @@ export const activityModules = (courseid) => {
     };
     return ajax.call([request])[0];
 };
+
+/**
+ *
+ *
+ * @method favouriteModule
+ * @param {String} modName TODO
+ * @param {int} modID TODO
+ * @param {int} courseid The ID of the course, we need to know the course for context verification.
+ * @return {object} jQuery promise
+ */
+export const favouriteModule = (modName, modID, courseid) => {
+    const request = {
+        methodname: 'core_course_add_content_item_to_user_favourites',
+        args: {
+            componentname: modName,
+            contentitemid: modID,
+            courseid: courseid,
+        },
+    };
+    return ajax.call([request])[0];
+};
+
+/**
+ *
+ *
+ * @method unfavouriteModule
+ * @param {String} modName TODO
+ * @param {int} modID TODO
+ * @param {int} courseid The ID of the course, we need to know the course for context verification.
+ * @return {object} jQuery promise
+ */
+export const unfavouriteModule = (modName, modID, courseid) => {
+    const request = {
+        methodname: 'core_course_remove_content_item_from_user_favourites',
+        args: {
+            componentname: modName,
+            contentitemid: modID,
+            courseid: courseid,
+        },
+    };
+    return ajax.call([request])[0];
+};
