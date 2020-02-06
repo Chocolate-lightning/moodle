@@ -64,7 +64,6 @@ const manageFavouriteState = async(e, courseid, foo) => {
 
     // Switch on fave or not.
     if (isFavourite === 'true') {
-        //const container = e.target.closest(selectors.regions.chooserOption.container);
         const [
             data
         ] = await Promise.all([
@@ -72,7 +71,7 @@ const manageFavouriteState = async(e, courseid, foo) => {
         ]);
 
         // Call of to the curried function to change all modals.
-        foo(false);
+        foo(false, e);
 
         if (!data.favourite) {
             window.console.log('fav removed');
@@ -87,7 +86,7 @@ const manageFavouriteState = async(e, courseid, foo) => {
         ]);
 
         // Call of to the curried function to change all modals.
-        foo(true);
+        foo(true, e);
 
         if (data.favourite) {
             window.console.log('fav added');

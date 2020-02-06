@@ -52,7 +52,7 @@ export const init = async(courseid) => {
 
     const modalMap = await modalMapper(builtModuleData);
 
-    const partial = foo(modalMap);
+    const partial = foo(modalMap, builtModuleData);
 
     // User interaction handlers.
     registerEventHandlers(modalMap, builtModuleData, courseid, partial);
@@ -263,19 +263,56 @@ const enableInteraction = (sections) => {
 };
 
 // Export a curried function where the modalMap has been applied.
-const foo = (modalMap) => {
-    return (addFavourite) => {
-        window.console.log('foo()()');
-        window.console.log(modalMap);
+const foo = (modalMap, mappedModules) => {
+    return (addFavourite, e) => {
+
+        window.console.log('Need a state change for recommended & default tabs. Full rerender may have to happen...');
+        const container = e.target.closest(selectors.regions.chooserOption.container);
+        const modName = container.dataset.internal;
         if (addFavourite) {
             window.console.log('Add this module to all modal faves');
+            window.console.log('Still need to fix tabbing breaking with this...');
+
+            Array.from(mappedModules).map(async(section) => {
+
+                let newFaves = section[1].filter((mod) => {
+                    if (mod.name === modName) {
+                        mod.favourite = true;
+                        return mod;
+                    }
+                    if (mod.favourite === true) {
+                        return mod;
+                    }
+                });
+
+                let sectionModal = modalMap.get(section[0]);
+
+                let modalBody = sectionModal.getBody()[0];
+
+                let sectionModalFavourites = modalBody.querySelector(selectors.render.favourites);
+
+                let {html, js} = await Templates.renderForPromise('core_course/foo', {favourites: newFaves});
+                await Templates.replaceNodeContents(sectionModalFavourites, html, js);
+            });
+
             // Also change the classes or just re-render the faves tab
         } else {
             window.console.log('Remove this module to all modal faves');
+            window.console.log('Still need to fix tabbing breaking with this...');
+            const iter = modalMap.entries();
+            let result = iter.next();
+            while (!result.done) {
+                let modal = result.value[1];
+                let modalBody = modal.getBody()[0];
+
+                let favArea = modalBody.querySelector(selectors.render.favourites);
+                let nodeToRemove = favArea.querySelector(`[data-internal="${modName}"]`);
+
+                nodeToRemove.parentNode.removeChild(nodeToRemove);
+
+                result = iter.next();
+            }
             // Also change the classes or just re-render the faves tab
-            // if (!data.favourite) {
-            //     container.parentNode.removeChild(container);
-            // }
         }
     };
 };
