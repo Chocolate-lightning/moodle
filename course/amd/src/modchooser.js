@@ -287,11 +287,12 @@ const foo = (modalMap, mappedModules) => {
                 let {html, js} = await Templates.renderForPromise('core_course/foo', {favourites: newFaves});
                 await Templates.replaceNodeContents(sectionModalFavourites, html, js);
 
-                let foo = modalBody.querySelectorAll(`[data-internal="${modName}"] [data-action="manage-module-favourite"]`);
+                // eslint-disable-next-line max-len
+                let foo = modalBody.querySelectorAll(`[data-internal="${modName}"] ${selectors.actions.optionActions.manageFavourite}`);
                 Array.from(foo).map((element) => {
                     element.classList.remove('text-muted');
                     element.classList.add('text-primary');
-                    // Handle meta tags still...
+                    element.dataset.favourited = 'true';
                 });
             });
 
@@ -309,11 +310,12 @@ const foo = (modalMap, mappedModules) => {
 
                 nodeToRemove.parentNode.removeChild(nodeToRemove);
 
-                let foo = modalBody.querySelectorAll(`[data-internal="${modName}"] [data-action="manage-module-favourite"]`);
+                // eslint-disable-next-line max-len
+                let foo = modalBody.querySelectorAll(`[data-internal="${modName}"] ${selectors.actions.optionActions.manageFavourite}`);
                 Array.from(foo).map((element) => {
                     element.classList.add('text-muted');
                     element.classList.remove('text-primary');
-                    // Handle meta tags still...
+                    element.dataset.favourited = 'false';
                 });
                 result = iter.next();
             }
