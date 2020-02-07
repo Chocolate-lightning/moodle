@@ -39,8 +39,8 @@
         </a>
         <div class="optionactions btn-group" role="group" aria-label="{{#str}} actionsfor, moodle, {{label}}{{/str}}" data-region="chooser-option-actions-container">
             {{^legacyitem}}
-                <button class="btn btn-icon icon-no-margin icon-size-3 m-0 optionaction" data-action="manage-module-favourite" data-favourited="{{favourite}}" data-id="{{id}}" data-name="{{componentname}}" aria-label="{{#str}} moreinfo {{/str}}">
-                    <span aria-hidden="true" class="{{#favourite}}text-primary{{/favourite}}{{^favourite}}text-muted{{/favourite}}">{{#pix}} i/star, core, {{#str}} modulefavourite, core_course {{/str}} {{/pix}}</span>
+                <button class="btn btn-icon icon-no-margin icon-size-3 m-0 optionaction {{#favourite}}text-primary{{/favourite}}{{^favourite}}text-muted{{/favourite}}" data-action="manage-module-favourite" data-favourited="{{favourite}}" data-id="{{id}}" data-name="{{componentname}}" aria-label="{{#str}} moreinfo {{/str}}">
+                    <span aria-hidden="true">{{#pix}} i/star, core, {{#str}} modulefavourite, core_course {{/str}} {{/pix}}</span>
                     <span class="sr-only">{{#str}} aria:modulefavourite, core_course {{/str}}</span>
                 </button>
             {{/legacyitem}}
