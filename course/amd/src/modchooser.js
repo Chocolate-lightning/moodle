@@ -292,6 +292,13 @@ const foo = (modalMap, mappedModules) => {
 
                 let {html, js} = await Templates.renderForPromise('core_course/foo', {favourites: newFaves});
                 await Templates.replaceNodeContents(sectionModalFavourites, html, js);
+
+                let foo = modalBody.querySelectorAll(`[data-internal="${modName}"] [data-action="manage-module-favourite"]`);
+                Array.from(foo).map((element) => {
+                    element.classList.remove('text-muted');
+                    element.classList.add('text-primary');
+                    // Handle meta tags still...
+                });
             });
 
             // Also change the classes or just re-render the faves tab
@@ -308,6 +315,12 @@ const foo = (modalMap, mappedModules) => {
 
                 nodeToRemove.parentNode.removeChild(nodeToRemove);
 
+                let foo = modalBody.querySelectorAll(`[data-internal="${modName}"] [data-action="manage-module-favourite"]`);
+                Array.from(foo).map((element) => {
+                    element.classList.add('text-muted');
+                    element.classList.remove('text-primary');
+                    // Handle meta tags still...
+                });
                 result = iter.next();
             }
             // Also change the classes or just re-render the faves tab

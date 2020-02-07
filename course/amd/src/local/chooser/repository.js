@@ -40,12 +40,13 @@ export const activityModules = (courseid) => {
 };
 
 /**
- *
+ * Given a module name, module ID & the current course we want to specify that the module
+ * is a users' favourite.
  *
  * @method favouriteModule
- * @param {String} modName TODO
- * @param {int} modID TODO
- * @param {int} courseid The ID of the course, we need to know the course for context verification.
+ * @param {String} modName Frankenstyle name of the component to add favourite
+ * @param {int} modID ID of the module. Mainly for LTI cases where they have same / similar names
+ * @param {int} courseid The ID of the course, we need to know the course for context verification
  * @return {object} jQuery promise
  */
 export const favouriteModule = (modName, modID, courseid) => {
@@ -61,11 +62,12 @@ export const favouriteModule = (modName, modID, courseid) => {
 };
 
 /**
- *
+ * Given a module name, module ID & the current course we want to specify that the module
+ * is no longer a users' favourite.
  *
  * @method unfavouriteModule
- * @param {String} modName TODO
- * @param {int} modID TODO
+ * @param {String} modName Frankenstyle name of the component to add favourite
+ * @param {int} modID ID of the module. Mainly for LTI cases where they have same / similar names
  * @param {int} courseid The ID of the course, we need to know the course for context verification.
  * @return {object} jQuery promise
  */
