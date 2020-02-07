@@ -265,7 +265,6 @@ const foo = (modalMap, mappedModules) => {
         const modName = container.dataset.internal;
         if (addFavourite) {
             window.console.log('Add this module to all modal faves');
-            window.console.log('Still need to fix tabbing breaking with this...');
 
             Array.from(mappedModules).map(async(section) => {
 
@@ -292,7 +291,6 @@ const foo = (modalMap, mappedModules) => {
             // Also change the classes or just re-render the faves tab
         } else {
             window.console.log('Remove this module to all modal faves');
-            window.console.log('Still need to fix tabbing breaking with this...');
             const iter = modalMap.entries();
             let result = iter.next();
             while (!result.done) {
