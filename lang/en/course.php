@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activitychooser'] = 'Activity chooser';
+$string['activitychoosertitle'] = 'Recommendations for the activity chooser';
 $string['aria:coursecategory'] = 'Course category';
 $string['aria:courseimage'] = 'Course image';
 $string['aria:courseshortname'] = 'Course short name';
@@ -46,6 +48,7 @@ $string['errorendbeforestart'] = 'The end date ({$a}) is before the course start
 $string['favourite'] = 'Starred course';
 $string['gradetopassnotset'] = 'This course does not have a grade to pass set. It may be set in the grade item of the course (Gradebook setup).';
 $string['navigatemoduletabs'] = 'Navigate between module tabs';
+$string['module'] = 'Module';
 $string['nocourseactivity'] = 'Not enough course activity between the start and the end of the course';
 $string['nocourseendtime'] = 'The course does not have an end time';
 $string['nocoursesections'] = 'No course sections';
@@ -65,6 +68,8 @@ $string['privacy:favouritespath'] = 'Course starred information';
 $string['privacy:metadata:activityfavouritessummary'] = 'The course system contains favourite information about the activity chooser and which activities have been favourited.';
 $string['privacy:metadata:completionsummary'] = 'The course contains completion information about the user.';
 $string['privacy:metadata:favouritessummary'] = 'The course contains information relating to the course being starred by the user.';
+$string['recommend'] = 'Recommend';
+$string['recommendcheckbox'] = 'Recommend activity: {$a}';
 $string['studentsatriskincourse'] = 'Students at risk in {$a} course';
 $string['studentsatriskinfomessage'] = 'Hi {$a->userfirstname},
 
