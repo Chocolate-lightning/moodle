@@ -52,7 +52,7 @@ export const init = async(courseid) => {
 
     const modalMap = await modalMapper(builtModuleData);
 
-    const partial = foo(modalMap, builtModuleData);
+    const partial = favouriteCurry(modalMap, builtModuleData);
 
     // User interaction handlers.
     registerEventHandlers(modalMap, builtModuleData, courseid, partial);
@@ -226,7 +226,7 @@ const buildModal = async(data) => {
  * @param {Map} modulesMap The map of K: sectionID V: [modules] we need to pass along so we can fetch a specific modules data
  * @param {int} courseid The ID of the course, we need to know the course for context verification.
  */
-const registerEventHandlers = (modalMap, modulesMap, courseid, foo) => {
+const registerEventHandlers = (modalMap, modulesMap, courseid, favouriteCurry) => {
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -242,7 +242,7 @@ const registerEventHandlers = (modalMap, modulesMap, courseid, foo) => {
                 const caller = e.target.closest(selectors.elements.sectionmodchooser);
                 const sectionid = caller.dataset.sectionid;
                 const modal = modalMap.get(sectionid);
-                ChooserDialogue.displayChooser(caller, modal, modulesMap.get(sectionid), courseid, foo);
+                ChooserDialogue.displayChooser(caller, modal, modulesMap.get(sectionid), courseid, favouriteCurry);
             }
         });
     });
@@ -262,16 +262,21 @@ const enableInteraction = (sections) => {
     });
 };
 
-// Export a curried function where the modalMap has been applied.
-const foo = (modalMap, mappedModules) => {
+/**
+ * Export a curried function where the modalMap & mappedModules have been applied.
+ * We want to find all of our modals to change.
+ * We also have our map of modules so we can re render the favourites area and have all of the items sorted.
+ *
+ * @method favouriteCurry
+ * @param {Map} modalMap
+ * @param {Map} mappedModules
+ * @return {Function} partially applied function so we can manipulate DOM nodes easily without rebuilding maps
+ */
+const favouriteCurry = (modalMap, mappedModules) => {
     return (addFavourite, e) => {
-
-        window.console.log('Need a state change for recommended & default tabs. Full rerender may have to happen...');
         const container = e.target.closest(selectors.regions.chooserOption.container);
         const modName = container.dataset.internal;
         if (addFavourite) {
-            window.console.log('Add this module to all modal faves');
-
             Array.from(mappedModules).map(async(section) => {
 
                 let newFaves = section[1].filter((mod) => {
@@ -285,26 +290,22 @@ const foo = (modalMap, mappedModules) => {
                 });
 
                 let sectionModal = modalMap.get(section[0]);
-
                 let modalBody = sectionModal.getBody()[0];
-
                 let sectionModalFavourites = modalBody.querySelector(selectors.render.favourites);
 
-                let {html, js} = await Templates.renderForPromise('core_course/foo', {favourites: newFaves});
+                let {html, js} = await Templates.renderForPromise('core_course/chooser_favourites', {favourites: newFaves});
                 await Templates.replaceNodeContents(sectionModalFavourites, html, js);
 
                 // eslint-disable-next-line max-len
-                let foo = modalBody.querySelectorAll(`[data-internal="${modName}"] ${selectors.actions.optionActions.manageFavourite}`);
-                Array.from(foo).map((element) => {
+                let favouriteButtons = modalBody.querySelectorAll(`[data-internal="${modName}"] ${selectors.actions.optionActions.manageFavourite}`);
+                Array.from(favouriteButtons).map((element) => {
                     element.classList.remove('text-muted');
                     element.classList.add('text-primary');
                     element.dataset.favourited = 'true';
                 });
             });
 
-            // Also change the classes or just re-render the faves tab
         } else {
-            window.console.log('Remove this module to all modal faves');
             const iter = modalMap.entries();
             let result = iter.next();
             while (!result.done) {
@@ -317,15 +318,14 @@ const foo = (modalMap, mappedModules) => {
                 nodeToRemove.parentNode.removeChild(nodeToRemove);
 
                 // eslint-disable-next-line max-len
-                let foo = modalBody.querySelectorAll(`[data-internal="${modName}"] ${selectors.actions.optionActions.manageFavourite}`);
-                Array.from(foo).map((element) => {
+                let favouriteButtons = modalBody.querySelectorAll(`[data-internal="${modName}"] ${selectors.actions.optionActions.manageFavourite}`);
+                Array.from(favouriteButtons).map((element) => {
                     element.classList.add('text-muted');
                     element.classList.remove('text-primary');
                     element.dataset.favourited = 'false';
                 });
                 result = iter.next();
             }
-            // Also change the classes or just re-render the faves tab
         }
     };
 };
