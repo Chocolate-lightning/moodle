@@ -28,6 +28,7 @@ import selectors from 'core_course/local/chooser/selectors';
 import * as Templates from 'core/templates';
 import {end, arrowLeft, arrowRight, arrowUp, arrowDown, home, tab, enter, space} from 'core/key_codes';
 import * as Repository from 'core_course/local/chooser/repository';
+import Notification from 'core/notification';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -82,10 +83,8 @@ const manageFavouriteState = async(e, courseid, favouriteCurry) => {
         // Call of to the curried function to change all modals.
         favouriteCurry(false, e);
 
-        if (!data.favourite) {
-            window.console.log('fav removed');
-        } else {
-            window.console.log('There was a problem removing the favourite');
+        if (data.favourite) {
+            Notification.exception({message: 'There was a problem removing the favourite'});
         }
     } else {
         const [
@@ -97,10 +96,8 @@ const manageFavouriteState = async(e, courseid, favouriteCurry) => {
         // Call of to the curried function to change all modals.
         favouriteCurry(true, e);
 
-        if (data.favourite) {
-            window.console.log('fav added');
-        } else {
-            window.console.log('There was a problem adding the favourite');
+        if (!data.favourite) {
+            Notification.exception({message: 'There was a problem adding the favourite'});
         }
     }
 
