@@ -273,6 +273,12 @@ const enableInteraction = (sections) => {
  * @return {Function} partially applied function so we can manipulate DOM nodes easily without rebuilding maps
  */
 const favouriteCurry = (modalMap, mappedModules) => {
+    /**
+     * Curried function that is being returned.
+     *
+     * @param {boolean} addFavourite Do we want to add the module as a favourite or not
+     * @param {Event} e Triggering Event
+     */
     return (addFavourite, e) => {
         const container = e.target.closest(selectors.regions.chooserOption.container);
         const modName = container.dataset.internal;
