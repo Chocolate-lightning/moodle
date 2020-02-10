@@ -56,7 +56,16 @@ const carouselPageTo = async(e, mappedModules, modal, carousel) => {
     });
 };
 
-const manageFavouriteState = async(e, courseid, foo) => {
+/**
+ * Given a user wants to change the favourite state of a module we either add or remove the status.
+ * We also propergate this change across our map of modals.
+ *
+ * @method manageFavouriteState
+ * @param {Event} e Triggering Event
+ * @param {int} courseid The ID of the course, we need to know the course for context verification.
+ * @param {function} favouriteCurry Curried function to manage favorite state within modals
+ */
+const manageFavouriteState = async(e, courseid, favouriteCurry) => {
     const caller = e.target.closest(selectors.actions.optionActions.manageFavourite);
     const isFavourite = caller.dataset.favourited;
     const id = caller.dataset.id;
@@ -71,14 +80,14 @@ const manageFavouriteState = async(e, courseid, foo) => {
         ]);
 
         // Call of to the curried function to change all modals.
-        foo(false, e);
+        favouriteCurry(false, e);
 
         if (!data.favourite) {
             window.console.log('fav removed');
+        } else {
+            window.console.log('There was a problem removing the favourite');
         }
-        // Error handling.
     } else {
-        window.console.log('Not a fave yet');
         const [
             data
         ] = await Promise.all([
@@ -86,15 +95,13 @@ const manageFavouriteState = async(e, courseid, foo) => {
         ]);
 
         // Call of to the curried function to change all modals.
-        foo(true, e);
+        favouriteCurry(true, e);
 
         if (data.favourite) {
             window.console.log('fav added');
+        } else {
+            window.console.log('There was a problem adding the favourite');
         }
-        // Push new module to the map?
-        // Re-render with new map.
-        // Replace existing contents with new render.
-        // Go back and handle this stuff in modchooser.
     }
 
 };
@@ -105,8 +112,9 @@ const manageFavouriteState = async(e, courseid, foo) => {
  * @param {Promise} modal Our modal that we are working with
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  * @param {int} courseid The ID of the course, we need to know the course for context verification.
+ * @param {function} favouriteCurry Curried function to manage favorite state within modals
  */
-const registerListenerEvents = (modal, mappedModules, courseid, foo) => {
+const registerListenerEvents = (modal, mappedModules, courseid, favouriteCurry) => {
 
     modal.getBody()[0].addEventListener('click', async(e) => {
         const carousel = $(selectors.regions.carousel);
@@ -117,7 +125,7 @@ const registerListenerEvents = (modal, mappedModules, courseid, foo) => {
             await carouselPageTo(e, mappedModules, modal, carousel);
         }
         if (e.target.closest(selectors.actions.optionActions.manageFavourite)) {
-            manageFavouriteState(e, courseid, foo);
+            manageFavouriteState(e, courseid, favouriteCurry);
         }
 
         // From the help screen go back to the module overview.
@@ -227,8 +235,9 @@ const clickErrorHandler = (item, fallback) => {
  * @param {Object} modal Our created modal for the section
  * @param {Array} sectionModules An array of all of the built module information
  * @param {int} courseid The ID of the course, we need to know the course for context verification.
+ * @param {function} favouriteCurry Curried function to manage favorite state within modals
  */
-export const displayChooser = async(origin, modal, sectionModules, courseid, foo) => {
+export const displayChooser = async(origin, modal, sectionModules, courseid, favouriteCurry) => {
 
     // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
     const mappedModules = new Map();
@@ -237,7 +246,7 @@ export const displayChooser = async(origin, modal, sectionModules, courseid, foo
     });
 
     // Register event listeners.
-    await registerListenerEvents(modal, mappedModules, courseid, foo);
+    await registerListenerEvents(modal, mappedModules, courseid, favouriteCurry);
 
     // We want to focus on the action select when the dialog is closed.
     modal.getRoot().on(ModalEvents.hidden, () => {
