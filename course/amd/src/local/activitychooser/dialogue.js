@@ -24,7 +24,7 @@
 
 import $ from 'jquery';
 import * as ModalEvents from 'core/modal_events';
-import selectors from 'core_course/local/chooser/selectors';
+import selectors from 'core_course/local/activitychooser/selectors';
 import * as Templates from 'core/templates';
 import {end, arrowLeft, arrowRight, home, enter, space} from 'core/key_codes';
 import {addIconToContainer} from 'core/loadingicon';
@@ -32,11 +32,11 @@ import {addIconToContainer} from 'core/loadingicon';
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
  *
- * @method carouselPageTo
+ * @method showModuleHelp
  * @param {jQuery} carousel Our initialized carousel to manipulate
  * @param {Object} moduleData Data of the module to carousel to
  */
-const carouselPageTo = (carousel, moduleData) => {
+const showModuleHelp = (carousel, moduleData) => {
     const help = carousel.find(selectors.regions.help)[0];
     help.innerHTML = '';
 
@@ -84,7 +84,7 @@ const registerListenerEvents = (modal, mappedModules) => {
             const module = e.target.closest(selectors.regions.chooserOption.container);
             const moduleName = module.dataset.modname;
             const moduleData = mappedModules.get(moduleName);
-            carouselPageTo(carousel, moduleData);
+            showModuleHelp(carousel, moduleData);
         }
 
         // From the help screen go back to the module overview.
@@ -151,6 +151,7 @@ const initKeyboardNavigation = (body, mappedModules) => {
             // Check for enter/ space triggers for showing the help.
             if (e.keyCode === enter || e.keyCode === space) {
                 if (e.target.matches(selectors.actions.optionActions.showSummary)) {
+                    e.preventDefault();
                     const module = e.target.closest(selectors.regions.chooserOption.container);
                     const moduleName = module.dataset.modname;
                     const moduleData = mappedModules.get(moduleName);
@@ -160,12 +161,13 @@ const initKeyboardNavigation = (body, mappedModules) => {
                         pause: true,
                         keyboard: false
                     });
-                    carouselPageTo(carousel, moduleData);
+                    showModuleHelp(carousel, moduleData);
                 }
             }
 
             // Next.
             if (e.keyCode === arrowRight) {
+                e.preventDefault();
                 const currentOption = e.target.closest(selectors.regions.chooserOption.container);
                 const nextOption = currentOption.nextElementSibling;
                 const firstOption = chooserOptions.firstElementChild;
@@ -175,6 +177,7 @@ const initKeyboardNavigation = (body, mappedModules) => {
 
             // Previous.
             if (e.keyCode === arrowLeft) {
+                e.preventDefault();
                 const currentOption = e.target.closest(selectors.regions.chooserOption.container);
                 const previousOption = currentOption.previousElementSibling;
                 const lastOption = chooserOptions.lastElementChild;
@@ -183,12 +186,14 @@ const initKeyboardNavigation = (body, mappedModules) => {
             }
 
             if (e.keyCode === home) {
+                e.preventDefault();
                 const currentOption = e.target.closest(selectors.regions.chooserOption.container);
                 const firstOption = chooserOptions.firstElementChild;
                 focusChooserOption(firstOption, currentOption);
             }
 
             if (e.keyCode === end) {
+                e.preventDefault();
                 const currentOption = e.target.closest(selectors.regions.chooserOption.container);
                 const lastOption = chooserOptions.lastElementChild;
                 focusChooserOption(lastOption, currentOption);

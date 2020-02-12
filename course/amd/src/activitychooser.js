@@ -22,10 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import * as ChooserDialogue from 'core_course/local/chooser/dialogue';
+import * as ChooserDialogue from 'core_course/local/activitychooser/dialogue';
+import * as Repository from 'core_course/local/activitychooser/repository';
+import selectors from 'core_course/local/activitychooser/selectors';
 import CustomEvents from 'core/custom_interaction_events';
-import * as Repository from 'core_course/local/chooser/repository';
-import selectors from 'core_course/local/chooser/selectors';
 import * as Templates from 'core/templates';
 import * as ModalFactory from 'core/modal_factory';
 import {get_string as getString} from 'core/str';
@@ -40,44 +40,37 @@ import Pending from 'core/pending';
 export const init = courseId => {
     const pendingPromise = new Pending();
 
-    registerListenerEvents(fetchModuleDataFunction(courseId));
+    registerListenerEvents(courseId);
 
     pendingPromise.resolve();
-};
-
-/**
- * Call the activity webservice so we get an array of modules
- *
- * @method fetchModuleDataFunction
- * @param {Number} courseId Course ID for the course we want modules for
- * @return {Object} The result of the Web service
- */
-const fetchModuleDataFunction = courseId => {
-    let innerPromise = null;
-
-    return () => {
-        if (!innerPromise) {
-            innerPromise = new Promise((resolve) => {
-                resolve(Repository.activityModules(courseId));
-            });
-        }
-
-        return innerPromise;
-    };
 };
 
 /**
  * Once a selection has been made make the modal & module information and pass it along
  *
  * @method registerListenerEvents
- * @param {Function} curriedData TODO
+ * @param {Number} courseId
  */
-const registerListenerEvents = (curriedData) => {
+const registerListenerEvents = (courseId) => {
     const events = [
         'click',
         CustomEvents.events.activate,
         CustomEvents.events.keyboardActivate
     ];
+
+    const fetchModuleData = (() => {
+        let innerPromise = null;
+
+        return () => {
+            if (!innerPromise) {
+                innerPromise = new Promise((resolve) => {
+                    resolve(Repository.activityModules(courseId));
+                });
+            }
+
+            return innerPromise;
+        };
+    })();
 
     CustomEvents.define(document, events);
 
@@ -86,12 +79,7 @@ const registerListenerEvents = (curriedData) => {
         document.addEventListener(event, async(e) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
                 const caller = e.target.closest(selectors.elements.sectionmodchooser);
-                const sectionid = caller.dataset.sectionid;
-
-                const webserviceData = await curriedData();
-
-                const builtModuleData = sectionIdMapper(webserviceData, sectionid);
-
+                const builtModuleData = sectionIdMapper(await fetchModuleData(), caller.dataset.sectionid);
                 const sectionModal = await modalBuilder(builtModuleData);
 
                 ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData);
@@ -135,11 +123,6 @@ const modalBuilder = data => buildModal(templateDataBuilder(data));
  * @return {Object} Our built object ready to render out
  */
 const templateDataBuilder = (data) => {
-    // const recommended = data.filter(mod => mod.recommended === true);
-    // const favourites = data.filter(mod => mod.favourite === true);
-    // Switching for the active tab.
-    // foo ? foo : bar
-
     return {
         'default': data,
     };
@@ -152,7 +135,7 @@ const templateDataBuilder = (data) => {
  * @param {Object} data The template data which contains arrays of modules
  * @return {Object} The modal for the calling section with everything already set up
  */
-const buildModal = async(data) => {
+const buildModal = data => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
