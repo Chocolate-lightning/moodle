@@ -40,19 +40,31 @@ const carouselPageTo = (carousel, moduleData) => {
     const help = carousel.find(selectors.regions.help)[0];
     help.innerHTML = '';
 
-    addIconToContainer(help)
+    // Add a spinner.
+    const spinnerPromise = addIconToContainer(help);
+
+    // Used later...
+    let transitionPromiseResolver = null;
+    const transitionPromise = new Promise(resolve => {
+        transitionPromiseResolver = resolve;
+    });
 
     // Build up the html & js ready to place into the help section.
-    .then(() => {
-        return Templates.renderForPromise('core_course/chooser_help', moduleData);
-    })
-    .then(({html, js}) => Templates.replaceNodeContents(help, html, js))
-    .then(() => {
-        help.querySelector(selectors.regions.chooserSummary.description).focus();
-        return help;
-    })
-    .catch(Notification.exception);
+    const contentPromise = Templates.renderForPromise('core_course/chooser_help', moduleData);
 
+    // Wait for the content to be ready, and for the transition to be complet.
+    Promise.all([contentPromise, spinnerPromise, transitionPromise])
+        .then(([{html, js}]) => Templates.replaceNodeContents(help, html, js))
+        .then(() => {
+            help.querySelector(selectors.regions.chooserSummary.description).focus();
+            return help;
+        })
+        .catch(Notification.exception);
+
+    // Move to the next slide, and resolve the transition promise when it's done.
+    carousel.one('slid.bs.carousel', () => {
+        transitionPromiseResolver();
+    });
     // Trigger the transition between 'pages'.
     carousel.carousel('next');
 };

@@ -1511,6 +1511,17 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     padding: 0;
     height: 590px;
     overflow-y: auto;
+
+    .loading-icon {
+        opacity: 1;
+        .icon {
+            display: block;
+            font-size: 3em;
+            height: 1em;
+            width: 1em;
+            margin: 5em auto;
+        }
+    }
 }
 
 .modchoosercontainer.noscroll {
