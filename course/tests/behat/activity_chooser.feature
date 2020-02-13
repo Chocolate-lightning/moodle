@@ -54,8 +54,39 @@ Feature: Display and choose from the available activities in course
     And "Back" "button" should not exist in the "modules" "core_course > Activity chooser screen"
     And I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "Add an activity or resource" "dialogue"
 
-  # Currently stubbed out in MDL-67321 as further issues will add more tabs.
+  # TODO: in recommended frontend MDL further add to this test.
   Scenario: Navigate between module tabs
     Given I open the activity chooser
     And I should see "Activities" in the "Add an activity or resource" "dialogue"
     Then I should see "Forum" in the "default" "core_course > Activity chooser tab"
+    And I click on "Toggle starred status of the Forum activity" "button" in the "Add an activity or resource" "dialogue"
+    Then I should see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    Then I should see "Forum" in the "favourites" "core_course > Activity chooser tab"
+
+  Scenario: Favourite a module in the activity chooser
+    Given I open the activity chooser
+    Then I should see "Activities" in the "Add an activity or resource" "dialogue"
+    And I should not see "Starred" in the "Add an activity or resource" "dialogue"
+    When I click on "Toggle starred status of the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    Then I should see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    Then I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
+
+  Scenario: Add a favourite module and check it exists when reopening the chooser
+    Given I open the activity chooser
+    When I click on "Toggle starred status of the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Toggle starred status of the Forum activity" "button" in the "Add an activity or resource" "dialogue"
+    Then I should see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "Close" "button" in the "Add an activity or resource" "dialogue"
+    When I click on "Add an activity or resource" "button" in the "Topic 3" "section"
+    And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    Then I should see "Forum" in the "favourites" "core_course > Activity chooser tab"
+
+  Scenario: Add a favourite and then remove it whilst checking the tabs work as expected
+    Given I open the activity chooser
+    And I click on "Toggle starred status of the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    Then I should see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
+    When I click on "Toggle starred status of the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    Then I should not see "Starred" in the "Add an activity or resource" "dialogue"

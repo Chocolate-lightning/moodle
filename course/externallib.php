@@ -4150,7 +4150,8 @@ class core_course_external extends external_api {
         return new external_function_parameters([
             'componentname' => new external_value(PARAM_TEXT,
                 'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
-            'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED)
+            'contentitemid' => new external_value(PARAM_INT,
+                'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
         ]);
     }
 
@@ -4208,7 +4209,7 @@ class core_course_external extends external_api {
      *
      * @param string $componentname the name of the component from which this content item originates.
      * @param int $contentitemid the id of the content item.
-     * @return stdClass the exported content item.
+     * @return stdClass the exporter content item.
      */
     public static function remove_content_item_from_user_favourites(string $componentname, int $contentitemid) {
         global $USER;
