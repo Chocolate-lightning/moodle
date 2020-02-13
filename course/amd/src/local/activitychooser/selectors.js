@@ -51,15 +51,25 @@ export default {
         carousel: getDataSelector('region', 'carousel'),
         help: getDataSelector('region', 'help'),
         modules: getDataSelector('region', 'modules'),
+        favouriteTabNav: getDataSelector('region', 'favourite-tab-nav'),
+        recommendedTabNav: getDataSelector('region', 'recommended-tab-nav'),
+        defaultTabNav: getDataSelector('region', 'default-tab-nav'),
+        favouriteTab: getDataSelector('region', 'favourites'),
+        recommendedTab: getDataSelector('region', 'recommended'),
+        defaultTab: getDataSelector('region', 'default'),
         getModuleSelector: modname => `[role="menuitem"][data-modname="${modname}"]`
     },
     actions: {
         optionActions: {
             showSummary: getDataSelector('action', 'show-option-summary'),
+            manageFavourite: getDataSelector('action', 'manage-module-favourite'),
         },
         addChooser: getDataSelector('action', 'add-chooser-option'),
         closeOption: getDataSelector('action', 'close-chooser-option-summary'),
         hide: getDataSelector('action', 'hide')
+    },
+    render: {
+        favourites: getDataSelector('render', 'favourites-area'),
     },
     elements: {
         section: '.section',

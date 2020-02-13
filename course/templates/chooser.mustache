@@ -41,6 +41,7 @@
                         <a class="nav-link {{#favouritesFirst}}active{{/favouritesFirst}} {{^favourites}}d-none{{/favourites}}"
                            id="starred-tab-{{uniqid}}"
                            data-toggle="tab"
+                           data-region="favourite-tab-nav"
                            href="#starred-{{uniqid}}"
                            role="tab"
                            aria-label="{{#str}} aria:selectfavouritestab, core_course {{/str}}"
@@ -53,6 +54,7 @@
                         <a class="nav-link {{#recommendedFirst}}active{{/recommendedFirst}} {{^recommended}}d-none{{/recommended}}"
                            id="recommended-tab-{{uniqid}}"
                            data-toggle="tab"
+                           data-region="recommended-tab-nav"
                            href="#recommended-{{uniqid}}"
                            role="tab"
                            aria-label="{{#str}} aria:selectrecommendedtab, core_course {{/str}}"
@@ -65,6 +67,7 @@
                         <a class="nav-link {{#fallback}}active{{/fallback}}"
                            id="all-tab-{{uniqid}}"
                            data-toggle="tab"
+                           data-region="default-tab-nav"
                            href="#all-{{uniqid}}"
                            role="tab"
                            aria-label="{{#str}} aria:selectdefaulttab, core_course {{/str}}"
@@ -76,16 +79,14 @@
                 </ul>
             </nav>
             <div class="tab-content" id="tabbed-activities-{{uniqid}}">
-                <div class="tab-pane {{#favouritesFirst}}active{{/favouritesFirst}}" id="starred-{{uniqid}}" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
+                <div data-region="favourites" class="tab-pane {{#favouritesFirst}}active{{/favouritesFirst}}" id="starred-{{uniqid}}" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
                     <div class="modchoosercontainer" data-region="chooser-container" aria-label="{{#str}} activitymodules {{/str}}">
                         <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="menubar" data-region="chooser-options-container" data-render="favourites-area">
-                            {{#favourites}}
-                                {{>core_course/chooser_item}}
-                            {{/favourites}}
+                            {{>core_course/chooser_favourites}}
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane {{#recommendedFirst}}active{{/recommendedFirst}}" id="recommended-{{uniqid}}" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
+                <div data-region="recommended" class="tab-pane {{#recommendedFirst}}active{{/recommendedFirst}}" id="recommended-{{uniqid}}" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
                     <div class="modchoosercontainer" data-region="chooser-container" aria-label="{{#str}} activitymodules {{/str}}">
                         <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="menubar" data-region="chooser-options-container">
                             {{#recommended}}
@@ -94,7 +95,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane {{#fallback}}active{{/fallback}}" id="all-{{uniqid}}" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
+                <div data-region="default" class="tab-pane {{#fallback}}active{{/fallback}}" id="all-{{uniqid}}" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
                     <div class="modchoosercontainer" data-region="chooser-container" aria-label="{{#str}} activitymodules {{/str}}">
                         <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="menubar" data-region="chooser-options-container">
                             {{#default}}
