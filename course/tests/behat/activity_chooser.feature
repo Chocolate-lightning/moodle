@@ -54,10 +54,28 @@ Feature: Display and choose from the available activities in course
     And "Back" "button" should not exist in the "modules" "core_course > Activity chooser screen"
     And I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "Add an activity or resource" "dialogue"
 
-  # Currently stubbed out in MDL-67321 as further issues will add more tabs.
   Scenario: Navigate between module tabs
     Given I open the activity chooser
     Then I should see "Activities" in the "Add an activity or resource" "dialogue"
+    And I should not see "Starred" in the "Add an activity or resource" "dialogue"
+    When I click on "Toggle favourite status of the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    Then I should see "Starred" in the "Add an activity or resource" "dialogue"
+    And I click on "Close" "button" in the "Add an activity or resource" "dialogue"
+    # Setup recommended module.
+    When I log out
+    And I log in as "admin"
+    And I am on site homepage
+    And I navigate to "Courses > Activity chooser" in site administration
+    And I click on ".activity-recommend-checkbox" "css" in the "Book" "table_row"
+    Then "input[aria-label=\"Recommend activity: Book\"][checked=checked]" "css_element" should exist
+    # Setup done, lets check it works with a teacher.
+    When I log out
+    And I log in as "teacher"
+    And I am on "Course" course homepage with editing mode on
+    And I open the activity chooser
+    Then I should see "Recommended" in the "Add an activity or resource" "dialogue"
+    And I click on "Recommended" "link" in the "Add an activity or resource" "dialogue"
+    Then I should see "Book" in the "recommended" "core_course > Activity chooser tab"
 
   Scenario: Favourite a module in the activity chooser
     Given I open the activity chooser
