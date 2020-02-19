@@ -25,6 +25,7 @@
 import $ from 'jquery';
 import * as ModalEvents from 'core/modal_events';
 import selectors from 'core_course/local/activitychooser/selectors';
+import {search} from 'core_course/local/activitychooser/search';
 import * as Templates from 'core/templates';
 import {end, arrowLeft, arrowRight, home, enter, space} from 'core/key_codes';
 import {addIconToContainer} from 'core/loadingicon';
@@ -271,10 +272,20 @@ export const displayChooser = (origin, modal, sectionModules) => {
 
     // We want to focus on the first chooser option element as soon as the modal is opened.
     modal.getRoot().on(ModalEvents.shown, () => {
+        const userArray = [
+            {id: 10, nickName: 'flightless bird'},
+            {id: 11, nickName: 'bald eagle'},
+            {id: 12, nickName: 'bagman'},
+            {id: 13, nickName: 'paggers'},
+            {id: 14, nickName: 'Gordo'},
+            {id: 15, nickName: 'Montreal Mullet'}
+        ];
+
         modal.getModal()[0].tabIndex = -1;
 
         modal.getBodyPromise()
         .then(body => {
+            search(userArray);
             const firstChooserOption = body[0].querySelector(selectors.regions.chooserOption.container);
             focusChooserOption(firstChooserOption);
 
