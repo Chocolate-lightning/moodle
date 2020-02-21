@@ -59,3 +59,55 @@ Feature: Display and choose from the available activities in course
     Given I open the activity chooser
     And I should see "Activities" in the "Add an activity or resource" "dialogue"
     Then I should see "Forum" in the "default" "core_course > Activity chooser tab"
+
+  Scenario: The teacher can search for an activity by it's name
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    When I set the field "search" to "Lesson"
+    Then I should see "1 results found"
+    And I should see "Lesson" in the ".searchresultscontainer" "css_element"
+
+  Scenario: The teacher can search for an activity by it's description
+    Given I open the activity chooser
+    When I set the field "search" to "The lesson activity module enables a teacher to deliver content"
+    Then I should see "1 results found"
+    And I should see "Lesson" in the ".searchresultscontainer" "css_element"
+
+  Scenario: Search results are not returned if the search query does not match any activity name or description
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    When I set the field "search" to "Random search query"
+    Then I should see "0 results found"
+    And ".option" "css_element" should not exist in the ".searchresultitemscontainer" "css_element"
+
+  Scenario: Teacher can return to the default activity chooser state by manually removing the search query
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    And I set the field "search" to "Lesson"
+    And I should see "1 results found"
+    And I should see "Lesson" in the ".searchresultscontainer" "css_element"
+    When I set the field "search" to ""
+    Then ".searchresultscontainer" "css_element" should not exist
+    And ".optionscontainer" "css_element" should exist
+
+  Scenario: Teacher can not see a "clear" button if a search query is not entered in the activity chooser search bar
+    When I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    Then "//button[@data-action='clearsearch']" "xpath_element" should not exist
+
+  Scenario: Teacher can see a "clear" button after entering a search query in the activity chooser search bar
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    When I set the field "search" to "Search query"
+    Then "//button[@data-action='clearsearch']" "xpath_element" should exist
+
+  Scenario: Teacher can not see a "clear" button if the search query is removed in the activity chooser search bar
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    And I set the field "search" to "Search query"
+    And "//button[@data-action='clearsearch']" "xpath_element" should exist
+    When I set the field "search" to ""
+    Then "//button[@data-action='clearsearch']" "xpath_element" should not exist
+
+  Scenario: Teacher can instantly remove the search query from the activity search bar by clicking on the "clear" button
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    And I set the field "search" to "Search query"
+    And I should see "results found"
+    When I click on "//button[@data-action='clearsearch']" "xpath_element"
+    Then I should not see "Search query"
+    And ".searchresultscontainer" "css_element" should not exist
+    And ".optionscontainer" "css_element" should exist
