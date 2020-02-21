@@ -28,6 +28,7 @@ import selectors from 'core_course/local/activitychooser/selectors';
 import * as Templates from 'core/templates';
 import {end, arrowLeft, arrowRight, home, enter, space} from 'core/key_codes';
 import {addIconToContainer} from 'core/loadingicon';
+import {debounce} from 'core/utils';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -99,6 +100,15 @@ const registerListenerEvents = (modal, mappedModules) => {
                 caller.focus();
             });
         }
+
+        // The "clear search" button is triggered.
+        if (e.target.matches(selectors.actions.clearSearch)) {
+            // Clear the entered search query in the search bar and hide the search results container.
+            const searchInput = modal.getBody()[0].querySelector(selectors.actions.search);
+            searchInput.value = "";
+            searchInput.focus();
+            toggleSearchResultsView(modal.getBody()[0], mappedModules, searchInput.value);
+        }
     };
 
     modal.getBodyPromise()
@@ -124,9 +134,26 @@ const registerListenerEvents = (modal, mappedModules) => {
         return body;
     })
 
+    // Add a listener for an input change in the activity chooser's search bar.
+    .then(body => {
+        const searchInput = body.querySelector(selectors.actions.search);
+        // The search input is triggered.
+        searchInput.addEventListener('input', debounce(() => {
+            // Display the search results.
+            toggleSearchResultsView(body, mappedModules, searchInput.value);
+        }, 300));
+        return body;
+    })
+
     // Register event listeners related to the keyboard navigation controls.
     .then(body => {
-        initKeyboardNavigation(body, mappedModules);
+        // Get the active chooser options section.
+        const activeSectionId = body.querySelector(selectors.elements.activetab).getAttribute("href");
+        const sectionChooserOptions = body.querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
+        const firstChooserOption = sectionChooserOptions.querySelector(selectors.regions.chooserOption.container);
+        toggleFocusableChoserOption(firstChooserOption, true);
+        initTabsKeyboardNavigation(body);
+        initChooserOptionsKeyboardNavigation(body, mappedModules, sectionChooserOptions);
         return body;
     })
     .catch();
@@ -134,14 +161,12 @@ const registerListenerEvents = (modal, mappedModules) => {
 };
 
 /**
- * Initialise the keyboard navigation controls for the chooser.
+ * Initialise the keyboard navigation controls for the tab list items.
  *
- * @method initKeyboardNavigation
+ * @method initTabsKeyboardNavigation
  * @param {HTMLElement} body Our modal that we are working with
- * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  */
-const initKeyboardNavigation = (body, mappedModules) => {
-
+const initTabsKeyboardNavigation = (body) => {
     // Set up the tab handlers.
     const favTabNav = body.querySelector(selectors.regions.favouriteTabNav);
     const recommendedTabNav = body.querySelector(selectors.regions.recommendedTabNav);
@@ -200,13 +225,22 @@ const initKeyboardNavigation = (body, mappedModules) => {
             }
         });
     });
+};
 
-    // Set up the handlers for the modules.
-    const chooserOptions = body.querySelectorAll(selectors.regions.chooserOption.container);
+/**
+ * Initialise the keyboard navigation controls for the chooser options.
+ *
+ * @method initChooserOptionsKeyboardNavigation
+ * @param {HTMLElement} body Our modal that we are working with
+ * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
+ * @param {HTMLElement} chooserOptionsContainer The section that contains the chooser items
+ */
+const initChooserOptionsKeyboardNavigation = (body, mappedModules, chooserOptionsContainer) => {
+
+    const chooserOptions = chooserOptionsContainer.querySelectorAll(selectors.regions.chooserOption.container);
 
     Array.from(chooserOptions).forEach((element) => {
         return element.addEventListener('keyup', (e) => {
-            const chooserOptions = document.querySelector(selectors.regions.chooserOptions);
 
             // Check for enter/ space triggers for showing the help.
             if (e.keyCode === enter || e.keyCode === space) {
@@ -230,7 +264,7 @@ const initKeyboardNavigation = (body, mappedModules) => {
                 e.preventDefault();
                 const currentOption = e.target.closest(selectors.regions.chooserOption.container);
                 const nextOption = currentOption.nextElementSibling;
-                const firstOption = chooserOptions.firstElementChild;
+                const firstOption = chooserOptionsContainer.firstElementChild;
                 const toFocusOption = clickErrorHandler(nextOption, firstOption);
                 focusChooserOption(toFocusOption, currentOption);
             }
@@ -240,7 +274,7 @@ const initKeyboardNavigation = (body, mappedModules) => {
                 e.preventDefault();
                 const currentOption = e.target.closest(selectors.regions.chooserOption.container);
                 const previousOption = currentOption.previousElementSibling;
-                const lastOption = chooserOptions.lastElementChild;
+                const lastOption = chooserOptionsContainer.lastElementChild;
                 const toFocusOption = clickErrorHandler(previousOption, lastOption);
                 focusChooserOption(toFocusOption, currentOption);
             }
@@ -248,14 +282,14 @@ const initKeyboardNavigation = (body, mappedModules) => {
             if (e.keyCode === home) {
                 e.preventDefault();
                 const currentOption = e.target.closest(selectors.regions.chooserOption.container);
-                const firstOption = chooserOptions.firstElementChild;
+                const firstOption = chooserOptionsContainer.firstElementChild;
                 focusChooserOption(firstOption, currentOption);
             }
 
             if (e.keyCode === end) {
                 e.preventDefault();
                 const currentOption = e.target.closest(selectors.regions.chooserOption.container);
-                const lastOption = chooserOptions.lastElementChild;
+                const lastOption = chooserOptionsContainer.lastElementChild;
                 focusChooserOption(lastOption, currentOption);
             }
         });
@@ -267,26 +301,39 @@ const initKeyboardNavigation = (body, mappedModules) => {
  *
  * @method focusChooserOption
  * @param {HTMLElement} currentChooserOption The current chooser option element that we want to focus
- * @param {HTMLElement} previousChooserOption The previous focused option element
+ * @param {HTMLElement|null} previousChooserOption The previous focused option element
  */
-const focusChooserOption = (currentChooserOption, previousChooserOption = false) => {
-    if (previousChooserOption !== false) {
-        const previousChooserOptionLink = previousChooserOption.querySelector(selectors.actions.addChooser);
-        const previousChooserOptionHelp = previousChooserOption.querySelector(selectors.actions.optionActions.showSummary);
-        // Set tabindex to -1 to remove the previous chooser option element from the focus order.
-        previousChooserOption.tabIndex = -1;
-        previousChooserOptionLink.tabIndex = -1;
-        previousChooserOptionHelp.tabIndex = -1;
+const focusChooserOption = (currentChooserOption, previousChooserOption = null) => {
+    if (previousChooserOption !== null) {
+        toggleFocusableChoserOption(previousChooserOption, false);
     }
 
-    const currentChooserOptionLink = currentChooserOption.querySelector(selectors.actions.addChooser);
-    const currentChooserOptionHelp = currentChooserOption.querySelector(selectors.actions.optionActions.showSummary);
-    // Set tabindex to 0 to add current chooser option element to the focus order.
-    currentChooserOption.tabIndex = 0;
-    currentChooserOptionLink.tabIndex = 0;
-    currentChooserOptionHelp.tabIndex = 0;
-    // Focus the current chooser option element.
+    toggleFocusableChoserOption(currentChooserOption, true);
     currentChooserOption.focus();
+};
+
+/**
+ * Add or remove a chooser option from the focus order.
+ *
+ * @method toggleFocusableChoserOption
+ * @param {HTMLElement} chooserOption The chooser option element which should be added or removed from the focus order
+ * @param {Boolean} isFocusable Whether the chooser element is focusable or not
+ */
+const toggleFocusableChoserOption = (chooserOption, isFocusable) => {
+    const chooserOptionLink = chooserOption.querySelector(selectors.actions.addChooser);
+    const chooserOptionHelp = chooserOption.querySelector(selectors.actions.optionActions.showSummary);
+
+    if (isFocusable) {
+        // Set tabindex to 0 to add current chooser option element to the focus order.
+        chooserOption.tabIndex = 0;
+        chooserOptionLink.tabIndex = 0;
+        chooserOptionHelp.tabIndex = 0;
+    } else {
+        // Set tabindex to -1 to remove the previous chooser option element from the focus order.
+        chooserOption.tabIndex = -1;
+        chooserOptionLink.tabIndex = -1;
+        chooserOptionHelp.tabIndex = -1;
+    }
 };
 
 /**
@@ -295,7 +342,7 @@ const focusChooserOption = (currentChooserOption, previousChooserOption = false)
  * @method clickErrorHandler
  * @param {HTMLElement} item What we want to check exists
  * @param {HTMLElement} fallback If we dont match anything fallback the focus
- * @return {String}
+ * @return {HTMLElement}
  */
 const clickErrorHandler = (item, fallback) => {
     if (item !== null) {
@@ -303,6 +350,106 @@ const clickErrorHandler = (item, fallback) => {
     } else {
         return fallback;
     }
+};
+
+/**
+ * Render the search results in a defined container
+ *
+ * @method renderSearchResults
+ * @param {HTMLElement} searchResultsContainer The container where the data should be rendered
+ * @param {Object} searchResultsData Data containing the module items that satisfy the search criteria
+ */
+const renderSearchResults = async(searchResultsContainer, searchResultsData) => {
+    const searchResultsNumber = searchResultsData.length;
+    const templateData = {
+        'searchresultsnumber': searchResultsNumber,
+        'searchresults': searchResultsData
+    };
+    // Build up the html & js ready to place into the help section.
+    const {html, js} = await Templates.renderForPromise('core_course/chooser_search_results', templateData);
+    await Templates.replaceNodeContents(searchResultsContainer, html, js);
+};
+
+/**
+ * Toggle (display/hide) the search results depending on the value of the search query
+ *
+ * @method toggleSearchResultsView
+ * @param {NodeElement} modalBody The body of the created modal for the section
+ * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
+ * @param {String} searchQuery The search query
+ */
+const toggleSearchResultsView = async(modalBody, mappedModules, searchQuery) => {
+    const searchActive = searchQuery.length > 0;
+    const searchResultsContainer = modalBody.querySelector(selectors.regions.searchResults);
+    const chooserContainer = modalBody.querySelector(selectors.regions.chooser);
+    const clearSearchButton = modalBody.querySelector(selectors.actions.clearSearch);
+
+    if (searchActive) { // Search query is present.
+        const searchResultsData = searchModules(mappedModules, searchQuery);
+        await renderSearchResults(searchResultsContainer, searchResultsData);
+        const searchResultItemsContainer = searchResultsContainer.querySelector(selectors.regions.searchResultItems);
+        const firstSearchResultItem = searchResultItemsContainer.querySelector(selectors.regions.chooserOption.container);
+        if (firstSearchResultItem) {
+            // Set the first result item to be focusable.
+            toggleFocusableChoserOption(firstSearchResultItem, true);
+            // Register keyboard events on the created search result items.
+            initChooserOptionsKeyboardNavigation(modalBody, mappedModules, searchResultItemsContainer);
+        }
+        // Display the "clear" search button in the activity chooser search bar.
+        clearSearchButton.style.display = "block";
+        // Hide the default chooser options container.
+        chooserContainer.setAttribute('hidden', 'hidden');
+        // Display the search results container.
+        searchResultsContainer.removeAttribute('hidden');
+    } else { // Search query is not present.
+        // Hide the "clear" search button in the activity chooser search bar.
+        clearSearchButton.style.display = "none";
+        // Hide the search results container.
+        searchResultsContainer.setAttribute('hidden', 'hidden');
+        // Display the default chooser options container.
+        chooserContainer.removeAttribute('hidden');
+    }
+};
+
+/**
+ * Return the list of modules which have a name or description that matches the given search term.
+ *
+ * @method searchModules
+ * @param {Array} modules List of available modules
+ * @param {String} searchTerm The search term to match
+ * @return {Array}
+ */
+const searchModules = (modules, searchTerm) => {
+    if (searchTerm === '') {
+        return modules;
+    }
+
+    searchTerm = searchTerm.toLowerCase();
+
+    const searchResults = [];
+
+    modules.forEach((activity) => {
+        const activityName = activity.label.toLowerCase();
+        const activityDesc = activity.description.toLowerCase();
+        if (activityName.includes(searchTerm) || activityDesc.includes(searchTerm)) {
+            searchResults.push(activity);
+        }
+    });
+
+    return searchResults;
+};
+
+/**
+ * Disable the focus of all chooser options in a specific container (section).
+ *
+ * @method disableFocusAllChooserOptions
+ * @param {NodeElement} sectionChooserOptions The section that contains the chooser items
+ */
+const disableFocusAllChooserOptions = (sectionChooserOptions) => {
+    const allChooserOptions = sectionChooserOptions.querySelectorAll(selectors.regions.chooserOption.container);
+    allChooserOptions.forEach((chooserOption) => {
+        toggleFocusableChoserOption(chooserOption, false);
+    });
 };
 
 /**
@@ -335,10 +482,24 @@ export const displayChooser = (origin, modal, sectionModules) => {
 
         modal.getBodyPromise()
         .then(body => {
-            const firstChooserOption = body[0].querySelector(selectors.regions.chooserOption.container);
-            focusChooserOption(firstChooserOption);
 
-            return;
+            $(selectors.elements.tab).on('shown.bs.tab', (e) => {
+                const activeSectionId = e.target.getAttribute("href");
+                const activeSectionChooserOptions = body[0]
+                    .querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
+                const firstChooserOption = activeSectionChooserOptions
+                    .querySelector(selectors.regions.chooserOption.container);
+                const prevActiveSectionId = e.relatedTarget.getAttribute("href");
+                const prevActiveSectionChooserOptions = body[0]
+                    .querySelector(selectors.regions.getSectionChooserOptions(prevActiveSectionId));
+
+                // Disable the focus of every chooser option in the previous active section.
+                disableFocusAllChooserOptions(prevActiveSectionChooserOptions);
+                // Enable the focus of the first chooser option in the current active section.
+                toggleFocusableChoserOption(firstChooserOption, true);
+                initChooserOptionsKeyboardNavigation(body[0], mappedModules, activeSectionChooserOptions);
+                return;
+            });
         })
         .catch(Notification.exception);
     });
