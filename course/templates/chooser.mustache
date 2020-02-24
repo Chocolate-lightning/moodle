@@ -35,7 +35,7 @@
 
 <div data-region="carousel" class="carousel slide">
     <div class="carousel-inner" aria-live="polite">
-        <div class="carousel-item p-4 active" data-region="modules">
+        <div class="carousel-item py-3 px-4 active" data-region="modules">
             <div class="modchoosercontainer" aria-label="{{#str}} activitymodules {{/str}}">
                 <div class="searchcontainer m-b-1">
                     <div class="searchbar input-group">
@@ -44,7 +44,7 @@
                         </div>
                         <input type="text"
                                data-action="search"
-                               class="form-control form-control-lg searchinput"
+                               class="form-control form-control-lg searchinput px-3 py-2"
                                placeholder="{{#str}} search {{/str}}"
                                name="search"
                                aria-label="{{#str}} searchactivities {{/str}}"
@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <div data-region="chooser-container">
-                    <ul class="nav nav-tabs mb-2" id="activities-{{uniqid}}" role="tablist">
+                    <ul class="nav nav-tabs mb-4" id="activities-{{uniqid}}" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link {{#favouritesFirst}}active{{/favouritesFirst}} {{^favourites}}d-none{{/favourites}}"
                                id="starred-tab-{{uniqid}}"
@@ -108,7 +108,7 @@
                     <div class="tab-content" id="tabbed-activities-{{uniqid}}">
                         <div class="tab-pane {{#favouritesFirst}}active{{/favouritesFirst}}" id="starred-{{uniqid}}" data-region="favourites" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
                             <div class="modchoosercontainer" data-region="chooser-container" aria-label="{{#str}} activitymodules {{/str}}">
-                                <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="menubar" data-region="chooser-options-container" data-render="favourites-area">
+                                <div class="optionscontainer d-flex flex-wrap mw-100 position-relative" role="menubar" data-region="chooser-options-container" data-render="favourites-area">
                                         {{#favourites}}
                                         {{>core_course/chooser_item}}
                                     {{/favourites}}
@@ -117,7 +117,7 @@
                         </div>
                         <div class="tab-pane {{#recommendedFirst}}active{{/recommendedFirst}}" id="recommended-{{uniqid}}" data-region="recommended" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
                             <div class="modchoosercontainer" data-region="chooser-container" aria-label="{{#str}} activitymodules {{/str}}">
-                                <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="menubar" data-region="chooser-options-container">
+                                <div class="optionscontainer d-flex flex-wrap mw-100 position-relative" role="menubar" data-region="chooser-options-container">
                                     {{#recommended}}
                                         {{>core_course/chooser_item}}
                                     {{/recommended}}
@@ -126,7 +126,7 @@
                         </div>
                         <div class="tab-pane {{#fallback}}active{{/fallback}}" id="all-{{uniqid}}" data-region="default" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
                             <div class="modchoosercontainer" data-region="chooser-container" aria-label="{{#str}} activitymodules {{/str}}">
-                                <div class="optionscontainer d-flex flex-wrap mw-100 p-3 position-relative" role="menubar" data-region="chooser-options-container">
+                                <div class="optionscontainer d-flex flex-wrap mw-100 position-relative" role="menubar" data-region="chooser-options-container">
                                     {{#default}}
                                         {{>core_course/chooser_item}}
                                     {{/default}}
