@@ -1582,7 +1582,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
                 cursor: pointer;
                 color: $gray-600;
                 i {
-                    margin: 0;
+                    height: 23px;
+                    width: 23px;
+                    font-size: 23px;
+                    pointer-events: none;
                 }
             }
         }
@@ -1622,11 +1625,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
                 padding: 0;
             }
         }
-    }
-
-    .actions {
-        border-top: 1px solid $gray-300;
-        background: $white;
     }
 }
 

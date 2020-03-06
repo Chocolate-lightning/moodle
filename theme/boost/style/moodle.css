@@ -10707,7 +10707,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       color: #868e96; }
       .modchoosercontainer .optionscontainer .option .optionactions .optionaction i,
       .modchoosercontainer .searchresultitemscontainer .option .optionactions .optionaction i {
-        margin: 0; }
+        height: 23px;
+        width: 23px;
+        font-size: 23px;
+        pointer-events: none; }
     .modchoosercontainer .optionscontainer .option .optioninfo a,
     .modchoosercontainer .searchresultitemscontainer .option .optioninfo a {
       color: #495057; }
@@ -10734,9 +10737,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       width: 32px;
       font-size: 32px;
       padding: 0; }
-  .modchooser .modal-body .optionsummary .actions {
-    border-top: 1px solid #dee2e6;
-    background: #fff; }
 
 @media (max-width: 1199.98px) {
   .modchoosercontainer .optionscontainer .option,
