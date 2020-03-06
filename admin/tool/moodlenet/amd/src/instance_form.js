@@ -17,14 +17,30 @@
  * Our basic form manager for when a user either enters
  * their profile url or just wants to browse.
  *
+ * This file is a mishmash of JS functions we need for both the standalone (M3.7, M3.8)
+ * plugin & Moodle 3.9 functions. The 3.9 Functions have a base understanding that certain
+ * things exist i.e. directory structures for templates. When this feature goes 3.9+ only
+ * The goal is that we can quickly gut all AMD modules into bare JS files and use ES6 guidelines.
+ * Till then this will have to do.
+ *
  * @module     tool_moodlenet/instance_form
  * @package    tool_moodlenet
  * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingicon'],
-    function(Validator, Selectors, LoadingIcon) {
+define(['tool_moodlenet/validator',
+        'tool_moodlenet/selectors',
+        'core/loadingicon',
+        'core/templates',
+        'core/notification',
+        'jquery'],
+    function(Validator,
+             Selectors,
+             LoadingIcon,
+             Templates,
+             Notification,
+             $) {
     /**
      * Set up the form.
      *
@@ -76,7 +92,97 @@ define(['tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingico
         });
     };
 
+    /**
+     * Given a user wishes to see the MoodleNet profile url form transition them there.
+     *
+     * @method chooserNavigateToMnet
+     * @param {HTMLElement} showMoodleNet The chooser's area for ment
+     * @param {Object} footerData Our footer object to render out
+     * @param {jQuery} carousel Our carousel instance to manage
+     * @param {jQuery} modal Our modal instance to manage
+     */
+    var chooserNavigateToMnet = function(showMoodleNet, footerData, carousel, modal) {
+        showMoodleNet.innerHTML = '';
+
+        // Add a spinner.
+        var spinnerPromise = LoadingIcon.addIconToContainer(showMoodleNet);
+
+        // Used later...
+        var transitionPromiseResolver = null;
+        var transitionPromise = new Promise(resolve => {
+            transitionPromiseResolver = resolve;
+        });
+
+        $.when(
+            Templates.render('tool_moodlenet/chooser_moodlenet', footerData),
+            spinnerPromise,
+            transitionPromise
+        ).then(function([html, js]) {
+                Templates.replaceNodeContents(showMoodleNet, html, js);
+        }).catch(Notification.exception);
+
+        // We apply our handlers in here to minimise plugin dependency in the Chooser.
+        registerListenerEvents(showMoodleNet, footerData.generic);
+
+        // Move to the next slide, and resolve the transition promise when it's done.
+        carousel.one('slid.bs.carousel', () => {
+            transitionPromiseResolver();
+        });
+        // Trigger the transition between 'pages'.
+        carousel.carousel(2);
+        // eslint-disable-next-line max-len
+        modal.setFooter(Templates.render('tool_moodlenet/chooser_footer_close_mnet', {}));
+    };
+
+    /**
+     * Given a user no longer wishes to see the MoodleNet profile url form transition them from there.
+     *
+     * @method chooserNavigateFromMnet
+     * @param {jQuery} carousel Our carousel instance to manage
+     * @param {jQuery} modal Our modal instance to manage
+     * @param {Object} footerData Our footer object to render out
+     */
+    var chooserNavigateFromMnet = function(carousel, modal, footerData) {
+        // Trigger the transition between 'pages'.
+        carousel.carousel(0);
+        // Safe to assume we have this template as of the new chooser work where this is activated from
+        // we have directory structures available to us.
+        modal.setFooter(Templates.render('core_course/local/activitychooser/footer', footerData));
+    };
+
+    /**
+     * Given the base footer object we need to figure out what to show the user.
+     *
+     * @method chooserFooterLogic
+     * @param {Object} data Our raw footer object
+     * @param {Number} courseId Our course ID from the chooser
+     * @param {Number} caller Our section ID from the chooser
+     * @return {Object}
+     */
+    var chooserFooterLogic = function(data, courseId, caller) {
+        if (data.enabled === true) {
+            data.courseID = courseId;
+            data.sectionID = caller;
+            if (data.installed === true) {
+                // Assumption multiple mnet instances or is the URL meant to be appended to something?
+                // They have added a account to their profile show then a direct link.
+                if (data.advanced !== false) {
+                    var userInput = data.advanced.split("@");
+                    data.test = userInput[2];
+                    data.user = userInput[1];
+                }
+                // On click show the carousel item / render it then show.
+            }
+            // Plugin has been removed or disabled but promo is still shown.
+        }
+        return data;
+        // Final catch where the Admin want no references.
+    };
+
     return {
         init: init,
+        chooserNavigateToMnet: chooserNavigateToMnet,
+        chooserNavigateFromMnet: chooserNavigateFromMnet,
+        chooserFooterLogic: chooserFooterLogic,
     };
 });

@@ -158,7 +158,16 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid]);
+        // Dirty little testing object.
+        $sampleData = (object) [
+            'enabled' => true, // Mocks the adv feat setting.
+            'installed' => true, // Mocks some CB we will do to see if the plugin is installed.
+            'generic' => 'https://hq.moodle.net', // Mock of the default HQ run mnet instance.
+            'advanced' => false, // Can be false if user has not entered text into the fake form.
+            //'advanced' => '@dammit@https://home.next.moodle.com', // Mock of the user entered text from fake form.
+            'img' => $this->image_url('MoodleNet', 'tool_moodlenet')->out(false), // mnet logo for use in templates etc.
+        ];
+        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid, $sampleData]);
 
         return '';
     }

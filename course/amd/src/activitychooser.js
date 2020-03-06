@@ -30,17 +30,19 @@ import * as Templates from 'core/templates';
 import * as ModalFactory from 'core/modal_factory';
 import {get_string as getString} from 'core/str';
 import Pending from 'core/pending';
+import * as MoodleNetPlugin from 'tool_moodlenet/instance_form';
 
 /**
  * Set up the activity chooser.
  *
  * @method init
  * @param {Number} courseId Course ID to use later on in fetchModules()
+ * @param {Object} footerData What we use to figure out if / what we need to render
  */
-export const init = courseId => {
+export const init = (courseId, footerData) => {
     const pendingPromise = new Pending();
 
-    registerListenerEvents(courseId);
+    registerListenerEvents(courseId, footerData);
 
     pendingPromise.resolve();
 };
@@ -50,8 +52,9 @@ export const init = courseId => {
  *
  * @method registerListenerEvents
  * @param {Number} courseId
+ * @param {Object} footerData What we use to figure out if / what we need to render
  */
-const registerListenerEvents = (courseId) => {
+const registerListenerEvents = (courseId, footerData) => {
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -80,11 +83,13 @@ const registerListenerEvents = (courseId) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
                 const data = await fetchModuleData();
                 const caller = e.target.closest(selectors.elements.sectionmodchooser);
-                const favouriteFunction = partiallyAppliedFavouriteManager(data, caller.dataset.sectionid);
-                const builtModuleData = sectionIdMapper(data, caller.dataset.sectionid);
-                const sectionModal = await modalBuilder(builtModuleData);
+                const sectionId = parseInt(caller.dataset.sectionid);
+                const favouriteFunction = partiallyAppliedFavouriteManager(data, sectionId);
+                const builtModuleData = sectionIdMapper(data, sectionId);
+                const builtFooterData = footerDataBuilder(footerData, courseId, sectionId);
+                const sectionModal = await modalBuilder(builtModuleData, builtFooterData);
 
-                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction);
+                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction, builtFooterData);
             }
         });
     });
@@ -96,7 +101,7 @@ const registerListenerEvents = (courseId) => {
  *
  * @method sectionIdMapper
  * @param {Object} webServiceData Our original data from the Web service call
- * @param {Array} id The ID of the section we need to append to the links
+ * @param {Number} id The ID of the section we need to append to the links
  * @return {Array} [modules] with URL's built
  */
 const sectionIdMapper = (webServiceData, id) => {
@@ -112,10 +117,11 @@ const sectionIdMapper = (webServiceData, id) => {
  * Build a modal on demand to save page load times
  *
  * @method modalBuilder
- * @param {Array} data our array of modules with section ID's applied in the URL field
+ * @param {Object} data our modules to generate a modal for
+ * @param {Object} footer object of Moodle Net data to build links for maybe
  * @return {Object} Our modal that we are going to show the user
  */
-const modalBuilder = data => buildModal(templateDataBuilder(data));
+const modalBuilder = (data, footer) => buildModal(templateDataBuilder(data), footer);
 
 /**
  * Given an array of modules we want to figure out where & how to place them into our template object
@@ -148,18 +154,25 @@ const templateDataBuilder = (data) => {
     };
 };
 
+const footerDataBuilder = (data, courseId, caller) => {
+    // Show something in the Footer.
+    return MoodleNetPlugin.chooserFooterLogic(data, courseId, caller);
+};
+
 /**
  * Given an object we want to build a modal ready to show
  *
  * @method buildModal
  * @param {Object} data The template data which contains arrays of modules
+ * @param {String|Boolean} footer Either a footer to add or nothing
  * @return {Object} The modal for the calling section with everything already set up
  */
-const buildModal = data => {
+const buildModal = async(data, footer) => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
         body: Templates.render('core_course/activitychooser', data),
+        footer: await Templates.render('core_course/local/activitychooser/footer', footer),
         large: true,
         templateContext: {
             classes: 'modchooser'
