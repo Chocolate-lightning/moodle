@@ -36,11 +36,12 @@ import Pending from 'core/pending';
  *
  * @method init
  * @param {Number} courseId Course ID to use later on in fetchModules()
+ * @param {Object} moodleNetData What we use to figure out if / what we need to render
  */
-export const init = courseId => {
+export const init = (courseId, moodleNetData) => {
     const pendingPromise = new Pending();
 
-    registerListenerEvents(courseId);
+    registerListenerEvents(courseId, moodleNetData);
 
     pendingPromise.resolve();
 };
@@ -51,7 +52,7 @@ export const init = courseId => {
  * @method registerListenerEvents
  * @param {Number} courseId
  */
-const registerListenerEvents = (courseId) => {
+const registerListenerEvents = (courseId, moodleNetData) => {
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -80,11 +81,13 @@ const registerListenerEvents = (courseId) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
                 const data = await fetchModuleData();
                 const caller = e.target.closest(selectors.elements.sectionmodchooser);
-                const favouriteFunction = partiallyAppliedFavouriteManager(data, caller.dataset.sectionid);
-                const builtModuleData = sectionIdMapper(data, caller.dataset.sectionid);
-                const sectionModal = await modalBuilder(builtModuleData);
+                const sectionId = parseInt(caller.dataset.sectionid);
+                const favouriteFunction = partiallyAppliedFavouriteManager(data, sectionId);
+                const builtModuleData = sectionIdMapper(data, sectionId);
+                const builtFooterData = footerDataBuilder(moodleNetData, courseId, sectionId);
+                const sectionModal = await modalBuilder(builtModuleData, builtFooterData);
 
-                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction);
+                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction, builtFooterData);
             }
         });
     });
@@ -96,7 +99,7 @@ const registerListenerEvents = (courseId) => {
  *
  * @method sectionIdMapper
  * @param {Object} webServiceData Our original data from the Web service call
- * @param {Array} id The ID of the section we need to append to the links
+ * @param {Number} id The ID of the section we need to append to the links
  * @return {Array} [modules] with URL's built
  */
 const sectionIdMapper = (webServiceData, id) => {
@@ -112,10 +115,11 @@ const sectionIdMapper = (webServiceData, id) => {
  * Build a modal for each section ID and store it into a map for quick access
  *
  * @method modalBuilder
- * @param {Map} data our map of section ID's & modules to generate modals for
+ * @param {Object} data our modules to generate a modal for
+ * @param {Object} footer object of Moodle Net data to build links for maybe
  * @return {Object} Our modal that we are going to show the user
  */
-const modalBuilder = data => buildModal(templateDataBuilder(data));
+const modalBuilder = (data, footer) => buildModal(templateDataBuilder(data), footer);
 
 /**
  * Given an array of modules we want to figure out where & how to place them into our template object
@@ -148,18 +152,42 @@ const templateDataBuilder = (data) => {
     };
 };
 
+const footerDataBuilder = (data, courseId, caller) => {
+    // Show something in the Footer.
+    if (data.enabled === true) {
+        data.courseID = courseId;
+        data.sectionID = caller;
+        if (data.installed === true) {
+            // Assumption multiple mnet instances or is the URL meant to be appended to something?
+            // They have added a account to their profile show then a direct link.
+            if (data.advanced !== false) {
+                const userInput = data.advanced.split("@");
+                data.test = userInput[2];
+                data.user = userInput[1];
+            }
+            // On click show the carousel item / render it then show.
+        }
+        // Plugin has been removed or disabled but promo is still shown.
+    }
+    // Final catch where the Admin want no references.
+
+    return data;
+};
+
 /**
- * Given an object we want to prebuild a modal ready to store into a map
+ * Given some objects we want to prebuild a modal ready to store into a map
  *
  * @method buildModal
  * @param {Object} data The template data which contains arrays of modules
+ * @param {String|Boolean} footer Either a footer to add or nothing
  * @return {Object} The modal for the calling section with everything already set up
  */
-const buildModal = data => {
+const buildModal = async(data, footer) => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
         body: Templates.render('core_course/chooser', data),
+        footer: await Templates.render('core_course/chooser_footer', footer),
         large: true,
         templateContext: {
             classes: 'modchooser'

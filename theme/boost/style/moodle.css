@@ -10662,9 +10662,22 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       height: 1em;
       width: 1em;
       margin: 5em auto; }
-
-.modchoosercontainer.noscroll {
-  overflow-y: hidden; }
+  .modchooser .modal-body .optionsummary {
+    background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    line-height: 2em;
+    height: 590px; }
+    .modchooser .modal-body .optionsummary .content {
+      overflow-y: auto; }
+      .modchooser .modal-body .optionsummary .content .heading .icon {
+        height: 32px;
+        width: 32px;
+        font-size: 32px;
+        padding: 0; }
+    .modchooser .modal-body .optionsummary .actions {
+      border-top: 1px solid #dee2e6;
+      background: #fff; }
 
 .modchooser .searchcontainer .searchbar .searchinput {
   font-size: inherit;
@@ -10692,6 +10705,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     height: 20px;
     width: 20px;
     font-size: 20px; }
+
+.modchoosercontainer.noscroll {
+  overflow-y: hidden; }
 
 .modchoosercontainer .optionscontainer,
 .modchoosercontainer .searchresultitemscontainer {
@@ -10723,23 +10739,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         width: 32px;
         height: 32px;
         font-size: 32px; }
-
-.modchooser .modal-body .optionsummary {
-  background-color: #fff;
-  overflow-x: hidden;
-  overflow-y: auto;
-  line-height: 2em;
-  height: 590px; }
-  .modchooser .modal-body .optionsummary .content {
-    overflow-y: auto; }
-    .modchooser .modal-body .optionsummary .content .heading .icon {
-      height: 32px;
-      width: 32px;
-      font-size: 32px;
-      padding: 0; }
-  .modchooser .modal-body .optionsummary .actions {
-    border-top: 1px solid #dee2e6;
-    background: #fff; }
 
 @media (max-width: 1199.98px) {
   .modchoosercontainer .optionscontainer .option,
