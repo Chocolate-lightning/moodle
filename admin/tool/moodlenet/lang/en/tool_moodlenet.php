@@ -25,13 +25,31 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
+$string['browsemoodlenet'] = "Browse Official HQ MoodleNet";
 $string['enablemoodlenet'] = 'Enable integration with MoodleNet instances';
 $string['enablemoodlenetinfo'] = 'If enabled, and provided the MoodleNet plugin is installed, users can import content from MoodleNet into this site.';
+$string['forminfo'] = "It will be automatically saved on your Moodle profile.";
+$string['instancedescription'] = "Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
+        Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
+        Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
+        Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
+        <br />
+        Upon an successful input you will be redirected to either hq.moodle.net or your entered domain.";
+$string['instancepagetitle'] = 'Instance page';
+$string['instancepageheader'] = 'Navigate to a MoodleNet instance';
+$string['instanceplaceholder'] = '@yourprofile@moodle.net';
+$string['inputhelp'] = 'Browse yours by entering your MoodleNet profile URL';
 $string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format.
 If this happens repeatedly, please contact the site administrator.';
 $string['mnetprofile'] = 'MoodleNet profile';
 $string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet. Do not delete.</p>';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
+$string['or'] = "Or";
 $string['pluginname'] = 'MoodleNet';
 $string['privacy:metadata:profilefieldpurpose'] = 'Information is stored in a custom user profile field.';
+$string['profilevalidationerror'] = 'There was a problem trying to validate your profile URL';
+$string['profilevalidationfail'] = 'Please enter a valid MoodleNet profile URL';
+$string['profilevalidationpass'] = 'Looks good!';
+$string['saveandgo'] = "Save and go";

@@ -281,4 +281,50 @@ class profile_manager {
         $profileclass->define_save($data);
     }
 
+    /**
+     * Given our $moodlenetprofile let's cURL the domains' WebFinger endpoint
+     *
+     * @param moodlenet_user_profile $moodlenetprofile The moodlenet profile to get info from.
+     * @return array [bool, text, raw]
+     */
+    public static function get_moodlenet_profile_link(moodlenet_user_profile $moodlenetprofile): array {
+        $domain = $moodlenetprofile->get_domain();
+        $username = $moodlenetprofile->get_username();
+
+        // Assumption: All MoodleNet instance's will contain a WebFinger validation script.
+        $url = "https://".$domain."/.well-known/webfinger?resource=acct:".$username."@".$domain;
+
+        $curl = new \curl();
+        $options = [
+            'CURLOPT_HEADER' => 0,
+            'CURLINFO_HTTP_CODE' => 1,
+        ];
+        $content = $curl->get($url, null, $options);
+        $errno   = $curl->get_errno();
+        $info = $curl->get_info();
+
+        // The base cURL seems fine, let's press on.
+        if (!$errno) {
+            // WebFinger gave us a 404 back so the user has no droids here.
+            if ($info['http_code'] === 404) {
+                return [
+                    'result' => false,
+                    'message' => get_string('profilevalidationfail', 'tool_moodlenet'),
+                ];
+            }
+            // We must have a valid link so give it back to the user.
+            $data = json_decode($content);
+            return [
+                'result' => true,
+                'message' => get_string('profilevalidationpass', 'tool_moodlenet'),
+                'domain' => $data->aliases[0]
+            ];
+        } else {
+            // There was some failure in curl so report it back.
+            return [
+                'result' => false,
+                'message' => get_string('profilevalidationerror', 'tool_moodlenet'),
+            ];
+        }
+    }
 }
