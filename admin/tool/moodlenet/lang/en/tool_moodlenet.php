@@ -25,15 +25,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
+$string['browse'] = "Browse";
+$string['browsemoodlenet'] = "Browse MoodleNet";
 $string['enablemoodlenet'] = 'Enable the MoodleNet integration';
 $string['enablemoodlenetinfo'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
 activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
 ';
-$string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format. 
+$string['forminfo'] = "It will be automatically saved on your Moodle profile.";
+$string['instancedescription'] = "Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
+        Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
+        Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
+        Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
+        <br />
+        Upon an successful input you will be redirected to either hq.moodle.net or your entered domain.";
+$string['instancepagetitle'] = 'Instance page';
+$string['instancepageheader'] = 'Navigate to a MoodleNet instance';
+$string['instanceplaceholder'] = '@yourprofile@youmoodlenet.site';
+$string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format.
 If this happens repeatedly, please contact the site administrator.';
 $string['mnetprofile'] = 'MoodleNet profile';
 $string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet. Do not delete.</p>';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
+$string['or'] = "Or";
 $string['pluginname'] = 'MoodleNet';
 $string['privacy:metadata:profilefieldpurpose'] = 'Information is stored in a custom user profile field.';
