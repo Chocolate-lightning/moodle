@@ -15,16 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version file for tool_moodlenet
+ * Tool Moodle.Net webservice definitions.
  *
- * @package     tool_moodlenet
- * @copyright   2020 Jake Dallimore <jrhdallimore@gmail.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_moodlenet
+ * @copyright  2020 Mathew May {@link https://mathew.solutions}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component  = 'tool_moodlenet';
-$plugin->version    = 2020031103;
-$plugin->requires   = 2020022800.01;
-$plugin->maturity   = MATURITY_ALPHA;
+$functions = [
+    'tool_moodlenet_search_courses' => [
+        'classname'   => 'tool_moodlenet\external',
+        'methodname'  => 'search_courses',
+        'description' => 'For some given input search for a course that matches',
+        'type'        => 'read',
+        'ajax'        => true,
+        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
+];
