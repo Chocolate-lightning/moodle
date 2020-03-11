@@ -44,7 +44,23 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
      */
     public function test_get_moodlenet_user_profile() {
         $this->resetAfterTest();
-        $user = $this->getDataGenerator()->create_user(['moodlenetprofile' => 'Anything here will do']);
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $fieldname = \tool_moodlenet\profile_manager::get_profile_field_name();
+
+        // The shortname is unique so we can grab the record from there.
+        $field = $DB->get_record('user_info_field', ['shortname' => $fieldname]);
+
+        $userprofiledata = '@matt@hq.mnet';
+
+        $data = (object) [
+            'userid' => $user->id,
+            'fieldid' => $field->id,
+            'data' => $userprofiledata
+        ];
+
+        $DB->insert_record('user_info_data', $data);
 
         $result = \tool_moodlenet\profile_manager::get_moodlenet_user_profile($user->id);
         $this->assertEquals($user->moodlenetprofile, $result->get_profile_name());
@@ -107,13 +123,105 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-        $profilename = 'Anything will do';
+        $profilename = '@matt@hq.mnet';
 
         $moodlenetprofile = new \tool_moodlenet\moodlenet_user_profile($profilename, $user->id);
 
         \tool_moodlenet\profile_manager::save_moodlenet_user_profile($moodlenetprofile);
 
-        $userdata = \core_user::get_user($user->id);
-        $this->assertEquals($profilename, $userdata->moodlenetprofile);
+        $profile = \tool_moodlenet\profile_manager::get_moodlenet_user_profile($user->id);
+        $this->assertEquals($profilename, $profile->get_profile_name());
+    }
+
+    /**
+     * Test that deleting the category will result in it being regenerated with the save being successful.
+     */
+    public function test_save_moodlenet_user_profile_deleted_category() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $profilename = '@matt@hq.mnet';
+
+        $categoryname = \tool_moodlenet\profile_manager::get_category_name();
+        $DB->delete_records('user_info_category', ['name' => $categoryname]);
+
+        $record = $DB->get_records('user_info_category');
+        $this->assertEmpty($record);
+
+        $moodlenetprofile = new \tool_moodlenet\moodlenet_user_profile($profilename, $user->id);
+        \tool_moodlenet\profile_manager::save_moodlenet_user_profile($moodlenetprofile);
+
+        $profile = \tool_moodlenet\profile_manager::get_moodlenet_user_profile($user->id);
+        $this->assertEquals($profilename, $profile->get_profile_name());
+
+        $record = $DB->get_records('user_info_category');
+        $this->assertCount(1, $record);
+    }
+
+    /**
+     * Test that deleting the field will result in it being regenerated with the save being successful.
+     */
+    public function test_save_moodlenet_user_profile_deleted_field() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $profilename = '@matt@hq.mnet';
+
+        $fieldname = \tool_moodlenet\profile_manager::get_profile_field_name();
+        $DB->delete_records('user_info_field', ['shortname' => $fieldname]);
+
+        $record = $DB->get_records('user_info_field');
+        $this->assertEmpty($record);
+
+        $moodlenetprofile = new \tool_moodlenet\moodlenet_user_profile($profilename, $user->id);
+        \tool_moodlenet\profile_manager::save_moodlenet_user_profile($moodlenetprofile);
+
+        $profile = \tool_moodlenet\profile_manager::get_moodlenet_user_profile($user->id);
+        $this->assertEquals($profilename, $profile->get_profile_name());
+
+        $record = $DB->get_records('user_info_field');
+        $this->assertCount(1, $record);
+    }
+
+    /**
+     * Test that deleting the category and field will result in both being regenerated with the save being successful.
+     */
+    public function test_save_moodlenet_user_profile_deleted_category_and_field() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $profilename = '@matt@hq.mnet';
+
+        $fieldname = \tool_moodlenet\profile_manager::get_profile_field_name();
+        $DB->delete_records('user_info_field', ['shortname' => $fieldname]);
+
+        // Delete field and category.
+        $record = $DB->get_records('user_info_field');
+        $this->assertEmpty($record);
+
+        $categoryname = \tool_moodlenet\profile_manager::get_category_name();
+        $DB->delete_records('user_info_category', ['name' => $categoryname]);
+
+        $record = $DB->get_records('user_info_category');
+        $this->assertEmpty($record);
+
+        // Create and then save the profile.
+        $moodlenetprofile = new \tool_moodlenet\moodlenet_user_profile($profilename, $user->id);
+        \tool_moodlenet\profile_manager::save_moodlenet_user_profile($moodlenetprofile);
+
+        $profile = \tool_moodlenet\profile_manager::get_moodlenet_user_profile($user->id);
+        $this->assertEquals($profilename, $profile->get_profile_name());
+
+        $record = $DB->get_records('user_info_field');
+        $this->assertCount(1, $record);
+
+        $record = $DB->get_records('user_info_category');
+        $this->assertCount(1, $record);
     }
 }
