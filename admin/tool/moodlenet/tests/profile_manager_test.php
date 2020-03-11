@@ -53,7 +53,7 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
         // The shortname is unique so we can grab the record from there.
         $field = $DB->get_record('user_info_field', ['shortname' => $fieldname]);
 
-        $userprofiledata = 'Anything will do';
+        $userprofiledata = '@matt@hq.mnet';
 
         $data = (object) [
             'userid' => $user->id,
@@ -127,7 +127,7 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-        $profilename = 'Anything will do';
+        $profilename = '@matt@hq.mnet';
 
         $moodlenetprofile = new \tool_moodlenet\moodlenet_user_profile($profilename, $user->id);
 
@@ -146,7 +146,7 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-        $profilename = 'Anything will do';
+        $profilename = '@matt@hq.mnet';
 
         $categoryname = \tool_moodlenet\profile_manager::get_category_name();
         $DB->delete_records('user_info_category', ['name' => $categoryname]);
@@ -173,7 +173,7 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-        $profilename = 'Anything will do';
+        $profilename = '@matt@hq.mnet';
 
         $fieldname = \tool_moodlenet\profile_manager::get_profile_field_name();
         $DB->delete_records('user_info_field', ['shortname' => $fieldname]);
@@ -200,7 +200,7 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-        $profilename = 'Anything will do';
+        $profilename = '@matt@hq.mnet';
 
         $fieldname = \tool_moodlenet\profile_manager::get_profile_field_name();
         $DB->delete_records('user_info_field', ['shortname' => $fieldname]);
