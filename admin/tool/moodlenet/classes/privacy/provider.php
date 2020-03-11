@@ -40,15 +40,12 @@ use \tool_monitor\rule_manager;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements \core_privacy\local\metadata\provider,
+						  \core_privacy\local\request\subsystem\plugin_provider,
+						  \core_privacy\local\request\userlist_provider {
 
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
-    }
+	public static function get_metadata(collection $collection) : collection {
+        $collection->link_subsystem('profilefield_text', 'privacy:metadata:profilefieldpurpose');
+        return $collection;
+	}
 }
