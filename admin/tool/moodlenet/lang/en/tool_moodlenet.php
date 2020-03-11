@@ -39,6 +39,10 @@ $string['mnetprofile'] = 'MoodleNet profile';
 $string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet.</p>';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
+$string['or'] = "Or";
 $string['pluginname'] = 'MoodleNet';
 $string['privacy:metadata'] = "The MoodleNet tool only facilitates communication with MoodleNet. It stores no data.";
+$string['profilevalidationerror'] = 'There was a problem trying to validate your profile URL';
+$string['profilevalidationfail'] = 'Please enter a valid MoodleNet profile URL';
+$string['profilevalidationpass'] = 'Looks good!';
 $string['uploadlimitexceeded'] = 'The file size {$a->filesize} exceeds the user upload limit of {$a->uploadlimit} bytes.';
