@@ -39,6 +39,12 @@ class moodlenet_user_profile {
     /** @var int $userid The user ID that this profile belongs to. */
     protected $userid;
 
+    /** @var string $username The username from $userprofile */
+    protected $username;
+
+    /** @var string $domain The domain from $domain */
+    protected $domain;
+
     /**
      * Constructor method.
      *
@@ -48,6 +54,19 @@ class moodlenet_user_profile {
     public function __construct(string $userprofile, int $userid) {
         $this->profile = $userprofile;
         $this->userid = $userid;
+
+        $explodedprofile = explode('@', $this->profile);
+        if (count($explodedprofile) === 2) {
+            // It'll either be an email or WebFinger entry.
+            $this->username = $explodedprofile[0];
+            $this->domain = $explodedprofile[1];
+        } else if (count($explodedprofile) === 3) {
+            // We may have a profile link as MoodleNet gives to the user.
+            $this->username = $explodedprofile[1];
+            $this->domain = $explodedprofile[2];
+        } else {
+            throw new \Exception('$userprofile is not correctly formatted');
+        }
     }
 
     /**
@@ -66,5 +85,23 @@ class moodlenet_user_profile {
      */
     public function get_userid(): int {
         return $this->userid;
+    }
+
+    /**
+     * Get the username for this profile.
+     *
+     * @return string The username.
+     */
+    public function get_username(): string {
+        return $this->username;
+    }
+
+    /**
+     * Get the domain for this profile.
+     *
+     * @return string The domain.
+     */
+    public function get_domain(): string {
+        return $this->domain;
     }
 }
