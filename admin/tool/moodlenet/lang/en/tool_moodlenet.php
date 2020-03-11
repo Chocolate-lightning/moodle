@@ -27,9 +27,11 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['enablemoodlenet'] = 'Enable integration with MoodleNet instances';
 $string['enablemoodlenetinfo'] = 'If enabled, and provided the MoodleNet plugin is installed, users can import content from MoodleNet into this site.';
-$string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format. 
+$string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format.
 If this happens repeatedly, please contact the site administrator.';
+$string['mnetprofile'] = 'MoodleNet profile';
+$string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet. Do not delete.</p>';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
 $string['pluginname'] = 'MoodleNet';
-$string['privacy:metadata'] = "The MoodleNet tool only facilitates communication with MoodleNet. It stores no data.";
+$string['privacy:metadata:profilefieldpurpose'] = 'Information is stored in a custom user profile field.';
