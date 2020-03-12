@@ -62,6 +62,7 @@ class instances_page implements \renderable, \templatable {
         // Prepare the context object.
         $data = new \stdClass();
         $data->foo = $this->foo;
+        $data->sesskey = sesskey();
         $data->img = $output->image_url('MoodleNet', 'tool_moodlenet')->out(false);
 
         return $data;
