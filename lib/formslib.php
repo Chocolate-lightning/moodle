@@ -1497,6 +1497,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_noSubmitButtons=array();
 
     /** @var array Array of buttons that if pressed do not result in the processing of the form. */
+    /** @var array Array of buttons that if pressed do not result in the processing of the form. */
     var $_cancelButtons=array();
 
     /** @var array Array whose keys are element names. If the key exists this is a advanced element */

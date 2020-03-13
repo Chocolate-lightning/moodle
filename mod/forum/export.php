@@ -76,7 +76,7 @@ $url = new moodle_url('/mod/forum/export.php');
 $pagetitle = get_string('export', 'mod_forum');
 $context = $forum->get_context();
 
-$form = new mod_forum\form\export_form($url->out(false), [
+$form = new mod_forum\form\instance_form($url->out(false), [
     'forum' => $forum
 ]);
 
