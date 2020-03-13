@@ -27,12 +27,10 @@ export const validation = (inputElement) => {
 
     // They didn't submit anything.
     if (inputValue === null || inputValue === "") {
-        inputElement.classList.add('is-invalid');
         return false;
     }
     // Simple string that we can't do anything with. May mess with domain only option.
     if (!inputValue.includes("@")) {
-        inputElement.classList.add('is-invalid');
         return false;
     }
     return true;

@@ -33,17 +33,20 @@ const registerListenerEvents = (page) => {
     page.addEventListener('click', async(e) => {
         // Browse with a account.
         if (e.target.matches('[data-action="browse"]')) {
-            window.console.log('browse');
+            window.console.log('inform the user that they will now be redirected');
             //window.location = "https://moodle.org";
         }
         // Our fake submit button / browse button.
         if (e.target.matches('[data-action="submit"]')) {
-            const passed = validator(page.querySelector('[data-var="mnet-link"]'));
+            const input = page.querySelector('[data-var="mnet-link"]');
+            const passed = validator(input);
             if (passed) {
-                window.console.log('validation passed & now redirect');
+                input.classList.add('is-valid');
+                input.classList.remove('is-invalid');
+                window.console.log('inform the user that they will now be redirected');
                 //window.location = "https://mathew.solutions";
             } else {
-                window.console.log('validation failed & set classes');
+                input.classList.add('is-invalid');
             }
         }
     });
