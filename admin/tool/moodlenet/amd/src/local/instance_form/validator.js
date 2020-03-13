@@ -24,14 +24,33 @@
 
 export const validation = (inputElement) => {
     const inputValue = inputElement.value;
-
+    window.console.log(inputValue.split("@"));
     // They didn't submit anything.
-    if (inputValue === null || inputValue === "") {
+    if (inputValue === "") {
         return false;
     }
-    // Simple string that we can't do anything with. May mess with domain only option.
+    // Simple string that we can't do anything with beside check if it is a domain.
     if (!inputValue.includes("@")) {
+        // Check if we are getting a domain entry.
+        return !!inputValue.includes(".moodle.net");
+
+    } else {
+        const inputSplit = inputValue.split("@");
+
+        // Check if we have one @. It'll either be an email or WebFinger entry.
+        if (inputSplit.length === 2) {
+            // Will need to check both parts of the split. i.e. if both sides are empty.
+            window.console.log("email or WebFinger");
+            return true;
+        }
+        // Check if we have two @.
+        if (inputSplit.length === 3) {
+            // Check the direction of the domain vs username
+            window.console.log("Fully passed domain & username in some format");
+            // Figure out where the domain is.
+            return true;
+        }
+        // We only accept the above two counts of @.
         return false;
     }
-    return true;
 };

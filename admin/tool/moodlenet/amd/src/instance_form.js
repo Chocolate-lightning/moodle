@@ -41,11 +41,13 @@ const registerListenerEvents = (page) => {
             const input = page.querySelector('[data-var="mnet-link"]');
             const passed = validator(input);
             if (passed) {
+                input.classList.remove('is-invalid'); // Just in case the class has been applied already.
                 input.classList.add('is-valid');
-                input.classList.remove('is-invalid');
+                window.console.log('push the result somewhere since it passes validation');
                 window.console.log('inform the user that they will now be redirected');
                 //window.location = "https://mathew.solutions";
             } else {
+                // Pass a tool tip or something?
                 input.classList.add('is-invalid');
             }
         }
