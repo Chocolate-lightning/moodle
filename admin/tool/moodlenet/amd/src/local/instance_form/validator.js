@@ -21,8 +21,9 @@
  * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-export const validation = (inputElement) => {
+import webfinger from '../../webfinger';
+export const validation = async (inputElement) => {
+    let web = new webfinger();
     const inputValue = inputElement.value;
     window.console.log(inputValue.split("@"));
     // They didn't submit anything.
@@ -32,7 +33,8 @@ export const validation = (inputElement) => {
     // Simple string that we can't do anything with beside check if it is a domain.
     if (!inputValue.includes("@")) {
         // Check if we are getting a domain entry.
-        return !!inputValue.includes(".moodle.net");
+        //return !!inputValue.includes(".moodle.net");
+        return false;
 
     } else {
         const inputSplit = inputValue.split("@");
@@ -41,14 +43,35 @@ export const validation = (inputElement) => {
         if (inputSplit.length === 2) {
             // Will need to check both parts of the split. i.e. if both sides are empty.
             window.console.log("email or WebFinger");
-            return true;
+            let foo = false;
+            await web.lookup(inputValue, function (err, p) {
+                if (err) {
+                    window.console.log('error: ', err.message);
+                    return false;
+                } else {
+                    window.console.log(p);
+                    foo = true;
+                }
+            });
+            window.console.log('nani');
+            return foo;
         }
         // Check if we have two @.
         if (inputSplit.length === 3) {
             // Check the direction of the domain vs username
             window.console.log("Fully passed domain & username in some format");
             // Figure out where the domain is.
-            return true;
+
+            // Need to strip off front @.
+            web.lookup(inputValue, function (err, p) {
+                if (err) {
+                    window.console.log('error: ', err.message);
+                    return false;
+                } else {
+                    window.console.log(p);
+                    return true;
+                }
+            });
         }
         // We only accept the above two counts of @.
         return false;
