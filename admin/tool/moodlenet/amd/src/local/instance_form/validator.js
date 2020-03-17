@@ -21,9 +21,8 @@
  * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import webfinger from '../../webfinger';
-export const validation = async (inputElement) => {
-    let web = new webfinger();
+import Ajax from 'core/ajax';
+export const validation = async(inputElement) => {
     const inputValue = inputElement.value;
     window.console.log(inputValue.split("@"));
     // They didn't submit anything.
@@ -43,35 +42,25 @@ export const validation = async (inputElement) => {
         if (inputSplit.length === 2) {
             // Will need to check both parts of the split. i.e. if both sides are empty.
             window.console.log("email or WebFinger");
-            let foo = false;
-            await web.lookup(inputValue, function (err, p) {
-                if (err) {
-                    window.console.log('error: ', err.message);
-                    return false;
-                } else {
-                    window.console.log(p);
-                    foo = true;
-                }
-            });
-            window.console.log('nani');
-            return foo;
+            return false;
+            // return true;
         }
         // Check if we have two @.
         if (inputSplit.length === 3) {
             // Check the direction of the domain vs username
             window.console.log("Fully passed domain & username in some format");
             // Figure out where the domain is.
-
-            // Need to strip off front @.
-            web.lookup(inputValue, function (err, p) {
-                if (err) {
-                    window.console.log('error: ', err.message);
-                    return false;
-                } else {
-                    window.console.log(p);
-                    return true;
+            window.console.log('nani');
+            const foo = await Ajax.call([{
+                methodname: 'tool_moodlenet_test',
+                args: {
+                    query: inputValue,
                 }
-            });
+            }])[0].then(async(result) => {
+                return result;
+            }).catch();
+            window.console.log(foo);
+            return foo;
         }
         // We only accept the above two counts of @.
         return false;
