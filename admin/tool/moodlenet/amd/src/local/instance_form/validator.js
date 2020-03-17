@@ -42,6 +42,7 @@ export const validation = async(inputElement) => {
         if (inputSplit.length === 2) {
             // Will need to check both parts of the split. i.e. if both sides are empty.
             window.console.log("email or WebFinger");
+            // TODO: Handle this case too.
             return false;
             // return true;
         }
@@ -51,16 +52,19 @@ export const validation = async(inputElement) => {
             window.console.log("Fully passed domain & username in some format");
             // Figure out where the domain is.
             window.console.log('nani');
+            // TODO: Spinner required.
             const foo = await Ajax.call([{
                 methodname: 'tool_moodlenet_test',
                 args: {
                     query: inputValue,
                 }
             }])[0].then(async(result) => {
+                window.console.log('result');
+                window.console.log(result);
                 return result;
             }).catch();
             window.console.log(foo);
-            return foo;
+            return foo.result;
         }
         // We only accept the above two counts of @.
         return false;

@@ -66,26 +66,25 @@ class external extends external_api {
         $params = self::validate_parameters(self::test_parameters(), ['query' => $query]);
         $input = explode("@", $params['query']);
 
-        $url = "https://".$input[2]."/.well-known/webfinger?resource=acct%3A".$input[1]."%40".$input[2];
+        $url = "https://".$input[2]."/.well-known/webfinger?resource=acct:".$input[1]."@".$input[2];
         $curl = new curl();
-        $curl->head($url);
-        $info = $curl->get_info();
-        echo $info;
-        $out = $curl->get($url);
+        $options = ['CURLOPT_HEADER' => 0];
+        $out =  $curl->get($url, null, $options);
 
         $data = json_decode($out);
         if (!empty($curl->error)) {
-            echo 'curl-request-timeout';
+            return ['result' => false];
         } else {
             if (isset($data->code) && $data->code == 'http-unreachable') {
-                echo 'http-unreachable';
+                return ['result' => false];
             } else {
-                echo 'available';
+                //echo 'available';
+                //echo $out;
+                //echo $data->subject;
+                return ['result' => true];
             }
         }
-        echo $out;
-        die();
-        return false;
+        //echo $data;
     }
 
     /**
