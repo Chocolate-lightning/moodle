@@ -64,6 +64,7 @@ class external extends external_api {
     public static function test(string $query = null) {
 
         $params = self::validate_parameters(self::test_parameters(), ['query' => $query]);
+        // Move the explode to the front end and pass two params assumed name, assumed domain.
         $input = explode("@", $params['query']);
 
         $url = "https://".$input[2]."/.well-known/webfinger?resource=acct:".$input[1]."@".$input[2];
@@ -81,7 +82,12 @@ class external extends external_api {
                 //echo 'available';
                 //echo $out;
                 //echo $data->subject;
-                return ['result' => true];
+                if (isset($data->subject)) {
+                    // Store the information.
+                    return ['result' => true];
+                } else {
+                    return ['result' => false];
+                }
             }
         }
         //echo $data;
