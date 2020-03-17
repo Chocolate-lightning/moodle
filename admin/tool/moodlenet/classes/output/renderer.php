@@ -49,7 +49,7 @@ class renderer extends plugin_renderer_base {
         $this->page->requires->js_call_amd('tool_moodlenet/instance_form', 'init');
 
         $data = $instancespage->export_for_template($this);
-        return parent::render_from_template('tool_moodlenet/something', $data);
+        return parent::render_from_template('tool_moodlenet/instances_page', $data);
     }
 
 }

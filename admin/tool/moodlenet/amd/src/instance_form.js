@@ -33,7 +33,6 @@ const registerListenerEvents = (page) => {
     page.addEventListener('click', async(e) => {
         // Browse with a account.
         if (e.target.matches('[data-action="browse"]')) {
-            window.console.log('inform the user that they will now be redirected');
             //window.location = "https://moodle.org";
         }
         // Our fake submit button / browse button.
@@ -43,11 +42,8 @@ const registerListenerEvents = (page) => {
             if (passed) {
                 input.classList.remove('is-invalid'); // Just in case the class has been applied already.
                 input.classList.add('is-valid');
-                window.console.log('push the result somewhere since it passes validation');
-                window.console.log('inform the user that they will now be redirected');
                 //window.location = "https://mathew.solutions";
             } else {
-                window.console.log('waited alright?');
                 // Pass a tool tip or something?
                 input.classList.add('is-invalid');
             }
