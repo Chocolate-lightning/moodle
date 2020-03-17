@@ -74,18 +74,15 @@ class external extends external_api {
             if (isset($data->code) && $data->code == 'http-unreachable') {
                 return ['result' => false];
             } else {
-                //echo 'available';
-                //echo $out;
-                //echo $data->subject;
                 if (isset($data->subject)) {
-                    // Store the information.
+                    // TODO: Store the information.
                     return ['result' => true];
                 } else {
+                    // User does not exist on that endpoint.
                     return ['result' => false];
                 }
             }
         }
-        //echo $data;
     }
 
     /**
