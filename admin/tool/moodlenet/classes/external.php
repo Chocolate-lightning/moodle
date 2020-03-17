@@ -44,30 +44,25 @@ use curl;
 class external extends external_api {
 
     /**
-     * potential_contexts parameters.
      *
-     * @since  Moodle 3.8
      * @return external_function_parameters
      */
     public static function test_parameters() {
         return new external_function_parameters(
             array(
-                'query' => new external_value(PARAM_RAW, 'Foo', VALUE_REQUIRED)
+                'name' => new external_value(PARAM_RAW, 'Foo', VALUE_REQUIRED),
+                'domain' => new external_value(PARAM_RAW, 'Foo', VALUE_REQUIRED)
             )
         );
     }
 
     /**
-     * @param  string $query
-     * @return array an array of contexts
      */
-    public static function test(string $query = null) {
+    public static function test(string $name, string $domain) {
 
-        $params = self::validate_parameters(self::test_parameters(), ['query' => $query]);
-        // Move the explode to the front end and pass two params assumed name, assumed domain.
-        $input = explode("@", $params['query']);
+        $params = self::validate_parameters(self::test_parameters(), ['name' => $name, 'domain' => $domain]);
 
-        $url = "https://".$input[2]."/.well-known/webfinger?resource=acct:".$input[1]."@".$input[2];
+        $url = "https://".$params['domain']."/.well-known/webfinger?resource=acct:".$params['name']."@".$params['domain'];
         $curl = new curl();
         $options = ['CURLOPT_HEADER' => 0];
         $out =  $curl->get($url, null, $options);
@@ -94,7 +89,6 @@ class external extends external_api {
     }
 
     /**
-
      */
     public static function test_returns() {
         return new external_single_structure([
