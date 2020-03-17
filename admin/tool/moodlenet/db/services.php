@@ -17,8 +17,8 @@
 /**
  * Tool analytics webservice definitions.
  *
- * @package    tool_analytics
- * @copyright  2019 David Monllao {@link http://www.davidmonllao.com}
+ * @package    tool_moodlenet
+ * @copyright  2020 Mathew May {@link https://mathew.solutions}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
