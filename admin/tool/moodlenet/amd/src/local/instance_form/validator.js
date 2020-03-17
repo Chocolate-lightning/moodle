@@ -22,66 +22,38 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import Ajax from 'core/ajax';
+
 export const validation = async(inputElement) => {
     const inputValue = inputElement.value;
-    window.console.log(inputValue.split("@"));
-    // They didn't submit anything.
-    if (inputValue === "") {
+
+    // They didn't submit anything or they gave us a simple string that we can't do anything with.
+    if (inputValue === "" || !inputValue.includes("@")) {
         return false;
     }
-    // Simple string that we can't do anything with beside check if it is a domain.
-    if (!inputValue.includes("@")) {
-        // Check if we are getting a domain entry.
-        //return !!inputValue.includes(".moodle.net");
-        return false;
 
+    const inputSplit = inputValue.split("@");
+
+    const args = {
+        name: null,
+        domain: null
+    };
+
+    // Check if we have one @. It'll either be an email or WebFinger entry.
+    if (inputSplit.length === 2) {
+        args.name = inputSplit[0];
+        args.domain = inputSplit[1];
+    } else if (inputSplit.length === 3) {
+        args.name = inputSplit[1];
+        args.domain = inputSplit[2];
     } else {
-        const inputSplit = inputValue.split("@");
-
-        // Check if we have one @. It'll either be an email or WebFinger entry.
-        if (inputSplit.length === 2) {
-            // Will need to check both parts of the split. i.e. if both sides are empty.
-            window.console.log("email or WebFinger");
-            window.console.log(inputSplit[0]);
-            window.console.log(inputSplit[1]);
-            const foo = await Ajax.call([{
-                methodname: 'tool_moodlenet_test',
-                args: {
-                    name: inputSplit[0],
-                    domain: inputSplit[1]
-                }
-            }])[0].then(async(result) => {
-                window.console.log('result');
-                window.console.log(result);
-                return result;
-            }).catch();
-            window.console.log(foo);
-            return foo.result;
-        }
-        // Check if we have two @.
-        if (inputSplit.length === 3) {
-            // Check the direction of the domain vs username
-            window.console.log("Fully passed domain & username in some format");
-            // Figure out where the domain is.
-            window.console.log('nani');
-            // TODO: Spinner required.
-            window.console.log(inputSplit[1]);
-            window.console.log(inputSplit[2]);
-            const foo = await Ajax.call([{
-                methodname: 'tool_moodlenet_test',
-                args: {
-                    name: inputSplit[1],
-                    domain: inputSplit[2]
-                }
-            }])[0].then(async(result) => {
-                window.console.log('result');
-                window.console.log(result);
-                return result;
-            }).catch();
-            window.console.log(foo);
-            return foo.result;
-        }
-        // We only accept the above two counts of @.
         return false;
     }
+    // TODO: Spinner required.
+    const result = await Ajax.call([{
+        methodname: 'tool_moodlenet_test',
+        args: args
+    }])[0].then(async(result) => {
+        return result;
+    }).catch();
+    return result.result;
 };
