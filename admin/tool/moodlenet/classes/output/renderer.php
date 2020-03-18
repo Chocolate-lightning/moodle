@@ -27,8 +27,8 @@ namespace tool_moodlenet\output;
 defined('MOODLE_INTERNAL') || die();
 
 use plugin_renderer_base;
-use templatable;
-use renderable;
+
+define('DEFAULT_MOODLE_NET_LINK', 'https://team.moodle.net');
 
 /**
  * Renderer class.
@@ -46,7 +46,7 @@ class renderer extends plugin_renderer_base {
      * @return string HTML
      */
     protected function render_instances_page(\tool_moodlenet\output\instances_page $instancespage): string {
-        $this->page->requires->js_call_amd('tool_moodlenet/instance_form', 'init');
+        $this->page->requires->js_call_amd('tool_moodlenet/instance_form', 'init', ['defaulturl' => DEFAULT_MOODLE_NET_LINK]);
 
         $data = $instancespage->export_for_template($this);
         return parent::render_from_template('tool_moodlenet/instances_page', $data);

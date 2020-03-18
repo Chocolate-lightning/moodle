@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Insights report renderable.
+ * Instances page renderable.
  *
  * @package    tool_moodlenet
  * @copyright  2020 Mathew May {@link https://mathew.solutions}
@@ -27,7 +27,7 @@ namespace tool_moodlenet\output;
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Insights report renderable.
+ * Instances page renderable.
  *
  * @package    tool_moodlenet
  * @copyright  2020 Mathew May {@link https://mathew.solutions}
@@ -36,20 +36,9 @@ defined('MOODLE_INTERNAL') || die;
 class instances_page implements \renderable, \templatable {
 
     /**
-     * @var String
+     * Inits the instances page renderable.
      */
-    private $foo = null;
-
-
-    /**
-     * Inits the insights report renderable.
-     *
-     * @param String $foo
-     * @return null
-     */
-    public function __construct(String $foo) {
-        $this->foo = $foo;
-    }
+    public function __construct() {}
 
     /**
      * Export the data.
@@ -61,7 +50,6 @@ class instances_page implements \renderable, \templatable {
 
         // Prepare the context object.
         $data = new \stdClass();
-        $data->foo = $this->foo;
         $data->sesskey = sesskey();
         $data->img = $output->image_url('MoodleNet', 'tool_moodlenet')->out(false);
 

@@ -23,6 +23,13 @@
  */
 import Ajax from 'core/ajax';
 
+/**
+ * Handle form validation
+ *
+ * @method validation
+ * @param {HTMLElement} inputElement The element the user entered text into.
+ * @return {Boolean} Was the users' entry a valid profile URL?
+ */
 export const validation = async(inputElement) => {
     const inputValue = inputElement.value;
 
@@ -38,21 +45,22 @@ export const validation = async(inputElement) => {
         domain: null
     };
 
-    // Check if we have one @. It'll either be an email or WebFinger entry.
     if (inputSplit.length === 2) {
+        // It'll either be an email or WebFinger entry.
         args.name = inputSplit[0];
         args.domain = inputSplit[1];
     } else if (inputSplit.length === 3) {
+        // We may have a profile link as MoodleNet gives to the user.
         args.name = inputSplit[1];
         args.domain = inputSplit[2];
     } else {
         return false;
     }
-    // TODO: Spinner required.
+
     const result = await Ajax.call([{
         methodname: 'tool_moodlenet_test',
         args: args
-    }])[0].then(async(result) => {
+    }])[0].then((result) => {
         return result;
     }).catch();
     return result.result;

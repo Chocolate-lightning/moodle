@@ -39,6 +39,8 @@ $string['instancedescription'] = "Description of what you can find on MoodleNet 
         Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
         <br />
         Upon an successful input you will be redirected to either hq.moodle.net or your entered domain.";
+$string['instancepagetitle'] = 'Instance page';
+$string['instancepageheader'] = 'Navigate to a MoodleNet instance';
 $string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format. 
 If this happens repeatedly, please contact the site administrator.';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.

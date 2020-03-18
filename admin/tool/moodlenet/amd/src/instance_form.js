@@ -14,7 +14,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A type of dialogue used as for choosing modules in a course.
+ * Our basic form manager for when a user either enters
+ * their profile url or just wants to browse.
  *
  * @module     tool_moodlenet/instance_form
  * @package    tool_moodlenet
@@ -22,26 +23,42 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {validation as validator} from 'tool_moodlenet/local/instance_form/validator';
+import {validation as Validator} from 'tool_moodlenet/local/instance_form/validator';
+import Selectors from 'tool_moodlenet/local/instance_form/selectors';
 
-export const init = () => {
-    const page = document.querySelector('[data-region="moodle-net"]');
-    registerListenerEvents(page);
+/**
+ * Set up the form.
+ *
+ * @method init
+ * @param {String} defaulturl Our base case / Moodle's own MoodleNet instance.
+ */
+export const init = (defaulturl) => {
+    const page = document.querySelector(Selectors.region.instancePage);
+    registerListenerEvents(page, defaulturl);
 };
 
-const registerListenerEvents = (page) => {
+/**
+ * Add the event listeners to our form.
+ *
+ * @method registerListenerEvents
+ * @param {HTMLElement} page The whole page element for our form area
+ * @param {String} defaulturl Our base case / Moodle's own MoodleNet instance.
+ */
+const registerListenerEvents = (page, defaulturl) => {
     page.addEventListener('click', async(e) => {
-        // Browse with a account.
-        if (e.target.matches('[data-action="browse"]')) {
-            //window.location = "https://moodle.org";
+        // Browse without an account.
+        if (e.target.matches(Selectors.action.browse)) {
+            window.location = defaulturl;
         }
         // Our fake submit button / browse button.
-        if (e.target.matches('[data-action="submit"]')) {
-            const input = page.querySelector('[data-var="mnet-link"]');
-            const passed = await validator(input);
+        if (e.target.matches(Selectors.action.submit)) {
+            // TODO: Spinner required.
+            const input = page.querySelector(Selectors.var.mnetLink);
+            const passed = await Validator(input);
             if (passed) {
                 input.classList.remove('is-invalid'); // Just in case the class has been applied already.
                 input.classList.add('is-valid');
+                // TODO: Timeout before redirect.
                 //window.location = "https://mathew.solutions";
             } else {
                 // Pass a tool tip or something?

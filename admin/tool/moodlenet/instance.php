@@ -12,12 +12,12 @@ if (!get_config('core', 'enablemoodlenet')) {
 $PAGE->set_url('/moodlenet/instance.php');
 $PAGE->set_context(null);
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title('Integrate!!!');
-$PAGE->set_heading('OH WOW!');
+$PAGE->set_title(get_string('instancepagetitle', 'tool_moodlenet'));
+$PAGE->set_heading(get_string('instancepageheader', 'tool_moodlenet'));
 
 echo $OUTPUT->header();
 
-$renderable = new \tool_moodlenet\output\instances_page('Something');
+$renderable = new \tool_moodlenet\output\instances_page();
 $renderer = $PAGE->get_renderer('tool_moodlenet');
 echo $renderer->render($renderable);
 
