@@ -29,8 +29,10 @@ $string['enablemoodlenet'] = 'Enable the MoodleNet integration';
 $string['enablemoodlenetinfo'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
 activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
 ';
-$string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format. 
+$string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format.
 If this happens repeatedly, please contact the site administrator.';
+$string['mnetprofile'] = 'MoodleNet profile';
+$string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet.</p>';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
 $string['pluginname'] = 'MoodleNet';
