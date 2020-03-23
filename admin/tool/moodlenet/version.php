@@ -25,6 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component  = 'tool_moodlenet';
+<<<<<<< HEAD
 $plugin->version    = 2020031101;
 $plugin->requires   = 2020022800.01;
+=======
+$plugin->version    = 2020030501;        // IMPORTANT! do not update this version number to be greater than the 3.9 version.
+$plugin->requires   = 2019052005.00;
+>>>>>>> 77c8544baa0... MDL-68141 tool_moodlenet: Add course selection page
 $plugin->maturity   = MATURITY_ALPHA;
