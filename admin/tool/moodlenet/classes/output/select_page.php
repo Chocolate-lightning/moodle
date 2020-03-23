@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderer.
+ * Select page renderable.
  *
  * @package    tool_moodlenet
  * @copyright  2020 Mathew May {@link https://mathew.solutions}
@@ -24,43 +24,47 @@
 
 namespace tool_moodlenet\output;
 
-defined('MOODLE_INTERNAL') || die();
-
-use plugin_renderer_base;
-
-define('DEFAULT_MOODLE_NET_LINK', 'https://team.moodle.net');
+defined('MOODLE_INTERNAL') || die;
 
 /**
- * Renderer class.
+ * Select page renderable.
  *
  * @package    tool_moodlenet
  * @copyright  2020 Mathew May {@link https://mathew.solutions}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class renderer extends plugin_renderer_base {
+class select_page implements \renderable, \templatable {
 
     /**
-     * Defer to template.
-     *
-     * @param \tool_moodlenet\output\instances_page $instancespage
-     * @return string HTML
+     * @var $resouceurl
      */
-    protected function render_instances_page(\tool_moodlenet\output\instances_page $instancespage): string {
-        $this->page->requires->js_call_amd('tool_moodlenet/instance_form', 'init', ['defaulturl' => DEFAULT_MOODLE_NET_LINK]);
+    protected $resouceurl;
 
-        $data = $instancespage->export_for_template($this);
-        return parent::render_from_template('tool_moodlenet/instances_page', $data);
+    /**
+     * Inits the Select page renderable.
+     *
+     * @param string $resourceurl The resource the user wants to add
+     */
+    public function __construct(string $resourceurl) {
+        $this->resouceurl = $resourceurl;
     }
 
     /**
-     * Defer to template.
+     * Export the data.
      *
-     * @param \tool_moodlenet\output\select_page $selectpage
-     * @return string HTML
+     * @param \renderer_base $output
+     * @return \stdClass
      */
-    protected function render_select_page(\tool_moodlenet\output\select_page $selectpage): string {
-        $this->page->requires->js_call_amd('tool_moodlenet/select_page', 'init');
-        $data = $selectpage->export_for_template($this);
-        return parent::render_from_template('tool_moodlenet/select_page', $data);
+    public function export_for_template(\renderer_base $output): \stdClass {
+
+        // Prepare the context object.
+        $data = new \stdClass();
+        $data->resourceurl = $this->resouceurl;
+        // TODO: uncomment these two lines once Jake's DnD issue lands.
+        //$remoteresource = new \remote_resource(new \curl(), new \url($this->resouceurl));
+        //$data->name = $remoteresource->get_name();
+        $data->name = 'FooBar uncomment the lines above this.';
+
+        return $data;
     }
 }
