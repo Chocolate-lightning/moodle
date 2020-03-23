@@ -2302,7 +2302,6 @@ function xmldb_main_upgrade($oldversion) {
             $select,
             array('%.h5p')
         );
-
         upgrade_main_savepoint(true, 2020041700.01);
     }
 
@@ -2314,5 +2313,20 @@ function xmldb_main_upgrade($oldversion) {
 
         upgrade_main_savepoint(true, 2020042800.01);
     }
+
+    if ($oldversion < 2020050200.01) {
+        // Define field moodlenetprofile to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('moodlenetprofile', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'alternatename');
+
+        // Conditionally launch add field moodlenetprofile.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020050200.01);
+    }
+
     return true;
 }
