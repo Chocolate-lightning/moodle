@@ -29,11 +29,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir .'/externallib.php');
 require_once($CFG->libdir . '/filelib.php');
 
+use core_course\external\course_summary_exporter;
 use external_api;
 use external_function_parameters;
 use external_value;
 use external_single_structure;
-use curl;
+use renderer_base;
 
 /**
  * This is the external API for this component.
@@ -79,7 +80,7 @@ class external extends external_api {
         $userlink = profile_manager::get_moodlenet_profile_link($mnetprofile);
 
         // There were no problems verifying the account so lets store it.
-        if($userlink['result'] === true) {
+        if ($userlink['result'] === true) {
             profile_manager::save_moodlenet_user_profile($mnetprofile);
         }
         return $userlink;
@@ -95,6 +96,92 @@ class external extends external_api {
             'result' => new external_value(PARAM_BOOL, 'Was the passed content a valid WebFinger?'),
             'message' => new external_value(PARAM_TEXT, 'Our message for the user'),
             'domain' => new external_value(PARAM_RAW, 'Domain to redirect the user to', VALUE_OPTIONAL),
+        ]);
+    }
+
+    /**
+     * search_courses_parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function search_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'searchvalue' => new external_value(PARAM_RAW, 'search value'),
+                'resourceurl' => new external_value(PARAM_RAW, 'The resource link'),
+            )
+        );
+    }
+
+    /**
+     * For some given input find and return any course that matches it.
+     *
+     * @param string $searchvalue The profile url that the user states exists
+     * @param string $resourceurl The resource the user wants to add
+     * @return array Contains the result set of courses for the value
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \invalid_parameter_exception
+     * @throws \moodle_exception
+     * @throws \restricted_context_exception
+     */
+    public static function search_courses(string $searchvalue, string $resourceurl) {
+        global $OUTPUT;
+
+        $params = self::validate_parameters(
+            self::search_courses_parameters(),
+            ['searchvalue' => $searchvalue, 'resourceurl' => $resourceurl]
+        );
+        self::validate_context(\context_system::instance());
+
+        $courses = array();
+
+        if ($arrcourses = \core_course_category::search_courses(array('search' => $params['searchvalue']))) {
+            foreach ($arrcourses as $course) {
+                if (has_capability('moodle/course:manageactivities', \context_course::instance($course->id))) {
+                    $data = new \stdClass();
+                    $data->id = $course->id;
+                    $data->fullname = $course->fullname;
+                    $data->hidden = $course->visible;
+                    $options = [
+                        'course' => $course->id,
+                        'section' => 0,
+                        'resourceurl' => $resourceurl
+                    ];
+                    $viewurl = new \moodle_url('/admin/tool/moodlenet/options.php', $options);
+                    $data->viewurl = $viewurl->out(false);
+                    $category = \core_course_category::get($course->category);
+                    $data->coursecategory = $category->name;
+                    $courseimage = course_summary_exporter::get_course_image($data);
+                    if (!$courseimage) {
+                        $courseimage = $OUTPUT->get_generated_image_for_id($data->id);
+                    }
+                    $data->courseimage = $courseimage;
+                    $courses[] = $data;
+                }
+            }
+        }
+        return array(
+            'courses' => $courses
+        );
+    }
+
+    /**
+     * search_courses_returns.
+     *
+     * @return \external_description
+     */
+    public static function search_courses_returns() {
+        return new external_single_structure([
+            'courses' => new \external_multiple_structure(
+                new external_single_structure([
+                    'id' => new external_value(PARAM_INT, 'course id'),
+                    'fullname' => new external_value(PARAM_TEXT, 'course full name'),
+                    'hidden' => new external_value(PARAM_INT, 'is the course visible'),
+                    'viewurl' => new external_value(PARAM_URL, 'Next step of import'),
+                    'coursecategory' => new external_value(PARAM_TEXT, 'Category name'),
+                    'courseimage' => new external_value(PARAM_RAW, 'course image'),
+                ]))
         ]);
     }
 }

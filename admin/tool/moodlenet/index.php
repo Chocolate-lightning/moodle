@@ -99,6 +99,11 @@ if ($cancel) {
             'section' => $section,
         ]));
     }
+    if (is_null($course)) {
+        redirect(new \moodle_url('/admin/tool/moodlenet/select.php', [
+            'resourceurl' => urlencode($resourceurl),
+        ]));
+    }
     // TODO: Extend conditional to handle cases where course needs to be selected or when the file is an mbz.
 }
 
