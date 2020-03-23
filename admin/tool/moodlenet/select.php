@@ -15,31 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tool Moodle.Net webservice definitions.
+ * Select page.
  *
  * @package    tool_moodlenet
  * @copyright  2020 Mathew May {@link https://mathew.solutions}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../../config.php');
 
-$functions = [
-    'tool_moodlenet_verify_webfinger' => [
-        'classname'   => 'tool_moodlenet\external',
-        'methodname'  => 'verify_webfinger',
-        'description' => 'Verify if the passed information resolves into a WebFinger profile URL',
-        'type'        => 'read',
-        'ajax'        => true,
-        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE]
-    ],
-    'tool_moodlenet_search_courses' => [
-        'classname'   => 'tool_moodlenet\external',
-        'methodname'  => 'search_courses',
-        'description' => 'For some given input search for a course that matches',
-        'type'        => 'read',
-        'ajax'        => true,
-        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE]
-    ],
+require_login();
 
-];
+$resourceurl = required_param('resourceurl', PARAM_RAW);
+$resourceurl = urldecode($resourceurl);
+
+// The integration must be enabled to access this page.
+if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
+    print_error('moodlenetnotenabled', 'tool_moodlenet');
+}
+
+$PAGE->set_url('/admin/tool/moodlenet/select.php');
+$PAGE->set_context(context_system::instance());
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string('selectpagetitle', 'tool_moodlenet'));
+$PAGE->set_heading(format_string($SITE->fullname));
+
+echo $OUTPUT->header();
+
+$renderable = new \tool_moodlenet\output\select_page($resourceurl);
+$renderer = $PAGE->get_renderer('tool_moodlenet');
+echo $renderer->render($renderable);
+
+echo $OUTPUT->footer();
