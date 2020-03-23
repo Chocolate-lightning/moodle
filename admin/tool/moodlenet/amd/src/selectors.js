@@ -28,7 +28,12 @@ define([], function() {
             submit: '[data-action="submit"]',
         },
         region: {
+            clearIcon: '[data-region="clear-icon"]',
+            courses: '[data-region="mnet-courses"]',
             instancePage: '[data-region="moodle-net"]',
+            searchInput: '[data-region="search-input"]',
+            searchIcon: '[data-region="search-icon"]',
+            selectPage: '[data-region="moodle-net-select"]',
             spinner: '[data-region="spinner"]',
             validationArea: '[data-region="validation-area"]',
         },
