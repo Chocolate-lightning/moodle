@@ -26,9 +26,12 @@ define([], function() {
         action: {
             browse: '[data-action="browse"]',
             submit: '[data-action="submit"]',
+            search: '[data-action="search"]',
         },
         region: {
+            courses: '[data-region="mnet-courses"]',
             instancePage: '[data-region="moodle-net"]',
+            selectPage: '[data-region="moodle-net-select"]',
             spinner: '[data-region="spinner"]',
         },
     };

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
 $string['browse'] = "Browse";
 $string['browsemoodlenet'] = "Browse MoodleNet";
+$string['clearsearch'] = "Clear search";
 $string['enablemoodlenet'] = 'Enable the MoodleNet integration';
 $string['enablemoodlenetinfo'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
 activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
@@ -49,5 +50,8 @@ $string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
 $string['or'] = "Or";
+$string['searchcourses'] = "Search courses";
+$string['selectpagetitle'] = 'Select page';
+$string['selectpageheader'] = 'Select a course to add to';
 $string['pluginname'] = 'MoodleNet';
 $string['privacy:metadata:profilefieldpurpose'] = 'Information is stored in a custom user profile field.';

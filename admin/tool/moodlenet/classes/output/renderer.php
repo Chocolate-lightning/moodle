@@ -52,4 +52,16 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('tool_moodlenet/instances_page', $data);
     }
 
+    /**
+     * Defer to template.
+     *
+     * @param \tool_moodlenet\output\select_page $selectpage
+     * @return string HTML
+     */
+    protected function render_select_page(\tool_moodlenet\output\select_page $selectpage): string {
+        global $USER;
+        $this->page->requires->js_call_amd('tool_moodlenet/select_page', 'init', ['userid' => $USER->id]);
+        $data = $selectpage->export_for_template($this);
+        return parent::render_from_template('tool_moodlenet/select_page', $data);
+    }
 }
