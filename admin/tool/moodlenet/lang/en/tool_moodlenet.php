@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
 $string['browsemoodlenet'] = "Browse Official HQ MoodleNet";
+$string['clearsearch'] = "Clear search";
 $string['enablemoodlenet'] = 'Enable integration with MoodleNet instances';
 $string['enablemoodlenetinfo'] = 'If enabled, and provided the MoodleNet plugin is installed, users can import content from MoodleNet into this site.';
 $string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';
@@ -47,7 +48,12 @@ $string['mnetprofile'] = 'MoodleNet profile';
 $string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet.</p>';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
+$string['notification'] = 'You are currently adding the resource "{$a}". <a href="/my">Cancel</a>';
 $string['or'] = "Or";
+$string['searchcourses'] = "Search courses";
+$string['selectacourseinfo'] = 'Please select the course in which the resource "{$a}" will be added';
+$string['selecthelp'] = 'We have narrowed down the list of courses where you have the permission to create resources. If you can not find a course, please contact your Moodle administrator.';
+$string['selectpagetitle'] = 'Select page';
 $string['pluginname'] = 'MoodleNet';
 $string['privacy:metadata:profilefieldpurpose'] = 'Information is stored in a custom user profile field.';
 $string['profilevalidationerror'] = 'There was a problem trying to validate your profile URL';
