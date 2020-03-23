@@ -2212,5 +2212,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020013000.01);
     }
 
+    if ($oldversion < 2020032000.01) {
+
+        // Define field moodlenetprofile to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('moodlenetprofile', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'alternatename');
+
+        // Conditionally launch add field moodlenetprofile.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020032000.01);
+    }
+
     return true;
 }

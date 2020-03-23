@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['moodlenetprofile'] = 'MoodleNet profile';
 $string['privacy:courserequestpath'] = 'Requested courses';
 $string['privacy:descriptionpath'] = 'Profile description';
 $string['privacy:devicespath'] = 'User devices';
@@ -74,6 +75,7 @@ $string['privacy:metadata:maildisplay'] = 'A preference for the user about displ
 $string['privacy:metadata:middlename'] = 'The middle name of the user';
 $string['privacy:metadata:mnethostid'] = 'An identifier for the MNet host if used';
 $string['privacy:metadata:model'] = 'The device name, occam or iPhone etc..';
+$string['privacy:metadata:moodlenetprofile'] = 'The MoodleNet profile for the user';
 $string['privacy:metadata:msn'] = 'The MSN identifier of the user';
 $string['privacy:metadata:my_pages'] = 'User pages - dashboard and profile. This table does not contain personal data and only used to link dashboard blocks to users';
 $string['privacy:metadata:my_pages:name'] = 'Page name';
