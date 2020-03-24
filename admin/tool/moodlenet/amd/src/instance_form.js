@@ -117,6 +117,9 @@ define(['tool_moodlenet/validator',
                 Templates.replaceNodeContents(showMoodleNet, html, js);
         }).catch(Notification.exception);
 
+        // We apply our handlers in here to minimise plugin dependency in the Chooser.
+        registerListenerEvents(showMoodleNet, footerData.generic);
+
         // Move to the next slide, and resolve the transition promise when it's done.
         carousel.one('slid.bs.carousel', () => {
             transitionPromiseResolver();
