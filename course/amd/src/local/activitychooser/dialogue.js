@@ -163,13 +163,13 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
             const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
             const showMoodleNet = carousel.find(selectors.regions.moodleNet)[0];
 
-            MoodleNetPlugin.masterHandlers(showMoodleNet, footerData, carousel, modal);
+            MoodleNetPlugin.chooserNavigateToMnet(showMoodleNet, footerData, carousel, modal);
         }
         // From the help screen go back to the module overview.
         if (e.target.matches(selectors.actions.closeOption)) {
             const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
 
-            MoodleNetPlugin.masterHandlersElectricBoogaloo(carousel, modal, footerData);
+            MoodleNetPlugin.chooserNavigateFromMnet(carousel, modal, footerData);
         }
     };
 
