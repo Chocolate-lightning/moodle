@@ -30,18 +30,19 @@ import * as Templates from 'core/templates';
 import * as ModalFactory from 'core/modal_factory';
 import {get_string as getString} from 'core/str';
 import Pending from 'core/pending';
+import * as MoodleNetPlugin from 'tool_moodlenet/instance_form';
 
 /**
  * Set up the activity chooser.
  *
  * @method init
  * @param {Number} courseId Course ID to use later on in fetchModules()
- * @param {Object} moodleNetData What we use to figure out if / what we need to render
+ * @param {Object} footerData What we use to figure out if / what we need to render
  */
-export const init = (courseId, moodleNetData) => {
+export const init = (courseId, footerData) => {
     const pendingPromise = new Pending();
 
-    registerListenerEvents(courseId, moodleNetData);
+    registerListenerEvents(courseId, footerData);
 
     pendingPromise.resolve();
 };
@@ -51,8 +52,9 @@ export const init = (courseId, moodleNetData) => {
  *
  * @method registerListenerEvents
  * @param {Number} courseId
+ * @param {Object} footerData What we use to figure out if / what we need to render
  */
-const registerListenerEvents = (courseId, moodleNetData) => {
+const registerListenerEvents = (courseId, footerData) => {
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -84,7 +86,7 @@ const registerListenerEvents = (courseId, moodleNetData) => {
                 const sectionId = parseInt(caller.dataset.sectionid);
                 const favouriteFunction = partiallyAppliedFavouriteManager(data, sectionId);
                 const builtModuleData = sectionIdMapper(data, sectionId);
-                const builtFooterData = footerDataBuilder(moodleNetData, courseId, sectionId);
+                const builtFooterData = footerDataBuilder(footerData, courseId, sectionId);
                 const sectionModal = await modalBuilder(builtModuleData, builtFooterData);
 
                 ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction, builtFooterData);
@@ -154,24 +156,7 @@ const templateDataBuilder = (data) => {
 
 const footerDataBuilder = (data, courseId, caller) => {
     // Show something in the Footer.
-    if (data.enabled === true) {
-        data.courseID = courseId;
-        data.sectionID = caller;
-        if (data.installed === true) {
-            // Assumption multiple mnet instances or is the URL meant to be appended to something?
-            // They have added a account to their profile show then a direct link.
-            if (data.advanced !== false) {
-                const userInput = data.advanced.split("@");
-                data.test = userInput[2];
-                data.user = userInput[1];
-            }
-            // On click show the carousel item / render it then show.
-        }
-        // Plugin has been removed or disabled but promo is still shown.
-    }
-    // Final catch where the Admin want no references.
-
-    return data;
+    return MoodleNetPlugin.chooserFooterLogic(data, courseId, caller);
 };
 
 /**
