@@ -31,6 +31,7 @@ import {addIconToContainer} from 'core/loadingicon';
 import * as Repository from 'core_course/local/activitychooser/repository';
 import Notification from 'core/notification';
 import {debounce} from 'core/utils';
+import * as MoodleNetPlugin from 'tool_moodlenet/instance_form';
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -162,41 +163,13 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
             const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
             const showMoodleNet = carousel.find(selectors.regions.moodleNet)[0];
 
-            showMoodleNet.innerHTML = '';
-
-            // Add a spinner.
-            const spinnerPromise = addIconToContainer(showMoodleNet);
-
-            // Used later...
-            let transitionPromiseResolver = null;
-            const transitionPromise = new Promise(resolve => {
-                transitionPromiseResolver = resolve;
-            });
-
-            // Build up the html & js ready to place into the help section.
-            const contentPromise = Templates.renderForPromise('core_course/local/activitychooser/moodlenet', footerData);
-
-            // Wait for the content to be ready, and for the transition to be complet.
-            Promise.all([contentPromise, spinnerPromise, transitionPromise])
-                .then(([{html, js}]) => Templates.replaceNodeContents(showMoodleNet, html, js))
-                .catch(Notification.exception);
-
-            // Move to the next slide, and resolve the transition promise when it's done.
-            carousel.one('slid.bs.carousel', () => {
-                transitionPromiseResolver();
-            });
-            // Trigger the transition between 'pages'.
-            carousel.carousel(2);
-            // eslint-disable-next-line max-len
-            modal.setFooter(Templates.render('core_course/local/activitychooser/footer_close_mnet', {}));
+            MoodleNetPlugin.masterHandlers(showMoodleNet, footerData, carousel, modal);
         }
         // From the help screen go back to the module overview.
         if (e.target.matches(selectors.actions.closeOption)) {
             const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
 
-            // Trigger the transition between 'pages'.
-            carousel.carousel(0);
-            modal.setFooter(Templates.render('core_course/local/activitychooser/footer', footerData));
+            MoodleNetPlugin.masterHandlersElectricBoogaloo(carousel, modal, footerData);
         }
     };
 
@@ -222,7 +195,6 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
         body.addEventListener('click', bodyClickListener);
         return body;
     })
-    // Need handlers on the footer.
 
     // Add a listener for an input change in the activity chooser's search bar.
     .then(body => {

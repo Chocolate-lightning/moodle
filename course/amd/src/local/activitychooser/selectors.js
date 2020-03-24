@@ -50,7 +50,6 @@ export default {
         },
         carousel: getDataSelector('region', 'carousel'),
         help: getDataSelector('region', 'help'),
-        moodleNet: getDataSelector('region', 'moodleNet'),
         modules: getDataSelector('region', 'modules'),
         favouriteTabNav: getDataSelector('region', 'favourite-tab-nav'),
         recommendedTabNav: getDataSelector('region', 'recommended-tab-nav'),
@@ -72,7 +71,6 @@ export default {
         hide: getDataSelector('action', 'hide'),
         search: getDataSelector('action', 'search'),
         clearSearch: getDataSelector('action', 'clearsearch'),
-        showMoodleNet: getDataSelector('action', 'show-moodlenet'),
     },
     render: {
         favourites: getDataSelector('render', 'favourites-area'),
