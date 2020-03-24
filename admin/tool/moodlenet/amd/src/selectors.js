@@ -31,5 +31,9 @@ define([], function() {
             instancePage: '[data-region="moodle-net"]',
             spinner: '[data-region="spinner"]',
         },
+        chooser: {
+            moodleNet: '[data-region="moodleNet"]',
+            showMoodleNet: '[data-action="show-moodlenet"]',
+        }
     };
 });

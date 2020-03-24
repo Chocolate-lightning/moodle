@@ -23,6 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import * as Templates from "../../../../../lib/amd/src/templates";
+import Notification from "../../../../../lib/amd/src/notification";
+
 define(['tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingicon'],
     function(Validator, Selectors, LoadingIcon) {
     /**
@@ -77,7 +80,50 @@ define(['tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingico
         });
     };
 
+    var initChooser = function(data) {
+        return data;
+    };
+
+    var masterHandlers = function(showMoodleNet, footerData, carousel, modal) {
+        showMoodleNet.innerHTML = '';
+
+        // Add a spinner.
+        const spinnerPromise = LoadingIcon.addIconToContainer(showMoodleNet);
+
+        // Used later...
+        let transitionPromiseResolver = null;
+        const transitionPromise = new Promise(resolve => {
+            transitionPromiseResolver = resolve;
+        });
+
+        // Build up the html & js ready to place into the help section.
+        const contentPromise = Templates.renderForPromise('core_course/local/activitychooser/moodlenet', footerData);
+
+        // Wait for the content to be ready, and for the transition to be complet.
+        Promise.all([contentPromise, spinnerPromise, transitionPromise])
+            .then(([{html, js}]) => Templates.replaceNodeContents(showMoodleNet, html, js))
+            .catch(Notification.exception);
+
+        // Move to the next slide, and resolve the transition promise when it's done.
+        carousel.one('slid.bs.carousel', () => {
+            transitionPromiseResolver();
+        });
+        // Trigger the transition between 'pages'.
+        carousel.carousel(2);
+        // eslint-disable-next-line max-len
+        modal.setFooter(Templates.render('core_course/local/activitychooser/footer_close_mnet', {}));
+    };
+
+    var masterHandlersElectricBoogaloo = function(carousel, modal, footerData) {
+        // Trigger the transition between 'pages'.
+        carousel.carousel(0);
+        modal.setFooter(Templates.render('core_course/local/activitychooser/footer', footerData));
+    };
+
     return {
         init: init,
+        initChooser: initChooser,
+        masterHandlers: masterHandlers,
+        masterHandlersElectricBoogaloo: masterHandlersElectricBoogaloo,
     };
 });
