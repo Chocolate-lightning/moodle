@@ -23,11 +23,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import * as Templates from "../../../../../lib/amd/src/templates";
-import Notification from "../../../../../lib/amd/src/notification";
-
-define(['tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingicon'],
-    function(Validator, Selectors, LoadingIcon) {
+define(['tool_moodlenet/validator',
+        'tool_moodlenet/selectors',
+        'core/loadingicon',
+        'core/templates',
+        'core/notification',
+        'jquery'],
+    function(Validator,
+             Selectors,
+             LoadingIcon,
+             Templates,
+             Notification,
+             $) {
     /**
      * Set up the form.
      *
@@ -88,21 +95,21 @@ define(['tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingico
         showMoodleNet.innerHTML = '';
 
         // Add a spinner.
-        const spinnerPromise = LoadingIcon.addIconToContainer(showMoodleNet);
+        var spinnerPromise = LoadingIcon.addIconToContainer(showMoodleNet);
 
         // Used later...
-        let transitionPromiseResolver = null;
-        const transitionPromise = new Promise(resolve => {
+        var transitionPromiseResolver = null;
+        var transitionPromise = new Promise(resolve => {
             transitionPromiseResolver = resolve;
         });
 
-        // Build up the html & js ready to place into the help section.
-        const contentPromise = Templates.renderForPromise('core_course/local/activitychooser/moodlenet', footerData);
-
-        // Wait for the content to be ready, and for the transition to be complet.
-        Promise.all([contentPromise, spinnerPromise, transitionPromise])
-            .then(([{html, js}]) => Templates.replaceNodeContents(showMoodleNet, html, js))
-            .catch(Notification.exception);
+        $.when(
+            Templates.render('core_course/local/activitychooser/moodlenet', footerData),
+            spinnerPromise,
+            transitionPromise
+        ).then(function([html, js]) {
+                Templates.replaceNodeContents(showMoodleNet, html, js);
+        }).catch(Notification.exception);
 
         // Move to the next slide, and resolve the transition promise when it's done.
         carousel.one('slid.bs.carousel', () => {
