@@ -25,4 +25,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
+    $advancedsettings = $ADMIN->locate('optionalsubsystems');
+
+    $temp = new admin_setting_configcheckbox('enablemoodlenet', get_string('enablemoodlenet', 'tool_moodlenet'),
+            new lang_string('enablemoodlenetinfo', 'tool_moodlenet'), 1, 1, 0);
+    $advancedsettings->add($temp);
 }

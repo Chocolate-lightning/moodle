@@ -25,10 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['enablemoodlenet'] = 'Enable the MoodleNet integration';
-$string['enablemoodlenetinfo'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
-activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
-';
+$string['enablemoodlenet'] = 'Enable integration with MoodleNet instances';
+$string['enablemoodlenetinfo'] = 'If enabled, and provided the MoodleNet plugin is installed, users can import content from MoodleNet into this site.';
 $string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format. 
 If this happens repeatedly, please contact the site administrator.';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
