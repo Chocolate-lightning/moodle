@@ -38,10 +38,10 @@ import {debounce} from 'core/utils';
  * @method showModuleHelp
  * @param {jQuery} carousel Our initialized carousel to manipulate
  * @param {Object} moduleData Data of the module to carousel to
+ * @param {jQuery} modal We need to figure out if the current modal has a footer.
  */
 const showModuleHelp = (carousel, moduleData, modal = null) => {
-    // TODO: set the footer to the currently fake footer.
-    // If showFooter === true then call modal.setFooter
+    // MoodleNet footer hack. If we have a real footer then we need to change temporarily.
     if (modal !== null && moduleData.showFooter === true) {
         modal.setFooter(Templates.render('core_course/chooser_footer_partial', moduleData));
     }
@@ -158,8 +158,6 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
     // modal.footer. We need to ensure we know exactly what type of footer we are using so we know what we
     // need to manage. The below code handles a real footer going to a mnet carousel item.
     const footerClickListener = e => {
-        // TODO: tidy this all up into functions.
-        // May need to deal with the case where the user clicks on the image.
         if (e.target.matches(selectors.actions.showMoodleNet) || e.target.closest(selectors.actions.showMoodleNet)) {
             const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
             const showMoodleNet = carousel.find(selectors.regions.moodleNet)[0];
@@ -190,7 +188,7 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
             // Trigger the transition between 'pages'.
             carousel.carousel(2);
             // eslint-disable-next-line max-len
-            modal.setFooter(`<button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary mr-auto" tabindex="0">Back</button>`);
+            modal.setFooter(Templates.render('core_course/chooser_footer_close_mnet', {}));
         }
         // From the help screen go back to the module overview.
         if (e.target.matches(selectors.actions.closeOption)) {
