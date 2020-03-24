@@ -17,6 +17,12 @@
  * Our basic form manager for when a user either enters
  * their profile url or just wants to browse.
  *
+ * This file is a mishmash of JS functions we need for both the standalone (M3.7, M3.8)
+ * plugin & Moodle 3.9 functions. The 3.9 Functions have a base understanding that certain
+ * things exist i.e. directory structures for templates. When this feature goes 3.9+ only
+ * The goal is that we can quickly gut all AMD modules into bare JS files and use ES6 guidelines.
+ * Till then this will have to do.
+ *
  * @module     tool_moodlenet/instance_form
  * @package    tool_moodlenet
  * @copyright  2020 Mathew May <mathew.solutions>
@@ -91,7 +97,7 @@ define(['tool_moodlenet/validator',
         return data;
     };
 
-    var masterHandlers = function(showMoodleNet, footerData, carousel, modal) {
+    var chooserNavigateToMnet = function(showMoodleNet, footerData, carousel, modal) {
         showMoodleNet.innerHTML = '';
 
         // Add a spinner.
@@ -104,7 +110,7 @@ define(['tool_moodlenet/validator',
         });
 
         $.when(
-            Templates.render('core_course/local/activitychooser/moodlenet', footerData),
+            Templates.render('tool_moodlenet/chooser_moodlenet', footerData),
             spinnerPromise,
             transitionPromise
         ).then(function([html, js]) {
@@ -118,19 +124,21 @@ define(['tool_moodlenet/validator',
         // Trigger the transition between 'pages'.
         carousel.carousel(2);
         // eslint-disable-next-line max-len
-        modal.setFooter(Templates.render('core_course/local/activitychooser/footer_close_mnet', {}));
+        modal.setFooter(Templates.render('tool_moodlenet/chooser_footer_close_mnet', {}));
     };
 
-    var masterHandlersElectricBoogaloo = function(carousel, modal, footerData) {
+    var chooserNavigateFromMnet = function(carousel, modal, footerData) {
         // Trigger the transition between 'pages'.
         carousel.carousel(0);
+        // Safe to assume we have this template as of the new chooser work where this is activated from
+        // we have directory structures available to us.
         modal.setFooter(Templates.render('core_course/local/activitychooser/footer', footerData));
     };
 
     return {
         init: init,
         initChooser: initChooser,
-        masterHandlers: masterHandlers,
-        masterHandlersElectricBoogaloo: masterHandlersElectricBoogaloo,
+        chooserNavigateToMnet: chooserNavigateToMnet,
+        chooserNavigateFromMnet: chooserNavigateFromMnet,
     };
 });
