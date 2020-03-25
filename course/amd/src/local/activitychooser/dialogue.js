@@ -112,6 +112,7 @@ const manageFavouriteState = async(modalBody, caller, partialFavourite) => {
  * @param {Promise} modal Our modal that we are working with
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  * @param {Function} partialFavourite Partially applied function we need to manage favourite status
+ * @param {Object} footerData Our base footer object.
  */
 const registerListenerEvents = (modal, mappedModules, partialFavourite, footerData) => {
     const bodyClickListener = e => {
@@ -154,7 +155,7 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
         }
     };
 
-    // This all still needs a proper polish and shine. We essentially have two types of footer
+    // We essentially have two types of footer.
     // A fake one that is handled within the template for chooser_help and then all of the stuff for
     // modal.footer. We need to ensure we know exactly what type of footer we are using so we know what we
     // need to manage. The below code handles a real footer going to a mnet carousel item.

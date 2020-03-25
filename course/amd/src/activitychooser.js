@@ -167,12 +167,12 @@ const footerDataBuilder = (data, courseId, caller) => {
  * @param {String|Boolean} footer Either a footer to add or nothing
  * @return {Object} The modal for the calling section with everything already set up
  */
-const buildModal = async(data, footer) => {
+const buildModal = (data, footer) => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
         body: Templates.render('core_course/activitychooser', data),
-        footer: await Templates.render('core_course/local/activitychooser/footer', footer),
+        footer: Templates.render('core_course/local/activitychooser/footer', footer),
         large: true,
         templateContext: {
             classes: 'modchooser'

@@ -93,10 +93,15 @@ define(['tool_moodlenet/validator',
         });
     };
 
-    var initChooser = function(data) {
-        return data;
-    };
-
+    /**
+     * Given a user wishes to see the MoodleNet profile url form transition them there.
+     *
+     * @method chooserNavigateToMnet
+     * @param {HTMLElement} showMoodleNet The chooser's area for ment
+     * @param {Object} footerData Our footer object to render out
+     * @param {jQuery} carousel Our carousel instance to manage
+     * @param {jQuery} modal Our modal instance to manage
+     */
     var chooserNavigateToMnet = function(showMoodleNet, footerData, carousel, modal) {
         showMoodleNet.innerHTML = '';
 
@@ -130,6 +135,14 @@ define(['tool_moodlenet/validator',
         modal.setFooter(Templates.render('tool_moodlenet/chooser_footer_close_mnet', {}));
     };
 
+    /**
+     * Given a user no longer wishes to see the MoodleNet profile url form transition them from there.
+     *
+     * @method chooserNavigateFromMnet
+     * @param {jQuery} carousel Our carousel instance to manage
+     * @param {jQuery} modal Our modal instance to manage
+     * @param {Object} footerData Our footer object to render out
+     */
     var chooserNavigateFromMnet = function(carousel, modal, footerData) {
         // Trigger the transition between 'pages'.
         carousel.carousel(0);
@@ -138,6 +151,15 @@ define(['tool_moodlenet/validator',
         modal.setFooter(Templates.render('core_course/local/activitychooser/footer', footerData));
     };
 
+    /**
+     * Given the base footer object we need to figure out what to show the user.
+     *
+     * @method chooserFooterLogic
+     * @param {Object} data Our raw footer object
+     * @param {Number} courseId Our course ID from the chooser
+     * @param {Number} caller Our section ID from the chooser
+     * @return {Object}
+     */
     var chooserFooterLogic = function(data, courseId, caller) {
         if (data.enabled === true) {
             data.courseID = courseId;
@@ -160,7 +182,6 @@ define(['tool_moodlenet/validator',
 
     return {
         init: init,
-        initChooser: initChooser,
         chooserNavigateToMnet: chooserNavigateToMnet,
         chooserNavigateFromMnet: chooserNavigateFromMnet,
         chooserFooterLogic: chooserFooterLogic,
