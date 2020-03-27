@@ -41,3 +41,23 @@ function generate_mnet_endpoint(string $profileurl, int $course, int $section = 
     $endpoint = new moodle_url('endpoint', ['site' => $CFG->wwwroot, 'path' => $importurl->out(false)]);
     return "$domain/{$endpoint->out(false)}";
 }
+
+/**
+ * A convenience function to either get the user's mnet profile OR the url to the page that would set that.
+ *
+ * @param int $course The course that we want to add the moodlenet resource
+ * @param int $section The section that we want to add the moodlenet resource. Defaults to 0 for other than Topic format
+ * @return string A URL pointing to the next step in the process. If a moodlenet profile has been set then we use it
+ *                  else we return a URL pointing to the page where they can set this up.
+ * @throws moodle_exception
+ */
+function tool_moodlenet_add_resource_redirect_url(int $course, int $section = 0): string {
+    global $USER;
+    $profile = \tool_moodlenet\profile_manager::get_moodlenet_user_profile($USER->id);
+    if ($profile) {
+        return generate_mnet_endpoint($profile->get_domain(), $course, $section);
+    } else {
+        $url = new moodle_url('/admin/tool/moodlenet/instance.php');
+        return $url->out(false);
+    }
+}

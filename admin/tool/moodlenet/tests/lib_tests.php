@@ -47,6 +47,33 @@ class tool_moodlenet_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the moodlenet_add_resource_redirect_url function
+     */
+    public function test_moodlenet_add_resource_redirect_url() {
+        $this->resetAfterTest();
+        $course = 1;
+        $section = 3;
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $profilename = "@moodlenetprofile@moodle.net";
+
+        // If no moodlenet profile has been set.
+        $expected = new moodle_url('/admin/tool/moodlenet/instance.php');
+        $endpoint = component_callback('tool_moodlenet', 'add_resource_redirect_url', [$course, $section]);
+        $this->assertEquals($expected->out(false), $endpoint);
+
+        // If a moodlenet profile has been set.
+        $moodlenetprofile = new \tool_moodlenet\moodlenet_user_profile($profilename, $user->id);
+
+        \tool_moodlenet\profile_manager::save_moodlenet_user_profile($moodlenetprofile);
+        global $CFG;
+        $expected = 'moodle.net/endpoint?site=' . urlencode($CFG->wwwroot)
+            . '&path=' . urlencode("admin/tool/moodlenet/import.php?course=$course&section=$section");
+        $endpoint = component_callback('tool_moodlenet', 'add_resource_redirect_url', [$course, $section]);
+        $this->assertEquals($expected, $endpoint);
+    }
+
+    /**
      * Dataprovider for test_generate_mnet_endpoint
      *
      * @return array
@@ -56,6 +83,13 @@ class tool_moodlenet_lib_testcase extends advanced_testcase {
         return [
             [
                 '@name@domain.name',
+                1,
+                2,
+                'domain.name/endpoint?site=' . urlencode($CFG->wwwroot)
+                    . '&path=' . urlencode('admin/tool/moodlenet/import.php?course=1&section=2')
+            ],
+            [
+                'domain.name',
                 1,
                 2,
                 'domain.name/endpoint?site=' . urlencode($CFG->wwwroot)
