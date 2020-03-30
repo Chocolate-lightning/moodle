@@ -74,5 +74,16 @@ function xmldb_tool_moodlenet_upgrade(int $oldversion) {
         upgrade_plugin_savepoint(true, 2020031100, 'tool', 'moodlenet');
     }
 
+    if ($oldversion < 2020031101) {
+
+        $oldsetting = get_config('tool_moodlenet', 'enablemoodlenet');
+        if ($oldsetting !== false) {
+            set_config('enablemoodlenet', $oldsetting);
+            unset_config('tool_moodlenet', 'enablemoodlenet');
+        }
+
+        upgrade_plugin_savepoint(true, 2020031101, 'tool', 'moodlenet');
+    }
+
     return true;
 }
