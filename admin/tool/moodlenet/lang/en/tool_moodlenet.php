@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
 $string['enablemoodlenet'] = 'Enable the MoodleNet integration';
 $string['enablemoodlenetinfo'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
 activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
@@ -33,6 +34,7 @@ $string['errorduringdownload'] = 'An error occurred while downloading the file: 
 $string['importoptionguidingtext'] = 'In which format would you like the resource "{$a->name}" to be added to your course?';
 $string['importconfirm'] = 'You are about to add the resource "{$a->resourcename}" to the course "{$a->coursename}". Please confirm if this is what you intend to do.';
 $string['importconfirmnocourse'] = 'You are about to add the resource "{$a->resourcename}". Please confirm if this is what you intend to do.';
+$string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';
 $string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format.
 If this happens repeatedly, please contact the site administrator.';
 $string['mnetprofile'] = 'MoodleNet profile';
