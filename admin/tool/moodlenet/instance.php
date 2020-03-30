@@ -27,7 +27,7 @@ require_once(__DIR__ . '/../../../config.php');
 require_login();
 
 // The integration must be enabled for this import endpoint to be active.
-if (!get_config('core', 'enablemoodlenet')) {
+if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
     print_error('moodlenetnotenabled', 'tool_moodlenet');
 }
 
