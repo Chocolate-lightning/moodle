@@ -29,6 +29,7 @@ $string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
 $string['browsemoodlenet'] = "Browse Official HQ MoodleNet";
 $string['enablemoodlenet'] = 'Enable integration with MoodleNet instances';
 $string['enablemoodlenetinfo'] = 'If enabled, and provided the MoodleNet plugin is installed, users can import content from MoodleNet into this site.';
+$string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';
 $string['forminfo'] = "It will be automatically saved on your Moodle profile.";
 $string['instancedescription'] = "Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
         Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />

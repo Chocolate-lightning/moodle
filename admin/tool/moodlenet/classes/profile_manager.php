@@ -44,7 +44,12 @@ class profile_manager {
         // Check for official profile.
         if (self::official_profile_exists()) {
             $user = \core_user::get_user($userid, 'moodlenetprofile');
-            return (isset($user)) ? new moodlenet_user_profile($user->moodlenetprofile, $userid) : null;
+            try {
+                return (isset($user)) ? new moodlenet_user_profile($user->moodlenetprofile, $userid) : null;
+            } catch (\moodle_exception $e) {
+                // If an exception is thrown, means there isn't a valid profile set. No need to log exception
+                return null;
+            }
         }
         // Otherwise get hacked in user profile field.
         require_once($CFG->dirroot . '/user/profile/lib.php');
@@ -52,7 +57,12 @@ class profile_manager {
         foreach ($profilefields as $key => $field) {
             if ($field->get_category_name() == self::get_category_name()
                     && $field->inputname == 'profile_field_mnetprofile') {
-                return new moodlenet_user_profile($field->display_data(), $userid);
+                try {
+                    return new moodlenet_user_profile($field->display_data(), $userid);
+                } catch (\moodle_exception $e) {
+                    // If an exception is thrown, means there isn't a valid profile set. No need to log exception
+                    return null;
+                }
             }
         }
         return null;

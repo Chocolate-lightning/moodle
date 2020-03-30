@@ -50,6 +50,7 @@ class moodlenet_user_profile {
      *
      * @param string $userprofile The moodle net user profile string.
      * @param int $userid The user ID that this profile belongs to.
+     * @throws \moodle_exception
      */
     public function __construct(string $userprofile, int $userid) {
         $this->profile = $userprofile;
@@ -65,7 +66,7 @@ class moodlenet_user_profile {
             $this->username = $explodedprofile[1];
             $this->domain = $explodedprofile[2];
         } else {
-            throw new \Exception('$userprofile is not correctly formatted');
+            throw new \moodle_exception('invalidmoodlenetprofile', 'tool_moodlenet');
         }
     }
 

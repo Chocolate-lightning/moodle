@@ -40,6 +40,29 @@ class tool_moodlenet_profile_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Test a null is returned when the user's mnet profile field is not set.
+     */
+    public function test_get_moodlenet_user_profile_no_profile_set() {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+
+        $result = \tool_moodlenet\profile_manager::get_moodlenet_user_profile($user->id);
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test a null is returned when the user's mnet profile field is not set.
+     */
+    public function test_moodlenet_user_profile_creation_no_profile_set() {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->expectException(moodle_exception::class);
+        $this->expectExceptionMessage(get_string('invalidmoodlenetprofile', 'tool_moodlenet'));
+        $result = new \tool_moodlenet\moodlenet_user_profile("", $user->id);
+    }
+
+    /**
      * Test the return of a moodle net profile.
      */
     public function test_get_moodlenet_user_profile() {
