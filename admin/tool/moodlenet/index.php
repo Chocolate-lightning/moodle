@@ -26,6 +26,7 @@
 
 use tool_moodlenet\local\remote_resource;
 use tool_moodlenet\local\url;
+use tool_moodlenet\local\import_backup_helper;
 
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot .'/course/lib.php');
@@ -56,6 +57,40 @@ if ($cancel) {
 } else if ($continue) {
     confirm_sesskey();
 
+    $remoteresource = new remote_resource(new curl(), new url($resourceurl));
+    $extension = $remoteresource->get_extension();
+
+    // Handle backups.
+    if (strtolower($extension) == 'mbz') {
+        if (empty($course)) {
+            // Find a course that the user has permission to upload a backup file.
+            // This is likely to be very slow on larger sites.
+            $context = import_backup_helper::get_context_for_user($USER->id);
+
+            if (is_null($context)) {
+                print_error('nopermissions', 'error', '', get_string('restore:uploadfile', 'core_role'));
+            }
+        } else {
+            $context = context_course::instance($course);
+        }
+
+        $importbackuphelper = new import_backup_helper($remoteresource, $USER, $context);
+        $storedfile = $importbackuphelper->get_stored_file();
+
+        $url = new \moodle_url('/backup/restorefile.php', [
+            'component' => $storedfile->get_component(),
+            'filearea' => $storedfile->get_filearea(),
+            'itemid' => $storedfile->get_itemid(),
+            'filepath' => $storedfile->get_filepath(),
+            'filename' => $storedfile->get_filename(),
+            'filecontextid' => $storedfile->get_contextid(),
+            'contextid' => $context->id,
+            'action' => 'choosebackupfile'
+        ]);
+        redirect($url);
+    }
+
+    // Handle adding files to a course.
     // Course and section data present and confirmed. Redirect to the option select view.
     if (!is_null($course) && !is_null($section)) {
         redirect(new \moodle_url('/admin/tool/moodlenet/options.php', [
@@ -66,7 +101,6 @@ if ($cancel) {
     }
     // TODO: Extend conditional to handle cases where course needs to be selected or when the file is an mbz.
 }
-
 
 $remoteresource = new remote_resource(new curl(), new url($resourceurl));
 $extension = $remoteresource->get_extension();
