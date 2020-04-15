@@ -35,6 +35,8 @@ $string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';
 $string['forminfo'] = "It will be automatically saved on your Moodle profile.";
 $string['importconfirm'] = 'You are about to add the resource "{$a->resourcename}" to the course "{$a->coursename}". Please confirm if this is what you intend to do.';
 $string['importconfirmnocourse'] = 'You are about to add the resource "{$a->resourcename}". Please confirm if this is what you intend to do.';
+$string['importformatselectguidingtext'] = 'In which format would you like the resource "{$a->name}" to be added to your course?';
+$string['importformatselectheader'] = 'Choose the resource display format';
 $string['instancedescription'] = "Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
         Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
         Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
