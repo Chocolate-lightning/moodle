@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addingaresource'] = 'Adding a resource from MoodleNet';
 $string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
 $string['browsemoodlenet'] = "Browse Official HQ MoodleNet";
 $string['enablemoodlenet'] = 'Enable integration with MoodleNet instances';
@@ -32,6 +33,8 @@ $string['enablemoodlenetinfo'] = 'If enabled, and provided the MoodleNet plugin 
 $string['errorduringdownload'] = 'An error occurred while downloading the file: {$a}';
 $string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';
 $string['forminfo'] = "It will be automatically saved on your Moodle profile.";
+$string['importconfirm'] = 'You are about to add the resource "{$a->resourcename}" to the course "{$a->coursename}". Please confirm if this is what you intend to do.';
+$string['importconfirmnocourse'] = 'You are about to add the resource "{$a->resourcename}". Please confirm if this is what you intend to do.';
 $string['instancedescription'] = "Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
         Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
         Description of what you can find on MoodleNet and that you will be directed out of the Moodle site.<br />
