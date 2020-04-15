@@ -38,3 +38,4 @@ $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled befo
 To enable this feature, see the \'enablemoodlenet\' setting.';
 $string['pluginname'] = 'MoodleNet';
 $string['privacy:metadata'] = "The MoodleNet tool only facilitates communication with MoodleNet. It stores no data.";
+$string['uploadlimitexceeded'] = 'The file size {$a->filesize} exceeds the user upload limit of {$a->uploadlimit} bytes.';
