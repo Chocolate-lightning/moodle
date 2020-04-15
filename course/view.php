@@ -18,6 +18,7 @@
     $marker      = optional_param('marker',-1 , PARAM_INT);
     $switchrole  = optional_param('switchrole',-1, PARAM_INT); // Deprecated, use course/switchrole.php instead.
     $return      = optional_param('return', 0, PARAM_LOCALURL);
+    $importing   = optional_param('importing', -1, PARAM_BOOL);
 
     $params = array();
     if (!empty($name)) {
@@ -202,6 +203,10 @@
             } else {
                 echo $OUTPUT->notification('An error occurred while moving a section');
             }
+        }
+
+        if (($importing == 1) and confirm_sesskey()) {
+            $PAGE->requires->js_call_amd('core_course/import', 'init', [$course->id]);
         }
     } else {
         $USER->editing = 0;
