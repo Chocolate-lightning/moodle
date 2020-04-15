@@ -33,6 +33,8 @@ activity chooser and import MoodleNet resources into their course. It also allow
 $string['errorduringdownload'] = 'An error occurred while downloading the file: {$a}';
 $string['importconfirm'] = 'You are about to add the resource "{$a->resourcename}" to the course "{$a->coursename}". Please confirm if this is what you intend to do.';
 $string['importconfirmnocourse'] = 'You are about to add the resource "{$a->resourcename}". Please confirm if this is what you intend to do.';
+$string['importformatselectguidingtext'] = 'In which format would you like the resource "{$a->name}" to be added to your course?';
+$string['importformatselectheader'] = 'Choose the resource display format';
 $string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format.
 If this happens repeatedly, please contact the site administrator.';
 $string['mnetprofile'] = 'MoodleNet profile';
