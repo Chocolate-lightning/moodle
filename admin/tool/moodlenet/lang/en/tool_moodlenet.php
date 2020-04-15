@@ -55,3 +55,4 @@ $string['profilevalidationerror'] = 'There was a problem trying to validate your
 $string['profilevalidationfail'] = 'Please enter a valid MoodleNet profile URL';
 $string['profilevalidationpass'] = 'Looks good!';
 $string['saveandgo'] = "Save and go";
+$string['uploadlimitexceeded'] = 'The file size {$a->filesize} exceeds the user upload limit of {$a->uploadlimit} bytes.';
