@@ -11596,6 +11596,52 @@ body.h5p-embed .h5pmessages {
 .alert-dark a {
   color: #040505; }
 
+.border-dotted {
+  border-style: dotted !important; }
+
+.border-dashed {
+  border-style: dashed !important; }
+
+.btn-outline-primary-hover:hover {
+  color: #1177d1 !important;
+  background-color: initial !important;
+  border-color: #1177d1 !important; }
+
+.btn-outline-secondary-hover:hover {
+  color: #ced4da !important;
+  background-color: initial !important;
+  border-color: #ced4da !important; }
+
+.btn-outline-success-hover:hover {
+  color: #398439 !important;
+  background-color: initial !important;
+  border-color: #398439 !important; }
+
+.btn-outline-info-hover:hover {
+  color: #5bc0de !important;
+  background-color: initial !important;
+  border-color: #5bc0de !important; }
+
+.btn-outline-warning-hover:hover {
+  color: #f0ad4e !important;
+  background-color: initial !important;
+  border-color: #f0ad4e !important; }
+
+.btn-outline-danger-hover:hover {
+  color: #d43f3a !important;
+  background-color: initial !important;
+  border-color: #d43f3a !important; }
+
+.btn-outline-light-hover:hover {
+  color: #f8f9fa !important;
+  background-color: initial !important;
+  border-color: #f8f9fa !important; }
+
+.btn-outline-dark-hover:hover {
+  color: #343a40 !important;
+  background-color: initial !important;
+  border-color: #343a40 !important; }
+
 .icon {
   font-size: 16px;
   width: 16px;

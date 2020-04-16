@@ -2448,3 +2448,23 @@ $picker-emojis-per-row: 7 !default;
         color: darken(theme-color-level($color, $alert-color-level), 10%);
     }
 }
+
+// stylelint-disable property-blacklist, declaration-no-important
+// Add some helping classes since Bootstrap does not have style classes.
+.border-dotted {
+    border-style: dotted !important;
+}
+.border-dashed {
+    border-style: dashed !important;
+}
+
+// In case anyone wants to have a different outline hover style using BS colors.
+@each $color, $value in $theme-colors {
+    .btn-outline-#{$color}-hover {
+        @include hover {
+            color: $value !important;
+            background-color: initial !important;
+            border-color: $value !important;
+        }
+    }
+}
