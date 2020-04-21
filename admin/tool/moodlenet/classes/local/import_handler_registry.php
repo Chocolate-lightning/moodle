@@ -102,6 +102,39 @@ class import_handler_registry {
     }
 
     /**
+     * Shim replacing the use of course_allowed_module with its Moodle 3.9 variant, which includes user support.
+     *
+     * @param object $course the course settings. Only $course->id is used.
+     * @param string $modname the module name. E.g. 'forum' or 'quiz'.
+     * @param string $user the user to check.
+     * @return bool whether the current user is allowed to add this type of module to this course.
+     */
+    protected function course_allowed_module($course, $modname, $user) {
+        if (is_numeric($modname)) {
+            throw new coding_exception('Function course_allowed_module no longer
+            supports numeric module ids. Please update your code to pass the module name.');
+        }
+
+        $capability = 'mod/' . $modname . ':addinstance';
+        if (!get_capability_info($capability)) {
+            // Debug warning that the capability does not exist, but no more than once per page.
+            static $warned = array();
+            $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+            if (!isset($warned[$modname]) && $archetype !== MOD_ARCHETYPE_SYSTEM) {
+                debugging('The module ' . $modname . ' does not define the standard capability ' .
+                    $capability , DEBUG_DEVELOPER);
+                $warned[$modname] = 1;
+            }
+
+            // If the capability does not exist, the module can always be added.
+            return true;
+        }
+
+        $coursecontext = \context_course::instance($course->id);
+        return has_capability($capability, $coursecontext, $user);
+    }
+
+    /**
      * Build up a list of extension handlers by leveraging the dndupload_register callbacks.
      */
     protected function populate_handlers() {
@@ -122,7 +155,7 @@ class import_handler_registry {
             if (!empty($sitedisabledmods) && array_key_exists($modname, $sitedisabledmods)) {
                 continue; // Module is disabled at the site level.
             }
-            if (!course_allowed_module($this->course, $modname, $this->user)) {
+            if (!$this->course_allowed_module($this->course, $modname, $this->user)) {
                 continue; // User does not have permission to add this module to the course.
             }
 
