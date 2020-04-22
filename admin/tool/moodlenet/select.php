@@ -33,7 +33,7 @@ if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
     print_error('moodlenetnotenabled', 'tool_moodlenet');
 }
 
-$PAGE->set_url('/moodlenet/select.php');
+$PAGE->set_url('/admin/tool/moodlenet/select.php');
 $PAGE->set_context(null);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('selectpagetitle', 'tool_moodlenet'));
