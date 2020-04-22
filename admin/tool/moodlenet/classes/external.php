@@ -141,9 +141,7 @@ class external extends external_api {
                 if (has_capability('moodle/course:manageactivities', \context_course::instance($course->id))) {
                     $data = new \stdClass();
                     $data->id = $course->id;
-                    $data->shortname = $course->shortname;
                     $data->fullname = $course->fullname;
-                    $data->coursename = $course->fullname;
                     $data->hidden = $course->visible;
                     $options = [
                         'course' => $course->id,
@@ -151,7 +149,7 @@ class external extends external_api {
                         'resourceurl' => $resourceurl
                     ];
                     $viewurl = new \moodle_url('/admin/tool/moodlenet/options.php', $options);
-                    $data->viewurl = $viewurl->out();
+                    $data->viewurl = $viewurl->out(false);
                     $category = \core_course_category::get($course->category);
                     $data->coursecategory = $category->name;
                     $courseimage = course_summary_exporter::get_course_image($data);
@@ -178,11 +176,9 @@ class external extends external_api {
             'courses' => new \external_multiple_structure(
                 new external_single_structure([
                     'id' => new external_value(PARAM_INT, 'course id'),
-                    'shortname' => new external_value(PARAM_TEXT, 'course short name'),
                     'fullname' => new external_value(PARAM_TEXT, 'course full name'),
-                    'coursename' => new external_value(PARAM_TEXT, 'course display name'),
                     'hidden' => new external_value(PARAM_INT, 'is the course visible'),
-                    'viewurl' => new external_value(PARAM_RAW, 'Next step of import'),
+                    'viewurl' => new external_value(PARAM_URL, 'Next step of import'),
                     'coursecategory' => new external_value(PARAM_TEXT, 'Category name'),
                     'courseimage' => new external_value(PARAM_RAW, 'course image'),
                 ]))

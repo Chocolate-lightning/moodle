@@ -34,6 +34,13 @@ $section = optional_param('section', null, PARAM_INT);
 require_login();
 $PAGE->set_context(context_system::instance());
 
+if ($course === null) {
+    redirect(new \moodle_url('/admin/tool/moodlenet/select.php', [
+        'resourceurl' => urlencode($resourceurl),
+        'course' => $course,
+        'section' => $section,
+    ]));
+}
 // Page setup.
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title("Some import handler page thingy");

@@ -28,7 +28,7 @@ require_login();
 
 $resourceurl = required_param('resourceurl', PARAM_RAW);
 
-// The integration must be enabled for this import endpoint to be active.
+// The integration must be enabled to access this page.
 if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
     print_error('moodlenetnotenabled', 'tool_moodlenet');
 }

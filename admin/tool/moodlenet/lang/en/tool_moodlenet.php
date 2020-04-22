@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
 $string['browsemoodlenet'] = "Browse Official HQ MoodleNet";
 $string['clearsearch'] = "Clear search";
+$string['defaultmoodlenet'] = "Link to Moodle HQ Moodlenet";
+$string['defaultmoodlenetinfo'] = "The Moodle HQ run instance of MoodleNet";
 $string['enablemoodlenet'] = 'Enable integration with MoodleNet instances';
 $string['enablemoodlenetinfo'] = 'If enabled, and provided the MoodleNet plugin is installed, users can import content from MoodleNet into this site.';
 $string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';

@@ -30,4 +30,8 @@ if ($hassiteconfig) {
     $temp = new admin_setting_configcheckbox('tool_moodlenet/enablemoodlenet', get_string('enablemoodlenet', 'tool_moodlenet'),
             new lang_string('enablemoodlenetinfo', 'tool_moodlenet'), 1, 1, 0);
     $advancedsettings->add($temp);
+
+    $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenet', get_string('defaultmoodlenet', 'tool_moodlenet'),
+        new lang_string('defaultmoodlenetinfo', 'tool_moodlenet'), 'https://team.moodle.net');
+    $advancedsettings->add($temp);
 }

@@ -26,6 +26,7 @@ namespace tool_moodlenet\output;
 
 defined('MOODLE_INTERNAL') || die;
 
+//use remote_resource;
 /**
  * Select page renderable.
  *
@@ -60,10 +61,9 @@ class select_page implements \renderable, \templatable {
         // Prepare the context object.
         $data = new \stdClass();
         $data->resourceurl = $this->resouceurl;
-        // TODO: uncomment these two lines once Jake's DnD issue lands.
-        //$remoteresource = new \remote_resource(new \curl(), new \url($this->resouceurl));
+        //$remoteresource = new remote_resource(new \curl(), new \url($this->resouceurl));
         //$data->name = $remoteresource->get_name();
-        $data->name = 'FooBar uncomment the lines above this.';
+        $data->name = 'foobar';
 
         return $data;
     }
