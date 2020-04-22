@@ -30,17 +30,16 @@ $resourceurl = urldecode($resourceurl);
 $course = optional_param('course', null, PARAM_INT);
 $section = optional_param('section', null, PARAM_INT);
 
+if (is_null($course)) {
+    redirect(new \moodle_url('/admin/tool/moodlenet/select.php', [
+        'resourceurl' => urlencode($resourceurl),
+    ]));
+}
+
 // TODO: Might be a course context if we have that param in the URL, so check/set these two accordingly.
 require_login();
 $PAGE->set_context(context_system::instance());
 
-if ($course === null) {
-    redirect(new \moodle_url('/admin/tool/moodlenet/select.php', [
-        'resourceurl' => urlencode($resourceurl),
-        'course' => $course,
-        'section' => $section,
-    ]));
-}
 // Page setup.
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title("Some import handler page thingy");
