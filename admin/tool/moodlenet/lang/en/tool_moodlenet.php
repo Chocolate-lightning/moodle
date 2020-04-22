@@ -26,6 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['clearsearch'] = "Clear search";
+$string['defaultmoodlenet'] = "Link to Moodle HQ Moodlenet";
+$string['defaultmoodlenetinfo'] = "The Moodle HQ run instance of MoodleNet";
 $string['enablemoodlenet'] = 'Enable the MoodleNet integration';
 $string['enablemoodlenetinfo'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
 activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
@@ -41,7 +43,6 @@ $string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
 $string['notification'] = 'You are currently adding the resource "{$a}". <a href="/my">Cancel</a>';
-$string['or'] = "Or";
 $string['searchcourses'] = "Search courses";
 $string['selectacourseinfo'] = 'Please select the course in which the resource "{$a}" will be added';
 $string['selecthelp'] = 'We have narrowed down the list of courses where you have the permission to create resources. If you can not find a course, please contact your Moodle administrator.';

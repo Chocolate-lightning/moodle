@@ -28,12 +28,12 @@ require_login();
 
 $resourceurl = required_param('resourceurl', PARAM_RAW);
 
-// The integration must be enabled for this import endpoint to be active.
+// The integration must be enabled to access this page.
 if (!get_config('core', 'enablemoodlenet')) {
     print_error('moodlenetnotenabled', 'tool_moodlenet');
 }
 
-$PAGE->set_url('/moodlenet/select.php');
+$PAGE->set_url('/admin/tool/moodlenet/select.php');
 $PAGE->set_context(null);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('selectpagetitle', 'tool_moodlenet'));

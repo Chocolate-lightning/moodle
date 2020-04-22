@@ -138,6 +138,9 @@ define([
      * Define our own debounce function as Moodle 3.7 does not have it.
      *
      * @method debounce
+     * @from underscore.js
+     * @copyright 2009-2020 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+     * @licence MIT
      * @param {function} func The function we want to keep calling
      * @param {number} wait Our timeout
      * @param {boolean} immediate Do we want to apply the function immediately

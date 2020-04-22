@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use plugin_renderer_base;
 
-define('DEFAULT_MOODLE_NET_LINK', 'https://team.moodle.net');
+define('DEFAULT_MOODLE_NET_LINK', get_config('tool_moodlenet', 'defaultmoodlenet'));
 
 /**
  * Renderer class.
