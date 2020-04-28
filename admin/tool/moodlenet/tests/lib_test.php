@@ -58,7 +58,7 @@ class tool_moodlenet_lib_testcase extends advanced_testcase {
         $profilename = "@moodlenetprofile@moodle.net";
 
         // If no moodlenet profile has been set.
-        $expected = new moodle_url('/admin/tool/moodlenet/instance.php');
+        $expected = new moodle_url("/admin/tool/moodlenet/instance.php?course=$course&section=$section");
         $endpoint = component_callback('tool_moodlenet', 'add_resource_redirect_url', [$course, $section]);
         $this->assertEquals($expected->out(false), $endpoint);
 

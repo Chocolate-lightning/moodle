@@ -23,8 +23,12 @@
  */
 
 require_once(__DIR__ . '/../../../config.php');
+require_once('lib.php');
 
 require_login();
+
+$course = required_param('course', PARAM_INT);
+$section = required_param('section', PARAM_INT);
 
 // The integration must be enabled for this import endpoint to be active.
 if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
@@ -39,7 +43,8 @@ $PAGE->set_heading(get_string('instancepageheader', 'tool_moodlenet'));
 
 echo $OUTPUT->header();
 
-$renderable = new \tool_moodlenet\output\instances_page();
+$mnetsite = get_config('tool_moodlenet', 'defaultmoodlenet');
+$renderable = new \tool_moodlenet\output\instances_page(generate_mnet_endpoint($mnetsite, $course, $section));
 $renderer = $PAGE->get_renderer('tool_moodlenet');
 echo $renderer->render($renderable);
 

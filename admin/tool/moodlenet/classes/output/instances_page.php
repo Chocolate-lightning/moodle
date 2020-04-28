@@ -36,6 +36,22 @@ defined('MOODLE_INTERNAL') || die;
 class instances_page implements \renderable, \templatable {
 
     /**
+     * The link for the default moodlenet site
+     *
+     * @var string
+     */
+    private $defaultlink;
+
+    /**
+     * instances_page constructor.
+     *
+     * @param string $defaultlink The default link for the main moodlenet site
+     */
+    public function __construct(string $defaultlink) {
+        $this->defaultlink = $defaultlink;
+    }
+
+    /**
      * Export the data.
      *
      * @param \renderer_base $output
@@ -47,6 +63,7 @@ class instances_page implements \renderable, \templatable {
         $data = new \stdClass();
         $data->sesskey = sesskey();
         $data->img = $output->image_url('MoodleNet', 'tool_moodlenet')->out(false);
+        $data->mnetlink = $this->defaultlink;
 
         return $data;
     }

@@ -57,7 +57,7 @@ function tool_moodlenet_add_resource_redirect_url(int $course, int $section = 0)
     if ($profile) {
         return generate_mnet_endpoint($profile->get_domain(), $course, $section);
     } else {
-        $url = new moodle_url('/admin/tool/moodlenet/instance.php');
+        $url = new moodle_url('/admin/tool/moodlenet/instance.php', ['course' => $course, 'section' => $section]);
         return $url->out(false);
     }
 }
