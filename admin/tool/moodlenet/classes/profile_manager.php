@@ -44,7 +44,13 @@ class profile_manager {
         // Check for official profile.
         if (self::official_profile_exists()) {
             $user = \core_user::get_user($userid, 'moodlenetprofile');
-            return (isset($user)) ? new moodlenet_user_profile($user->moodlenetprofile, $userid) : null;
+            try {
+                $userprofile = $user->moodlenetprofile ? $user->moodlenetprofile : '';
+                return (isset($user)) ? new moodlenet_user_profile($userprofile, $userid) : null;
+            } catch (\moodle_exception $e) {
+                // If an exception is thrown, means there isn't a valid profile set. No need to log exception.
+                return null;
+            }
         }
         // Otherwise get hacked in user profile field.
         require_once($CFG->dirroot . '/user/profile/lib.php');
@@ -52,7 +58,12 @@ class profile_manager {
         foreach ($profilefields as $key => $field) {
             if ($field->get_category_name() == self::get_category_name()
                     && $field->inputname == 'profile_field_mnetprofile') {
-                return new moodlenet_user_profile($field->display_data(), $userid);
+                try {
+                    return new moodlenet_user_profile($field->display_data(), $userid);
+                } catch (\moodle_exception $e) {
+                    // If an exception is thrown, means there isn't a valid profile set. No need to log exception.
+                    return null;
+                }
             }
         }
         return null;
@@ -279,5 +290,61 @@ class profile_manager {
             'param2' => 2048
         ];
         $profileclass->define_save($data);
+    }
+
+    /**
+     * Given our $moodlenetprofile let's cURL the domains' WebFinger endpoint
+     *
+     * @param moodlenet_user_profile $moodlenetprofile The moodlenet profile to get info from.
+     * @return array [bool, text, raw]
+     */
+    public static function get_moodlenet_profile_link(moodlenet_user_profile $moodlenetprofile): array {
+        $domain = $moodlenetprofile->get_domain();
+        $username = $moodlenetprofile->get_username();
+
+        // Assumption: All MoodleNet instance's will contain a WebFinger validation script.
+        $url = "https://".$domain."/.well-known/webfinger?resource=acct:".$username."@".$domain;
+
+        $curl = new \curl();
+        $options = [
+            'CURLOPT_HEADER' => 0,
+        ];
+        $content = $curl->get($url, null, $options);
+        $errno   = $curl->get_errno();
+        $info = $curl->get_info();
+
+        // The base cURL seems fine, let's press on.
+        if (!$errno) {
+            // WebFinger gave us a 404 back so the user has no droids here.
+            if ($info['http_code'] >= 400) {
+                if ($info['http_code'] === 404) {
+                    // User not found.
+                    return [
+                        'result' => false,
+                        'message' => get_string('profilevalidationfail', 'tool_moodlenet'),
+                    ];
+                } else {
+                    // There was some other error that was not a missing account.
+                    return [
+                        'result' => false,
+                        'message' => get_string('profilevalidationerror', 'tool_moodlenet'),
+                    ];
+                }
+            }
+
+            // We must have a valid link so give it back to the user.
+            $data = json_decode($content);
+            return [
+                'result' => true,
+                'message' => get_string('profilevalidationpass', 'tool_moodlenet'),
+                'domain' => $data->aliases[0]
+            ];
+        } else {
+            // There was some failure in curl so report it back.
+            return [
+                'result' => false,
+                'message' => get_string('profilevalidationerror', 'tool_moodlenet'),
+            ];
+        }
     }
 }

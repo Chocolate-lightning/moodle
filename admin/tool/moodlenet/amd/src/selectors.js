@@ -26,6 +26,8 @@ define([], function() {
         action: {
             browse: '[data-action="browse"]',
             submit: '[data-action="submit"]',
+            showMoodleNet: '[data-action="show-moodlenet"]',
+            closeOption: '[data-action="close-chooser-option-summary"]',
         },
         region: {
             clearIcon: '[data-region="clear-icon"]',
@@ -36,6 +38,8 @@ define([], function() {
             selectPage: '[data-region="moodle-net-select"]',
             spinner: '[data-region="spinner"]',
             validationArea: '[data-region="validation-area"]',
+            carousel: '[data-region="carousel"]',
+            moodleNet: '[data-region="pluginCarousel"]',
         },
     };
 });

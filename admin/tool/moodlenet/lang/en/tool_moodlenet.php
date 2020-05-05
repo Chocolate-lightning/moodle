@@ -26,12 +26,22 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addingaresource'] = 'Adding a resource from MoodleNet';
+$string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
+$string['aria:footermessage'] = "Browse for content on MoodleNet";
+$string['browsemoodlenet'] = "Browse the MoodleNet instance of Moodle HQ";
+$string['browsecontentmoodlenet'] = "Or browse for content on MoodleNet";
 $string['clearsearch'] = "Clear search";
 $string['enablemoodlenet'] = 'Enable the MoodleNet integration';
 $string['enablemoodlenetinfo'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
 activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
 ';
 $string['errorduringdownload'] = 'An error occurred while downloading the file: {$a}';
+$string['forminfo'] = "It will be automatically saved on your Moodle profile.";
+$string['footermessage'] = "Or, browse for content on";
+$string['instancedescription'] = "MoodleNet is an open social media platform for educators, with a focus on the collaborative curation of collections of open resources. ";
+$string['instanceplaceholder'] = '@yourprofile@moodle.net';
+$string['inputhelp'] = 'Or connect to and browse your local MoodleNet instance';
+$string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';
 $string['importconfirm'] = 'You are about to add the resource "{$a->resourcename}" to the course "{$a->coursename}". Please confirm if this is what you intend to do.';
 $string['importconfirmnocourse'] = 'You are about to add the resource "{$a->resourcename}". Please confirm if this is what you intend to do.';
 $string['importformatselectguidingtext'] = 'In which format would you like the resource "{$a->name}" to be added to your course?';
@@ -43,6 +53,7 @@ $string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
 $string['notification'] = 'You are currently adding the resource "{$a->name}". Navigate to the course you want to add the content to, or <a href="{$a->cancellink}">Cancel</a>.';
+$string['or'] = "Or";
 $string['searchcourses'] = "Search courses";
 $string['selectacourseinfo'] = 'Please select the course in which the resource "{$a}" will be added';
 $string['selecthelp'] = 'We have narrowed down the list of courses where you have the permission to create resources. If you can not find a course, please contact your Moodle administrator.';
@@ -51,5 +62,6 @@ $string['pluginname'] = 'MoodleNet';
 $string['privacy:metadata'] = "The MoodleNet tool only facilitates communication with MoodleNet. It stores no data.";
 $string['profilevalidationerror'] = 'There was a problem trying to validate your profile URL';
 $string['profilevalidationfail'] = 'Please enter a valid MoodleNet profile URL';
-$string['profilevalidationpass'] = 'Looks good!';
+$string['profilevalidationpass'] = 'Your profile has been saved, you will be redirected in a moment.';
+$string['saveandgo'] = "Save and go";
 $string['uploadlimitexceeded'] = 'The file size {$a->filesize} exceeds the user upload limit of {$a->uploadlimit} bytes.';
