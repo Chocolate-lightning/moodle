@@ -31,6 +31,7 @@ import {addIconToContainer} from 'core/loadingicon';
 import * as Repository from 'core_course/local/activitychooser/repository';
 import Notification from 'core/notification';
 import {debounce} from 'core/utils';
+const getPlugin = pluginName => import(pluginName);
 
 /**
  * Given an event from the main module 'page' navigate to it's help section via a carousel.
@@ -38,8 +39,13 @@ import {debounce} from 'core/utils';
  * @method showModuleHelp
  * @param {jQuery} carousel Our initialized carousel to manipulate
  * @param {Object} moduleData Data of the module to carousel to
+ * @param {jQuery} modal We need to figure out if the current modal has a footer.
  */
-const showModuleHelp = (carousel, moduleData) => {
+const showModuleHelp = (carousel, moduleData, modal = null) => {
+    // If we have a real footer then we need to change temporarily.
+    if (modal !== null && moduleData.showFooter === true) {
+        modal.setFooter(Templates.render('core_course/local/activitychooser/footer_partial', moduleData));
+    }
     const help = carousel.find(selectors.regions.help)[0];
     help.innerHTML = '';
 
@@ -106,8 +112,9 @@ const manageFavouriteState = async(modalBody, caller, partialFavourite) => {
  * @param {Promise} modal Our modal that we are working with
  * @param {Map} mappedModules A map of all of the modules we are working with with K: mod_name V: {Object}
  * @param {Function} partialFavourite Partially applied function we need to manage favourite status
+ * @param {Object} footerData Our base footer object.
  */
-const registerListenerEvents = (modal, mappedModules, partialFavourite) => {
+const registerListenerEvents = (modal, mappedModules, partialFavourite, footerData) => {
     const bodyClickListener = async(e) => {
         if (e.target.closest(selectors.actions.optionActions.showSummary)) {
             const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
@@ -115,7 +122,9 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite) => {
             const module = e.target.closest(selectors.regions.chooserOption.container);
             const moduleName = module.dataset.modname;
             const moduleData = mappedModules.get(moduleName);
-            showModuleHelp(carousel, moduleData);
+            // We need to know if the overall modal has a footer so we know when to show a real / vs fake footer.
+            moduleData.showFooter = modal.hasFooterContent();
+            showModuleHelp(carousel, moduleData, modal);
         }
 
         if (e.target.closest(selectors.actions.optionActions.manageFavourite)) {
@@ -150,6 +159,17 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite) => {
             searchInput.value = "";
             searchInput.focus();
             toggleSearchResultsView(modal.getBody()[0], mappedModules, searchInput.value);
+        }
+    };
+
+    // We essentially have two types of footer.
+    // A fake one that is handled within the template for chooser_help and then all of the stuff for
+    // modal.footer. We need to ensure we know exactly what type of footer we are using so we know what we
+    // need to manage. The below code handles a real footer going to a mnet carousel item.
+    const footerClickListener = async(e) => {
+        if (footerData.hasOwnProperty('customfooterjs')) {
+            const footerjs = await getPlugin(footerData.customfooterjs);
+            await footerjs.footerClickListener(e, footerData, modal);
         }
     };
 
@@ -200,6 +220,16 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite) => {
     })
     .catch();
 
+    modal.getFooterPromise()
+
+    // The return value of getBodyPromise is a jquery object containing the body NodeElement.
+    .then(footer => footer[0])
+    // Add the listener for clicks on the footer.
+    .then(footer => {
+        footer.addEventListener('click', footerClickListener);
+        return footer;
+    })
+    .catch();
 };
 
 /**
@@ -505,7 +535,7 @@ const disableFocusAllChooserOptions = (sectionChooserOptions) => {
  * @param {Array} sectionModules An array of all of the built module information
  * @param {Function} partialFavourite Partially applied function we need to manage favourite status
  */
-export const displayChooser = (origin, modal, sectionModules, partialFavourite) => {
+export const displayChooser = (origin, modal, sectionModules, partialFavourite, footerData) => {
 
     // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
     const mappedModules = new Map();
@@ -514,7 +544,7 @@ export const displayChooser = (origin, modal, sectionModules, partialFavourite) 
     });
 
     // Register event listeners.
-    registerListenerEvents(modal, mappedModules, partialFavourite);
+    registerListenerEvents(modal, mappedModules, partialFavourite, footerData);
 
     // We want to focus on the action select when the dialog is closed.
     modal.getRoot().on(ModalEvents.hidden, () => {

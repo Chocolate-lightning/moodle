@@ -22,7 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activitychooserbrowse'] = "Browse for content on";
 $string['activitychooserrecommendations'] = 'Recommended activities';
+$string['aria:activitychooserbrowse'] = "Browse for content on MoodleNet";
 $string['aria:coursecategory'] = 'Course category';
 $string['aria:courseimage'] = 'Course image';
 $string['aria:courseshortname'] = 'Course short name';

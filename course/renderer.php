@@ -153,7 +153,6 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     public function course_activitychooser($courseid) {
-
         if (!$this->page->requires->should_create_one_time_item_now('core_course_modchooser')) {
             return '';
         }
