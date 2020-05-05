@@ -37,7 +37,7 @@ import Pending from 'core/pending';
  * @method init
  * @param {Number} courseId Course ID to use later on in fetchModules()
  */
-export const init = courseId => {
+export const init = (courseId) => {
     const pendingPromise = new Pending();
 
     registerListenerEvents(courseId);
@@ -72,6 +72,20 @@ const registerListenerEvents = (courseId) => {
         };
     })();
 
+    const fetchFooterData = (() => {
+        let footerInnerPromise = null;
+
+        return (sectionId) => {
+            if (!footerInnerPromise) {
+                footerInnerPromise = new Promise((resolve) => {
+                    resolve(Repository.fetchFooterData(courseId, sectionId));
+                });
+            }
+
+            return footerInnerPromise;
+        };
+    })();
+
     CustomEvents.define(document, events);
 
     // Display module chooser event listeners.
@@ -79,6 +93,7 @@ const registerListenerEvents = (courseId) => {
         document.addEventListener(event, async(e) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
                 const data = await fetchModuleData();
+
                 // We need to know who called this.
                 // Standard courses use the ID in the main section info.
                 const sectionDiv = e.target.closest(selectors.elements.section);
@@ -86,11 +101,13 @@ const registerListenerEvents = (courseId) => {
                 const button = e.target.closest(selectors.elements.sectionmodchooser);
                 // If we don't have a section ID use the fallback ID.
                 const caller = sectionDiv || button;
+
                 const favouriteFunction = partiallyAppliedFavouriteManager(data, caller.dataset.sectionid);
                 const builtModuleData = sectionIdMapper(data, caller.dataset.sectionid);
-                const sectionModal = await modalBuilder(builtModuleData);
+                const footerData = await fetchFooterData(caller.dataset.sectionid);
+                const sectionModal = await modalBuilder(builtModuleData, footerData);
 
-                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction);
+                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction, footerData);
             }
         });
     });
@@ -102,7 +119,7 @@ const registerListenerEvents = (courseId) => {
  *
  * @method sectionIdMapper
  * @param {Object} webServiceData Our original data from the Web service call
- * @param {Array} id The ID of the section we need to append to the links
+ * @param {Number} id The ID of the section we need to append to the links
  * @return {Array} [modules] with URL's built
  */
 const sectionIdMapper = (webServiceData, id) => {
@@ -118,10 +135,11 @@ const sectionIdMapper = (webServiceData, id) => {
  * Build a modal on demand to save page load times
  *
  * @method modalBuilder
- * @param {Array} data our array of modules with section ID's applied in the URL field
+ * @param {Object} data our modules to generate a modal for
+ * @param {Object} footer object of Moodle Net data to build links for maybe
  * @return {Object} Our modal that we are going to show the user
  */
-const modalBuilder = data => buildModal(templateDataBuilder(data));
+const modalBuilder = (data, footer) => buildModal(templateDataBuilder(data), footer);
 
 /**
  * Given an array of modules we want to figure out where & how to place them into our template object
@@ -159,13 +177,15 @@ const templateDataBuilder = (data) => {
  *
  * @method buildModal
  * @param {Object} data The template data which contains arrays of modules
+ * @param {String|Boolean} footer Either a footer to add or nothing
  * @return {Object} The modal for the calling section with everything already set up
  */
-const buildModal = data => {
+const buildModal = async(data, footer) => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
         body: Templates.render('core_course/activitychooser', data),
+        footer: footer.customfootertemplate,
         large: true,
         templateContext: {
             classes: 'modchooser'
