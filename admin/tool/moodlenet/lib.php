@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use \core_course\local\entity\activity_chooser_footer;
 /**
  * Generate the endpoint url to the user's moodlenet site.
  *
@@ -40,4 +41,52 @@ function generate_mnet_endpoint(string $profileurl, int $course, int $section = 
     $importurl = new moodle_url('admin/tool/moodlenet/import.php', ['course' => $course, 'section' => $section]);
     $endpoint = new moodle_url('endpoint', ['site' => $CFG->wwwroot, 'path' => $importurl->out(false)]);
     return "$domain/{$endpoint->out(false)}";
+}
+
+/**
+ * Hooking function to build up the initial Activity Chooser footer information for MoodleNet
+ *
+ * @param int $courseid The course the user is currently in and wants to add resources to
+ * @param int $sectionid The section the user is currently in and wants to add resources to
+ * @return activity_chooser_footer
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
+function tool_moodlenet_custom_chooser_footer(int $courseid, int $sectionid): activity_chooser_footer {
+    global $CFG, $USER, $OUTPUT;
+    $defaultlink = get_config('core', 'defaultmoodlenet');
+    $enabled = get_config('core', 'enablemoodlenet');
+
+    $advanced = false;
+    // We are in the MoodleNet lib. It is safe assume we have our own functions here.
+    $mnetprofile = \tool_moodlenet\profile_manager::get_moodlenet_user_profile($USER->id);
+    if ($mnetprofile !== null) {
+        $advanced = $mnetprofile->get_domain() ?? false;
+    }
+
+    $encodedsite = urlencode($CFG->wwwroot);
+    $encodedpath = urlencode('admin/tool/moodlenet/import.php?course='.$courseid.'&section='.$sectionid);
+    $defaultlink = $defaultlink.'?site='.$encodedsite.'&path='.$encodedpath;
+    if ($advanced !== false) {
+        $advanced = 'https://'.$advanced.'?site='.$encodedsite.'&path='.$encodedpath;
+    }
+
+    $renderedfooter = $OUTPUT->render_from_template('tool_moodlenet/chooser_footer', (object)[
+        'enabled' => (bool)$enabled,
+        'generic' => $defaultlink,
+        'advanced' => $advanced,
+        'courseID' => $courseid,
+        'sectionID' => $sectionid,
+        'img' => $OUTPUT->image_url('MoodleNet', 'core')->out(false),
+    ]);
+
+    $renderedcarousel = $OUTPUT->render_from_template('tool_moodlenet/chooser_moodlenet', (object)[
+        'generic' => $defaultlink,
+        'img' => $OUTPUT->image_url('MoodleNet', 'core')->out(false),
+    ]);
+    return new activity_chooser_footer(
+        'tool_moodlenet/instance_form',
+        $renderedfooter,
+        $renderedcarousel
+    );
 }

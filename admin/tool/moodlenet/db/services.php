@@ -25,6 +25,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
+    'tool_moodlenet_verify_webfinger' => [
+        'classname'   => 'tool_moodlenet\external',
+        'methodname'  => 'verify_webfinger',
+        'description' => 'Verify if the passed information resolves into a WebFinger profile URL',
+        'type'        => 'read',
+        'ajax'        => true,
+        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
     'tool_moodlenet_search_courses' => [
         'classname'   => 'tool_moodlenet\external',
         'methodname'  => 'search_courses',
