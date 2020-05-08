@@ -21,20 +21,25 @@
  * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/ajax'], function(Ajax) {
+define(['jquery', 'core/ajax', 'core/str', 'core/notification'], function($, Ajax, Str, Notification) {
     /**
      * Handle form validation
      *
      * @method validation
      * @param {HTMLElement} inputElement The element the user entered text into.
-     * @return {Boolean} Was the users' entry a valid profile URL?
+     * @return {Promise} Was the users' entry a valid profile URL?
      */
     var validation = function validation(inputElement) {
         var inputValue = inputElement.value;
 
         // They didn't submit anything or they gave us a simple string that we can't do anything with.
         if (inputValue === "" || !inputValue.includes("@")) {
-            return false;
+            // Create a promise and immediately reject it.
+            $.when(Str.get_string('profilevalidationerror', 'tool_moodlenet')).then(function(strings) {
+                return Promise.reject().catch(function() {
+                    return {result: false, message: strings[0]};
+                });
+            }).fail(Notification.exception);
         }
 
         return Ajax.call([{
