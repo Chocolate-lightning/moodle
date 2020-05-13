@@ -29,16 +29,16 @@
             <div class="overlay-icon-container z-index-1 d-none" data-region="spinner"></div>
             <img class="w-25 mb-4" aria-hidden="true" src="{{{img}}}">
             <p>{{#str}} instancedescription, tool_moodlenet {{/str}}</p>
-            <a class="btn btn-secondary d-block w-50 mx-auto mt-5 mb-3"
+            <p class="w-75 mx-auto mb-1 mt-5">{{#str}} connectandbrowse, tool_moodlenet {{/str}}</p>
+            <a class="btn btn-secondary d-block w-75 mx-auto mb-4"
                data-action="browse"
                href="{{{generic}}}"
             >
-                {{#str}} browsemoodlenet, tool_moodlenet {{/str}}
+                {{{buttonName}}}
             </a>
-            <p class="text-center text-uppercase h5">{{#str}} or, tool_moodlenet {{/str}}</p>
             <div id="mnet-instance-form-{{uniqid}}" data-region="mnet-form">
                 <input type="hidden" name="sesskey" value="{{sesskey}}">
-                <div class="w-50 mx-auto my-3">
+                <div class="w-75 mx-auto my-3">
                     <p class="text-left">{{#str}}inputhelp, tool_moodlenet{{/str}}</p>
                     <div class="input-group">
                         <input type="text"

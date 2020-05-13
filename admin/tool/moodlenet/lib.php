@@ -54,8 +54,8 @@ function generate_mnet_endpoint(string $profileurl, int $course, int $section = 
  */
 function tool_moodlenet_custom_chooser_footer(int $courseid, int $sectionid): activity_chooser_footer {
     global $CFG, $USER, $OUTPUT;
-    $defaultlink = get_config('core', 'defaultmoodlenet');
-    $enabled = get_config('core', 'enablemoodlenet');
+    $defaultlink = get_config('tool_moodlenet', 'defaultmoodlenet');
+    $enabled = get_config('tool_moodlenet', 'enablemoodlenet');
 
     $advanced = false;
     // We are in the MoodleNet lib. It is safe assume we have our own functions here.
@@ -81,6 +81,7 @@ function tool_moodlenet_custom_chooser_footer(int $courseid, int $sectionid): ac
     ]);
 
     $renderedcarousel = $OUTPUT->render_from_template('tool_moodlenet/chooser_moodlenet', (object)[
+        'buttonName' => get_config('tool_moodlenet', 'defaultmoodlenetname'),
         'generic' => $defaultlink,
         'img' => $OUTPUT->image_url('MoodleNet', 'core')->out(false),
     ]);
