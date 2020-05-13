@@ -30,7 +30,7 @@ $resourceurl = required_param('resourceurl', PARAM_RAW);
 $resourceurl = urldecode($resourceurl);
 
 // The integration must be enabled to access this page.
-if (!get_config('core', 'enablemoodlenet')) {
+if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
     print_error('moodlenetnotenabled', 'tool_moodlenet');
 }
 

@@ -28,11 +28,16 @@ defined('MOODLE_INTERNAL') || die();
 $string['addingaresource'] = 'Adding a resource from MoodleNet';
 $string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
 $string['aria:footermessage'] = "Browse for content on MoodleNet";
-$string['browsemoodlenet'] = "Browse the MoodleNet instance of Moodle HQ";
 $string['browsecontentmoodlenet'] = "Or browse for content on MoodleNet";
 $string['clearsearch'] = "Clear search";
-$string['enablemoodlenet'] = 'Enable the MoodleNet integration';
-$string['enablemoodlenetinfo'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
+$string['connectandbrowse'] = "Connect to and browse:";
+$string['defaultmoodlenet'] = "Default MoodleNet URL";
+$string['defaultmoodlenet_desc'] = "The Moodle HQ run instance of MoodleNet";
+$string['defaultmoodlenet_desc'] = "The URL to either Moodle HQ's MoodleNet instance, or your preferred instance.";
+$string['defaultmoodlenetname'] = "MoodleNet instance name";
+$string['defaultmoodlenetname_desc'] = 'The name of either Moodle HQ\'s MoodleNet instance or your preferred MoodleNet instance to browse on.';
+$string['enablemoodlenet'] = 'Enable MoodleNet integration';
+$string['enablemoodlenet_desc'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
 activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
 ';
 $string['errorduringdownload'] = 'An error occurred while downloading the file: {$a}';
@@ -40,7 +45,7 @@ $string['forminfo'] = "It will be automatically saved on your Moodle profile.";
 $string['footermessage'] = "Or, browse for content on";
 $string['instancedescription'] = "MoodleNet is an open social media platform for educators, with a focus on the collaborative curation of collections of open resources. ";
 $string['instanceplaceholder'] = '@yourprofile@moodle.net';
-$string['inputhelp'] = 'Or connect to and browse your local MoodleNet instance';
+$string['inputhelp'] = 'Or if you have a MoodleNet account already, enter your MoodleNet profile:';
 $string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';
 $string['importconfirm'] = 'You are about to add the resource "{$a->resourcename}" to the course "{$a->coursename}". Please confirm if this is what you intend to do.';
 $string['importconfirmnocourse'] = 'You are about to add the resource "{$a->resourcename}". Please confirm if this is what you intend to do.';
@@ -50,10 +55,10 @@ $string['missinginvalidpostdata'] = 'The resource information from MoodleNet is 
 If this happens repeatedly, please contact the site administrator.';
 $string['mnetprofile'] = 'MoodleNet profile';
 $string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet.</p>';
+$string['moodlenetsettings'] = 'MoodleNet settings';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
 To enable this feature, see the \'enablemoodlenet\' setting.';
 $string['notification'] = 'You are currently adding the resource "{$a->name}". Navigate to the course you want to add the content to, or <a href="{$a->cancellink}">Cancel</a>.';
-$string['or'] = "Or";
 $string['searchcourses'] = "Search courses";
 $string['selectacourseinfo'] = 'Please select the course in which the resource "{$a}" will be added';
 $string['selecthelp'] = 'We have narrowed down the list of courses where you have the permission to create resources. If you can not find a course, please contact your Moodle administrator.';

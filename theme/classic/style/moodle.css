@@ -10873,7 +10873,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       margin: 5em auto; }
 
 .modchooser .modal-footer {
-  max-height: 70px; }
+  max-height: 70px;
+  background: #fff; }
   .modchooser .modal-footer .moodlenet-logo .icon {
     height: 2.5rem;
     width: 6rem;
