@@ -4377,15 +4377,17 @@ class core_course_external extends external_api {
                 }
                 break; // Only a single plugin can modify the footer.
             }
+            return [
+                'footer' => true,
+                'customfooterjs' => $footerdata->get_footer_js_file(),
+                'customfootertemplate' => $footerdata->get_footer_template(),
+                'customcarouseltemplate' => $footerdata->get_carousel_template(),
+            ];
         } else {
-            $footerdata = course_activity_chooser_footer_fallback($courseid);
+            return [
+                'footer' => false,
+            ];
         }
-
-        return [
-            'customfooterjs' => $footerdata->get_footer_js_file(),
-            'customfootertemplate' => $footerdata->get_footer_template(),
-            'customcarouseltemplate' => $footerdata->get_carousel_template(),
-        ];
     }
 
     /**
@@ -4396,9 +4398,10 @@ class core_course_external extends external_api {
     public static function get_activity_chooser_footer_returns() {
         return new external_single_structure(
             [
-                'customfooterjs' => new external_value(PARAM_RAW, 'The path to the plugin JS file'),
-                'customfootertemplate' => new external_value(PARAM_RAW, 'The prerendered footer'),
-                'customcarouseltemplate' => new external_value(PARAM_RAW, 'Either "" or the prerendered carousel page'),
+                'footer' => new external_value(PARAM_BOOL, 'Is a footer being return by this request?', VALUE_REQUIRED),
+                'customfooterjs' => new external_value(PARAM_RAW, 'The path to the plugin JS file', VALUE_OPTIONAL),
+                'customfootertemplate' => new external_value(PARAM_RAW, 'The prerendered footer', VALUE_OPTIONAL),
+                'customcarouseltemplate' => new external_value(PARAM_RAW, 'Either "" or the prerendered carousel page', VALUE_OPTIONAL),
             ]
         );
     }

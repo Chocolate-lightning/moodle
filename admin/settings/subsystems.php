@@ -74,10 +74,4 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
             new lang_string('configallowemojipickerincompatible', 'admin')
         ));
     }
-
-    $optionalsubsystems->add(new admin_setting_configcheckbox('enablemoodlenet', new lang_string('enablemoodlenet', 'admin'),
-        new lang_string('enablemoodlenet_desc', 'admin'), 1, 1, 0));
-
-    $optionalsubsystems->add(new admin_setting_configtext('defaultmoodlenet', new lang_string('defaultmoodlenet', 'admin'),
-        new lang_string('defaultmoodlenet_desc', 'admin'), 'https://team.moodle.net'));
 }
