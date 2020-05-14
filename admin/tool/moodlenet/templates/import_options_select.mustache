@@ -46,8 +46,8 @@
         "handlers": [
             {
                 "module": "label",
-                "extension": "png",
-                "message": "Add media to the course page"
+                "message": "Add media to the course page",
+                "handlerid": "label_file"
             }
         ]
     }
@@ -66,7 +66,7 @@
                 {{#str}}importformatselectguidingtext, tool_moodlenet, {"name": {{#quote}}{{resourcename}}{{/quote}} }{{/str}}
                 <br><br>
                 {{#handlers}}
-                    <input id="{{module}}_option" name="modhandler" type="radio" value="{{module}}_{{extension}}">&nbsp;<label for="{{module}}_option">{{message}}</label>
+                    <input id="{{module}}_option" name="modhandler" type="radio" value="{{handlerid}}">&nbsp;<label for="{{module}}_option">{{message}}</label>
                     <br>
                 {{/handlers}}
             </div>

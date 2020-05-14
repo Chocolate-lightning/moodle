@@ -32,6 +32,7 @@ require_once($CFG->dirroot .'/course/lib.php');
 
 use \tool_moodlenet\local\import_handler_registry;
 use \tool_moodlenet\local\import_processor;
+use tool_moodlenet\local\import_strategy_file;
 use \tool_moodlenet\local\remote_resource;
 use \tool_moodlenet\local\url;
 
@@ -66,26 +67,30 @@ if ($modhandler && $import) {
     require_capability('moodle/course:manageactivities', context_course::instance($course->id));
     confirm_sesskey();
 
-    $modandext = explode('_', $modhandler);
-    $remoteresource = new remote_resource(new curl(), new url($resourceurl));
-    $handlerinfo = $handlerregistry->get_file_handler_for_extension_and_plugin($modandext[1], $modandext[0]);
+    $modandstrat = explode('_', $modhandler);
+    $resource = new remote_resource(new curl(), new url($resourceurl));
+    if ($modandstrat[1] != 'file') {
+        throw new coding_exception("Invalid import strategy '$modandstrat[1]'");
+    }
+    $strategy = new import_strategy_file();
+    $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($resource, $modandstrat[0], $strategy);
     if (is_null($handlerinfo)) {
         throw new coding_exception("Invalid handler data '$modhandler'. An import handler could not be found.");
     }
-    $importproc = new import_processor($course, $section, $remoteresource, $handlerinfo, $handlerregistry);
+    $importproc = new import_processor($course, $section, $resource, $handlerinfo, $handlerregistry);
     $importproc->process();
     redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
 }
 
 // Render the form, providing the user with actions, starting by getting the handlers supporting this extension.
 $resource = new remote_resource(new curl(), new url($resourceurl));
-$handlers = $handlerregistry->get_file_handlers_for_extension($resource->get_extension());
+$handlers = $handlerregistry->get_resource_handlers_for_strategy($resource, new import_strategy_file());
 $handlercontext = [];
 foreach ($handlers as $handler) {
     $handlercontext[] = [
         'module' => $handler->get_module_name(),
-        'extension' => $handler->get_extension(),
-        'message' => $handler->get_description()
+        'message' => $handler->get_description(),
+        'handlerid' => $handler->get_module_name() . '_file'
     ];
 }
 
