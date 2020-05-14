@@ -44,7 +44,7 @@ class import_strategy_file implements import_strategy {
      */
     public function get_handlers(array $registrydata, remote_resource $resource): array {
         $handlers = [];
-        foreach ($registrydata as $index => $items) {
+        foreach ($registrydata['files'] as $index => $items) {
             foreach ($items as $item) {
                 if ($index === $resource->get_extension() || $index === '*') {
                     $handlers[] = new import_handler_info($item['module'], $item['message'], $this);

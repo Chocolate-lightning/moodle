@@ -39,6 +39,16 @@ class import_handler_registry {
     protected $filehandlers = [];
 
     /**
+     * @var array $typehandlers the array of modules registering as handlers of other, non-file types, indexed by typename.
+     */
+    protected $typehandlers = [];
+
+    /**
+     * @var array $registry the aggregate of all registrations made by plugins, indexed by 'file' and 'type'.
+     */
+    protected $registry = [];
+
+    /**
      * @var \context_course the course context object.
      */
     protected $context;
@@ -76,7 +86,7 @@ class import_handler_registry {
      * @return import_handler_info[] the array of import_handler_info handlers.
      */
     public function get_resource_handlers_for_strategy(remote_resource $resource, import_strategy $strategy): array {
-        return $strategy->get_handlers($this->filehandlers, $resource);
+        return $strategy->get_handlers($this->registry, $resource);
     }
 
     /**
@@ -89,7 +99,7 @@ class import_handler_registry {
      */
     public function get_resource_handler_for_mod_and_strategy(remote_resource $resource, string $modname,
             import_strategy $strategy): ?import_handler_info {
-        foreach ($strategy->get_handlers($this->filehandlers, $resource) as $handler) {
+        foreach ($strategy->get_handlers($this->registry, $resource) as $handler) {
             if ($handler->get_module_name() === $modname) {
                 return $handler;
             }
@@ -134,6 +144,12 @@ class import_handler_registry {
      * Build up a list of extension handlers by leveraging the dndupload_register callbacks.
      */
     protected function populate_handlers() {
+        // Generate a dndupload_handler object, just so we can call ->is_known_type() on the types being registered by plugins.
+        // We must vet each type which is reported to be handled against the list of known, supported types.
+        global $CFG;
+        require_once($CFG->dirroot . '/course/dnduploadlib.php');
+        $dndhandlers = new \dndupload_handler($this->course);
+
         // Get the list of mods enabled at site level first. We need to cross check this.
         $pluginman = \core_plugin_manager::instance();
         $sitemods = $pluginman->get_plugins_of_type('mod');
@@ -164,7 +180,30 @@ class import_handler_registry {
                     $this->register_file_handler($file['extension'], $modname, $file['message']);
                 }
             }
+            if (isset($resp['types'])) {
+                foreach ($resp['types'] as $type) {
+                    if (!$dndhandlers->is_known_type($type['identifier'])) {
+                        throw new \coding_exception("Trying to add handler for unknown type $type");
+                    }
+                    $this->register_type_handler($type['identifier'], $modname, $type['message']);
+                }
+            }
         }
+        $this->registry = [
+            'files' => $this->filehandlers,
+            'types' => $this->typehandlers
+        ];
+    }
+
+    /**
+     * Adds a type handler to the list.
+     *
+     * @param string $identifier the name of the type.
+     * @param string $module the name of the module, e.g. 'label'.
+     * @param string $message the message describing how the module handles the type.
+     */
+    protected function register_type_handler(string $identifier, string $module,  string $message) {
+        $this->typehandlers[$identifier][] = ['module' => $module, 'message' => $message];
     }
 
     /**
