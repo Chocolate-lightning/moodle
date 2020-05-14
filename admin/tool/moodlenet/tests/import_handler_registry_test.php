@@ -27,6 +27,7 @@ namespace tool_moodlenet\local\tests;
 use tool_moodlenet\local\import_handler_registry;
 use tool_moodlenet\local\import_handler_info;
 use tool_moodlenet\local\import_strategy_file;
+use tool_moodlenet\local\import_strategy_link;
 use tool_moodlenet\local\remote_resource;
 use tool_moodlenet\local\url;
 
@@ -87,5 +88,11 @@ class tool_moodlenet_import_handler_registry_testcase extends \advanced_testcase
         // Resource handles every file type, so we'll always be able to find that unique handler when looking.
         $handler = $ihr->get_resource_handler_for_mod_and_strategy($resource, 'resource', new import_strategy_file());
         $this->assertInstanceOf(import_handler_info::class, $handler);
+
+        // URL handles every resource, so we'll always be able to find that unique handler when looking with a link strategy.
+        $handler = $ihr->get_resource_handler_for_mod_and_strategy($resource, 'url', new import_strategy_link());
+        $this->assertInstanceOf(import_handler_info::class, $handler);
+        $this->assertEquals('url', $handler->get_module_name());
+        $this->assertInstanceOf(import_strategy_link::class, $handler->get_strategy());
     }
 }

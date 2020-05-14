@@ -98,6 +98,8 @@ class import_strategy_file implements import_strategy {
     /**
      * Creates the data to pass to the dndupload_handle() hooks.
      *
+     * @param \stdClass $course the course record.
+     * @param remote_resource $resource the resource being imported as a file.
      * @param int $draftitemid the itemid of the draft file.
      * @return \stdClass the data object.
      */
@@ -117,7 +119,7 @@ class import_strategy_file implements import_strategy {
      * @param \stdClass $course the course to check in.
      * @return int the file size limit, in bytes.
      */
-    protected function get_user_upload_limit(\stdClass $user, \stdClass $course) {
+    protected function get_user_upload_limit(\stdClass $user, \stdClass $course): int {
         return get_user_max_upload_file_size(\context_course::instance($course->id), get_config('core', 'maxbytes'),
             $course->maxbytes, 0, $user);
     }
@@ -140,6 +142,7 @@ class import_strategy_file implements import_strategy {
     /**
      * Create a file in the user drafts ready for use by plugins implementing dndupload_handle().
      *
+     * @param \stdClass $user the user object.
      * @param string $filename the name of the file on disk
      * @param string $path the path where the file is stored on disk
      * @return \stored_file

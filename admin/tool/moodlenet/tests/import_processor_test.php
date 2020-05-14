@@ -27,6 +27,7 @@ namespace tool_moodlenet\local\tests;
 use tool_moodlenet\local\import_handler_registry;
 use tool_moodlenet\local\import_processor;
 use tool_moodlenet\local\import_strategy_file;
+use tool_moodlenet\local\import_strategy_link;
 use tool_moodlenet\local\remote_resource;
 use tool_moodlenet\local\url;
 
@@ -97,5 +98,35 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
         // Import the file.
         $this->expectException(\coding_exception::class);
         $importproc->process();
+    }
+
+    /**
+     * Test confirming that imports can be completed using alternative import strategies.
+     */
+    public function test_process_alternative_import_strategies() {
+        $this->resetAfterTest();
+
+        // Set up a user as a teacher in a course.
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $section = 0;
+        $this->setUser($teacher);
+
+        // Set up the import, using a mod_url handler and the link import strategy.
+        $remoteresource = new remote_resource(new \curl(), new url('http://example.com/cats.pdf'));
+        $handlerregistry = new import_handler_registry($course, $teacher);
+        $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'url',
+            new import_strategy_link());
+        $importproc = new import_processor($course, $section, $remoteresource, $handlerinfo, $handlerregistry);
+
+        // Import the resource as a link.
+        $importproc->process();
+
+        // Verify there is a new mod_url created with name 'cats' and containing the URL of the resource.
+        $modinfo = get_fast_modinfo($course, $teacher->id);
+        $cms = $modinfo->get_instances();
+        $this->assertArrayHasKey('url', $cms);
+        $cminfo = array_shift($cms['url']);
+        $this->assertEquals('cats', $cminfo->get_formatted_name());
     }
 }
