@@ -38,10 +38,10 @@ define([
      *
      * @method init
      */
-    var init = function() {
+    var init = function(type) {
         var page = document.querySelector(Selectors.region.selectPage);
         registerListenerEvents(page);
-        addCourses(page);
+        addCourses(page, type);
     };
 
     /**
@@ -74,7 +74,12 @@ define([
      * @param {Array<courses>} courses the courses to render.
      * @returns {Promise}
      */
-    var renderCourses = function(areaReplace, courses) {
+    var renderCourses = function(areaReplace, courses, type) {
+        if (type) {
+            courses.forEach(function(course) {
+                course.viewurl += '&type=' + type;
+            });
+        }
         return Templates.render('tool_moodlenet/view-cards', {
             courses: courses
         }).then(function(html, js) {
@@ -93,7 +98,7 @@ define([
      * @param {HTMLElement} page The whole page element for our page
      * @param {HTMLElement} areaReplace The Element to replace the contents of
      */
-    var searchCourses = function(inputValue, page, areaReplace) {
+    var searchCourses = function(inputValue, page, areaReplace, type) {
         var searchIcon = page.querySelector(Selectors.region.searchIcon);
         var clearIcon = page.querySelector(Selectors.region.clearIcon);
 
@@ -115,7 +120,7 @@ define([
             if (result.courses.length === 0) {
                 return renderNoCourses(areaReplace);
             } else {
-                return renderCourses(areaReplace, result.courses);
+                return renderCourses(areaReplace, result.courses, type);
             }
         }).catch(Notification.exception);
     };
@@ -146,9 +151,9 @@ define([
      * @method addCourses
      * @param {HTMLElement} page The whole page element for our course page
      */
-    var addCourses = function(page) {
+    var addCourses = function(page, type) {
         var courseArea = page.querySelector(Selectors.region.courses);
-        searchCourses('', page, courseArea);
+        searchCourses('', page, courseArea, type);
     };
 
     /**

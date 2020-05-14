@@ -48,8 +48,9 @@ class select_page implements \renderable, \templatable {
      *
      * @param string $resourceurl The resource the user wants to add
      */
-    public function __construct(string $resourceurl) {
+    public function __construct(string $resourceurl, $linkparams) {
         $this->resouceurl = $resourceurl;
+        $this->linkparams = $linkparams;
     }
 
     /**
