@@ -37,6 +37,7 @@ if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
 
 $course = optional_param('course', null, PARAM_INT);
 $section = optional_param('section', null, PARAM_INT);
+$type = optional_param('type', 'link', PARAM_INT);
 
 // The POST data must be present and valid.
 if (!empty($_POST)) {
@@ -47,7 +48,7 @@ if (!empty($_POST)) {
         $resourceurl = urlencode($resourceurl);
 
         // Build the URL to fetch.
-        $url = new moodle_url('/admin/tool/moodlenet/index.php', ['resourceurl' => $resourceurl]);
+        $url = new moodle_url('/admin/tool/moodlenet/index.php', ['resourceurl' => $resourceurl, 'type' => $type]);
 
         if (!is_null($course)) {
             $url->param('course', $course);

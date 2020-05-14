@@ -33,6 +33,7 @@ require_once($CFG->dirroot .'/course/lib.php');
 use \tool_moodlenet\local\import_handler_registry;
 use \tool_moodlenet\local\import_processor;
 use tool_moodlenet\local\import_strategy_file;
+use tool_moodlenet\local\import_strategy_link;
 use \tool_moodlenet\local\remote_resource;
 use \tool_moodlenet\local\url;
 
@@ -48,6 +49,7 @@ $course = required_param('course', PARAM_INT);
 $section = required_param('section', PARAM_INT);
 $resourceurl = required_param('resourceurl', PARAM_RAW);
 $resourceurl = urldecode($resourceurl);
+$type = required_param('type', PARAM_TEXT);
 $modhandler = optional_param('modhandler', null, PARAM_TEXT);
 $import = optional_param('import', null, PARAM_TEXT);
 $cancel = optional_param('cancel', null, PARAM_TEXT);
@@ -63,6 +65,16 @@ if ($cancel) {
 
 $handlerregistry = new import_handler_registry($course, $USER);
 
+switch ($type) {
+    case 'file':
+        $strategy = new import_strategy_file();
+        break;
+    case 'link':
+    default:
+        $strategy = new import_strategy_link();
+        break;
+}
+
 if ($modhandler && $import) {
     require_capability('moodle/course:manageactivities', context_course::instance($course->id));
     confirm_sesskey();
@@ -72,7 +84,6 @@ if ($modhandler && $import) {
     if ($modandstrat[1] != 'file') {
         throw new coding_exception("Invalid import strategy '$modandstrat[1]'");
     }
-    $strategy = new import_strategy_file();
     $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($resource, $modandstrat[0], $strategy);
     if (is_null($handlerinfo)) {
         throw new coding_exception("Invalid handler data '$modhandler'. An import handler could not be found.");
@@ -84,7 +95,7 @@ if ($modhandler && $import) {
 
 // Render the form, providing the user with actions, starting by getting the handlers supporting this extension.
 $resource = new remote_resource(new curl(), new url($resourceurl));
-$handlers = $handlerregistry->get_resource_handlers_for_strategy($resource, new import_strategy_file());
+$handlers = $handlerregistry->get_resource_handlers_for_strategy($resource, $strategy);
 $handlercontext = [];
 foreach ($handlers as $handler) {
     $handlercontext[] = [

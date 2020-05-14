@@ -32,6 +32,7 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot .'/course/lib.php');
 
 $resourceurl = required_param('resourceurl', PARAM_RAW);
+$type = required_param('type', PARAM_TEXT);
 $resourceurl = urldecode($resourceurl);
 $course = optional_param('course', null, PARAM_INT);
 $section = optional_param('section', null, PARAM_INT);
@@ -97,11 +98,13 @@ if ($cancel) {
             'resourceurl' => urlencode($resourceurl),
             'course' => $course,
             'section' => $section,
+            'type' => $type
         ]));
     }
     if (is_null($course)) {
         redirect(new \moodle_url('/admin/tool/moodlenet/select.php', [
             'resourceurl' => urlencode($resourceurl),
+            'type' => $type
         ]));
     }
     // TODO: Extend conditional to handle cases where course needs to be selected or when the file is an mbz.
