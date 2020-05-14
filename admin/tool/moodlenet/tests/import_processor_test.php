@@ -26,6 +26,7 @@ namespace tool_moodlenet\local\tests;
 
 use tool_moodlenet\local\import_handler_registry;
 use tool_moodlenet\local\import_processor;
+use tool_moodlenet\local\import_strategy_file;
 use tool_moodlenet\local\remote_resource;
 use tool_moodlenet\local\url;
 
@@ -52,7 +53,8 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
         $resourceurl = $this->getExternalTestFileUrl('/test.html');
         $remoteresource = new remote_resource(new \curl(), new url($resourceurl));
         $handlerregistry = new import_handler_registry($course, $teacher);
-        $handlerinfo = $handlerregistry->get_file_handler_for_extension_and_plugin('html', 'resource');
+        $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'resource',
+            new import_strategy_file());
         $importproc = new import_processor($course, $section, $remoteresource, $handlerinfo, $handlerregistry);
 
         // Import the file.
@@ -88,7 +90,8 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
         $resourceurl = $this->getExternalTestFileUrl('/test.htmlzz');
         $remoteresource = new remote_resource(new \curl(), new url($resourceurl));
         $handlerregistry = new import_handler_registry($course, $teacher);
-        $handlerinfo = $handlerregistry->get_file_handler_for_extension_and_plugin('html', 'resource');
+        $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'resource',
+            new import_strategy_file());
         $importproc = new import_processor($course, $section, $remoteresource, $handlerinfo, $handlerregistry);
 
         // Import the file.

@@ -39,12 +39,6 @@ class import_processor {
     /** @var int The section number we are uploading to */
     protected $section = null;
 
-    /** @var object The course module that has been created */
-    protected $cm = null;
-
-    /** @var \context_course $context the course context to which the import applies.*/
-    protected $context;
-
     /** @var import_handler_registry $handlerregistry registry object to use for cross checking the supplied handler.*/
     protected $handlerregistry;
 
@@ -53,9 +47,6 @@ class import_processor {
 
     /** @var \stdClass $user the user conducting the import.*/
     protected $user;
-
-    /** @var int $useruploadlimit the upload limit for the user conducting the import.*/
-    protected $useruploadlimit;
 
     /** @var remote_resource $remoteresource the remote resource being imported.*/
     protected $remoteresource;
@@ -74,72 +65,38 @@ class import_processor {
             import_handler_registry $handlerregistry) {
 
         global $DB, $USER;
-        $this->course = $course;
-        $this->context = \context_course::instance($this->course->id);
 
         if ($section < 0) {
             throw new \coding_exception("Invalid section number $section. Must be > 0.");
         }
+        if (!$DB->get_record('modules', array('name' => $handlerinfo->get_module_name()))) {
+            throw new \coding_exception("Module {$handlerinfo->get_module_name()} does not exist");
+        }
+
+        $this->course = $course;
         $this->section = $section;
         $this->handlerregistry = $handlerregistry;
         $this->user = $USER;
         $this->remoteresource = $remoteresource;
-
-        $this->useruploadlimit = get_user_max_upload_file_size($this->context, get_config('core', 'maxbytes'),
-            $this->course->maxbytes, 0, $this->user);
-
-        if (!$DB->get_record('modules', array('name' => $handlerinfo->get_module_name()))) {
-            throw new \coding_exception("Module {$handlerinfo->get_module_name()} does not exist");
-        }
         $this->handlerinfo = $handlerinfo;
 
-        // Ensure the supplied handler is valid for the file extension of the remote resource.
-        $extension = $this->remoteresource->get_extension();
-        $handlers = $this->handlerregistry->get_file_handlers_for_extension($extension);
-        $supported = !empty(array_filter($handlers, function($handler) {
-            return $handler->get_module_name() == $this->handlerinfo->get_module_name();
-        }));
-        if (!$supported) {
-            throw new \coding_exception("Module {$this->handlerinfo->get_module_name()} does not support extension '$extension'.");
-        }
+        // ALL handlers must have a strategy and ANY strategy can process ANY resource.
+        // It is therefore NOT POSSIBLE to have a resource that CANNOT be processed by a handler.
+        // So, there's no need to verify that the remote_resource CAN be handled by the handler. It always can.
     }
 
     /**
      * Run the import process, including file download, module creation and cleanup (cache purge, etc).
-     *
-     * @throws \coding_exception if the module cannot support the extension of the remote resource.
-     * @throws \moodle_exception if the file exceeds the user's upload limits for the course.
      */
-    public function process() {
-        // Before starting a potentially lengthy download, try to ensure the file size does not exceed the upload size restrictions
-        // for the user. This is a time saving measure.
-        // This is a naive check, that serves only to catch files if they provide the content length header.
-        // Because of potential content encoding (compression), the stored file will be checked again after download as well.
-        $size = $this->remoteresource->get_download_size() ?? -1;
-        if ($this->size_exceeds_upload_limit($size)) {
-            throw new \moodle_exception('uploadlimitexceeded', 'tool_moodlenet', '', ['filesize' => $size,
-                'uploadlimit' => $this->useruploadlimit]);
-        }
+    public function process(): void {
+        // Allow the strategy to do setup for this file import.
+        $moduledata = $this->handlerinfo->get_strategy()->import($this->remoteresource, $this->user, $this->course, $this->section);
 
-        // Download the file into a request directory and scan it.
-        [$filepath, $filename] = $this->remoteresource->download_to_requestdir();
-        \core\antivirus\manager::scan_file($filepath, $filename, true);
+        // Create the course module, and add that information to the data to be sent to the plugin handling the resource.
+        $cmdata = $this->create_course_module($this->course, $this->section, $this->handlerinfo->get_module_name());
+        $moduledata->coursemodule = $cmdata->id;
 
-        // Check the final size of file against the user upload limits.
-        $localsize = filesize(sprintf('%s/%s', $filepath, $filename));
-        if ($this->size_exceeds_upload_limit($localsize)) {
-            throw new \moodle_exception('uploadlimitexceeded', 'tool_moodlenet', '', ['filesize' => $localsize,
-                'uploadlimit' => $this->useruploadlimit]);
-        }
-
-        // Store in the user draft file area.
-        $storedfile = $this->create_user_draft_stored_file($filename, $filepath);
-
-        // Create a course module to hold the new instance.
-        $this->create_course_module();
-
-        // Ask the module to set itself up, using the dndupload_handle hook.
-        $moduledata = $this->prepare_module_data($storedfile->get_itemid());
+        // Now, send the data to the handling plugin to let it set up.
         $instanceid = plugin_callback('mod', $this->handlerinfo->get_module_name(), 'dndupload', 'handle', [$moduledata],
             'invalidfunction');
         if ($instanceid == 'invalidfunction') {
@@ -148,78 +105,22 @@ class import_processor {
         }
 
         // Finish setting up the course module.
-        $this->finish_setup_course_module($instanceid);
-    }
-
-    /**
-     * Does the size exceed the upload limit for the current import, taking into account user and core settings.
-     *
-     * @param int $sizeinbytes
-     * @return bool true if exceeded, false otherwise.
-     */
-    protected function size_exceeds_upload_limit(int $sizeinbytes): bool {
-        $maxbytes = get_user_max_upload_file_size($this->context, get_config('core', 'maxbytes'), $this->course->maxbytes, 0,
-            $this->user);
-        if ($maxbytes != USER_CAN_IGNORE_FILE_SIZE_LIMITS && $sizeinbytes > $maxbytes) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Create a file in the user drafts ready for use by plugins implementing dndupload_handle().
-     *
-     * @param string $filename the name of the file on disk
-     * @param string $path the path where the file is stored on disk
-     * @return \stored_file
-     */
-    protected function create_user_draft_stored_file(string $filename, string $path): \stored_file {
-        global $CFG;
-
-        $record = new \stdClass();
-        $record->filearea = 'draft';
-        $record->component = 'user';
-        $record->filepath = '/';
-        $record->itemid   = file_get_unused_draft_itemid();
-        $record->license  = $CFG->sitedefaultlicense;
-        $record->author   = '';
-        $record->filename = clean_param($filename, PARAM_FILE);
-        $record->contextid = \context_user::instance($this->user->id)->id;
-        $record->userid = $this->user->id;
-
-        $fullpathwithname = sprintf('%s/%s', $path, $filename);
-
-        $fs = get_file_storage();
-
-        return  $fs->create_file_from_pathname($record, $fullpathwithname);
+        $this->finish_setup_course_module($instanceid, $cmdata->id);
     }
 
     /**
      * Create the course module to hold the file/content that has been uploaded.
+     * @param \stdClass $course the course object.
+     * @param int $section the section.
+     * @param string $modname the name of the moduel, e.g. 'label'.
+     * @return \stdClass the course module data.
      */
-    protected function create_course_module(): void {
+    protected function create_course_module(\stdClass $course, int $section, string $modname): \stdClass {
         global $CFG;
         require_once($CFG->dirroot . '/course/modlib.php');
-        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($this->course, $this->handlerinfo->get_module_name(),
-            $this->section);
+        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $modname, $section);
         $data->visible = false; // The module is created in a hidden state.
         $data->coursemodule = $data->id = add_course_module($data);
-        $this->cm = $data;
-    }
-
-    /**
-     * Creates the data to pass to the dndupload_handle() hooks.
-     *
-     * @param int $draftitemid the itemid of the draft file.
-     * @return \stdClass the data object.
-     */
-    protected function prepare_module_data(int $draftitemid): \stdClass {
-        $data = new \stdClass();
-        $data->type = 'Files';
-        $data->course = $this->course;
-        $data->draftitemid = $draftitemid;
-        $data->coursemodule = $this->cm->id;
-        $data->displayname = $this->remoteresource->get_name();
         return $data;
     }
 
@@ -227,39 +128,40 @@ class import_processor {
      * Finish off any course module setup, such as adding to the course section and firing events.
      *
      * @param int $instanceid id returned by the mod when it was created.
+     * @param int $cmid the course module record id, for removal if something went wrong.
      */
-    protected function finish_setup_course_module($instanceid): void {
+    protected function finish_setup_course_module($instanceid, int $cmid): void {
         global $DB;
 
         if (!$instanceid) {
             // Something has gone wrong - undo everything we can.
-            course_delete_module($this->cm->id);
+            course_delete_module($cmid);
             throw new \moodle_exception('errorcreatingactivity', 'moodle', '', $this->handlerinfo->get_module_name());
         }
 
         // Note the section visibility.
         $visible = get_fast_modinfo($this->course)->get_section_info($this->section)->visible;
 
-        $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $this->cm->id));
+        $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $cmid));
 
         // Rebuild the course cache after update action.
         rebuild_course_cache($this->course->id, true);
 
-        course_add_cm_to_section($this->course, $this->cm->id, $this->section);
+        course_add_cm_to_section($this->course, $cmid, $this->section);
 
-        set_coursemodule_visible($this->cm->id, $visible);
+        set_coursemodule_visible($cmid, $visible);
         if (!$visible) {
-            $DB->set_field('course_modules', 'visibleold', 1, array('id' => $this->cm->id));
+            $DB->set_field('course_modules', 'visibleold', 1, array('id' => $cmid));
         }
 
         // Retrieve the final info about this module.
         $info = get_fast_modinfo($this->course, $this->user->id);
-        if (!isset($info->cms[$this->cm->id])) {
+        if (!isset($info->cms[$cmid])) {
             // The course module has not been properly created in the course - undo everything.
-            course_delete_module($this->cm->id);
+            course_delete_module($cmid);
             throw new \moodle_exception('errorcreatingactivity', 'moodle', '', $this->handlerinfo->get_module_name());
         }
-        $mod = $info->get_cm($this->cm->id);
+        $mod = $info->get_cm($cmid);
 
         // Trigger course module created event.
         $event = \core\event\course_module_created::create_from_cm($mod);
