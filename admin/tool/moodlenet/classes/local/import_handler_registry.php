@@ -34,7 +34,7 @@ namespace tool_moodlenet\local;
 class import_handler_registry {
 
     /**
-     * @var array array of import_handler_info objects.
+     * @var array array containing the names and messages of all modules handling import of resources as a 'file' type.
      */
     protected $filehandlers = [];
 
@@ -69,33 +69,29 @@ class import_handler_registry {
     }
 
     /**
-     * Return an array of handlers supporting the given extension.
+     * Get all handlers for the remote resource, depending on the strategy being used to import the resource.
      *
-     * @param string $extension the extension to check
-     * @return array the array of import_handler_info objects.
+     * @param remote_resource $resource the remote resource.
+     * @param import_strategy $strategy an import_strategy instance.
+     * @return import_handler_info[] the array of import_handler_info handlers.
      */
-    public function get_file_handlers_for_extension(string $extension): array {
-        $exthandlers = [];
-        foreach ($this->filehandlers as $key => $fhandler) {
-            if ($fhandler->get_extension() == '*' || $fhandler->get_extension() == $extension) {
-                $exthandlers[] = $fhandler;
-            }
-        }
-        return $exthandlers;
+    public function get_resource_handlers_for_strategy(remote_resource $resource, import_strategy $strategy): array {
+        return $strategy->get_handlers($this->filehandlers, $resource);
     }
 
     /**
-     * Return the import_handler_info object for the given extension and plugin name, or null if not found.
+     * Get a specific handler for the resource, belonging to a specific module and for a specific strategy.
      *
-     * @param string $extension the extension to check for.
-     * @param string $modname the module name to check for.
+     * @param remote_resource $resource the remote resource.
+     * @param string $modname the name of the module, e.g. 'label'.
+     * @param import_strategy $strategy a string representing how to treat the resource. e.g. 'file', 'link'.
      * @return import_handler_info|null the import_handler_info object, if found, otherwise null.
      */
-    public function get_file_handler_for_extension_and_plugin(string $extension, string $modname): ?import_handler_info {
-        foreach ($this->filehandlers as $key => $fhandler) {
-            if (($fhandler->get_extension() == '*' || $fhandler->get_extension() == $extension)
-                && $fhandler->get_module_name() == $modname) {
-                    return $fhandler;
+    public function get_resource_handler_for_mod_and_strategy(remote_resource $resource, string $modname,
+            import_strategy $strategy): ?import_handler_info {
+        foreach ($strategy->get_handlers($this->filehandlers, $resource) as $handler) {
+            if ($handler->get_module_name() === $modname) {
+                return $handler;
             }
         }
         return null;
@@ -180,8 +176,7 @@ class import_handler_registry {
      */
     protected function register_file_handler(string $extension, string $module, string $message) {
         $extension = strtolower($extension);
-        $handler = new import_handler_info($extension, $module, $message);
-        $this->filehandlers[] = $handler;
+        $this->filehandlers[$extension][] = ['module' => $module, 'message' => $message];
     }
 }
 

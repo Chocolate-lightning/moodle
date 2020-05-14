@@ -24,8 +24,9 @@
  */
 namespace tool_moodlenet\local\tests;
 
-use core\session\exception;
 use tool_moodlenet\local\import_handler_info;
+use tool_moodlenet\local\import_strategy;
+use tool_moodlenet\local\import_strategy_file;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,27 +36,26 @@ defined('MOODLE_INTERNAL') || die();
 class tool_moodlenet_import_handler_info_testcase extends \advanced_testcase {
 
     /**
-     * Test the getters of this object.
+     * Test init and the getters.
      *
      * @dataProvider handler_info_data_provider
-     * @param string $extension the file extension.
      * @param string $modname the name of the mod.
      * @param string $description description of the mod.
      * @param bool $expectexception whether we expect an exception during init or not.
      */
-    public function test_initialisation($extension, $modname, $description, $expectexception) {
+    public function test_initialisation($modname, $description, $expectexception) {
         $this->resetAfterTest();
         // Skip those cases we cannot init.
         if ($expectexception) {
             $this->expectException(\coding_exception::class);
-            $handlerinfo = new import_handler_info($extension, $modname, $description);
+            $handlerinfo = new import_handler_info($modname, $description, new import_strategy_file());
         }
 
-        $handlerinfo = new import_handler_info($extension, $modname, $description);
+        $handlerinfo = new import_handler_info($modname, $description, new import_strategy_file());
 
-        $this->assertEquals($extension, $handlerinfo->get_extension());
         $this->assertEquals($modname, $handlerinfo->get_module_name());
         $this->assertEquals($description, $handlerinfo->get_description());
+        $this->assertInstanceOf(import_strategy::class, $handlerinfo->get_strategy());
     }
 
 
@@ -66,11 +66,9 @@ class tool_moodlenet_import_handler_info_testcase extends \advanced_testcase {
      */
     public function handler_info_data_provider() {
         return [
-            'Label handles the png extension' => ['png', 'label', 'Add a label to the course', false],
-            'Resource handles any file extension' => ['*', 'resource', 'Add a file resource to the course', false],
-            'Missing file extension' => ['', 'resource', 'Add a file resource to the course', true],
-            'Missing module name' => ['*', '', 'Add a file resource to the course', true],
-            'Missing description' => ['*', 'resource', '', true],
+            'All data present' => ['label', 'Add a label to the course', false],
+            'Empty module name' => ['', 'Add a file resource to the course', true],
+            'Empty description' => ['resource', '', true],
 
         ];
     }

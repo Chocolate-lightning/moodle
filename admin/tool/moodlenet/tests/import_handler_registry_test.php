@@ -26,6 +26,9 @@ namespace tool_moodlenet\local\tests;
 
 use tool_moodlenet\local\import_handler_registry;
 use tool_moodlenet\local\import_handler_info;
+use tool_moodlenet\local\import_strategy_file;
+use tool_moodlenet\local\remote_resource;
+use tool_moodlenet\local\url;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,33 +38,18 @@ defined('MOODLE_INTERNAL') || die();
 class tool_moodlenet_import_handler_registry_testcase extends \advanced_testcase {
 
     /**
-     * Test confirming that the extension IS case sensitive and that different results are returned depending on case.
+     * Test confirming the behaviour of get_resource_handlers_for_strategy with different params.
      */
-    public function test_get_file_handlers_for_extension_case_sensitivity() {
+    public function test_get_resource_handlers_for_strategy() {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $ihr = new import_handler_registry($course, $teacher);
+        $resource = new remote_resource(new \curl(), new url('http://example.org'));
 
-        $lchandlers = $ihr->get_file_handlers_for_extension('png');
-        $uchandlers = $ihr->get_file_handlers_for_extension('PNG');
-        $this->assertNotEquals(count($lchandlers), count($uchandlers));
-    }
-
-    /**
-     * Test confirming the return format is an array of import_handler_info type objects.
-     */
-    public function test_get_file_handlers_for_extension_format() {
-        $this->resetAfterTest();
-
-        $course = $this->getDataGenerator()->create_course();
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
-        $ihr = new import_handler_registry($course, $teacher);
-
-        $handlers = $ihr->get_file_handlers_for_extension('png');
+        $handlers = $ihr->get_resource_handlers_for_strategy($resource, new import_strategy_file());
         $this->assertIsArray($handlers);
-
         foreach ($handlers as $handler) {
             $this->assertInstanceOf(import_handler_info::class, $handler);
         }
@@ -70,29 +58,34 @@ class tool_moodlenet_import_handler_registry_testcase extends \advanced_testcase
     /**
      * Test confirming that the results are scoped to the provided user.
      */
-    public function test_get_file_handlers_for_extension_user_scoping() {
+    public function test_get_resource_handlers_for_strategy_user_scoping() {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
         $studentihr = new import_handler_registry($course, $student);
         $teacherihr = new import_handler_registry($course, $teacher);
+        $resource = new remote_resource(new \curl(), new url('http://example.org'));
 
-        $this->assertEmpty($studentihr->get_file_handlers_for_extension('png'));
-        $this->assertNotEmpty($teacherihr->get_file_handlers_for_extension('png'));
+        $this->assertEmpty($studentihr->get_resource_handlers_for_strategy($resource, new import_strategy_file()));
+        $this->assertNotEmpty($teacherihr->get_resource_handlers_for_strategy($resource, new import_strategy_file()));
     }
 
     /**
-     * Test confirming that we can find a unique handler based on its extension and plugin name.
+     * Test confirming that we can find a unique handler based on the module and strategy name.
      */
-    public function test_get_file_handler_for_extension_and_plugin() {
+    public function test_get_resource_handler_for_module_and_strategy() {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $ihr = new import_handler_registry($course, $teacher);
+        $resource = new remote_resource(new \curl(), new url('http://example.org'));
 
-        $this->assertInstanceOf(import_handler_info::class, $ihr->get_file_handler_for_extension_and_plugin('png', 'label'));
+        // Resource handles every file type, so we'll always be able to find that unique handler when looking.
+        $handler = $ihr->get_resource_handler_for_mod_and_strategy($resource, 'resource', new import_strategy_file());
+        $this->assertInstanceOf(import_handler_info::class, $handler);
     }
 }
