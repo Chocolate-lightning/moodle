@@ -35,20 +35,22 @@ defined('MOODLE_INTERNAL') || die();
 class tool_moodlenet_remote_resource_testcase extends \advanced_testcase {
 
     /**
-     * Test confirming that information can be pulled out of the URL.
+     * Test getters.
      *
      * @dataProvider remote_resource_parsing_data_provider
-     * @param string $url the url.
+     * @param string $url the url of the resource.
      * @param string $name the expected name of the resource.
+     * @param string $description the description of the resource.
      * @param string $extension the expected extension of the resource.
      */
-    public function test_parsing($url, $name, $extension) {
+    public function test_getters($url, $name, $description, $extension) {
         $this->resetAfterTest();
 
-        $remoteres = new remote_resource(new \curl(), new url($url));
+        $remoteres = new remote_resource(new \curl(), new url($url), $name, $description);
 
         $this->assertEquals(new url($url), $remoteres->get_url());
         $this->assertEquals($name, $remoteres->get_name());
+        $this->assertEquals($description, $remoteres->get_description());
         $this->assertEquals($extension, $remoteres->get_extension());
     }
 
@@ -58,8 +60,18 @@ class tool_moodlenet_remote_resource_testcase extends \advanced_testcase {
      */
     public function remote_resource_parsing_data_provider() {
         return [
-            'With filename and extension' => [$this->getExternalTestFileUrl('/test.html'), 'test', 'html'],
-            'With filename only' => ['http://example.com/path/file', 'file', '']
+            'With filename and extension' => [
+                $this->getExternalTestFileUrl('/test.html'),
+                'Test html file',
+                'Full description of the html file',
+                'html'
+            ],
+            'With filename only' => [
+                'http://example.com/path/file',
+                'Test html file',
+                'Full description of the html file',
+                ''
+            ]
         ];
     }
 
@@ -70,8 +82,8 @@ class tool_moodlenet_remote_resource_testcase extends \advanced_testcase {
         $url = $this->getExternalTestFileUrl('/test.html');
         $nonexistenturl = $this->getExternalTestFileUrl('/test.htmlzz');
 
-        $remoteres = new remote_resource(new \curl(), new url($url));
-        $nonexistentremoteres = new remote_resource(new \curl(), new url($nonexistenturl));
+        $remoteres = new remote_resource(new \curl(), new url($url), 'Test html file', 'Some description');
+        $nonexistentremoteres = new remote_resource(new \curl(), new url($nonexistenturl), 'Test html file', 'Some description');
 
         $this->assertGreaterThan(0, $remoteres->get_download_size());
         [$path, $name] = $remoteres->download_to_requestdir();

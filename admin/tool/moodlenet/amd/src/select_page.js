@@ -38,10 +38,11 @@ define([
      *
      * @method init
      */
-    var init = function(type) {
+    var init = function(info) {
+        var courseurlparams = info;
         var page = document.querySelector(Selectors.region.selectPage);
         registerListenerEvents(page);
-        addCourses(page, type);
+        addCourses(page, courseurlparams);
     };
 
     /**
@@ -74,10 +75,13 @@ define([
      * @param {Array<courses>} courses the courses to render.
      * @returns {Promise}
      */
-    var renderCourses = function(areaReplace, courses, type) {
-        if (type) {
+    var renderCourses = function(areaReplace, courses, courseurlparams) {
+        if (courseurlparams) {
+            window.console.log(courseurlparams);
             courses.forEach(function(course) {
-                course.viewurl += '&type=' + type;
+                course.viewurl += '&type=' + courseurlparams.type;
+                course.viewurl += '&name=' + courseurlparams.name;
+                course.viewurl += '&description=' + courseurlparams.description;
             });
         }
         return Templates.render('tool_moodlenet/view-cards', {
@@ -98,7 +102,7 @@ define([
      * @param {HTMLElement} page The whole page element for our page
      * @param {HTMLElement} areaReplace The Element to replace the contents of
      */
-    var searchCourses = function(inputValue, page, areaReplace, type) {
+    var searchCourses = function(inputValue, page, areaReplace, courseurlparams) {
         var searchIcon = page.querySelector(Selectors.region.searchIcon);
         var clearIcon = page.querySelector(Selectors.region.clearIcon);
 
@@ -120,7 +124,7 @@ define([
             if (result.courses.length === 0) {
                 return renderNoCourses(areaReplace);
             } else {
-                return renderCourses(areaReplace, result.courses, type);
+                return renderCourses(areaReplace, result.courses, courseurlparams);
             }
         }).catch(Notification.exception);
     };
@@ -151,9 +155,9 @@ define([
      * @method addCourses
      * @param {HTMLElement} page The whole page element for our course page
      */
-    var addCourses = function(page, type) {
+    var addCourses = function(page, courseurlparams) {
         var courseArea = page.querySelector(Selectors.region.courses);
-        searchCourses('', page, courseArea, type);
+        searchCourses('', page, courseArea, courseurlparams);
     };
 
     /**

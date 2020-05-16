@@ -52,7 +52,7 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
 
         // Set up the import, using a mod_resource handler for the html extension.
         $resourceurl = $this->getExternalTestFileUrl('/test.html');
-        $remoteresource = new remote_resource(new \curl(), new url($resourceurl));
+        $remoteresource = new remote_resource(new \curl(), new url($resourceurl), 'Resource name', 'Resource description');
         $handlerregistry = new import_handler_registry($course, $teacher);
         $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'resource',
             new import_strategy_file());
@@ -61,12 +61,15 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
         // Import the file.
         $importproc->process();
 
-        // Verify there is a new mod_resource created with name 'test' and containing the test.html file.
+        // Verify there is a new mod_resource created with correct name, description and containing the test.html file.
         $modinfo = get_fast_modinfo($course, $teacher->id);
         $cms = $modinfo->get_instances();
         $this->assertArrayHasKey('resource', $cms);
         $cminfo = array_shift($cms['resource']);
-        $this->assertEquals('test', $cminfo->get_formatted_name());
+        $this->assertEquals('Resource name', $cminfo->get_formatted_name());
+        $cm = get_coursemodule_from_id('', $cminfo->id, 0, false, MUST_EXIST);
+        list($cm, $context, $module, $data, $cw) = get_moduleinfo_data($cminfo, $course);
+        $this->assertEquals($remoteresource->get_description(), $data->intro);
         $fs = get_file_storage();
         $files = $fs->get_area_files(\context_module::instance($cminfo->id)->id, 'mod_resource', 'content', false,
             'sortorder DESC, id ASC', false);
@@ -89,7 +92,7 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
 
         // Set up the import, using a mod_resource handler for the html extension.
         $resourceurl = $this->getExternalTestFileUrl('/test.htmlzz');
-        $remoteresource = new remote_resource(new \curl(), new url($resourceurl));
+        $remoteresource = new remote_resource(new \curl(), new url($resourceurl), 'Resource name', 'Resource description');
         $handlerregistry = new import_handler_registry($course, $teacher);
         $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'resource',
             new import_strategy_file());
@@ -113,7 +116,8 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
         $this->setUser($teacher);
 
         // Set up the import, using a mod_url handler and the link import strategy.
-        $remoteresource = new remote_resource(new \curl(), new url('http://example.com/cats.pdf'));
+        $remoteresource = new remote_resource(new \curl(), new url('http://example.com/cats.pdf'), 'Resource name',
+            'Resource description');
         $handlerregistry = new import_handler_registry($course, $teacher);
         $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'url',
             new import_strategy_link());
@@ -127,6 +131,6 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
         $cms = $modinfo->get_instances();
         $this->assertArrayHasKey('url', $cms);
         $cminfo = array_shift($cms['url']);
-        $this->assertEquals('cats', $cminfo->get_formatted_name());
+        $this->assertEquals('Resource name', $cminfo->get_formatted_name());
     }
 }

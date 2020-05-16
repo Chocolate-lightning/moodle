@@ -50,6 +50,8 @@ $section = required_param('section', PARAM_INT);
 $resourceurl = required_param('resourceurl', PARAM_RAW);
 $resourceurl = urldecode($resourceurl);
 $type = required_param('type', PARAM_TEXT);
+$name = required_param('name', PARAM_TEXT);
+$description = optional_param('description', '', PARAM_TEXT);
 $modhandler = optional_param('modhandler', null, PARAM_TEXT);
 $import = optional_param('import', null, PARAM_TEXT);
 $cancel = optional_param('cancel', null, PARAM_TEXT);
@@ -80,10 +82,10 @@ if ($modhandler && $import) {
     confirm_sesskey();
 
     $modandstrat = explode('_', $modhandler);
-    $resource = new remote_resource(new curl(), new url($resourceurl));
-    if ($modandstrat[1] != 'file') {
-        throw new coding_exception("Invalid import strategy '$modandstrat[1]'");
-    }
+    $resource = new remote_resource(new curl(), new url($resourceurl), $name, $description);
+    //if ($modandstrat[1] != 'file') {
+    //    throw new coding_exception("Invalid import strategy '$modandstrat[1]'");
+    //}
     $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($resource, $modandstrat[0], $strategy);
     if (is_null($handlerinfo)) {
         throw new coding_exception("Invalid handler data '$modhandler'. An import handler could not be found.");
@@ -94,14 +96,14 @@ if ($modhandler && $import) {
 }
 
 // Render the form, providing the user with actions, starting by getting the handlers supporting this extension.
-$resource = new remote_resource(new curl(), new url($resourceurl));
+$resource = new remote_resource(new curl(), new url($resourceurl), $name, $description);
 $handlers = $handlerregistry->get_resource_handlers_for_strategy($resource, $strategy);
 $handlercontext = [];
 foreach ($handlers as $handler) {
     $handlercontext[] = [
         'module' => $handler->get_module_name(),
         'message' => $handler->get_description(),
-        'handlerid' => $handler->get_module_name() . '_file'
+        'handlerid' => $handler->get_module_name() . '_' . $type
     ];
 }
 

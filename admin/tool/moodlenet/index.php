@@ -32,8 +32,10 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot .'/course/lib.php');
 
 $resourceurl = required_param('resourceurl', PARAM_RAW);
-$type = required_param('type', PARAM_TEXT);
 $resourceurl = urldecode($resourceurl);
+$type = required_param('type', PARAM_TEXT);
+$name = required_param('name', PARAM_TEXT);
+$description = optional_param('description', '', PARAM_TEXT);
 $course = optional_param('course', null, PARAM_INT);
 $section = optional_param('section', null, PARAM_INT);
 $cancel = optional_param('cancel', null, PARAM_TEXT);
@@ -58,7 +60,7 @@ if ($cancel) {
 } else if ($continue) {
     confirm_sesskey();
 
-    $remoteresource = new remote_resource(new curl(), new url($resourceurl));
+    $remoteresource = new remote_resource(new curl(), new url($resourceurl), $name, $description);
     $extension = $remoteresource->get_extension();
 
     // Handle backups.
@@ -98,19 +100,23 @@ if ($cancel) {
             'resourceurl' => urlencode($resourceurl),
             'course' => $course,
             'section' => $section,
-            'type' => $type
+            'type' => $type,
+            'name' => $name,
+            'description' => $description
         ]));
     }
     if (is_null($course)) {
         redirect(new \moodle_url('/admin/tool/moodlenet/select.php', [
             'resourceurl' => urlencode($resourceurl),
-            'type' => $type
+            'type' => $type,
+            'name' => $name,
+            'description' => $description
         ]));
     }
     // TODO: Extend conditional to handle cases where course needs to be selected or when the file is an mbz.
 }
 
-$remoteresource = new remote_resource(new curl(), new url($resourceurl));
+$remoteresource = new remote_resource(new curl(), new url($resourceurl), $name, $description);
 $extension = $remoteresource->get_extension();
 
 // Display the page.

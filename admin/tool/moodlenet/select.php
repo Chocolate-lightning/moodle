@@ -29,6 +29,8 @@ require_login();
 $resourceurl = required_param('resourceurl', PARAM_RAW);
 $resourceurl = urldecode($resourceurl);
 $type = required_param('type', PARAM_TEXT);
+$name = required_param('name', PARAM_TEXT);
+$description = optional_param('description', null, PARAM_TEXT);
 
 // The integration must be enabled to access this page.
 if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
@@ -43,7 +45,8 @@ $PAGE->set_heading(format_string($SITE->fullname));
 
 echo $OUTPUT->header();
 
-$renderable = new \tool_moodlenet\output\select_page($resourceurl, ['type' => $type]);
+$renderable = new \tool_moodlenet\output\select_page($resourceurl, ['type' => $type, 'name' => $name,
+    'description' => $description]);
 $renderer = $PAGE->get_renderer('tool_moodlenet');
 echo $renderer->render($renderable);
 

@@ -47,7 +47,7 @@ class tool_moodlenet_import_handler_registry_testcase extends \advanced_testcase
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $ihr = new import_handler_registry($course, $teacher);
-        $resource = new remote_resource(new \curl(), new url('http://example.org'));
+        $resource = new remote_resource(new \curl(), new url('http://example.org'), 'Resource name', 'Resource description');
 
         $handlers = $ihr->get_resource_handlers_for_strategy($resource, new import_strategy_file());
         $this->assertIsArray($handlers);
@@ -68,7 +68,7 @@ class tool_moodlenet_import_handler_registry_testcase extends \advanced_testcase
 
         $studentihr = new import_handler_registry($course, $student);
         $teacherihr = new import_handler_registry($course, $teacher);
-        $resource = new remote_resource(new \curl(), new url('http://example.org'));
+        $resource = new remote_resource(new \curl(), new url('http://example.org'), 'Resource name', 'Resource description');
 
         $this->assertEmpty($studentihr->get_resource_handlers_for_strategy($resource, new import_strategy_file()));
         $this->assertNotEmpty($teacherihr->get_resource_handlers_for_strategy($resource, new import_strategy_file()));
@@ -83,7 +83,7 @@ class tool_moodlenet_import_handler_registry_testcase extends \advanced_testcase
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $ihr = new import_handler_registry($course, $teacher);
-        $resource = new remote_resource(new \curl(), new url('http://example.org'));
+        $resource = new remote_resource(new \curl(), new url('http://example.org'), 'Resource name', 'Resource description');
 
         // Resource handles every file type, so we'll always be able to find that unique handler when looking.
         $handler = $ihr->get_resource_handler_for_mod_and_strategy($resource, 'resource', new import_strategy_file());

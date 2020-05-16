@@ -47,17 +47,25 @@ class remote_resource {
     /** @var array $headinfo the array of information for the most recent HEAD request.*/
     protected $headinfo = [];
 
+    /** @var string $name the name of the resource. */
+    protected $name;
+
+    /** @var string $description a more verbose description of the resource. */
+    protected $description;
+
     /**
      * The remote_resource constructor.
      *
      * @param \curl $curl a curl object for HTTP requests.
      * @param url $url the URL of the remote resource.
      */
-    public function __construct(\curl $curl, url $url) {
+    public function __construct(\curl $curl, url $url, string $name, string $description) {
         $this->curl = $curl;
         $this->url = $url;
         $this->filename = pathinfo($this->url->get_path(), PATHINFO_FILENAME);
         $this->extension = pathinfo($this->url->get_path(), PATHINFO_EXTENSION);
+        $this->name = $name;
+        $this->description = $description;
     }
 
     /**
@@ -73,7 +81,16 @@ class remote_resource {
      * Get the name of the file from the URL.
      */
     public function get_name() {
-        return $this->filename;
+        return $this->name;
+    }
+
+    /**
+     * Get the description of the resource.
+     *
+     * @return string
+     */
+    public function get_description(): string {
+        return $this->description;
     }
 
     /**
@@ -102,7 +119,7 @@ class remote_resource {
      * @throws \moodle_exception if the file cannot be downloaded.
      */
     public function download_to_requestdir(): array {
-        $filename = sprintf('%s.%s', $this->get_name(), $this->get_extension());
+        $filename = sprintf('%s.%s', $this->filename, $this->get_extension());
         $path = make_request_directory();
         $fullpathwithname = sprintf('%s/%s', $path, $filename);
 

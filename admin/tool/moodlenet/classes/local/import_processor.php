@@ -51,6 +51,9 @@ class import_processor {
     /** @var remote_resource $remoteresource the remote resource being imported.*/
     protected $remoteresource;
 
+    /** @var string[] $descriptionoverrides list of modules which support having their descriptions updated, post-import. */
+    protected $descriptionoverrides = ['folder', 'page', 'resource', 'scorm', 'url'];
+
     /**
      * The import_processor constructor.
      *
@@ -104,15 +107,47 @@ class import_processor {
             throw new \coding_exception("$name does not support drag and drop upload (missing {$name}_dndupload_handle function)");
         }
 
+        // Now, update the module description if the module supports it and only if it's not currently set.
+        $this->update_module_description($instanceid);
+
         // Finish setting up the course module.
         $this->finish_setup_course_module($instanceid, $cmdata->id);
+    }
+
+    /**
+     * Update the module's description (intro), if that feature is supported.
+     *
+     * @param int $instanceid the instance id of the module to update.
+     */
+    protected function update_module_description(int $instanceid): void {
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/moodlelib.php');
+
+        if (plugin_supports('mod', $this->handlerinfo->get_module_name(), FEATURE_MOD_INTRO, true)) {
+            require_once($CFG->libdir . '/editorlib.php');
+            require_once($CFG->libdir . '/modinfolib.php');
+
+            $rec = $DB->get_record($this->handlerinfo->get_module_name(), ['id' => $instanceid]);
+
+            if (empty($rec->intro) || in_array($this->handlerinfo->get_module_name(), $this->descriptionoverrides)) {
+                $updatedata = (object)[
+                    'id' => $instanceid,
+                    'intro' => clean_param($this->remoteresource->get_description(), PARAM_TEXT),
+                    'introformat' => editors_get_preferred_format()
+                ];
+
+                $DB->update_record($this->handlerinfo->get_module_name(), $updatedata);
+
+                rebuild_course_cache($this->course->id, true);
+            }
+        }
     }
 
     /**
      * Create the course module to hold the file/content that has been uploaded.
      * @param \stdClass $course the course object.
      * @param int $section the section.
-     * @param string $modname the name of the moduel, e.g. 'label'.
+     * @param string $modname the name of the module, e.g. 'label'.
      * @return \stdClass the course module data.
      */
     protected function create_course_module(\stdClass $course, int $section, string $modname): \stdClass {

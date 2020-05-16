@@ -35,26 +35,34 @@ if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
     print_error('moodlenetnotenabled', 'tool_moodlenet');
 }
 
-$course = optional_param('course', null, PARAM_INT);
-$section = optional_param('section', null, PARAM_INT);
-$type = optional_param('type', 'link', PARAM_INT);
-
 // The POST data must be present and valid.
 if (!empty($_POST)) {
-    if (!empty($_POST['resourceurl'])) {
+    // We require resourceurl as well as resource_info->name.
+    $resourceurl = $_POST['resourceurl'] ?? null;
+    $resourceurl = validate_param($resourceurl, PARAM_URL);
+    $resourceinfo = isset($_POST['resource_info']) ? json_decode($_POST['resource_info']) : null;
+    $course = $_POST['course'] ?? null;
+    $section = $_POST['section'] ?? null;
+    $type = $_POST['type'] ?? 'link';
+    $valid = !is_null($resourceurl) && !is_null($resourceinfo) && !empty($resourceinfo->name);
+    if ($valid) {
         // Take the params we need, create a local URL, and redirect to it.
         // This allows us to hook into the 'wantsurl' capability of the auth system.
-        $resourceurl = validate_param($_POST['resourceurl'], PARAM_URL);
         $resourceurl = urlencode($resourceurl);
+        $name = $resourceinfo->name;
+        $description = $resourceinfo->summary ?? '';
 
         // Build the URL to fetch.
-        $url = new moodle_url('/admin/tool/moodlenet/index.php', ['resourceurl' => $resourceurl, 'type' => $type]);
+        $url = new moodle_url('/admin/tool/moodlenet/index.php', ['resourceurl' => $resourceurl, 'name' => urlencode($name), 'type' => $type]);
 
         if (!is_null($course)) {
             $url->param('course', $course);
         }
         if (!is_null($section)) {
             $url->param('section', $section);
+        }
+        if (!is_null($description)) {
+            $url->param('description', urlencode($description));
         }
 
         redirect($url);
