@@ -17,16 +17,22 @@
 /**
  * This is the main endpoint which MoodleNet instances POST to.
  *
- * This converts the POST into a GET for a secured page, so the $wantsurl aspect of auth can be leveraged.
- *
- * Once the POST is converted to a GET request for admin/tool/moodlenet/index.php with relevant params, the user will either:
- * - If not authenticated, they will be asked to login, after which they will see the confirmation page.
- * - If authenticated, they will see the confirmation page.
+ * MoodleNet instances send the user agent to this endpoint via a form POST.
+ * Then:
+ * 1. The POSTed resource information is put in a session store for cross-request access.
+ * 2. This page makes a GET request for admin/tool/moodlenet/index.php (the import confirmation page).
+ * 3. Then, depending on whether the user is authenticated, the user will either:
+ * - If not authenticated, they will be asked to login, after which they will see the confirmation page (leveraging $wantsurl).
+ * - If authenticated, they will see the confirmation page immediately.
  *
  * @package     tool_moodlenet
  * @copyright   2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use tool_moodlenet\local\import_info;
+use tool_moodlenet\local\remote_resource;
+use tool_moodlenet\local\url;
 
 require_once(__DIR__ . '/../../../config.php');
 
@@ -46,26 +52,28 @@ if (!empty($_POST)) {
     $type = $_POST['type'] ?? 'link';
     $valid = !is_null($resourceurl) && !is_null($resourceinfo) && !empty($resourceinfo->name);
     if ($valid) {
-        // Take the params we need, create a local URL, and redirect to it.
-        // This allows us to hook into the 'wantsurl' capability of the auth system.
-        $resourceurl = urlencode($resourceurl);
-        $name = $resourceinfo->name;
-        $description = $resourceinfo->summary ?? '';
 
-        // Build the URL to fetch.
-        $url = new moodle_url('/admin/tool/moodlenet/index.php', ['resourceurl' => $resourceurl, 'name' => urlencode($name), 'type' => $type]);
+        // Store information about the import of the resource for the current user.
+        $importconfig = (object) [
+            'course' => $course,
+            'section' => $section,
+            'type' => $type,
+        ];
+        $metadata = (object) [
+            'name' => $resourceinfo->name,
+            'description' => $resourceinfo->summary ?? ''
+        ];
 
-        if (!is_null($course)) {
-            $url->param('course', $course);
-        }
-        if (!is_null($section)) {
-            $url->param('section', $section);
-        }
-        if (!is_null($description)) {
-            $url->param('description', urlencode($description));
-        }
+        require_once($CFG->libdir . '/filelib.php');
+        $importinfo = new import_info(
+            $USER->id,
+            new remote_resource(new \curl(), new url($resourceurl), $metadata),
+            $importconfig
+        );
+        $importinfo->save();
 
-        redirect($url);
+        // Redirect to the import confirmation page, detouring via the log in page if required.
+        redirect(new moodle_url('/admin/tool/moodlenet/index.php', ['id' => $importinfo->get_id()]));
     }
 }
 

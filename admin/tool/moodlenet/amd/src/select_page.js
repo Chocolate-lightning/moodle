@@ -34,15 +34,21 @@ define([
     Notification
 ) {
     /**
+     * @var {string} The id corresponding to the import.
+     */
+    var importId;
+
+    /**
      * Set up the page.
      *
      * @method init
+     * @param {string} importIdString the string ID of the import.
      */
-    var init = function(info) {
-        var courseurlparams = info;
+    var init = function(importIdString) {
+        importId = importIdString;
         var page = document.querySelector(Selectors.region.selectPage);
         registerListenerEvents(page);
-        addCourses(page, courseurlparams);
+        addCourses(page);
     };
 
     /**
@@ -75,15 +81,7 @@ define([
      * @param {Array<courses>} courses the courses to render.
      * @returns {Promise}
      */
-    var renderCourses = function(areaReplace, courses, courseurlparams) {
-        if (courseurlparams) {
-            window.console.log(courseurlparams);
-            courses.forEach(function(course) {
-                course.viewurl += '&type=' + courseurlparams.type;
-                course.viewurl += '&name=' + courseurlparams.name;
-                course.viewurl += '&description=' + courseurlparams.description;
-            });
-        }
+    var renderCourses = function(areaReplace, courses) {
         return Templates.render('tool_moodlenet/view-cards', {
             courses: courses
         }).then(function(html, js) {
@@ -102,7 +100,7 @@ define([
      * @param {HTMLElement} page The whole page element for our page
      * @param {HTMLElement} areaReplace The Element to replace the contents of
      */
-    var searchCourses = function(inputValue, page, areaReplace, courseurlparams) {
+    var searchCourses = function(inputValue, page, areaReplace) {
         var searchIcon = page.querySelector(Selectors.region.searchIcon);
         var clearIcon = page.querySelector(Selectors.region.clearIcon);
 
@@ -115,7 +113,6 @@ define([
         }
         var args = {
             searchvalue: inputValue,
-            resourceurl: page.dataset.var
         };
         Ajax.call([{
             methodname: 'tool_moodlenet_search_courses',
@@ -124,7 +121,11 @@ define([
             if (result.courses.length === 0) {
                 return renderNoCourses(areaReplace);
             } else {
-                return renderCourses(areaReplace, result.courses, courseurlparams);
+                // Add the importId to the course link
+                result.courses.forEach(function(course) {
+                    course.viewurl += '&id=' + importId;
+                });
+                return renderCourses(areaReplace, result.courses);
             }
         }).catch(Notification.exception);
     };
@@ -155,9 +156,9 @@ define([
      * @method addCourses
      * @param {HTMLElement} page The whole page element for our course page
      */
-    var addCourses = function(page, courseurlparams) {
+    var addCourses = function(page) {
         var courseArea = page.querySelector(Selectors.region.courses);
-        searchCourses('', page, courseArea, courseurlparams);
+        searchCourses('', page, courseArea);
     };
 
     /**

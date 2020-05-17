@@ -24,26 +24,27 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_moodlenet\local\remote_resource;
-use tool_moodlenet\local\url;
+use tool_moodlenet\local\import_info;
 use tool_moodlenet\local\import_backup_helper;
 
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot .'/course/lib.php');
 
-$resourceurl = required_param('resourceurl', PARAM_RAW);
-$resourceurl = urldecode($resourceurl);
-$type = required_param('type', PARAM_TEXT);
-$name = required_param('name', PARAM_TEXT);
-$description = optional_param('description', '', PARAM_TEXT);
-$course = optional_param('course', null, PARAM_INT);
-$section = optional_param('section', null, PARAM_INT);
 $cancel = optional_param('cancel', null, PARAM_TEXT);
 $continue = optional_param('continue', null, PARAM_TEXT);
+$id = required_param('id', PARAM_ALPHANUM);
 
-require_login($course, false);
-if ($course) {
-    require_capability('moodle/course:manageactivities', context_course::instance($course));
+if (is_null($importinfo = import_info::load($id))) {
+    throw new moodle_exception('missinginvalidpostdata', 'tool_moodlenet');
+}
+
+// Access control.
+require_login($importinfo->get_config()->course, false); // Course may be null here - that's ok.
+if ($importinfo->get_config()->course) {
+    require_capability('moodle/course:manageactivities', context_course::instance($importinfo->get_config()->course));
+}
+if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
+    print_error('moodlenetnotenabled', 'tool_moodlenet');
 }
 
 // Handle the form submits.
@@ -55,17 +56,18 @@ if ($course) {
 // - 4. The dashboard, if the user decides to cancel and course or section is not found.
 // - 5. The course home, if the user decides to cancel but the course and section are found.
 if ($cancel) {
-    $url = !empty($course) ? new \moodle_url('/course/view.php', ['id' => $course]) : new \moodle_url('/');
+    if (!empty($importinfo->get_config()->course)) {
+        $url = new \moodle_url('/course/view.php', ['id' => $importinfo->get_config()->course]);
+    } else {
+        $url = new \moodle_url('/');
+    }
     redirect($url);
 } else if ($continue) {
     confirm_sesskey();
 
-    $remoteresource = new remote_resource(new curl(), new url($resourceurl), $name, $description);
-    $extension = $remoteresource->get_extension();
-
     // Handle backups.
-    if (strtolower($extension) == 'mbz') {
-        if (empty($course)) {
+    if (strtolower($importinfo->get_resource()->get_extension()) == 'mbz') {
+        if (empty($importinfo->get_config()->course)) {
             // Find a course that the user has permission to upload a backup file.
             // This is likely to be very slow on larger sites.
             $context = import_backup_helper::get_context_for_user($USER->id);
@@ -74,10 +76,10 @@ if ($cancel) {
                 print_error('nopermissions', 'error', '', get_string('restore:uploadfile', 'core_role'));
             }
         } else {
-            $context = context_course::instance($course);
+            $context = context_course::instance($importinfo->get_config()->course);
         }
 
-        $importbackuphelper = new import_backup_helper($remoteresource, $USER, $context);
+        $importbackuphelper = new import_backup_helper($importinfo->get_resource(), $USER, $context);
         $storedfile = $importbackuphelper->get_stored_file();
 
         $url = new \moodle_url('/backup/restorefile.php', [
@@ -95,29 +97,14 @@ if ($cancel) {
 
     // Handle adding files to a course.
     // Course and section data present and confirmed. Redirect to the option select view.
-    if (!is_null($course) && !is_null($section)) {
-        redirect(new \moodle_url('/admin/tool/moodlenet/options.php', [
-            'resourceurl' => urlencode($resourceurl),
-            'course' => $course,
-            'section' => $section,
-            'type' => $type,
-            'name' => $name,
-            'description' => $description
-        ]));
+    if (!is_null($importinfo->get_config()->course) && !is_null($importinfo->get_config()->section)) {
+        redirect(new \moodle_url('/admin/tool/moodlenet/options.php', ['id' => $id]));
     }
-    if (is_null($course)) {
-        redirect(new \moodle_url('/admin/tool/moodlenet/select.php', [
-            'resourceurl' => urlencode($resourceurl),
-            'type' => $type,
-            'name' => $name,
-            'description' => $description
-        ]));
-    }
-    // TODO: Extend conditional to handle cases where course needs to be selected or when the file is an mbz.
-}
 
-$remoteresource = new remote_resource(new curl(), new url($resourceurl), $name, $description);
-$extension = $remoteresource->get_extension();
+    if (is_null($importinfo->get_config()->course)) {
+        redirect(new \moodle_url('/admin/tool/moodlenet/select.php', ['id' => $id]));
+    }
+}
 
 // Display the page.
 $PAGE->set_context(context_system::instance());
@@ -128,22 +115,21 @@ $url = new moodle_url('/admin/tool/moodlenet/index.php');
 $PAGE->set_url($url);
 $renderer = $PAGE->get_renderer('core');
 
-echo $OUTPUT->header();
-
 // Relevant confirmation form.
 $context = $context = [
-    'resourceurl' => $resourceurl,
-    'resourcename' => $remoteresource->get_name() . '.' . $remoteresource->get_extension(),
+    'resourceurl' => $importinfo->get_resource()->get_url()->get_value(),
+    'resourcename' => $importinfo->get_resource()->get_name(),
     'sesskey' => sesskey()
 ];
-if (!is_null($course) && !is_null($section)) {
-    $course = get_course($course);
+if (!is_null($importinfo->get_config()->course) && !is_null($importinfo->get_config()->section)) {
+    $course = get_course($importinfo->get_config()->course);
     $context = array_merge($context, [
         'course' => $course->id,
         'coursename' => $course->shortname,
-        'section' => $section
+        'section' => $importinfo->get_config()->section
     ]);
 }
-echo $renderer->render_from_template('tool_moodlenet/import_confirmation', $context);
 
+echo $OUTPUT->header();
+echo $renderer->render_from_template('tool_moodlenet/import_confirmation', $context);
 echo $OUTPUT->footer();

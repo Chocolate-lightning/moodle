@@ -37,39 +37,43 @@ class tool_moodlenet_remote_resource_testcase extends \advanced_testcase {
     /**
      * Test getters.
      *
-     * @dataProvider remote_resource_parsing_data_provider
+     * @dataProvider remote_resource_data_provider
      * @param string $url the url of the resource.
-     * @param string $name the expected name of the resource.
-     * @param string $description the description of the resource.
-     * @param string $extension the expected extension of the resource.
+     * @param string $metadata the resource metadata like name, description, etc.
+     * @param string $expectedextension the extension we expect to find when querying the remote resource.
      */
-    public function test_getters($url, $name, $description, $extension) {
+    public function test_getters($url, $metadata, $expectedextension) {
         $this->resetAfterTest();
 
-        $remoteres = new remote_resource(new \curl(), new url($url), $name, $description);
+        $remoteres = new remote_resource(new \curl(), new url($url), $metadata);
 
         $this->assertEquals(new url($url), $remoteres->get_url());
-        $this->assertEquals($name, $remoteres->get_name());
-        $this->assertEquals($description, $remoteres->get_description());
-        $this->assertEquals($extension, $remoteres->get_extension());
+        $this->assertEquals($metadata->name, $remoteres->get_name());
+        $this->assertEquals($metadata->description, $remoteres->get_description());
+        $this->assertEquals($expectedextension, $remoteres->get_extension());
     }
 
     /**
      * Data provider generating remote urls.
+     *
      * @return array
      */
-    public function remote_resource_parsing_data_provider() {
+    public function remote_resource_data_provider() {
         return [
             'With filename and extension' => [
                 $this->getExternalTestFileUrl('/test.html'),
-                'Test html file',
-                'Full description of the html file',
+                (object) [
+                    'name' => 'Test html file',
+                    'description' => 'Full description of the html file'
+                ],
                 'html'
             ],
             'With filename only' => [
                 'http://example.com/path/file',
-                'Test html file',
-                'Full description of the html file',
+                (object) [
+                    'name' => 'Test html file',
+                    'description' => 'Full description of the html file'
+                ],
                 ''
             ]
         ];
@@ -82,8 +86,22 @@ class tool_moodlenet_remote_resource_testcase extends \advanced_testcase {
         $url = $this->getExternalTestFileUrl('/test.html');
         $nonexistenturl = $this->getExternalTestFileUrl('/test.htmlzz');
 
-        $remoteres = new remote_resource(new \curl(), new url($url), 'Test html file', 'Some description');
-        $nonexistentremoteres = new remote_resource(new \curl(), new url($nonexistenturl), 'Test html file', 'Some description');
+        $remoteres = new remote_resource(
+            new \curl(),
+            new url($url),
+            (object) [
+                'name' => 'Test html file',
+                'description' => 'Some description'
+            ]
+        );
+        $nonexistentremoteres = new remote_resource(
+            new \curl(),
+            new url($nonexistenturl),
+            (object) [
+                'name' => 'Test html file',
+                'description' => 'Some description'
+            ]
+        );
 
         $this->assertGreaterThan(0, $remoteres->get_download_size());
         [$path, $name] = $remoteres->download_to_requestdir();

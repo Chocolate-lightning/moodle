@@ -57,7 +57,7 @@ class renderer extends plugin_renderer_base {
      */
     protected function render_select_page(\tool_moodlenet\output\select_page $selectpage): string {
 
-        $this->page->requires->js_call_amd('tool_moodlenet/select_page', 'init', [$selectpage->linkparams]);
+        $this->page->requires->js_call_amd('tool_moodlenet/select_page', 'init', [$selectpage->get_import_info()->get_id()]);
         $data = $selectpage->export_for_template($this);
         return parent::render_from_template('tool_moodlenet/select_page', $data);
     }

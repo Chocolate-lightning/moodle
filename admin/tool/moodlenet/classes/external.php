@@ -108,7 +108,6 @@ class external extends external_api {
         return new external_function_parameters(
             array(
                 'searchvalue' => new external_value(PARAM_RAW, 'search value'),
-                'resourceurl' => new external_value(PARAM_RAW, 'The resource link'),
             )
         );
     }
@@ -117,20 +116,14 @@ class external extends external_api {
      * For some given input find and return any course that matches it.
      *
      * @param string $searchvalue The profile url that the user states exists
-     * @param string $resourceurl The resource the user wants to add
      * @return array Contains the result set of courses for the value
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \invalid_parameter_exception
-     * @throws \moodle_exception
-     * @throws \restricted_context_exception
      */
-    public static function search_courses(string $searchvalue, string $resourceurl) {
+    public static function search_courses(string $searchvalue) {
         global $OUTPUT;
 
         $params = self::validate_parameters(
             self::search_courses_parameters(),
-            ['searchvalue' => $searchvalue, 'resourceurl' => $resourceurl]
+            ['searchvalue' => $searchvalue]
         );
         self::validate_context(\context_system::instance());
 
@@ -145,8 +138,6 @@ class external extends external_api {
                     $data->hidden = $course->visible;
                     $options = [
                         'course' => $course->id,
-                        'section' => 0,
-                        'resourceurl' => $resourceurl
                     ];
                     $viewurl = new \moodle_url('/admin/tool/moodlenet/options.php', $options);
                     $data->viewurl = $viewurl->out(false);

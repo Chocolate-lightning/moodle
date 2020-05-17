@@ -17,57 +17,60 @@
 /**
  * Page to select WHAT to do with a given resource stored on MoodleNet.
  *
- * This collates and presents the same options as a user would see for a drag and drop upload of files.
+ * This collates and presents the same options as a user would see for a drag and drop upload.
  * That is, it leverages the dndupload_register() hooks and delegates the resource handling to the dndupload_handle hooks.
  *
- * This page requires a course, section an resourceurl.
+ * This page requires a course, section an resourceurl to be provided via import_info.
  *
  * @package     tool_moodlenet
  * @copyright   2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->dirroot .'/course/lib.php');
-
-use \tool_moodlenet\local\import_handler_registry;
-use \tool_moodlenet\local\import_processor;
+use tool_moodlenet\local\import_handler_registry;
+use tool_moodlenet\local\import_processor;
+use tool_moodlenet\local\import_info;
 use tool_moodlenet\local\import_strategy_file;
 use tool_moodlenet\local\import_strategy_link;
-use \tool_moodlenet\local\remote_resource;
-use \tool_moodlenet\local\url;
 
-/*
-The basic logic for this page is as follows:
-1. Try to get the extension of the remote resource, defaulting to ''.
-2. Get plugins handling that extension from the dnd_register hooks. If the extension is unknown, the only option is a file resource.
-3. Present the various import options in a form.
-4. Handle form submit, which includes checking permissions, processing the import, then redirecting to the course page.
-*/
+require_once(__DIR__ . '/../../../config.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
-$course = required_param('course', PARAM_INT);
-$section = required_param('section', PARAM_INT);
-$resourceurl = required_param('resourceurl', PARAM_RAW);
-$resourceurl = urldecode($resourceurl);
-$type = required_param('type', PARAM_TEXT);
-$name = required_param('name', PARAM_TEXT);
-$description = optional_param('description', '', PARAM_TEXT);
-$modhandler = optional_param('modhandler', null, PARAM_TEXT);
-$import = optional_param('import', null, PARAM_TEXT);
-$cancel = optional_param('cancel', null, PARAM_TEXT);
-require_login($course, false);
-require_capability('moodle/course:manageactivities', context_course::instance($course));
-$course = get_course($course);
-global $USER;
+$module = optional_param('module', null, PARAM_PLUGIN);
+$import = optional_param('import', null, PARAM_ALPHA);
+$cancel = optional_param('cancel', null, PARAM_ALPHA);
+$id = required_param('id', PARAM_ALPHANUM);
 
-// Handle the form actions.
-if ($cancel) {
-    redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
+if (is_null($importinfo = import_info::load($id))) {
+    throw new moodle_exception('missinginvalidpostdata', 'tool_moodlenet');
 }
 
-$handlerregistry = new import_handler_registry($course, $USER);
+// Resolve course and section params.
+// If course is not already set in the importinfo, we require it in the URL params.
+$config = $importinfo->get_config();
+if (!isset($config->course)) {
+    $course = required_param('course', PARAM_INT);
+    $config->course = $course;
+    $config->section = 0;
+    $importinfo->set_config($config);
+    $importinfo->save();
+}
 
-switch ($type) {
+// Access control.
+require_login($config->course, false);
+require_capability('moodle/course:manageactivities', context_course::instance($config->course));
+if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
+    print_error('moodlenetnotenabled', 'tool_moodlenet');
+}
+
+// If the user cancelled, break early.
+if ($cancel) {
+    redirect(new moodle_url('/course/view.php', ['id' => $config->course]));
+}
+
+// Set up required objects.
+$course = get_course($config->course);
+$handlerregistry = new import_handler_registry($course, $USER);
+switch ($config->type) {
     case 'file':
         $strategy = new import_strategy_file();
         break;
@@ -77,34 +80,19 @@ switch ($type) {
         break;
 }
 
-if ($modhandler && $import) {
-    require_capability('moodle/course:manageactivities', context_course::instance($course->id));
+if ($import && $module) {
     confirm_sesskey();
 
-    $modandstrat = explode('_', $modhandler);
-    $resource = new remote_resource(new curl(), new url($resourceurl), $name, $description);
-    //if ($modandstrat[1] != 'file') {
-    //    throw new coding_exception("Invalid import strategy '$modandstrat[1]'");
-    //}
-    $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($resource, $modandstrat[0], $strategy);
+    $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($importinfo->get_resource(), $module, $strategy);
     if (is_null($handlerinfo)) {
-        throw new coding_exception("Invalid handler data '$modhandler'. An import handler could not be found.");
+        throw new coding_exception("Invalid handler '$module'. The import handler could not be found.");
     }
-    $importproc = new import_processor($course, $section, $resource, $handlerinfo, $handlerregistry);
+    $importproc = new import_processor($course, $config->section, $importinfo->get_resource(), $handlerinfo, $handlerregistry);
     $importproc->process();
-    redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
-}
 
-// Render the form, providing the user with actions, starting by getting the handlers supporting this extension.
-$resource = new remote_resource(new curl(), new url($resourceurl), $name, $description);
-$handlers = $handlerregistry->get_resource_handlers_for_strategy($resource, $strategy);
-$handlercontext = [];
-foreach ($handlers as $handler) {
-    $handlercontext[] = [
-        'module' => $handler->get_module_name(),
-        'message' => $handler->get_description(),
-        'handlerid' => $handler->get_module_name() . '_' . $type
-    ];
+    $importinfo->purge(); // We don't need information about the import any more.
+
+    redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
 }
 
 // Setup the page and display the form.
@@ -112,18 +100,27 @@ $PAGE->set_context(context_course::instance($course->id));
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('coursetitle', 'moodle', array('course' => $course->fullname)));
 $PAGE->set_heading($course->fullname);
-$url = new moodle_url('/admin/tool/moodlenet/options.php');
-$PAGE->set_url($url);
-$renderer = $PAGE->get_renderer('core');
+$PAGE->set_url(new moodle_url('/admin/tool/moodlenet/options.php'));
+
+// Fetch the handlers supporting this resource. We'll display each of these as an option in the form.
+$handlercontext = [];
+foreach ($handlerregistry->get_resource_handlers_for_strategy($importinfo->get_resource(), $strategy) as $handler) {
+    $handlercontext[] = [
+        'module' => $handler->get_module_name(),
+        'message' => $handler->get_description(),
+    ];
+}
+
+// Template context.
 $context = [
-    'resourcename' => sprintf('%s.%s', $resource->get_name(), $resource->get_extension()),
-    'resourceurl' => urlencode($resourceurl),
+    'resourcename' => $importinfo->get_resource()->get_name(),
+    'resourceurl' => urlencode($importinfo->get_resource()->get_url()->get_value()),
     'course' => $course->id,
-    'section' => $section,
+    'section' => $config->section,
     'sesskey' => sesskey(),
     'handlers' => $handlercontext
 ];
 
 echo $OUTPUT->header();
-echo $renderer->render_from_template('tool_moodlenet/import_options_select', $context);
+echo $PAGE->get_renderer('core')->render_from_template('tool_moodlenet/import_options_select', $context);
 echo $OUTPUT->footer();

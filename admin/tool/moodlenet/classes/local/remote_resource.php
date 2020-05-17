@@ -25,7 +25,7 @@ namespace tool_moodlenet\local;
 /**
  * The remote_resource class.
  *
- * Objects of type remote_resource provide a means of interacting with remote files over HTTP.
+ * Objects of type remote_resource provide a means of interacting with resources over HTTP.
  *
  * @copyright 2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -47,25 +47,22 @@ class remote_resource {
     /** @var array $headinfo the array of information for the most recent HEAD request.*/
     protected $headinfo = [];
 
-    /** @var string $name the name of the resource. */
-    protected $name;
-
-    /** @var string $description a more verbose description of the resource. */
-    protected $description;
+    /** @var \stdClass $metadata information about the resource. */
+    protected $metadata;
 
     /**
      * The remote_resource constructor.
      *
      * @param \curl $curl a curl object for HTTP requests.
      * @param url $url the URL of the remote resource.
+     * @param \stdClass $metadata resource metadata such as name, summary, license, etc.
      */
-    public function __construct(\curl $curl, url $url, string $name, string $description) {
+    public function __construct(\curl $curl, url $url, \stdClass $metadata) {
         $this->curl = $curl;
         $this->url = $url;
         $this->filename = pathinfo($this->url->get_path(), PATHINFO_FILENAME);
         $this->extension = pathinfo($this->url->get_path(), PATHINFO_EXTENSION);
-        $this->name = $name;
-        $this->description = $description;
+        $this->metadata = $metadata;
     }
 
     /**
@@ -78,19 +75,28 @@ class remote_resource {
     }
 
     /**
-     * Get the name of the file from the URL.
+     * Get the name of the file as taken from the metadata.
      */
-    public function get_name() {
-        return $this->name;
+    public function get_name(): string {
+        return $this->metadata->name ?? '';
     }
 
     /**
-     * Get the description of the resource.
+     * Get the resource metadata.
+     *
+     * @return \stdClass the metadata.
+     */
+    public function get_metadata(): \stdClass {
+        return$this->metadata;
+    }
+
+    /**
+     * Get the description of the resource as taken from the metadata.
      *
      * @return string
      */
     public function get_description(): string {
-        return $this->description;
+        return $this->metadata->description ?? '';
     }
 
     /**

@@ -41,13 +41,12 @@
         "coursename": "Introduction to quantum physics",
         "section": 0,
         "resourceurl": "http://example.com/test.png",
-        "resourcename": "test.png",
+        "resourcename": "A test image",
         "sesskey": "abc123",
         "handlers": [
             {
                 "module": "label",
-                "message": "Add media to the course page",
-                "handlerid": "label_file"
+                "message": "Add media to the course page"
             }
         ]
     }
@@ -66,7 +65,7 @@
                 {{#str}}importformatselectguidingtext, tool_moodlenet, {"name": {{#quote}}{{resourcename}}{{/quote}} }{{/str}}
                 <br><br>
                 {{#handlers}}
-                    <input id="{{module}}_option" name="modhandler" type="radio" value="{{handlerid}}">&nbsp;<label for="{{module}}_option">{{message}}</label>
+                    <input id="{{module}}_option" name="module" type="radio" value="{{module}}">&nbsp;<label for="{{module}}_option">{{message}}</label>
                     <br>
                 {{/handlers}}
             </div>

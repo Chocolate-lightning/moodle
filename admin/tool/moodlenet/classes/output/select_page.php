@@ -24,10 +24,9 @@
 
 namespace tool_moodlenet\output;
 
-use tool_moodlenet\local\remote_resource;
-use tool_moodlenet\local\url;
-
 defined('MOODLE_INTERNAL') || die;
+
+use tool_moodlenet\local\import_info;
 
 /**
  * Select page renderable.
@@ -38,19 +37,25 @@ defined('MOODLE_INTERNAL') || die;
  */
 class select_page implements \renderable, \templatable {
 
-    /**
-     * @var $resouceurl
-     */
-    protected $resouceurl;
+    /** @var import_info $importinfo resource and config information pertaining to an import. */
+    protected $importinfo;
 
     /**
      * Inits the Select page renderable.
      *
-     * @param string $resourceurl The resource the user wants to add
+     * @param import_info $importinfo resource and config information pertaining to an import.
      */
-    public function __construct(string $resourceurl, $linkparams) {
-        $this->resouceurl = $resourceurl;
-        $this->linkparams = $linkparams;
+    public function __construct(import_info $importinfo) {
+        $this->importinfo = $importinfo;
+    }
+
+    /**
+     * Return the import info.
+     *
+     * @return import_info the import information.
+     */
+    public function get_import_info(): import_info {
+        return $this->importinfo;
     }
 
     /**
@@ -62,12 +67,9 @@ class select_page implements \renderable, \templatable {
     public function export_for_template(\renderer_base $output): \stdClass {
 
         // Prepare the context object.
-        $data = new \stdClass();
-        $data->resourceurl = $this->resouceurl;
-        $remoteresource = new remote_resource(new \curl(), new url($this->resouceurl), $this->linkparams['name'], $this->linkparams['description']);
-        $data->name = $remoteresource->get_name() . '.' . $remoteresource->get_extension();
-        $data->cancellink = new \moodle_url('/my');
-
-        return $data;
+        return (object) [
+            'name' => $this->importinfo->get_resource()->get_name(),
+            'cancellink' => new \moodle_url('/my'),
+        ];
     }
 }

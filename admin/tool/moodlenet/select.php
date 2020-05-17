@@ -21,20 +21,21 @@
  * @copyright  2020 Mathew May {@link https://mathew.solutions}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+use tool_moodlenet\local\import_info;
+use tool_moodlenet\output\select_page;
 
 require_once(__DIR__ . '/../../../config.php');
 
+$id = required_param('id', PARAM_ALPHANUM);
+
+// Access control.
 require_login();
-
-$resourceurl = required_param('resourceurl', PARAM_RAW);
-$resourceurl = urldecode($resourceurl);
-$type = required_param('type', PARAM_TEXT);
-$name = required_param('name', PARAM_TEXT);
-$description = optional_param('description', null, PARAM_TEXT);
-
-// The integration must be enabled to access this page.
 if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
     print_error('moodlenetnotenabled', 'tool_moodlenet');
+}
+
+if (is_null($importinfo = import_info::load($id))) {
+    throw new moodle_exception('missinginvalidpostdata', 'tool_moodlenet');
 }
 
 $PAGE->set_url('/admin/tool/moodlenet/select.php');
@@ -45,8 +46,7 @@ $PAGE->set_heading(format_string($SITE->fullname));
 
 echo $OUTPUT->header();
 
-$renderable = new \tool_moodlenet\output\select_page($resourceurl, ['type' => $type, 'name' => $name,
-    'description' => $description]);
+$renderable = new select_page($importinfo);
 $renderer = $PAGE->get_renderer('tool_moodlenet');
 echo $renderer->render($renderable);
 

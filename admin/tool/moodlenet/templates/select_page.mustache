@@ -21,12 +21,11 @@
 
     Example context (json):
     {
-        "resourceurl": "https://team.moodle.net/uploads/01E394TX0TXVCQ1DN0D48JKBRT/cat.png",
-        "name": "cat.png",
+        "name": "A cat picture",
         "cancellink": "https://moodlesite/my"
     }
 }}
-<div data-region="moodle-net-select" data-var="{{{resourceurl}}}">
+<div data-region="moodle-net-select">
     <div class="alert alert-primary" role="alert">
         {{#str}} notification, tool_moodlenet, {"name": {{#quote}}{{name}}{{/quote}}, "cancellink": {{#quote}}{{cancellink}}{{/quote}} } {{/str}}
     </div>

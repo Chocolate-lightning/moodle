@@ -52,7 +52,14 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
 
         // Set up the import, using a mod_resource handler for the html extension.
         $resourceurl = $this->getExternalTestFileUrl('/test.html');
-        $remoteresource = new remote_resource(new \curl(), new url($resourceurl), 'Resource name', 'Resource description');
+        $remoteresource = new remote_resource(
+            new \curl(),
+            new url($resourceurl),
+            (object) [
+                'name' => 'Resource name',
+                'description' => 'Resource description'
+            ]
+        );
         $handlerregistry = new import_handler_registry($course, $teacher);
         $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'resource',
             new import_strategy_file());
@@ -92,7 +99,14 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
 
         // Set up the import, using a mod_resource handler for the html extension.
         $resourceurl = $this->getExternalTestFileUrl('/test.htmlzz');
-        $remoteresource = new remote_resource(new \curl(), new url($resourceurl), 'Resource name', 'Resource description');
+        $remoteresource = new remote_resource(
+            new \curl(),
+            new url($resourceurl),
+            (object) [
+                'name' => 'Resource name',
+                'description' => 'Resource description'
+            ]
+        );
         $handlerregistry = new import_handler_registry($course, $teacher);
         $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'resource',
             new import_strategy_file());
@@ -116,8 +130,14 @@ class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
         $this->setUser($teacher);
 
         // Set up the import, using a mod_url handler and the link import strategy.
-        $remoteresource = new remote_resource(new \curl(), new url('http://example.com/cats.pdf'), 'Resource name',
-            'Resource description');
+        $remoteresource = new remote_resource(
+            new \curl(),
+            new url('http://example.com/cats.pdf'),
+            (object) [
+                'name' => 'Resource name',
+                'description' => 'Resource description'
+            ]
+        );
         $handlerregistry = new import_handler_registry($course, $teacher);
         $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($remoteresource, 'url',
             new import_strategy_link());
