@@ -308,6 +308,7 @@ module.exports = function(grunt) {
                 plugins: [
                     'transform-es2015-modules-amd-lazy',
                     'system-import-transformer',
+                    'transform-async-to-promises',
                     // This plugin modifies the Babel transpiling for "export default"
                     // so that if it's used then only the exported value is returned
                     // by the generated AMD module.
