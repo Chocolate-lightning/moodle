@@ -44,7 +44,11 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification'], function($, Aja
 
         return Ajax.call([{
             methodname: 'tool_moodlenet_verify_webfinger',
-            args: {profileurl: inputValue}
+            args: {
+                profileurl: inputValue,
+                course: inputElement.dataset.courseid,
+                section: inputElement.dataset.sectionid
+            }
         }])[0].then(function(result) {
             return result;
         }).catch();

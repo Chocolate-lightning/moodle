@@ -41,14 +41,30 @@ class instances_page implements \renderable, \templatable {
      * @var string
      */
     private $defaultlink;
+    /**
+     * The course we are adding to
+     *
+     * @var string
+     */
+    private $course;
+    /**
+     * The section in the course we are adding to
+     *
+     * @var string
+     */
+    private $section;
 
     /**
      * instances_page constructor.
      *
      * @param string $defaultlink The default link for the main moodlenet site
+     * @param int $course the course id
+     * @param int $section the section id
      */
-    public function __construct(string $defaultlink) {
+    public function __construct(string $defaultlink, int $course, int $section) {
         $this->defaultlink = $defaultlink;
+        $this->course = $course;
+        $this->section = $section;
     }
 
     /**
@@ -64,6 +80,8 @@ class instances_page implements \renderable, \templatable {
         $data->sesskey = sesskey();
         $data->img = $output->image_url('MoodleNet', 'tool_moodlenet')->out(false);
         $data->mnetlink = $this->defaultlink;
+        $data->course = $this->course;
+        $data->section = $this->section;
 
         return $data;
     }

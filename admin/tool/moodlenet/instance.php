@@ -44,7 +44,7 @@ $PAGE->set_heading(get_string('instancepageheader', 'tool_moodlenet'));
 echo $OUTPUT->header();
 
 $mnetsite = get_config('tool_moodlenet', 'defaultmoodlenet');
-$renderable = new \tool_moodlenet\output\instances_page(generate_mnet_endpoint($mnetsite, $course, $section));
+$renderable = new \tool_moodlenet\output\instances_page($mnetsite, $course, $section);
 $renderer = $PAGE->get_renderer('tool_moodlenet');
 echo $renderer->render($renderable);
 

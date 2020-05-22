@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir .'/externallib.php');
 require_once($CFG->libdir . '/filelib.php');
+require_once(__DIR__ . '/../lib.php');
 
 use core_course\external\course_summary_exporter;
 use external_api;
@@ -53,6 +54,8 @@ class external extends external_api {
         return new external_function_parameters(
             array(
                 'profileurl' => new external_value(PARAM_RAW, 'The profile url that the user has given us', VALUE_REQUIRED),
+                'course' => new external_value(PARAM_INT, 'The course we are adding to', VALUE_REQUIRED),
+                'section' => new external_value(PARAM_INT, 'The section within the course we are adding to', VALUE_REQUIRED),
             )
         );
     }
@@ -61,13 +64,20 @@ class external extends external_api {
      * Figure out if the passed content resolves with a WebFinger account.
      *
      * @param string $profileurl The profile url that the user states exists
+     * @param int $course The course we are adding to
+     * @param int $section The section within the course we are adding to
      * @return array Contains the result and domain if any
      * @throws \invalid_parameter_exception
      */
-    public static function verify_webfinger(string $profileurl) {
+    public static function verify_webfinger(string $profileurl, int $course, int $section) {
         global $USER;
 
-        $params = self::validate_parameters(self::verify_webfinger_parameters(), ['profileurl' => $profileurl]);
+        $params = self::validate_parameters(self::verify_webfinger_parameters(), [
+                'profileurl' => $profileurl,
+                'section' => $section,
+                'course' => $course
+            ]
+        );
         try {
             $mnetprofile = new moodlenet_user_profile($params['profileurl'], $USER->id);
         } catch (\Exception $e) {
@@ -82,6 +92,7 @@ class external extends external_api {
         // There were no problems verifying the account so lets store it.
         if ($userlink['result'] === true) {
             profile_manager::save_moodlenet_user_profile($mnetprofile);
+            $userlink['domain'] = generate_mnet_endpoint($mnetprofile->get_profile_name(), $course, $section);
         }
         return $userlink;
     }

@@ -25,6 +25,10 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
+ * The default endpoint to MoodleNet.
+ */
+define('MOODLENET_DEFAULT_ENDPOINT', "lms/moodle/search");
+/**
  * Generate the endpoint url to the user's moodlenet site.
  *
  * @param string $profileurl The user's moodlenet profile page
@@ -37,9 +41,14 @@ function generate_mnet_endpoint(string $profileurl, int $course, int $section = 
     global $CFG;
     $urlportions = explode('@', $profileurl);
     $domain = end($urlportions);
-    $importurl = new moodle_url('admin/tool/moodlenet/import.php', ['course' => $course, 'section' => $section]);
-    $endpoint = new moodle_url('endpoint', ['site' => $CFG->wwwroot, 'path' => $importurl->out(false)]);
-    return "$domain/{$endpoint->out(false)}";
+    $parsedurl = parse_url($domain);
+    $params = [
+        'site' => $CFG->wwwroot,
+        'course' => $course,
+        'section' => $section
+    ];
+    $endpoint = new moodle_url(MOODLENET_DEFAULT_ENDPOINT, $params);
+    return (isset($parsedurl['scheme']) ? $domain : "https://$domain")."/{$endpoint->out(false)}";
 }
 
 /**
