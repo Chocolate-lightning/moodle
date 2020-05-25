@@ -41,40 +41,44 @@ if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
     print_error('moodlenetnotenabled', 'tool_moodlenet');
 }
 
-// The POST data must be present and valid.
+$resourceurl = required_param('resourceurl', PARAM_URL);
+$resourceinfo = required_param('resource_info', PARAM_RAW);
+$resourceinfo = json_decode($resourceinfo);
+$type = optional_param('type', 'link', PARAM_TEXT);
+$course = optional_param('course', 0, PARAM_INT);
+$section = optional_param('section', 0, PARAM_INT);
+// If course isn't provided, course and section are null.
+if (empty($course)) {
+    $course = null;
+    $section = null;
+}
+$name = validate_param($resourceinfo->name, PARAM_TEXT);
+$description = validate_param($resourceinfo->summary, PARAM_TEXT);
+
+// Only accept POSTs.
 if (!empty($_POST)) {
-    // We require resourceurl as well as resource_info->name.
-    $resourceurl = $_POST['resourceurl'] ?? null;
-    $resourceurl = validate_param($resourceurl, PARAM_URL);
-    $resourceinfo = isset($_POST['resource_info']) ? json_decode($_POST['resource_info']) : null;
-    $course = $_POST['course'] ?? null;
-    $section = $_POST['section'] ?? null;
-    $type = $_POST['type'] ?? 'link';
-    $valid = !is_null($resourceurl) && !is_null($resourceinfo) && !empty($resourceinfo->name);
-    if ($valid) {
+    // Store information about the import of the resource for the current user.
+    $importconfig = (object) [
+        'course' => $course,
+        'section' => $section,
+        'type' => $type,
+    ];
+    $metadata = (object) [
+        'name' => $name,
+        'description' => $description ?? ''
+    ];
 
-        // Store information about the import of the resource for the current user.
-        $importconfig = (object) [
-            'course' => $course,
-            'section' => $section,
-            'type' => $type,
-        ];
-        $metadata = (object) [
-            'name' => $resourceinfo->name,
-            'description' => $resourceinfo->summary ?? ''
-        ];
+    require_once($CFG->libdir . '/filelib.php');
+    $importinfo = new import_info(
+        $USER->id,
+        new remote_resource(new \curl(), new url($resourceurl), $metadata),
+        $importconfig
+    );
+    $importinfo->save();
 
-        require_once($CFG->libdir . '/filelib.php');
-        $importinfo = new import_info(
-            $USER->id,
-            new remote_resource(new \curl(), new url($resourceurl), $metadata),
-            $importconfig
-        );
-        $importinfo->save();
+    // Redirect to the import confirmation page, detouring via the log in page if required.
+    redirect(new moodle_url('/admin/tool/moodlenet/index.php', ['id' => $importinfo->get_id()]));
 
-        // Redirect to the import confirmation page, detouring via the log in page if required.
-        redirect(new moodle_url('/admin/tool/moodlenet/index.php', ['id' => $importinfo->get_id()]));
-    }
 }
 
 // Invalid or missing POST data. Show an error to the user.
