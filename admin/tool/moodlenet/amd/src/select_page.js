@@ -78,15 +78,18 @@ define([
      *
      * @param {HTMLElement} areaReplace the DOM node to replace.
      * @param {Array<courses>} courses the courses to render.
+     * @param {string} formaction Where we need to post the form.
      * @returns {Promise}
      */
-    var renderCourses = function(areaReplace, courses) {
+    var renderCourses = function(areaReplace, courses, formaction) {
         return Templates.render('tool_moodlenet/view-cards', {
-            courses: courses
+            courses: courses,
+            formaction: formaction
         }).then(function(html, js) {
             Templates.replaceNodeContents(areaReplace, html, js);
             areaReplace.classList.remove('mx-auto');
             areaReplace.classList.remove('w-25');
+            registerFormEvents(areaReplace);
             return;
         });
     };
@@ -112,6 +115,7 @@ define([
         }
         var args = {
             searchvalue: inputValue,
+            resourceid: importId,
         };
         Ajax.call([{
             methodname: 'tool_moodlenet_search_courses',
@@ -120,11 +124,7 @@ define([
             if (result.courses.length === 0) {
                 return renderNoCourses(areaReplace);
             } else {
-                // Add the importId to the course link
-                result.courses.forEach(function(course) {
-                    course.viewurl += '&id=' + importId;
-                });
-                return renderCourses(areaReplace, result.courses);
+                return renderCourses(areaReplace, result.courses, result.formaction);
             }
         }).catch(Notification.exception);
     };
@@ -147,6 +147,24 @@ define([
         input.addEventListener('input', debounce(function() {
             searchCourses(input.value, page, courseArea);
         }, 300));
+    };
+
+    /**
+     * Render the course cards for those supplied courses.
+     *
+     * @param {HTMLElement} areaReplace the DOM node to replace.
+     */
+    var registerFormEvents = function (areaReplace) {
+        // Make an array from a NodeList.
+        var forms = Array.prototype.slice.call(areaReplace.querySelectorAll('[data-region="form"]'));
+        forms.forEach(function (form) {
+            form.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (e.target.matches('[data-action="submit"]')) {
+                    form.submit();
+                }
+            });
+        });
     };
 
     /**

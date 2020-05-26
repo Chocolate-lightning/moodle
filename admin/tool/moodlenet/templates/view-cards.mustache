@@ -33,22 +33,61 @@
         ]
     }
 }}
-
-{{< core_course/coursecards }}
-    {{$coursename}}
-        <span class="multiline">
-            {{#shortentext}}50, {{{fullname}}} {{/shortentext}}
-        </span>
-    {{/coursename}}
-    {{$coursecategory}}
-        <span class="sr-only">
-            {{#str}}aria:coursecategory, core_course{{/str}}
-        </span>
-        <span class="categoryname text-truncate">
-            {{{coursecategory}}}
-        </span>
-    {{/coursecategory}}
-    {{$divider}}
-        <div class="pl-1 pr-1">|</div>
-    {{/divider}}
-{{/ core_course/coursecards }}
+<!-- Following div is from core_course/coursecards.mustache -->
+<div class="card-deck dashboard-card-deck {{$classes}}{{/classes}}" data-region="card-deck" role="list">
+    {{#courses}}
+        <!-- Following block is from core_course/coursecard.mustache and altered to remove built in links etc -->
+        <div class="card dashboard-card" role="listitem"
+             data-region="course-content"
+             data-course-id="{{{id}}}">
+            <form data-region="form" action="{{formaction}}" method="post">
+                <input type="hidden" name="course" value="{{course}}">
+                <input type="hidden" name="id" value="{{resourceid}}">
+                <input type="hidden" name="sesskey" value="{{sesskey}}">
+                <input type="hidden" name="import" value="Continue">
+                <a class="stretched-link" href="#" data-action="submit">
+                    <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
+                        <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                    </div>
+                    <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+                        <div class="d-flex align-items-start">
+                            <div class="w-100 text-truncate">
+                                <div class="text-muted muted d-flex mb-1 flex-wrap">
+                                    <span class="sr-only">
+                                        {{#str}}aria:coursecategory, core_course{{/str}}
+                                    </span>
+                                    <span class="categoryname text-truncate">
+                                        {{{coursecategory}}}
+                                    </span>
+                                    {{#showshortname}}
+                                        <div class="pl-1 pr-1">|</div>
+                                        <span class="sr-only">
+                                            {{#str}}aria:courseshortname, core_course{{/str}}
+                                        </span>
+                                        <div>
+                                            {{{shortname}}}
+                                        </div>
+                                    {{/showshortname}}
+                                </div>
+                                {{> core_course/favouriteicon }}
+                                <span class="sr-only">
+                                    {{#str}}aria:coursename, core_course{{/str}}
+                                </span>
+                                <span class="multiline">
+                                    {{#shortentext}}50, {{{fullname}}} {{/shortentext}}
+                                </span>
+                                {{^visible}}
+                                    <div class="d-flex flex-wrap">
+                                        <span class="tag tag-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                                    </div>
+                                {{/visible}}
+                            </div>
+                            {{$menu}}{{/menu}}
+                        </div>
+                    </div>
+                    {{$progress}}{{/progress}}
+                </a>
+            </form>
+        </div>
+    {{/courses}}
+</div>

@@ -66,6 +66,7 @@ if ($cancel) {
     confirm_sesskey();
 
     // Handle backups.
+    // We need a special redirect case here since we need to have a link with a bunch of params to redirect with.
     if (strtolower($importinfo->get_resource()->get_extension()) == 'mbz') {
         if (empty($importinfo->get_config()->course)) {
             // Find a course that the user has permission to upload a backup file.
@@ -94,16 +95,6 @@ if ($cancel) {
         ]);
         redirect($url);
     }
-
-    // Handle adding files to a course.
-    // Course and section data present and confirmed. Redirect to the option select view.
-    if (!is_null($importinfo->get_config()->course) && !is_null($importinfo->get_config()->section)) {
-        redirect(new \moodle_url('/admin/tool/moodlenet/options.php', ['id' => $id]));
-    }
-
-    if (is_null($importinfo->get_config()->course)) {
-        redirect(new \moodle_url('/admin/tool/moodlenet/select.php', ['id' => $id]));
-    }
 }
 
 // Display the page.
@@ -128,6 +119,28 @@ if (!is_null($importinfo->get_config()->course) && !is_null($importinfo->get_con
         'coursename' => $course->shortname,
         'section' => $importinfo->get_config()->section
     ]);
+}
+if (strtolower($importinfo->get_resource()->get_extension()) == 'mbz') {
+    $context = array_merge($context, [
+        'id' => $id,
+        'formaction' => '#',
+    ]);
+} else {
+    // Handle adding files to a course.
+    // Course and section data present and confirmed. Redirect to the option select view.
+    if (!is_null($importinfo->get_config()->course) && !is_null($importinfo->get_config()->section)) {
+        $context = array_merge($context, [
+            'id' => $id,
+            'formaction' => new \moodle_url('/admin/tool/moodlenet/options.php'),
+        ]);
+    }
+
+    if (is_null($importinfo->get_config()->course)) {
+        $context = array_merge($context, [
+            'id' => $id,
+            'formaction' => new \moodle_url('/admin/tool/moodlenet/select.php'),
+        ]);
+    }
 }
 
 echo $OUTPUT->header();

@@ -80,8 +80,21 @@ switch ($config->type) {
         break;
 }
 
-if ($import && $module) {
+// Fetch the handlers supporting this resource. We'll display each of these as an option in the form.
+$handlercontext = [];
+foreach ($handlerregistry->get_resource_handlers_for_strategy($importinfo->get_resource(), $strategy) as $handler) {
+    $handlercontext[] = [
+        'module' => $handler->get_module_name(),
+        'message' => $handler->get_description(),
+    ];
+}
+
+if (($import && $module) || sizeof($handlercontext) === 1) {
     confirm_sesskey();
+
+    if (sizeof($handlercontext) === 1) {
+        $module = $handlercontext[0]['module'];
+    }
 
     $handlerinfo = $handlerregistry->get_resource_handler_for_mod_and_strategy($importinfo->get_resource(), $module, $strategy);
     if (is_null($handlerinfo)) {
@@ -102,19 +115,11 @@ $PAGE->set_title(get_string('coursetitle', 'moodle', array('course' => $course->
 $PAGE->set_heading($course->fullname);
 $PAGE->set_url(new moodle_url('/admin/tool/moodlenet/options.php'));
 
-// Fetch the handlers supporting this resource. We'll display each of these as an option in the form.
-$handlercontext = [];
-foreach ($handlerregistry->get_resource_handlers_for_strategy($importinfo->get_resource(), $strategy) as $handler) {
-    $handlercontext[] = [
-        'module' => $handler->get_module_name(),
-        'message' => $handler->get_description(),
-    ];
-}
-
 // Template context.
 $context = [
     'resourcename' => $importinfo->get_resource()->get_name(),
     'resourceurl' => urlencode($importinfo->get_resource()->get_url()->get_value()),
+    'id' => $id,
     'course' => $course->id,
     'section' => $config->section,
     'sesskey' => sesskey(),

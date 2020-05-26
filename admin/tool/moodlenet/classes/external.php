@@ -108,6 +108,7 @@ class external extends external_api {
         return new external_function_parameters(
             array(
                 'searchvalue' => new external_value(PARAM_RAW, 'search value'),
+                'resourceid' => new external_value(PARAM_RAW, 'Resource ID'),
             )
         );
     }
@@ -116,14 +117,15 @@ class external extends external_api {
      * For some given input find and return any course that matches it.
      *
      * @param string $searchvalue The profile url that the user states exists
+     * @param string $resourceid The resource ID to post to options
      * @return array Contains the result set of courses for the value
      */
-    public static function search_courses(string $searchvalue) {
+    public static function search_courses(string $searchvalue, string $resourceid) {
         global $OUTPUT;
 
         $params = self::validate_parameters(
             self::search_courses_parameters(),
-            ['searchvalue' => $searchvalue]
+            ['searchvalue' => $searchvalue, 'resourceid' => $resourceid]
         );
         self::validate_context(\context_system::instance());
 
@@ -136,11 +138,9 @@ class external extends external_api {
                     $data->id = $course->id;
                     $data->fullname = $course->fullname;
                     $data->hidden = $course->visible;
-                    $options = [
-                        'course' => $course->id,
-                    ];
-                    $viewurl = new \moodle_url('/admin/tool/moodlenet/options.php', $options);
-                    $data->viewurl = $viewurl->out(false);
+                    $data->course = $course->id;
+                    $data->sesskey = sesskey();
+                    $data->resourceid = $resourceid;
                     $category = \core_course_category::get($course->category);
                     $data->coursecategory = $category->name;
                     $courseimage = course_summary_exporter::get_course_image($data);
@@ -152,7 +152,9 @@ class external extends external_api {
                 }
             }
         }
+        $formaction = new \moodle_url('/admin/tool/moodlenet/options.php');
         return array(
+            'formaction' => $formaction->out(false),
             'courses' => $courses
         );
     }
@@ -169,10 +171,13 @@ class external extends external_api {
                     'id' => new external_value(PARAM_INT, 'course id'),
                     'fullname' => new external_value(PARAM_TEXT, 'course full name'),
                     'hidden' => new external_value(PARAM_INT, 'is the course visible'),
-                    'viewurl' => new external_value(PARAM_URL, 'Next step of import'),
                     'coursecategory' => new external_value(PARAM_TEXT, 'Category name'),
                     'courseimage' => new external_value(PARAM_RAW, 'course image'),
-                ]))
+                    'course' => new external_value(PARAM_RAW, 'course'),
+                    'sesskey' => new external_value(PARAM_RAW, 'session key'),
+                    'resourceid' => new external_value(PARAM_RAW, 'resource ID'),
+                ])),
+            'formaction' => new external_value(PARAM_URL, 'Where the form will post to')
         ]);
     }
 }
