@@ -23,8 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingicon'],
-    function(Validator, Selectors, LoadingIcon) {
+define(['jquery', 'tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingicon'],
+    function($, Validator, Selectors, LoadingIcon) {
     /**
      * Set up the form.
      *
@@ -57,11 +57,13 @@ define(['tool_moodlenet/validator', 'tool_moodlenet/selectors', 'core/loadingico
                 var validationArea = document.querySelector(Selectors.region.validationArea);
 
                 overlay.classList.remove('d-none');
-                var spinner = LoadingIcon.addIconToContainerWithPromise(overlay);
+                page.querySelector(Selectors.action.submit).classList.add('disabled');
+                var spinner = LoadingIcon.addIconToContainerWithPromise($(overlay));
                 Validator.validation(input)
                     .then(function(result) {
                         spinner.resolve();
                         overlay.classList.add('d-none');
+                        page.querySelector(Selectors.action.submit).classList.remove('disabled');
                         if (result.result) {
                             input.classList.remove('is-invalid'); // Just in case the class has been applied already.
                             input.classList.add('is-valid');

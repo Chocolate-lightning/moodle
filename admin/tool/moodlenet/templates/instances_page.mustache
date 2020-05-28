@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 <div data-region="moodle-net">
-    <div class="overlay-icon-container d-none" data-region="spinner"></div>
+    <div class="overlay-icon-container d-none z-index-1" data-region="spinner"></div>
     <img class="w-25 mb-4" aria-hidden="true" src="{{{img}}}">
     <p>{{#str}} instancedescription, tool_moodlenet {{/str}}</p>
     <button class="btn btn-secondary d-block w-50 mx-auto mt-5 mb-3"
@@ -38,7 +38,7 @@
                        aria-label="{{#str}} aria:enterprofile, tool_moodlenet {{/str}}"
                        autocomplete="off"
                 >
-                <div class="input-group-append">
+                <div class="input-group-append z-index-0">
                     <button class="btn btn-secondary"
                             data-action="submit" id="button-addon2"
                     >
