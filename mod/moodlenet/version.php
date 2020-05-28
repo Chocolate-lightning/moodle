@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2020031302;       // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2019111802;       // Requires this Moodle version.
+$plugin->requires  = 2019052006;       // Requires this Moodle version.
 $plugin->component = 'mod_moodlenet';  // Full name of the plugin (used for diagnostics).
 $plugin->cron      = 0;
 $plugin->depenencies = [                // List any dependency for the plugin.

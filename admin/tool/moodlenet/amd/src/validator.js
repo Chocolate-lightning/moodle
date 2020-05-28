@@ -35,6 +35,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification'], function($, Aja
         // They didn't submit anything or they gave us a simple string that we can't do anything with.
         if (inputValue === "" || !inputValue.includes("@")) {
             // Create a promise and immediately reject it.
+            var Promise = $.Deferred();
             $.when(Str.get_string('profilevalidationerror', 'tool_moodlenet')).then(function(strings) {
                 return Promise.reject().catch(function() {
                     return {result: false, message: strings[0]};
