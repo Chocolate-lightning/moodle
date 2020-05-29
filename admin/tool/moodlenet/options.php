@@ -118,7 +118,8 @@ $context = [
     'course' => $course->id,
     'section' => $config->section,
     'sesskey' => sesskey(),
-    'handlers' => $handlercontext
+    'handlers' => $handlercontext,
+    'oneoption' => sizeof($handlercontext) === 1
 ];
 
 echo $OUTPUT->header();
