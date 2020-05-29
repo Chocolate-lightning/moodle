@@ -65,7 +65,7 @@
                 {{#str}}importformatselectguidingtext, tool_moodlenet, {"name": {{#quote}}{{resourcename}}{{/quote}} }{{/str}}
                 <br><br>
                 {{#handlers}}
-                    <input id="{{module}}_option" name="module" type="radio" value="{{module}}">&nbsp;<label for="{{module}}_option">{{message}}</label>
+                    <input id="{{module}}_option" name="module" type="radio" value="{{module}}" {{#oneoption}}checked="checked"{{/oneoption}}>&nbsp;<label for="{{module}}_option">{{message}}</label>
                     <br>
                 {{/handlers}}
             </div>
