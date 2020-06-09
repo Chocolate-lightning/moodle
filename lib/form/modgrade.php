@@ -176,6 +176,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         if ($this->isupdate && $this->hasgrades) {
             $this->gradetypeformelement->updateAttributes(array('disabled' => 'disabled'));
             $this->scaleformelement->updateAttributes(array('disabled' => 'disabled'));
+            $this->maxgradeformelement->updateAttributes(array('disabled' => 'disabled'));
 
             // Check box for options for processing existing grades.
             if ($this->canrescale) {
