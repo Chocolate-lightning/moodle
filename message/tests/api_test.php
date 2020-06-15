@@ -260,7 +260,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Perform a search $CFG->messagingallusers setting enabled.
         set_config('messagingallusers', 1);
-        list($contacts, $courses, $noncontacts) = \core_message\api::search_users($user1->id, 'search');
+        list($contacts, $courses, $noncontacts) = \core_message_external::message_search_users($user1->id, 'search');
 
         // Check that we retrieved the correct contacts.
         $this->assertEquals(2, count($contacts));
@@ -298,7 +298,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Perform a search $CFG->messagingallusers setting enabled.
         set_config('messagingallusers', 1);
-        list($contacts, $courses, $noncontacts) = \core_message\api::search_users($user1->id, 'search');
+        list($contacts, $courses, $noncontacts) = \core_message_external::message_search_users($user1->id, 'search');
 
         // Check results are empty.
         $this->assertEquals(0, count($contacts));
@@ -361,7 +361,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Perform a search with $CFG->messagingallusers disabled.
         set_config('messagingallusers', 0);
-        $result = \core_message\api::message_search_users($users[1]->id, 'search');
+        $result = \core_message_external::message_search_users($users[1]->id, 'search');
 
         // Confirm that we returns contacts and non-contacts.
         $this->assertArrayHasKey(0, $result);
@@ -456,7 +456,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Perform a search with $CFG->messagingallusers enabled.
         set_config('messagingallusers', 1);
-        $result = \core_message\api::message_search_users($users[1]->id, 'search');
+        $result = \core_message_external::message_search_users($users[1]->id, 'search');
 
         // Confirm that we returns contacts and non-contacts.
         $this->assertArrayHasKey(0, $result);
@@ -526,7 +526,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Perform a search as user1.
         $this->setUser($user1);
-        $result = \core_message\api::message_search_users($user1->id, 'One');
+        $result = \core_message_external::message_search_users($user1->id, 'One');
 
         // Check user1 is found as non-contacts.
         $this->assertCount(0, $result[0]);
@@ -551,7 +551,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Perform a search as user1.
         $this->setUser($user1);
-        $result = \core_message\api::message_search_users($user1->id, 'search');
+        $result = \core_message_external::message_search_users($user1->id, 'search');
 
         // Check results are empty.
         $this->assertCount(0, $result[0]);
@@ -591,7 +591,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Search using a limit of 3.
         // This tests the case where we have more results than the limit for both contacts and non-contacts.
-        $result = \core_message\api::message_search_users($users[1]->id, 'search', 0, 3);
+        $result = \core_message_external::message_search_users($users[1]->id, 'search', 0, 3);
         $contacts = $result[0];
         $noncontacts = $result[1];
 
@@ -610,7 +610,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Now, offset to get the next batch of results.
         // We expect to see 2 contacts, and 3 non-contacts.
-        $result = \core_message\api::message_search_users($users[1]->id, 'search', 3, 3);
+        $result = \core_message_external::message_search_users($users[1]->id, 'search', 3, 3);
         $contacts = $result[0];
         $noncontacts = $result[1];
         $this->assertCount(2, $contacts);
@@ -624,7 +624,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Now, offset to get the next batch of results.
         // We expect to see 0 contacts, and 2 non-contacts.
-        $result = \core_message\api::message_search_users($users[1]->id, 'search', 6, 3);
+        $result = \core_message_external::message_search_users($users[1]->id, 'search', 6, 3);
         $contacts = $result[0];
         $noncontacts = $result[1];
         $this->assertCount(0, $contacts);
@@ -672,7 +672,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Perform a search with $CFG->messagingallusers disabled.
         set_config('messagingallusers', 0);
-        $result = \core_message\api::message_search_users($users[1]->id, 'search');
+        $result = \core_message_external::message_search_users($users[1]->id, 'search');
         $contacts = $result[0];
         $noncontacts = $result[1];
 
@@ -704,7 +704,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Ensure an exception is thrown.
         $this->expectException('moodle_exception');
-        \core_message\api::message_search_users($user->id, 'User');
+        \core_message_external::message_search_users($user->id, 'User');
     }
 
     /**
