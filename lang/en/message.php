@@ -275,13 +275,6 @@ $string['you'] = 'You:';
 $string['youhaveblockeduser'] = 'You have blocked this user.';
 $string['yourcontactrequestpending'] = 'Your contact request is pending with {$a}';
 
-// Deprecated since Moodle 3.6.
-$string['eventmessagecontactblocked'] = 'Message contact blocked';
-$string['eventmessagecontactunblocked'] = 'Message contact unblocked';
-$string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';
-$string['userisblockingyou'] = 'This user has blocked you from sending messages to them.';
-$string['userisblockingyounoncontact'] = '{$a} only accepts messages from their contacts.';
-
 // Deprecated since Moodle 3.7.
 $string['nomessages'] = 'No messages';
 $string['outputdisabled'] = 'Output disabled';
