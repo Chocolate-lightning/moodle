@@ -1142,33 +1142,6 @@ class api {
     }
 
     /**
-     * Deletes a conversation.
-     *
-     * This function does not verify any permissions.
-     *
-     * @deprecated since 3.6
-     * @param int $userid The user id of who we want to delete the messages for (this may be done by the admin
-     *  but will still seem as if it was by the user)
-     * @param int $otheruserid The id of the other user in the conversation
-     * @return bool
-     */
-    public static function delete_conversation($userid, $otheruserid) {
-        debugging('\core_message\api::delete_conversation() is deprecated, please use ' .
-            '\core_message\api::delete_conversation_by_id() instead.', DEBUG_DEVELOPER);
-
-        $conversationid = self::get_conversation_between_users([$userid, $otheruserid]);
-
-        // If there is no conversation, there is nothing to do.
-        if (!$conversationid) {
-            return true;
-        }
-
-        self::delete_conversation_by_id($userid, $conversationid);
-
-        return true;
-    }
-
-    /**
      * Deletes a conversation for a specified user.
      *
      * This function does not verify any permissions.
@@ -1714,83 +1687,6 @@ class api {
     }
 
     /**
-     * Checks if the recipient is allowing messages from users that aren't a
-     * contact. If not then it checks to make sure the sender is in the
-     * recipient's contacts.
-     *
-     * @deprecated since 3.6
-     * @param \stdClass $recipient The user object.
-     * @param \stdClass|null $sender The user object.
-     * @return bool true if $sender is blocked, false otherwise.
-     */
-    public static function is_user_non_contact_blocked($recipient, $sender = null) {
-        debugging('\core_message\api::is_user_non_contact_blocked() is deprecated', DEBUG_DEVELOPER);
-
-        global $USER, $CFG;
-
-        if (is_null($sender)) {
-            // The message is from the logged in user, unless otherwise specified.
-            $sender = $USER;
-        }
-
-        $privacypreference = self::get_user_privacy_messaging_preference($recipient->id);
-        switch ($privacypreference) {
-            case self::MESSAGE_PRIVACY_SITE:
-                if (!empty($CFG->messagingallusers)) {
-                    // Users can be messaged without being contacts or members of the same course.
-                    break;
-                }
-                // When the $CFG->messagingallusers privacy setting is disabled, continue with the next
-                // case, because MESSAGE_PRIVACY_SITE is replaced to MESSAGE_PRIVACY_COURSEMEMBER.
-            case self::MESSAGE_PRIVACY_COURSEMEMBER:
-                // Confirm the sender and the recipient are both members of the same course.
-                if (enrol_sharing_course($recipient, $sender)) {
-                    // All good, the recipient and the sender are members of the same course.
-                    return false;
-                }
-            case self::MESSAGE_PRIVACY_ONLYCONTACTS:
-                // True if they aren't contacts (they can't send a message because of the privacy settings), false otherwise.
-                return !self::is_contact($sender->id, $recipient->id);
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if the recipient has specifically blocked the sending user.
-     *
-     * Note: This function will always return false if the sender has the
-     * readallmessages capability at the system context level.
-     *
-     * @deprecated since 3.6
-     * @param int $recipientid User ID of the recipient.
-     * @param int $senderid User ID of the sender.
-     * @return bool true if $sender is blocked, false otherwise.
-     */
-    public static function is_user_blocked($recipientid, $senderid = null) {
-        debugging('\core_message\api::is_user_blocked is deprecated and should not be used.',
-            DEBUG_DEVELOPER);
-
-        global $USER;
-
-        if (is_null($senderid)) {
-            // The message is from the logged in user, unless otherwise specified.
-            $senderid = $USER->id;
-        }
-
-        $systemcontext = \context_system::instance();
-        if (has_capability('moodle/site:readallmessages', $systemcontext, $senderid)) {
-            return false;
-        }
-
-        if (self::is_blocked($recipientid, $senderid)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Get specified message processor, validate corresponding plugin existence and
      * system configuration.
      *
@@ -2148,23 +2044,6 @@ class api {
             'convhash' => helper::get_conversation_hash([$userid])
         ];
         return $DB->get_record('message_conversations', $conditions);
-    }
-
-    /**
-     * Creates a conversation between two users.
-     *
-     * @deprecated since 3.6
-     * @param array $userids
-     * @return int The id of the conversation
-     */
-    public static function create_conversation_between_users(array $userids) {
-        debugging('\core_message\api::create_conversation_between_users is deprecated, please use ' .
-            '\core_message\api::create_conversation instead.', DEBUG_DEVELOPER);
-
-        // This method was always used for individual conversations.
-        $conversation = self::create_conversation(self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $userids);
-
-        return $conversation->id;
     }
 
     /**
