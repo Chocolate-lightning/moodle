@@ -1,6 +1,24 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+* Removed the following deprecated functions:
+  - print_textarea
+  - calendar_get_all_allowed_types
+  - groups_get_all_groups_for_courses
+  - events_get_cached
+  - events_uninstall
+  - events_cleanup
+  - events_dequeue
+  - events_get_handlers
+  - get_roles_on_exact_context
+  - get_roles_with_assignment_on_context
+  - message_add_contact
+  - message_remove_contact
+  - message_unblock_contact
+  - message_block_contact
+  - message_get_contact
+
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
     - cron_run_single_task()
