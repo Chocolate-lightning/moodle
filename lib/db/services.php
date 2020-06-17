@@ -1097,26 +1097,6 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_message_block_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'block_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Block contacts',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_create_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'create_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Add contacts to the contact list',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
     'core_message_get_contact_requests' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_contact_requests',
@@ -1412,16 +1392,6 @@ $functions = array(
         'methodname' => 'unblock_user',
         'classpath' => 'message/externallib.php',
         'description' => 'Unblocks a user',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_unblock_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'unblock_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                         Unblock contacts',
         'type' => 'write',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),

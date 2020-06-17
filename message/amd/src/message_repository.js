@@ -67,7 +67,7 @@ define(
         delete args.offset;
 
         var request = {
-            methodname: 'core_message_data_for_messagearea_conversations',
+            methodname: 'core_message_get_conversations',
             args: args
         };
 
@@ -106,7 +106,7 @@ define(
      */
     var markAllAsRead = function(args) {
         var request = {
-            methodname: 'core_message_mark_all_messages_as_read',
+            methodname: 'core_message_mark_all_conversation_messages_as_read',
             args: args
         };
 

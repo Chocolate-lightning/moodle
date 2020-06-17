@@ -117,7 +117,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         }
 
         var request = {
-            methodname: 'core_message_create_contacts',
+            methodname: 'core_message_create_contact_request',
             args: {
                 userids: [getUserId(element)],
             }
