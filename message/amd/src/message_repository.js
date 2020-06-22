@@ -99,25 +99,6 @@ define(
     };
 
     /**
-     * Mark all of unread messages for a user as read.
-     *
-     * @param {object} args The request arguments:
-     * @return {object} jQuery promise
-     */
-    var markAllAsRead = function(args) {
-        var request = {
-            methodname: 'core_message_mark_all_conversation_messages_as_read',
-            args: args
-        };
-
-        var promise = Ajax.call([request])[0];
-
-        promise.fail(Notification.exception);
-
-        return promise;
-    };
-
-    /**
      * Get contacts for given user.
      *
      * @param {int} userId The user id

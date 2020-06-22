@@ -273,23 +273,6 @@ class helper {
     }
 
     /**
-     * Requires the JS libraries for the toggle contact button.
-     *
-     * @return void
-     */
-    public static function togglecontact_requirejs() {
-        global $PAGE;
-
-        static $done = false;
-        if ($done) {
-            return;
-        }
-
-        $PAGE->requires->js_call_amd('core_message/toggle_contact_button', 'enhance', array('#toggle-contact-button'));
-        $done = true;
-    }
-
-    /**
      * Returns the attributes to place on a contact button.
      *
      * @param object $user User object.
