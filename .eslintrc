@@ -238,7 +238,10 @@
         // === Promises ===
         // We have Promise now that we're using ES6.
         'promise/no-native': 'off',
-        'promise/avoid-new': 'off'
+        'promise/avoid-new': 'off',
+        // Some more.
+        'no-const-assign': 'error',
+
       },
       parserOptions: {
         'ecmaVersion': 9,
