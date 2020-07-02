@@ -2,6 +2,7 @@
   'plugins': [
     'babel',
     'promise',
+    'import'
   ],
   'env': {
     'browser': true,
@@ -241,6 +242,17 @@
         'promise/avoid-new': 'off',
         // Some more.
         'no-const-assign': 'error',
+        'no-param-reassign': 'error',
+        'arrow-spacing': 'error',
+        'arrow-parens': [2, 'as-needed', { 'requireForBlockBody': true }],
+        'arrow-body-style': ['error', 'as-needed'],
+        'no-confusing-arrow': 'error',
+        'no-duplicate-imports': 'error',
+        'import/no-mutable-exports': 'error',
+        'import/prefer-default-export': 'error',
+        'import/first': 'error',
+        'eqeqeq': ['error', 'always'],
+        'no-else-return': ['error', {'allowElseIf': false}]
 
       },
       parserOptions: {
