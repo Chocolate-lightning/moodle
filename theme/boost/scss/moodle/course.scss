@@ -463,22 +463,19 @@ body:not(.editing)  .sitetopic ul.section {
 
 .path-course-view li.activity form.togglecompletion .btn {
     border: 2px solid transparent;
-    min-height: 0;
-    min-width: 0;
-    padding: 0 0 4px 4px;
-    margin-top: 5px;
-}
-
-.path-course-view li.activity form.togglecompletion .btn:focus {
-    border-color: #6eb5f3;
+    display: flex;
+    margin-right: .5em;
+    padding: .2em;
+    &:focus {
+        border-color: #6eb5f3;
+    }
+    .icon {
+        margin: 0;
+    }
 }
 
 .path-course-view li.activity form.togglecompletion img {
     max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
-}
-
-.path-course-view li.activity form.togglecompletion img.icon {
-    min-width: 0;
 }
 
 .path-course-view {
