@@ -119,18 +119,29 @@ define(
          */
         var showMultipleSummaryAndHideForm = function(items) {
            $("#region-main h2").after("<div id='add_summary'><p></p><ul></ul></div>");
-           $("div#add_summary p").text('The following items will be added to your course:');
-           items.forEach(function(item) {
-               var li = $('<li><strong></strong><span></span></li>');
-               li.find('strong').text(item.name);
-               if (item.instructorchoiceacceptgrades === 1) {
-                   li.find('span').text(' Graded ($points points)'.replace('$points', item.grade_modgrade_point));
-               }
-               $("div#add_summary ul").append(li);
-           });
            $('#region-main-box form.mform').children().hide();
-           $('#fgroup_id_buttonar').show();
            $('#id_submitbutton').hide();
+           str.get_strings([
+            {
+                key: 'contentitem_multiple_description',
+                component: 'mod_lti'
+            },
+            {
+                key: 'contentitem_multiple_graded',
+                component: 'mod_lti'
+            }
+           ]).done(strs => {
+                $("div#add_summary p").text(strs[0]);
+                items.forEach(item => {
+                    var li = $('<li><strong></strong> <em></em></li>');
+                    li.find('strong').text(item.name);
+                    if (item.instructorchoiceacceptgrades === 1) {
+                        li.find('em').text(strs[1].replace('$points', item.grade_modgrade_point || '100'));
+                    }
+                    $("div#add_summary ul").append(li);
+                });
+                $('#fgroup_id_buttonar').show();
+            });
         };
 
         var configToVariant = function(config) {

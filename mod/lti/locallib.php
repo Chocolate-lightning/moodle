@@ -1468,6 +1468,7 @@ function content_item_to_form(object $tool, object $typeconfig, object $item) : 
         if ($acceptgrades == LTI_SETTING_ALWAYS) {
             // We create a line item regardless if the definition contains one or not.
             $config->instructorchoiceacceptgrades = LTI_SETTING_ALWAYS;
+            $config->grade_modgrade_point = 100;
         }
         if ($acceptgrades == LTI_SETTING_DELEGATE || $acceptgrades == LTI_SETTING_ALWAYS) {
             if (isset($item->lineItem)) {
