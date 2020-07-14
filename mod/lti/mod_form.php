@@ -84,7 +84,9 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'add_multiple', '', array('id' => 'id_add_multiple'));
 
         // Adding the "general" fieldset, where all the common settings are shown.
+        $mform->addElement('html', "<div id='add_multiple_summary'><p></p><ul></ul></div>");
         $mform->addElement('header', 'general', get_string('general', 'form'));
+
         // Adding the standard "name" field.
         $mform->addElement('text', 'name', get_string('basicltiname', 'lti'), array('size' => '64'));
         $mform->setType('name', PARAM_TEXT);

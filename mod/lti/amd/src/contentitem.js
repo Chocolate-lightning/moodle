@@ -115,12 +115,15 @@ define(
          * options is (save and return to course) or cancel.
          * This function injects the summary to the form page, and hides
          * the unneeded elements.
-         * @param {*} items
+         * @param {Object[]} items
          */
         var showMultipleSummaryAndHideForm = function(items) {
-           $("#region-main h2").after("<div id='add_summary'><p></p><ul></ul></div>");
-           $('#region-main-box form.mform').children().hide();
-           $('#id_submitbutton').hide();
+           //$("#region-main h2").after("<div id='add_summary'><p></p><ul></ul></div>");
+           const hide = function(e) {e.hidden=true;};
+           [...document.querySelector('#region-main-box form.mform').children]
+                .filter(e=>e.id!=='add_multiple_summary')
+                .forEach(hide);
+           document.querySelector('#id_submitbutton').hidden = true;
            str.get_strings([
             {
                 key: 'contentitem_multiple_description',
@@ -131,16 +134,16 @@ define(
                 component: 'mod_lti'
             }
            ]).done(strs => {
-                $("div#add_summary p").text(strs[0]);
+                $("div#add_multiple_summary p").text(strs[0]);
                 items.forEach(item => {
                     var li = $('<li><strong></strong> <em></em></li>');
                     li.find('strong').text(item.name);
                     if (item.instructorchoiceacceptgrades === 1) {
-                        li.find('em').text(strs[1].replace('$points', item.grade_modgrade_point || '100'));
+                        li.find('em').text(strs[1].replace('$points', item.grade_modgrade_point || ''));
                     }
-                    $("div#add_summary ul").append(li);
+                    $("div#add_multiple_summary ul").append(li);
                 });
-                $('#fgroup_id_buttonar').show();
+                document.querySelector('#fgroup_id_buttonar').hidden = false;
             });
         };
 
