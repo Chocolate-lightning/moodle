@@ -123,61 +123,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Tests searching users in a course.
-     */
-    public function test_search_users_in_course() {
-        // Create some users.
-        $user1 = new stdClass();
-        $user1->firstname = 'User';
-        $user1->lastname = 'One';
-        $user1 = self::getDataGenerator()->create_user($user1);
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Second user is going to have their last access set to now, so they are online.
-        $user2 = new stdClass();
-        $user2->firstname = 'User';
-        $user2->lastname = 'Two';
-        $user2->lastaccess = time();
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        // Block the second user.
-        \core_message\api::block_user($user1->id, $user2->id);
-
-        $user3 = new stdClass();
-        $user3->firstname = 'User';
-        $user3->lastname = 'Three';
-        $user3 = self::getDataGenerator()->create_user($user3);
-
-        // Create a course.
-        $course1 = new stdClass();
-        $course1->fullname = 'Course';
-        $course1->shortname = 'One';
-        $course1 = $this->getDataGenerator()->create_course($course1);
-
-        // Enrol the searcher and one user in the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
-
-        // Perform a search.
-        $results = \core_message\api::search_users_in_course($user1->id, $course1->id, 'User');
-
-        $this->assertEquals(1, count($results));
-
-        $user = $results[0];
-        $this->assertEquals($user2->id, $user->userid);
-        $this->assertEquals(fullname($user2), $user->fullname);
-        $this->assertFalse($user->ismessaging);
-        $this->assertNull($user->lastmessage);
-        $this->assertNull($user->messageid);
-        $this->assertNull($user->isonline);
-        $this->assertFalse($user->isread);
-        $this->assertTrue($user->isblocked);
-        $this->assertNull($user->unreadcount);
-    }
-
-    /**
      * Tests searching users.
      */
     public function test_search_users() {

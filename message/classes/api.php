@@ -168,48 +168,10 @@ class api {
     }
 
     /**
-     * Handles searching for user in a particular course in the message area.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_search_users_in_course.
-     * Followup: MDL-63261
-     *
-     * @param int $userid The user id doing the searching
-     * @param int $courseid The id of the course we are searching in
-     * @param string $search The string the user is searching
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @return array
+     * @deprecated since 3.6
      */
-    public static function search_users_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
-        global $DB;
-
-        // Get all the users in the course.
-        list($esql, $params) = get_enrolled_sql(\context_course::instance($courseid), '', 0, true);
-        $sql = "SELECT u.*, mub.id as isblocked
-                  FROM {user} u
-                  JOIN ($esql) je
-                    ON je.id = u.id
-             LEFT JOIN {message_users_blocked} mub
-                    ON (mub.blockeduserid = u.id AND mub.userid = :userid)
-                 WHERE u.deleted = 0";
-        // Add more conditions.
-        $fullname = $DB->sql_fullname();
-        $sql .= " AND u.id != :userid2
-                  AND " . $DB->sql_like($fullname, ':search', false) . "
-             ORDER BY " . $DB->sql_fullname();
-        $params = array_merge(array('userid' => $userid, 'userid2' => $userid, 'search' => '%' . $search . '%'), $params);
-
-        // Convert all the user records into contacts.
-        $contacts = array();
-        if ($users = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
-            foreach ($users as $user) {
-                $user->blocked = $user->isblocked ? 1 : 0;
-                $contacts[] = helper::create_contact($user);
-            }
-        }
-
-        return $contacts;
+    public static function search_users_in_course() {
+        throw new \coding_exception('\core_message\api::search_users_in_course has been removed.');
     }
 
     /**
