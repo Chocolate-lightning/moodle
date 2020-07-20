@@ -950,55 +950,10 @@ class api {
     }
 
     /**
-     * Returns the contacts to display in the contacts area.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_contacts.
-     * Followup: MDL-63261
-     *
-     * @param int $userid The user id
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @return array
+     * @deprecated since 3.6
      */
-    public static function get_contacts($userid, $limitfrom = 0, $limitnum = 0) {
-        global $DB;
-
-        $contactids = [];
-        $sql = "SELECT mc.*
-                  FROM {message_contacts} mc
-                 WHERE mc.userid = ? OR mc.contactid = ?
-              ORDER BY timecreated DESC";
-        if ($contacts = $DB->get_records_sql($sql, [$userid, $userid], $limitfrom, $limitnum)) {
-            foreach ($contacts as $contact) {
-                if ($userid == $contact->userid) {
-                    $contactids[] = $contact->contactid;
-                } else {
-                    $contactids[] = $contact->userid;
-                }
-            }
-        }
-
-        if (!empty($contactids)) {
-            list($insql, $inparams) = $DB->get_in_or_equal($contactids);
-
-            $sql = "SELECT u.*, mub.id as isblocked
-                      FROM {user} u
-                 LEFT JOIN {message_users_blocked} mub
-                        ON u.id = mub.blockeduserid
-                     WHERE u.id $insql";
-            if ($contacts = $DB->get_records_sql($sql, $inparams)) {
-                $arrcontacts = [];
-                foreach ($contacts as $contact) {
-                    $contact->blocked = $contact->isblocked ? 1 : 0;
-                    $arrcontacts[] = helper::create_contact($contact);
-                }
-
-                return $arrcontacts;
-            }
-        }
-
-        return [];
+    public static function get_contacts() {
+        throw new \coding_exception('\core_message\api::get_contacts has been removed.');
     }
 
     /**
