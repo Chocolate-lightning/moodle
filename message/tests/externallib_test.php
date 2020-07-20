@@ -384,65 +384,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test block_contacts.
-     */
-    public function test_block_contacts() {
-        $this->resetAfterTest(true);
-
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-        $user3 = self::getDataGenerator()->create_user();
-        $user4 = self::getDataGenerator()->create_user();
-        $user5 = self::getDataGenerator()->create_user();
-        $this->setUser($user1);
-
-        \core_message\api::add_contact($user1->id, $user3->id);
-        \core_message\api::add_contact($user1->id, $user4->id);
-        \core_message\api::add_contact($user1->id, $user5->id);
-
-        // Blocking a contact who is already a contact.
-        $return = core_message_external::block_contacts(array($user2->id));
-        $return = external_api::clean_returnvalue(core_message_external::block_contacts_returns(), $return);
-        $this->assertEquals(array(array(
-            'item' => 'user',
-            'itemid' => $user2->id,
-            'warningcode' => 'contactnotblocked',
-            'message' => 'The contact could not be blocked'
-        )), $return);
-
-        // Blocking multiple contacts.
-        $return = core_message_external::block_contacts(array($user3->id, $user4->id));
-        $return = external_api::clean_returnvalue(core_message_external::block_contacts_returns(), $return);
-        $this->assertEquals(array(
-            array(
-                'item' => 'user',
-                'itemid' => $user3->id,
-                'warningcode' => 'contactnotblocked',
-                'message' => 'The contact could not be blocked'
-            ),
-            array(
-                'item' => 'user',
-                'itemid' => $user4->id,
-                'warningcode' => 'contactnotblocked',
-                'message' => 'The contact could not be blocked'
-            )
-        ), $return);
-
-        // Blocking a non-existing user.
-        $return = core_message_external::block_contacts(array(99999));
-        $return = external_api::clean_returnvalue(core_message_external::block_contacts_returns(), $return);
-        $this->assertCount(1, $return);
-        $return = array_pop($return);
-        $this->assertEquals($return['warningcode'], 'contactnotblocked');
-        $this->assertEquals($return['itemid'], 99999);
-
-        // Try to block a contact of another user contact list, should throw an exception.
-        // All assertions must be added before this point.
-        $this->expectException('required_capability_exception');
-        core_message_external::block_contacts(array($user2->id), $user3->id);
-    }
-
-    /**
      * Test unblock_contacts.
      */
     public function test_unblock_contacts() {
@@ -1330,7 +1271,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $contacts['offline']);
         $this->assertCount(1, $contacts['online']);
         $this->assertCount(3, $contacts['strangers']);
-        core_message_external::block_contacts(array($user_blocked->id));
+        \core_message\api::block_user($user1->id, $user_blocked->id);
         $contacts = core_message_external::get_contacts();
         $contacts = external_api::clean_returnvalue(core_message_external::get_contacts_returns(), $contacts);
         $this->assertCount(3, $contacts['offline']);
@@ -1759,7 +1700,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $blockedusers['users']);
 
         // Block the $userblocked and retrieve again the list.
-        core_message_external::block_contacts(array($userblocked->id));
+        \core_message\api::block_user($user1->id, $userblocked->id);
         $blockedusers = core_message_external::get_blocked_users($user1->id);
         $blockedusers = external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
         $this->assertCount(1, $blockedusers['users']);
