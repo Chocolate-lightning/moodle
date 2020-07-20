@@ -24,6 +24,7 @@
 
 namespace core_message;
 
+use core\session\exception;
 use core_favourites\local\entity\favourite;
 
 defined('MOODLE_INTERNAL') || die();
@@ -1240,52 +1241,10 @@ class api {
     }
 
     /**
-     * Returns the messages to display in the message area.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_messages.
-     * Followup: MDL-63261
-     *
-     * @param int $userid the current user
-     * @param int $otheruserid the other user
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @param string $sort
-     * @param int $timefrom the time from the message being sent
-     * @param int $timeto the time up until the message being sent
-     * @return array
+     * @deprecated since 3.6
      */
-    public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0,
-            $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
-
-        if (!empty($timefrom)) {
-            // Get the conversation between userid and otheruserid.
-            $userids = [$userid, $otheruserid];
-            if (!$conversationid = self::get_conversation_between_users($userids)) {
-                // This method was always used for individual conversations.
-                $conversation = self::create_conversation(self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $userids);
-                $conversationid = $conversation->id;
-            }
-
-            // Check the cache to see if we even need to do a DB query.
-            $cache = \cache::make('core', 'message_time_last_message_between_users');
-            $key = helper::get_last_message_time_created_cache_key($conversationid);
-            $lastcreated = $cache->get($key);
-
-            // The last known message time is earlier than the one being requested so we can
-            // just return an empty result set rather than having to query the DB.
-            if ($lastcreated && $lastcreated < $timefrom) {
-                return [];
-            }
-        }
-
-        $arrmessages = array();
-        if ($messages = helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum,
-                                             $sort, $timefrom, $timeto)) {
-            $arrmessages = helper::create_messages($userid, $messages);
-        }
-
-        return $arrmessages;
+    public static function get_messages() {
+        throw new \coding_exception('\core_message\api::get_messages has been removed.');
     }
 
     /**
