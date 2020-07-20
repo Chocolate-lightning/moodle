@@ -2732,62 +2732,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Tests retrieving a user's profile.
-     */
-    public function test_get_profile() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-
-        $user2 = new stdClass();
-        $user2->country = 'AU';
-        $user2->city = 'Perth';
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Get the profile.
-        $profile = \core_message\api::get_profile($user1->id, $user2->id);
-
-        $this->assertEquals($user2->id, $profile->userid);
-        $this->assertEmpty($profile->email);
-        $this->assertEmpty($profile->country);
-        $this->assertEmpty($profile->city);
-        $this->assertEquals(fullname($user2), $profile->fullname);
-        $this->assertNull($profile->isonline);
-        $this->assertFalse($profile->isblocked);
-        $this->assertFalse($profile->iscontact);
-    }
-
-    /**
-     * Tests retrieving a user's profile.
-     */
-    public function test_get_profile_as_admin() {
-        // The person doing the search.
-        $this->setAdminUser();
-
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-
-        $user2 = new stdClass();
-        $user2->country = 'AU';
-        $user2->city = 'Perth';
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        // Get the profile.
-        $profile = \core_message\api::get_profile($user1->id, $user2->id);
-
-        $this->assertEquals($user2->id, $profile->userid);
-        $this->assertEquals($user2->email, $profile->email);
-        $this->assertEquals($user2->country, $profile->country);
-        $this->assertEquals($user2->city, $profile->city);
-        $this->assertEquals(fullname($user2), $profile->fullname);
-        $this->assertFalse($profile->isonline);
-        $this->assertFalse($profile->isblocked);
-        $this->assertFalse($profile->iscontact);
-    }
-
-    /**
      * Tests checking if a user can mark all messages as read.
      */
     public function test_can_mark_all_messages_as_read() {

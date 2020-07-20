@@ -1143,58 +1143,10 @@ class api {
     }
 
     /**
-     * Returns the profile information for a contact for a user.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_get_profile.
-     * Followup: MDL-63261
-     *
-     * @param int $userid The user id
-     * @param int $otheruserid The id of the user whose profile we want to view.
-     * @return \stdClass
+     * @deprecated since 3.6
      */
-    public static function get_profile($userid, $otheruserid) {
-        global $CFG, $PAGE;
-
-        require_once($CFG->dirroot . '/user/lib.php');
-
-        $user = \core_user::get_user($otheruserid, '*', MUST_EXIST);
-
-        // Create the data we are going to pass to the renderable.
-        $data = new \stdClass();
-        $data->userid = $otheruserid;
-        $data->fullname = fullname($user);
-        $data->city = '';
-        $data->country = '';
-        $data->email = '';
-        $data->isonline = null;
-        // Get the user picture data - messaging has always shown these to the user.
-        $userpicture = new \user_picture($user);
-        $userpicture->size = 1; // Size f1.
-        $data->profileimageurl = $userpicture->get_url($PAGE)->out(false);
-        $userpicture->size = 0; // Size f2.
-        $data->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
-
-        $userfields = user_get_user_details($user, null, array('city', 'country', 'email', 'lastaccess'));
-        if ($userfields) {
-            if (isset($userfields['city'])) {
-                $data->city = $userfields['city'];
-            }
-            if (isset($userfields['country'])) {
-                $data->country = $userfields['country'];
-            }
-            if (isset($userfields['email'])) {
-                $data->email = $userfields['email'];
-            }
-            if (isset($userfields['lastaccess'])) {
-                $data->isonline = helper::is_online($userfields['lastaccess']);
-            }
-        }
-
-        $data->isblocked = self::is_blocked($userid, $otheruserid);
-        $data->iscontact = self::is_contact($userid, $otheruserid);
-
-        return $data;
+    public static function get_profile() {
+        throw new \coding_exception('\core_message\api::get_profile has been removed.');
     }
 
     /**
