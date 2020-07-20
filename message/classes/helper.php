@@ -155,58 +155,6 @@ class helper {
     }
 
     /**
-     * Helper function to return an array of messages.
-     *
-     * TODO: This function should be removed once the related web services go through final deprecation.
-     * The related web services are data_for_messagearea_messages AND data_for_messagearea_get_most_recent_message.
-     * Followup: MDL-63261
-     *
-     * @param int $userid
-     * @param array $messages
-     * @return array
-     */
-    public static function create_messages($userid, $messages) {
-        // Store the messages.
-        $arrmessages = array();
-
-        // We always view messages from oldest to newest, ensure we have it in that order.
-        $lastmessage = end($messages);
-        $firstmessage = reset($messages);
-        if ($lastmessage->timecreated < $firstmessage->timecreated) {
-            $messages = array_reverse($messages);
-        }
-
-        // Keeps track of the last day, month and year combo we were viewing.
-        $day = '';
-        $month = '';
-        $year = '';
-        foreach ($messages as $message) {
-            // Check if we are now viewing a different block period.
-            $displayblocktime = false;
-            $date = usergetdate($message->timecreated);
-            if ($day != $date['mday'] || $month != $date['month'] || $year != $date['year']) {
-                $day = $date['mday'];
-                $month = $date['month'];
-                $year = $date['year'];
-                $displayblocktime = true;
-            }
-            // Store the message to pass to the renderable.
-            $msg = new \stdClass();
-            $msg->id = $message->id;
-            $msg->text = message_format_message_text($message);
-            $msg->currentuserid = $userid;
-            $msg->useridfrom = $message->useridfrom;
-            $msg->useridto = $message->useridto;
-            $msg->displayblocktime = $displayblocktime;
-            $msg->timecreated = $message->timecreated;
-            $msg->timeread = $message->timeread;
-            $arrmessages[] = $msg;
-        }
-
-        return $arrmessages;
-    }
-
-    /**
      * Helper function for creating a contact object.
      *
      * @param \stdClass $contact
