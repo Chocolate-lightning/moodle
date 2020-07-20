@@ -2960,33 +2960,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Tests retrieving most recent message.
-     */
-    public function test_get_most_recent_message() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Send some messages back and forth.
-        $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
-
-        // Retrieve the most recent messages.
-        $message = \core_message\api::get_most_recent_message($user1->id, $user2->id);
-
-        // Check the results are correct.
-        $this->assertEquals($user2->id, $message->useridfrom);
-        $this->assertEquals($user1->id, $message->useridto);
-        $this->assertContains('Word.', $message->text);
-    }
-
-    /**
      * Tests retrieving most recent conversation message.
      */
     public function test_get_most_recent_conversation_message() {
