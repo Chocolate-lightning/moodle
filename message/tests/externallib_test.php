@@ -339,39 +339,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test create_contacts.
-     *
-     * TODO: MDL-63261
-     */
-    public function test_create_contacts() {
-        $this->resetAfterTest(true);
-
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-        $user3 = self::getDataGenerator()->create_user();
-        $user4 = self::getDataGenerator()->create_user();
-        $user5 = self::getDataGenerator()->create_user();
-        $this->setUser($user1);
-
-        // Adding a contact who is already a contact.
-        $return = core_message_external::create_contacts(array($user2->id));
-        $return = external_api::clean_returnvalue(core_message_external::create_contacts_returns(), $return);
-        $this->assertEquals(array(), $return);
-
-        // Adding multiple contacts.
-        $return = core_message_external::create_contacts(array($user3->id, $user4->id));
-        $return = external_api::clean_returnvalue(core_message_external::create_contacts_returns(), $return);
-        $this->assertEquals(array(), $return);
-
-        // Note: We should add real user checks in api L:2656.
-
-        // Try to add a contact to another user, should throw an exception.
-        // All assertions must be added before this point.
-        $this->expectException('required_capability_exception');
-        core_message_external::create_contacts(array($user2->id), $user3->id);
-    }
-
-    /**
      * Test delete_contacts.
      */
     public function test_delete_contacts() {
