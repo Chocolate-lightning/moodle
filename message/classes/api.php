@@ -1280,26 +1280,10 @@ class api {
     }
 
     /**
-     * Returns the most recent message between two users.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_get_most_recent_message.
-     * Followup: MDL-63261
-     *
-     * @param int $userid the current user
-     * @param int $otheruserid the other user
-     * @return \stdClass|null
+     * @deprecated since 3.6
      */
-    public static function get_most_recent_message($userid, $otheruserid) {
-        // We want two messages here so we get an accurate 'blocktime' value.
-        if ($messages = helper::get_messages($userid, $otheruserid, 0, 0, 2, 'timecreated DESC')) {
-            // Swap the order so we now have them in historical order.
-            $messages = array_reverse($messages);
-            $arrmessages = helper::create_messages($userid, $messages);
-            return array_pop($arrmessages);
-        }
-
-        return null;
+    public static function get_most_recent_message() {
+        throw new \coding_exception('\core_message\api::get_most_recent_message has been removed.');
     }
 
     /**
