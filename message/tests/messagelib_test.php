@@ -151,13 +151,17 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $userto = $this->getDataGenerator()->create_user();
 
         $this->assertEquals(0, message_count_unread_messages($userto));
+        $this->assertDebuggingCalled();
 
         // Send fake messages.
         $this->send_fake_message($userfrom1, $userto);
         $this->send_fake_message($userfrom2, $userto);
 
         $this->assertEquals(2, message_count_unread_messages($userto));
+        $this->assertDebuggingCalled();
+
         $this->assertEquals(1, message_count_unread_messages($userto, $userfrom1));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -183,7 +187,10 @@ class core_message_messagelib_testcase extends advanced_testcase {
 
         // Should only count the messages that weren't read by the current user.
         $this->assertEquals(1, message_count_unread_messages($userto));
+        $this->assertDebuggingCalledCount(2);
+
         $this->assertEquals(0, message_count_unread_messages($userto, $userfrom1));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -198,6 +205,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $userto = $this->getDataGenerator()->create_user();
 
         $this->assertEquals(0, message_count_unread_messages($userto));
+        $this->assertDebuggingCalled();
 
         // Send fake messages.
         $messageid = $this->send_fake_message($userfrom1, $userto);
@@ -208,7 +216,9 @@ class core_message_messagelib_testcase extends advanced_testcase {
 
         // Should only count the messages that weren't deleted by the current user.
         $this->assertEquals(1, message_count_unread_messages($userto));
+        $this->assertDebuggingCalled();
         $this->assertEquals(0, message_count_unread_messages($userto, $userfrom1));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -220,7 +230,9 @@ class core_message_messagelib_testcase extends advanced_testcase {
 
         $this->send_fake_message($userfrom, $userto);
 
+        // Ensure an exception is thrown.
         $this->assertEquals(0, message_count_unread_messages($userfrom));
+        $this->assertDebuggingCalled();
     }
 
     /**
