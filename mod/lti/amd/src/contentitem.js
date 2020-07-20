@@ -118,13 +118,14 @@ define(
          * @param {Object[]} items
          */
         var showMultipleSummaryAndHideForm = function(items) {
-           //$("#region-main h2").after("<div id='add_summary'><p></p><ul></ul></div>");
-           const hide = function(e) {e.hidden=true;};
-           [...document.querySelector('#region-main-box form.mform').children]
-                .filter(e=>e.id!=='add_multiple_summary')
+            const hide = function(e) {
+               e.hidden = true;
+            };
+            [...document.querySelector('#region-main-box form.mform').children]
+                .filter(e=>e.id !== 'add_multiple_summary')
                 .forEach(hide);
-           document.querySelector('#id_submitbutton').hidden = true;
-           str.get_strings([
+            document.querySelector('#id_submitbutton').hidden = true;
+            str.get_strings([
             {
                 key: 'contentitem_multiple_description',
                 component: 'mod_lti'
@@ -157,7 +158,7 @@ define(
             if (config.instructorchoiceacceptgrades === 1) {
                 variant.instructorchoiceacceptgrades = 1;
                 variant['grade[modgrade_type]'] = 'point';
-                variant['grade[modgrade_point]'] =  config['grade_modgrade_point'] || 100;
+                variant['grade[modgrade_point]'] = config.grade_modgrade_point || 100;
             } else {
                 variant.instructorchoiceacceptgrades = 0;
             }
@@ -181,7 +182,7 @@ define(
                 for (index in ltiFormFields) {
                     // Name is required, so putting a placeholder as it will not be used
                     // in multi-items add.
-                    ltiFormFields[index].setFieldValue(ltiFormFields[index].name==='name' ? 'item' : null);
+                    ltiFormFields[index].setFieldValue(ltiFormFields[index].name === 'name' ? 'item' : null);
                 }
                 var variants = [];
                 returnData.multiple.forEach(function(v) {
