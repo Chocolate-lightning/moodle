@@ -384,51 +384,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test unblock_contacts.
-     */
-    public function test_unblock_contacts() {
-        $this->resetAfterTest(true);
-
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-        $user3 = self::getDataGenerator()->create_user();
-        $user4 = self::getDataGenerator()->create_user();
-        $user5 = self::getDataGenerator()->create_user();
-        $user6 = self::getDataGenerator()->create_user();
-        $this->setUser($user1);
-
-        \core_message\api::add_contact($user1->id, $user3->id);
-        \core_message\api::add_contact($user1->id, $user4->id);
-        \core_message\api::add_contact($user1->id, $user5->id);
-        \core_message\api::add_contact($user1->id, $user6->id);
-
-        // Removing a non-contact.
-        $return = core_message_external::unblock_contacts(array($user2->id));
-        $this->assertNull($return);
-
-        // Removing one contact.
-        $return = core_message_external::unblock_contacts(array($user3->id));
-        $this->assertNull($return);
-
-        // Removing multiple contacts.
-        $return = core_message_external::unblock_contacts(array($user4->id, $user5->id));
-        $this->assertNull($return);
-
-        // Removing contact from unexisting user.
-        $return = core_message_external::unblock_contacts(array(99999));
-        $this->assertNull($return);
-
-        // Removing mixed valid and invalid data.
-        $return = core_message_external::unblock_contacts(array($user6->id, 99999));
-        $this->assertNull($return);
-
-        // Try to unblock a contact of another user contact list, should throw an exception.
-        // All assertions must be added before this point.
-        $this->expectException('required_capability_exception');
-        core_message_external::unblock_contacts(array($user2->id), $user3->id);
-    }
-
-    /**
      * Test getting contact requests.
      */
     public function test_get_contact_requests() {
