@@ -297,7 +297,9 @@ class helper {
      * @return array
      */
     public static function togglecontact_link_params($user, $iscontact = false) {
+        global $USER;
         $params = array(
+            'data-currentuserid' => $USER->id,
             'data-userid' => $user->id,
             'data-is-contact' => $iscontact,
             'id' => 'toggle-contact-button',
