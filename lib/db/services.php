@@ -1426,16 +1426,6 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_message_unblock_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'unblock_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                         Unblock contacts',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
     'core_message_get_user_notification_preferences' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_user_notification_preferences',
