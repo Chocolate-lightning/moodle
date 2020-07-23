@@ -25,6 +25,8 @@ information provided here is intended especially for developers.
   * get_conversation_messages()
   * data_for_messagearea_get_most_recent_message()
   * data_for_messagearea_get_profile()
+  * mark_all_messages_as_read()
+  * delete_conversation()
 
 === 3.9 ===
 * Removed the following deprecated functions:

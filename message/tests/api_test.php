@@ -2802,57 +2802,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Tests deleting a conversation.
-     */
-    public function test_delete_conversation() {
-        global $DB;
-
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Send some messages back and forth.
-        $time = 1;
-        $m1id = $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $m2id = $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $m3id = $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $m4id = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
-
-        // Delete the conversation as user 1.
-        \core_message\api::delete_conversation($user1->id, $user2->id);
-        $this->assertDebuggingCalled();
-
-        $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
-        $this->assertCount(4, $muas);
-        // Sort by id.
-        ksort($muas);
-
-        $mua1 = array_shift($muas);
-        $mua2 = array_shift($muas);
-        $mua3 = array_shift($muas);
-        $mua4 = array_shift($muas);
-
-        $this->assertEquals($user1->id, $mua1->userid);
-        $this->assertEquals($m1id, $mua1->messageid);
-        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua1->action);
-
-        $this->assertEquals($user1->id, $mua2->userid);
-        $this->assertEquals($m2id, $mua2->messageid);
-        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua2->action);
-
-        $this->assertEquals($user1->id, $mua3->userid);
-        $this->assertEquals($m3id, $mua3->messageid);
-        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua3->action);
-
-        $this->assertEquals($user1->id, $mua4->userid);
-        $this->assertEquals($m4id, $mua4->messageid);
-        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua4->action);
-    }
-
-    /**
      * Tests deleting a conversation by conversation id.
      */
     public function test_delete_conversation_by_id() {
@@ -3763,99 +3712,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         );
     }
 
-    /**
-     * Tests that when blocking messages from non-contacts is enabled that
-     * non-contacts trying to send a message return false.
-     */
-    public function test_is_user_non_contact_blocked() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // Set as the first user.
-        $this->setUser($user1);
-
-        // By default, user only can be messaged by contacts and members of any of his/her courses.
-        $this->assertTrue(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-
-        // Enable all users privacy messaging and check now the default user's preference has been set to allow receiving
-        // messages from everybody.
-        set_config('messagingallusers', true);
-        // Check that the return result is now false because any site user can contact him/her.
-        $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-
-        // Set the second user's preference to not receive messages from non-contacts.
-        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2->id);
-        // Check that the return result is still true (because is even more restricted).
-        $this->assertTrue(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-
-        // Add the first user as a contact for the second user.
-        \core_message\api::add_contact($user2->id, $user1->id);
-
-        // Check that the return result is now false.
-        $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-
-        // Set the second user's preference to receive messages from course members.
-        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER, $user2->id);
-        // Check that the return result is still false (because $user1 is still his/her contact).
-        $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-    }
-
-    /**
-     * Tests that we return true when a user is blocked, or false
-     * if they are not blocked.
-     */
-    public function test_is_user_blocked() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // Set the user.
-        $this->setUser($user1);
-
-        // User shouldn't be blocked.
-        $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
-        $this->assertDebuggingCalled();
-
-        // Block the user.
-        \core_message\api::block_user($user1->id, $user2->id);
-
-        // User should be blocked.
-        $this->assertTrue(\core_message\api::is_user_blocked($user1->id, $user2->id));
-        $this->assertDebuggingCalled();
-
-        // Unblock the user.
-        \core_message\api::unblock_user($user1->id, $user2->id);
-        $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
-        $this->assertDebuggingCalled();
-    }
-
-    /**
-     * Tests that the admin is not blocked even if someone has chosen to block them.
-     */
-    public function test_is_user_blocked_as_admin() {
-        // Create a user.
-        $user1 = self::getDataGenerator()->create_user();
-
-        // Set the user.
-        $this->setUser($user1);
-
-        // Block the admin user.
-        \core_message\api::block_user($user1->id, 2);
-
-        // Now change to the admin user.
-        $this->setAdminUser();
-
-        // As the admin you should still be able to send messages to the user.
-        $this->assertFalse(\core_message\api::is_user_blocked($user1->id));
-        $this->assertDebuggingCalled();
-    }
-
     /*
      * Tes get_message_processor api.
      */
@@ -4260,20 +4116,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = self::getDataGenerator()->create_user();
 
         $this->assertFalse(\core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
-    }
-
-    /**
-     * Test we can return a conversation that exists between users.
-     */
-    public function test_get_conversation_between_users_with_existing_conversation() {
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
-        $this->assertDebuggingCalled();
-
-        $this->assertEquals($conversationid,
-            \core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
     }
 
     /**
