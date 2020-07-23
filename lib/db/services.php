@@ -1151,17 +1151,6 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_message_delete_conversation' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'delete_conversation',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Deletes a conversation.',
-        'type' => 'write',
-        'capabilities' => 'moodle/site:deleteownmessage',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
     'core_message_delete_conversations_by_id' => array(
         'classname' => 'core_message_external',
         'methodname' => 'delete_conversations_by_id',
@@ -1206,15 +1195,6 @@ $functions = array(
         'description' => 'Retrieve the data for searching for people',
         'type' => 'read',
         'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_get_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'get_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the contact list',
-        'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_get_user_contacts' => array(
@@ -1322,16 +1302,6 @@ $functions = array(
         'methodname' => 'mark_all_notifications_as_read',
         'classpath' => 'message/externallib.php',
         'description' => 'Mark all notifications as read for a given user',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_mark_all_messages_as_read' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'mark_all_messages_as_read',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Mark all messages as read for a given user',
         'type' => 'write',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
