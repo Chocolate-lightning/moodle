@@ -24,7 +24,6 @@
 
 namespace core_message;
 
-use core\session\exception;
 use core_favourites\local\entity\favourite;
 
 defined('MOODLE_INTERNAL') || die();
