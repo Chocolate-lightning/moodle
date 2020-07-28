@@ -108,7 +108,7 @@ $string['configtoolurl'] = 'Default remote tool URL';
 $string['configtypes'] = 'Enable LTI applications';
 $string['configured'] = 'Configured';
 $string['confirmtoolactivation'] = 'Are you sure you would like to activate this tool?';
-$string['contentitem_deeplinking'] = 'supports Deep Linking';
+$string['contentitem_deeplinking'] = 'supports Deep Linking (Content-Item message)';
 $string['contentitem_help'] = 'If ticked, the option \'Select content\' will be available when adding an external tool.';
 $string['contentitem_multiple_description'] = 'The following items will be added to your course:';
 $string['contentitem_multiple_graded'] = 'Graded activity (Maximum grade $points)';
@@ -597,5 +597,6 @@ $string['organizationid_help'] = 'A unique identifier for this Moodle instance. 
 
 If this field is left blank, the host name of this Moodle site will be used as the default value.';
 
+// Deprecated since Moodle 3.10.
 $string['contentitem'] = 'Content-Item Message';
 

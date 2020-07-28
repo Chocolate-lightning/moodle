@@ -270,9 +270,9 @@ class mod_lti_edit_types_form extends moodleform {
 
             // Add grading preferences fieldset where the tool is allowed to return grades.
             $gradeoptions = array();
-            $gradeoptions[0] = get_string('never', 'lti');
-            $gradeoptions[1] = get_string('always', 'lti');
-            $gradeoptions[2] = get_string('delegate_tool', 'lti');
+            $gradeoptions[] = get_string('never', 'lti');
+            $gradeoptions[] = get_string('always', 'lti');
+            $gradeoptions[] = get_string('delegate_tool', 'lti');
 
             $mform->addElement('select', 'lti_acceptgrades', get_string('accept_grades_admin', 'lti'), $gradeoptions);
             $mform->setType('lti_acceptgrades', PARAM_INT);

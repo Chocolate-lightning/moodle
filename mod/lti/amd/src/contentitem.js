@@ -137,6 +137,7 @@ define(
            ]).done(strs => {
                 $("div#add_multiple_summary p").text(strs[0]);
                 items.forEach(item => {
+                    // Creating a new list element with strong for name and em for grading info.
                     var li = $('<li><strong></strong> <em></em></li>');
                     li.find('strong').text(item.name);
                     if (item.instructorchoiceacceptgrades === 1) {

@@ -152,6 +152,10 @@ if ($mform->is_cancelled()) {
         list($cm, $fromform) = update_moduleinfo($cm, $fromform, $course, $mform);
     } else if (!empty($fromform->add)) {
         if (!empty($fromform->add_multiple)) {
+            /* Allows a tool to add more than one module at a time by
+             * supplying variants which are applied to the base form data.
+             * Variants are JSON objects which attribute names match the form keys.
+             */
             $variants = json_decode($fromform->add_multiple);
             foreach ($variants as &$variant) {
                 $formvariant = clone $fromform;
