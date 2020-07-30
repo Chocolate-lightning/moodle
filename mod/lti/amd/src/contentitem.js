@@ -118,7 +118,7 @@ define(
          * @param {Object[]} items
          */
         var showMultipleSummaryAndHideForm = function(items) {
-            const hide = function(e) {
+            /*const hide = function(e) {
                e.hidden = true;
             };
             [...document.querySelector('#region-main-box form.mform').children]
@@ -146,7 +146,29 @@ define(
                     $("div#add_multiple_summary ul").append(li);
                 });
                 document.querySelector('#fgroup_id_buttonar').hidden = false;
+            });*/
+
+            demo(items);
+        };
+
+        const demo = async(items) => {
+            const form = document.querySelector('#region-main-box form');
+            const toolArea = form.querySelector('[data-attribute="dynamic-import"]');
+
+            Array.prototype.forEach.call(form.children, (formElement) => {
+                formElement.setAttribute('hidden', 'true');
+                formElement.setAttribute('aria-hidden', 'true');
+                formElement.setAttribute('tab-index', '-1');
             });
+
+            const {html, js} = await templates.renderForPromise('mod_lti/tool_deeplinking_results',
+                {items: items});
+
+            await templates.replaceNodeContents(toolArea, html, js);
+
+            toolArea.removeAttribute('hidden');
+            toolArea.setAttribute('aria-hidden', 'false');
+            toolArea.setAttribute('tab-index', '1');
         };
 
         var configToVariant = function(config) {
