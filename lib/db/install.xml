@@ -485,30 +485,6 @@
         <INDEX NAME="filter_md5key" UNIQUE="false" FIELDS="filter, md5key"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="log" COMMENT="Every action is logged as far as possible">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="ip" TYPE="char" LENGTH="45" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="module" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="action" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="url" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="course-module-action" UNIQUE="false" FIELDS="course, module, action"/>
-        <INDEX NAME="time" UNIQUE="false" FIELDS="time"/>
-        <INDEX NAME="action" UNIQUE="false" FIELDS="action"/>
-        <INDEX NAME="userid-course" UNIQUE="false" FIELDS="userid, course"/>
-        <INDEX NAME="cmid" UNIQUE="false" FIELDS="cmid"/>
-      </INDEXES>
-    </TABLE>
     <TABLE NAME="log_queries" COMMENT="Logged database queries.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

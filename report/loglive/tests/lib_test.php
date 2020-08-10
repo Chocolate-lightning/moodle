@@ -42,7 +42,6 @@ class report_loglive_lib_testcase extends advanced_testcase {
 
         $supportedstores = array(
             'logstore_database' => '\logstore_legacy\log\database',
-            'logstore_legacy' => '\logstore_legacy\log\store',
             'logstore_standard' => '\logstore_standard\log\store'
         );
 
