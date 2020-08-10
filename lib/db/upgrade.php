@@ -2575,5 +2575,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020081400.02);
     }
 
+    if ($oldversion < 2020082200.01) {
+
+        // Define table log to be dropped.
+        $table = new xmldb_table('log');
+
+        // Conditionally launch drop table for log.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020082200.01);
+    }
+
     return true;
 }
