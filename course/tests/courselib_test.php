@@ -2929,7 +2929,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $coursecontext = context_course::instance($course->id);
 
         $event = \core\event\course_resources_list_viewed::create(array('context' => context_course::instance($course->id)));
-        $event->set_legacy_logdata(array('book', 'page', 'resource'));
         $sink = $this->redirectEvents();
         $event->trigger();
         $events = $sink->get_events();

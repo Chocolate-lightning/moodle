@@ -44,9 +44,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class course_updated extends base {
 
-    /** @var array The legacy log data. */
-    private $legacylogdata;
-
     /**
      * Initialise the event data.
      */
@@ -81,42 +78,6 @@ class course_updated extends base {
      */
     public function get_url() {
         return new \moodle_url('/course/edit.php', array('id' => $this->objectid));
-    }
-
-    /**
-     * Returns the name of the legacy event.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'course_updated';
-    }
-
-    /**
-     * Returns the legacy event data.
-     *
-     * @return \stdClass the course that was updated
-     */
-    protected function get_legacy_eventdata() {
-        return $this->get_record_snapshot('course', $this->objectid);
-    }
-
-    /**
-     * Set the legacy data used for add_to_log().
-     *
-     * @param array $logdata
-     */
-    public function set_legacy_logdata($logdata) {
-        $this->legacylogdata = $logdata;
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
     }
 
     public static function get_objectid_mapping() {

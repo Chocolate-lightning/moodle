@@ -44,28 +44,12 @@ defined('MOODLE_INTERNAL') || die();
 class webservice_login_failed extends base {
 
     /**
-     * Legacy log data.
-     *
-     * @var null|array
-     */
-    protected $legacylogdata;
-
-    /**
      * Returns description of what happened.
      *
      * @return string
      */
     public function get_description() {
         return "Web service authentication failed with code: \"{$this->other['reason']}\".";
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
     }
 
     /**
@@ -86,16 +70,6 @@ class webservice_login_failed extends base {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
-    }
-
-    /**
-     * Set the legacy event log data.
-     *
-     * @param array $logdata The log data.
-     * @return void
-     */
-    public function set_legacy_logdata($logdata) {
-        $this->legacylogdata = $logdata;
     }
 
     /**

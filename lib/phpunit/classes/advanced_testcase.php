@@ -399,38 +399,6 @@ abstract class advanced_testcase extends base_testcase {
     }
 
     /**
-     * Assert that an event legacy data is equal to the expected value.
-     *
-     * @param mixed $expected expected data.
-     * @param \core\event\base $event the event object.
-     * @param string $message
-     * @return void
-     */
-    public function assertEventLegacyData($expected, \core\event\base $event, $message = '') {
-        $legacydata = phpunit_event_mock::testable_get_legacy_eventdata($event);
-        if ($message === '') {
-            $message = 'Event legacy data does not match expected value.';
-        }
-        $this->assertEquals($expected, $legacydata, $message);
-    }
-
-    /**
-     * Assert that an event legacy log data is equal to the expected value.
-     *
-     * @param mixed $expected expected data.
-     * @param \core\event\base $event the event object.
-     * @param string $message
-     * @return void
-     */
-    public function assertEventLegacyLogData($expected, \core\event\base $event, $message = '') {
-        $legacydata = phpunit_event_mock::testable_get_legacy_logdata($event);
-        if ($message === '') {
-            $message = 'Event legacy log data does not match expected value.';
-        }
-        $this->assertEquals($expected, $legacydata, $message);
-    }
-
-    /**
      * Assert that an event is not using event->contxet.
      * While restoring context might not be valid and it should not be used by event url
      * or description methods.
@@ -450,9 +418,6 @@ abstract class advanced_testcase extends base_testcase {
         // Test event methods should not use event->context.
         $event->get_url();
         $event->get_description();
-        $event->get_legacy_eventname();
-        phpunit_event_mock::testable_get_legacy_eventdata($event);
-        phpunit_event_mock::testable_get_legacy_logdata($event);
 
         // Restore event->context.
         phpunit_event_mock::testable_set_event_context($event, $eventcontext);
