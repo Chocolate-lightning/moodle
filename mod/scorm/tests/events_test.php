@@ -81,9 +81,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertEquals(context_module::instance($this->eventcm->id), $event->get_context());
         $this->assertEquals(4, $event->other['attemptid']);
         $this->assertEquals(2, $event->relateduserid);
-        $expected = array($this->eventcourse->id, 'scorm', 'delete attempts', 'report.php?id=' . $this->eventcm->id,
-                4, $this->eventcm->id);
-        $this->assertEventLegacyLogData($expected, $events[0]);
         $this->assertEventContextNotUsed($event);
 
         // Test event validations.
@@ -113,10 +110,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
-        // Check that the legacy log data is valid.
-        $expected = array($this->eventcourse->id, 'scorm', 'pre-view', 'view.php?id=' . $this->eventcm->id,
-                $this->eventscorm->id, $this->eventcm->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -138,9 +131,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
-        // Check that the legacy log data is valid.
-        $expected = array($this->eventcourse->id, 'scorm', 'view all', 'index.php?id=' . $this->eventcourse->id, '');
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -164,10 +154,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
-        // Check that the legacy log data is valid.
-        $expected = array($this->eventcourse->id, 'scorm', 'userreportinteractions', 'report/userreportinteractions.php?id=' .
-                $this->eventcm->id . '&user=5&attempt=' . 2, $this->eventscorm->id, $this->eventcm->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -221,10 +207,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
-        // Check that the legacy log data is valid.
-        $expected = array($this->eventcourse->id, 'scorm', 'report', 'report.php?id=' . $this->eventcm->id . '&mode=basic',
-                $this->eventscorm->id, $this->eventcm->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -249,10 +231,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
-        // Check that the legacy log data is valid.
-        $expected = array($this->eventcourse->id, 'scorm', 'launch', 'view.php?id=' . $this->eventcm->id,
-                          'url_to_content_that_was_laoded.php', $this->eventcm->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         // Test validations.
@@ -284,10 +262,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
-        // Check that the legacy log data is valid.
-        $expected = array($this->eventcourse->id, 'scorm', 'userreporttracks', 'report/userreporttracks.php?id=' .
-                $this->eventcm->id . '&user=5&attempt=' . 2 . '&scoid=3', $this->eventscorm->id, $this->eventcm->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -335,7 +309,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
     /**
      * Tests for userreport viewed event.
      *
-     * There is no api involved so the best we can do is test validations and legacy log by triggering event manually.
+     * There is no api involved so the best we can do is test validations by triggering event manually.
      */
     public function test_user_report_viewed_event() {
         $this->resetAfterTest();
@@ -352,10 +326,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
-        // Check that the legacy log data is valid.
-        $expected = array($this->eventcourse->id, 'scorm', 'userreport', 'report/userreport.php?id=' .
-                $this->eventcm->id . '&user=5&attempt=' . 2, $this->eventscorm->id, $this->eventcm->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -441,8 +411,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertEquals($cmielement, $event->other['cmielement']);
         $this->assertEquals($cmivalue, $event->other['cmivalue']);
 
-        // Check that no legacy log data is provided.
-        $this->assertEventLegacyLogData(null, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -562,8 +530,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertEquals($cmielement, $event->other['cmielement']);
         $this->assertEquals($cmivalue, $event->other['cmivalue']);
 
-        // Check that no legacy log data is provided.
-        $this->assertEventLegacyLogData(null, $event);
         $this->assertEventContextNotUsed($event);
     }
 

@@ -134,44 +134,7 @@ if ($showlastaccess) {
 
 $modinfo = get_fast_modinfo($course);
 
-// If using legacy log then get users from old table.
-if ($uselegacyreader) {
-    // If we are going to use the internal (not legacy) log table, we should only get records
-    // from the legacy table that exist before we started adding logs to the new table.
-    $params = array('courseid' => $course->id, 'action' => 'view%', 'visible' => 1);
-    $limittime = '';
-    if (!empty($minloginternalreader)) {
-        $limittime = ' AND time < :timeto ';
-        $params['timeto'] = $minloginternalreader;
-    }
-    if ($startdate) {
-        $limittime .= ' AND time >= :startdate ';
-        $params['startdate'] = $startdate;
-    }
-    if ($enddate) {
-        $limittime .= ' AND time < :enddate ';
-        $params['enddate'] = $enddate;
-    }
-    // Check if we need to show the last access.
-    $sqllasttime = '';
-    if ($showlastaccess) {
-        $sqllasttime = ", MAX(time) AS lasttime";
-    }
-    $logactionlike = $DB->sql_like('l.action', ':action');
-    $sql = "SELECT cm.id, COUNT('x') AS numviews, COUNT(DISTINCT userid) AS distinctusers $sqllasttime
-              FROM {course_modules} cm
-              JOIN {modules} m
-                ON m.id = cm.module
-              JOIN {log} l
-                ON l.cmid = cm.id
-             WHERE cm.course = :courseid
-               AND $logactionlike
-               AND m.visible = :visible $limittime
-          GROUP BY cm.id";
-    $views = $DB->get_records_sql($sql, $params);
-}
-
-// Get record from sql_internal_table_reader and merge with records obtained from legacy log (if needed).
+// Get record from sql_internal_table_reader.
 if ($useinternalreader) {
     // Check if we need to show the last access.
     $sqllasttime = '';

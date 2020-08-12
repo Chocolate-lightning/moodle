@@ -216,15 +216,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($assign->get_instance()->id, $event->objectid);
         $this->assertEquals($student->id, $event->relateduserid);
 
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'grant extension',
-            'view.php?id=' . $assign->get_course_module()->id,
-            $student->id,
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
 
@@ -250,16 +241,7 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($assign->get_instance()->id, $event->objectid);
         $this->assertEquals($student->id, $event->relateduserid);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'lock submission',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('locksubmissionforstudent', 'assign', array('id' => $student->id,
-                'fullname' => fullname($student))),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
+
         $sink->close();
     }
 
@@ -286,15 +268,6 @@ class assign_events_testcase extends advanced_testcase {
                 $this->assertInstanceOf('\mod_assign\event\identities_revealed', $event);
                 $this->assertEquals($assign->get_context(), $event->get_context());
                 $this->assertEquals($assign->get_instance()->id, $event->objectid);
-                $expected = array(
-                    $assign->get_course()->id,
-                    'assign',
-                    'reveal identities',
-                    'view.php?id=' . $assign->get_course_module()->id,
-                    get_string('revealidentities', 'assign'),
-                    $assign->get_course_module()->id
-                );
-                $this->assertEventLegacyLogData($expected, $event);
             }
         }
 
@@ -329,15 +302,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\submission_status_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewownsubmissionstatus', 'assign'),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -366,16 +330,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($submission->id, $event->objectid);
         $this->assertEquals($student->id, $event->relateduserid);
         $this->assertEquals(ASSIGN_SUBMISSION_STATUS_DRAFT, $event->other['newstatus']);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'revert submission to draft',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('reverttodraftforstudent', 'assign', array('id' => $student->id,
-                'fullname' => fullname($student))),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
 
@@ -403,16 +357,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($student->id, $event->relateduserid);
         $this->assertEquals($teacher->id, $event->userid);
         $this->assertEquals($teacher->id, $event->other['markerid']);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'set marking allocation',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('setmarkerallocationforlog', 'assign', array('id' => $student->id,
-                'fullname' => fullname($student), 'marker' => fullname($teacher))),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
 
@@ -448,16 +392,6 @@ class assign_events_testcase extends advanced_testcase {
                 $this->assertEquals($student->id, $event->relateduserid);
                 $this->assertEquals($teacher->id, $event->userid);
                 $this->assertEquals(ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW, $event->other['newstate']);
-                $expected = array(
-                    $assign->get_course()->id,
-                    'assign',
-                    'set marking workflow state',
-                    'view.php?id=' . $assign->get_course_module()->id,
-                    get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $student->id,
-                        'fullname' => fullname($student), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW)),
-                    $assign->get_course_module()->id
-                );
-                $this->assertEventLegacyLogData($expected, $event);
             }
         }
         $this->assertEquals(2, $eventcount);
@@ -479,16 +413,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($student->id, $event->relateduserid);
         $this->assertEquals($teacher->id, $event->userid);
         $this->assertEquals(ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE, $event->other['newstate']);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'set marking workflow state',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $student->id,
-                'fullname' => fullname($student), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE)),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
 
         // Test setting workflow state in process_save_quick_grades.
@@ -511,16 +435,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($student->id, $event->relateduserid);
         $this->assertEquals($teacher->id, $event->userid);
         $this->assertEquals(ASSIGN_MARKING_WORKFLOW_STATE_INMARKING, $event->other['newstate']);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'set marking workflow state',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $student->id,
-                'fullname' => fullname($student), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_INMARKING)),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
 
@@ -550,15 +464,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($submission2->id, $event->objectid);
         $this->assertEquals($student->id, $event->userid);
         $submission2->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'submissioncopied',
-            'view.php?id=' . $assign->get_course_module()->id,
-            $assign->testable_format_submission_for_log($submission2),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
 
@@ -584,16 +489,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($assign->get_instance()->id, $event->objectid);
         $this->assertEquals($student->id, $event->relateduserid);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'unlock submission',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('unlocksubmissionforstudent', 'assign', array('id' => $student->id,
-                'fullname' => fullname($student))),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
 
@@ -624,15 +519,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($grade->id, $event->objectid);
         $this->assertEquals($student->id, $event->relateduserid);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'grade submission',
-            'view.php?id=' . $assign->get_course_module()->id,
-            $assign->format_grade_for_log($grade),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
 
         // Test process_save_quick_grades.
@@ -655,15 +541,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($grade->id, $event->objectid);
         $this->assertEquals($student->id, $event->relateduserid);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'grade submission',
-            'view.php?id=' . $assign->get_course_module()->id,
-            $assign->format_grade_for_log($grade),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
 
         // Test update_grade.
@@ -681,15 +558,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($grade->id, $event->objectid);
         $this->assertEquals($student->id, $event->relateduserid);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'grade submission',
-            'view.php?id=' . $assign->get_course_module()->id,
-            $assign->format_grade_for_log($grade),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
 
@@ -729,15 +597,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_assign\event\submission_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($submission->id, $event->objectid);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view submission',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewsubmissionforuser', 'assign', $student->id),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -784,15 +643,6 @@ class assign_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_assign\event\feedback_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($gradeid, $event->objectid);
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view feedback',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewfeedbackforuser', 'assign', $student->id),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -829,16 +679,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\grading_form_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view grading form',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewgradingformforstudent', 'assign', array('id' => $student->id,
-                'fullname' => fullname($student))),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -875,15 +715,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\grading_table_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view submission grading table',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewsubmissiongradingtable', 'assign'),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -915,15 +746,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\submission_form_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view submit assignment form',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('editsubmission', 'assign'),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -955,15 +777,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\submission_confirmation_form_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view confirm submit assignment form',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewownsubmissionform', 'assign'),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -993,15 +806,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\reveal_identities_confirmation_page_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewrevealidentitiesconfirm', 'assign'),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1036,17 +840,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\statement_accepted', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'submission statement accepted',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('submissionstatementacceptedlog',
-                'mod_assign',
-                fullname($student)),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         // Enable the online text submission plugin.
@@ -1077,7 +870,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\statement_accepted', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1100,15 +892,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\batch_set_workflow_state_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view batch set marking workflow state',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewbatchsetmarkingworkflowstate', 'assign'),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1131,15 +914,6 @@ class assign_events_testcase extends advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_assign\event\batch_set_marker_allocation_viewed', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
-        $expected = array(
-            $assign->get_course()->id,
-            'assign',
-            'view batch set marker allocation',
-            'view.php?id=' . $assign->get_course_module()->id,
-            get_string('viewbatchmarkingallocation', 'assign'),
-            $assign->get_course_module()->id
-        );
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 

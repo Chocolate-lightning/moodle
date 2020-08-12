@@ -51,13 +51,6 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $event = reset($events);
 
-        $expected = new stdClass();
-        $expected->groupid = $group->id;
-        $expected->userid  = $user->id;
-        $expected->component = 'mod_workshop';
-        $expected->itemid = '123';
-        $this->assertEventLegacyData($expected, $event);
-        $this->assertSame('groups_member_added', $event->get_legacy_eventname());
         $this->assertInstanceOf('\core\event\group_member_added', $event);
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
@@ -82,11 +75,6 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $event = reset($events);
 
-        $expected = new stdClass();
-        $expected->groupid = $group->id;
-        $expected->userid  = $user->id;
-        $this->assertEventLegacyData($expected, $event);
-        $this->assertSame('groups_member_removed', $event->get_legacy_eventname());
         $this->assertInstanceOf('\core\event\group_member_removed', $event);
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
@@ -108,8 +96,7 @@ class core_group_lib_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\group_created', $event);
-        $this->assertEventLegacyData($group, $event);
-        $this->assertSame('groups_group_created', $event->get_legacy_eventname());
+
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
         $url = new moodle_url('/group/index.php', array('id' => $event->courseid));
@@ -129,9 +116,6 @@ class core_group_lib_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\grouping_created', $event);
-
-        $this->assertEventLegacyData($group, $event);
-        $this->assertSame('groups_grouping_created', $event->get_legacy_eventname());
 
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
@@ -162,8 +146,7 @@ class core_group_lib_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\group_updated', $event);
         $group->name = $data->name;
-        $this->assertEventLegacyData($group, $event);
-        $this->assertSame('groups_group_updated', $event->get_legacy_eventname());
+
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
         $url = new moodle_url('/group/group.php', array('id' => $event->objectid));
@@ -191,8 +174,7 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertTimeCurrent($group->timemodified);
 
         $this->assertInstanceOf('\core\event\group_updated', $event);
-        $this->assertEventLegacyData($group, $event);
-        $this->assertSame('groups_group_updated', $event->get_legacy_eventname());
+
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
         $url = new moodle_url('/group/group.php', array('id' => $event->objectid));
@@ -229,9 +211,6 @@ class core_group_lib_testcase extends advanced_testcase {
         $data->configdata = $grouping->configdata;
         $data->idnumber = $grouping->idnumber;
         $data->timecreated = $grouping->timecreated;
-        // Assert legacy event data.
-        $this->assertEventLegacyData($data, $event);
-        $this->assertSame('groups_grouping_updated', $event->get_legacy_eventname());
 
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($grouping->id, $event->objectid);
@@ -269,9 +248,6 @@ class core_group_lib_testcase extends advanced_testcase {
         $data->idnumber = $grouping->idnumber;
         $data->name = $grouping->name;
         $data->timecreated = $grouping->timecreated;
-        // Assert legacy event data.
-        $this->assertEventLegacyData($data, $event);
-        $this->assertSame('groups_grouping_updated', $event->get_legacy_eventname());
 
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($grouping->id, $event->objectid);
@@ -292,8 +268,7 @@ class core_group_lib_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\group_deleted', $event);
-        $this->assertEventLegacyData($group, $event);
-        $this->assertSame('groups_group_deleted', $event->get_legacy_eventname());
+
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
         $url = new moodle_url('/group/index.php', array('id' => $event->courseid));
@@ -313,8 +288,7 @@ class core_group_lib_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\grouping_deleted', $event);
-        $this->assertEventLegacyData($group, $event);
-        $this->assertSame('groups_grouping_deleted', $event->get_legacy_eventname());
+
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
         $url = new moodle_url('/group/groupings.php', array('id' => $event->courseid));

@@ -193,8 +193,6 @@ class core_authlib_testcase extends advanced_testcase {
         $this->assertEquals(AUTH_LOGIN_FAILED, $reason);
         // Test Event.
         $this->assertInstanceOf('\core\event\user_login_failed', $event);
-        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username1');
-        $this->assertEventLegacyLogData($expectedlogdata, $event);
         $eventdata = $event->get_data();
         $this->assertSame($eventdata['other']['username'], 'username1');
         $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_FAILED);
@@ -213,8 +211,6 @@ class core_authlib_testcase extends advanced_testcase {
         $this->assertEquals(AUTH_LOGIN_FAILED, $reason);
         // Test Event.
         $this->assertInstanceOf('\core\event\user_login_failed', $event);
-        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username1');
-        $this->assertEventLegacyLogData($expectedlogdata, $event);
         $eventdata = $event->get_data();
         $this->assertSame($eventdata['other']['username'], 'username1');
         $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_FAILED);
@@ -265,8 +261,6 @@ class core_authlib_testcase extends advanced_testcase {
         $this->assertEquals(AUTH_LOGIN_SUSPENDED, $reason);
         // Test Event.
         $this->assertInstanceOf('\core\event\user_login_failed', $event);
-        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username2');
-        $this->assertEventLegacyLogData($expectedlogdata, $event);
         $eventdata = $event->get_data();
         $this->assertSame($eventdata['other']['username'], 'username2');
         $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_SUSPENDED);
@@ -284,8 +278,6 @@ class core_authlib_testcase extends advanced_testcase {
         $this->assertEquals(AUTH_LOGIN_SUSPENDED, $reason);
         // Test Event.
         $this->assertInstanceOf('\core\event\user_login_failed', $event);
-        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username3');
-        $this->assertEventLegacyLogData($expectedlogdata, $event);
         $eventdata = $event->get_data();
         $this->assertSame($eventdata['other']['username'], 'username3');
         $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_SUSPENDED);
@@ -303,8 +295,6 @@ class core_authlib_testcase extends advanced_testcase {
         $this->assertEquals(AUTH_LOGIN_NOUSER, $reason);
         // Test Event.
         $this->assertInstanceOf('\core\event\user_login_failed', $event);
-        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username4');
-        $this->assertEventLegacyLogData($expectedlogdata, $event);
         $eventdata = $event->get_data();
         $this->assertSame($eventdata['other']['username'], 'username4');
         $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_NOUSER);

@@ -68,8 +68,6 @@ class core_tag_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\tag_updated', $event);
         $this->assertEquals($systemcontext, $event->get_context());
-        $expected = array(SITEID, 'tag', 'update', 'index.php?id=' . $tag->id, $oldname . '->'. $tag->name);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Trigger and capture the event when setting the type of a tag.
         $sink = $this->redirectEvents();
@@ -80,8 +78,6 @@ class core_tag_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\tag_updated', $event);
         $this->assertEquals($systemcontext, $event->get_context());
-        $expected = array(0, 'tag', 'update', 'index.php?id=' . $tag->id, $tag->name);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Trigger and capture the event for setting the description of a tag.
         $sink = $this->redirectEvents();
@@ -93,8 +89,6 @@ class core_tag_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\tag_updated', $event);
         $this->assertEquals($systemcontext, $event->get_context());
-        $expected = array(0, 'tag', 'update', 'index.php?id=' . $tag->id, $tag->name);
-        $this->assertEventLegacyLogData($expected, $event);
     }
 
     /**
@@ -116,8 +110,6 @@ class core_tag_events_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('tag_instance', array('component' => 'core')));
         $this->assertInstanceOf('\core\event\tag_added', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
-        $expected = array($course->id, 'coursetags', 'add', 'tag/search.php?query=A+tag', 'Course tagged');
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Create a question to tag.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -136,8 +128,6 @@ class core_tag_events_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('tag_instance', array('component' => 'core')));
         $this->assertInstanceOf('\core\event\tag_added', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
-        $expected = null;
-        $this->assertEventLegacyLogData($expected, $event);
     }
 
     /**
@@ -283,8 +273,6 @@ class core_tag_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\tag_flagged', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag->id, $tag->id, '', '2');
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Unset the flag for both (though by default tag2 should have been created with 0 already).
         foreach ($tags as $t) {
@@ -308,14 +296,10 @@ class core_tag_events_testcase extends advanced_testcase {
         $event = $events[0];
         $this->assertInstanceOf('\core\event\tag_flagged', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag->id, $tag->id, '', '2');
-        $this->assertEventLegacyLogData($expected, $event);
 
         $event = $events[1];
         $this->assertInstanceOf('\core\event\tag_flagged', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag2->id, $tag2->id, '', '2');
-        $this->assertEventLegacyLogData($expected, $event);
     }
 
     /**

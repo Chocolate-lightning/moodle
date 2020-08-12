@@ -38,7 +38,7 @@ class mod_folder_events_testcase extends advanced_testcase {
      * Test the folder updated event.
      *
      * There is no external API for updating a folder, so the unit test will simply create
-     * and trigger the event and ensure the legacy log data is returned as expected.
+     * and trigger the event and ensure data is returned as expected.
      */
     public function test_folder_updated() {
         $this->setAdminUser();
@@ -64,8 +64,6 @@ class mod_folder_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_folder\event\folder_updated', $event);
         $this->assertEquals(context_module::instance($folder->cmid), $event->get_context());
         $this->assertEquals($folder->id, $event->objectid);
-        $expected = array($course->id, 'folder', 'edit', 'edit.php?id=' . $folder->cmid, $folder->id, $folder->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -73,7 +71,7 @@ class mod_folder_events_testcase extends advanced_testcase {
      * Test the folder updated event.
      *
      * There is no external API for updating a folder, so the unit test will simply create
-     * and trigger the event and ensure the legacy log data is returned as expected.
+     * and trigger the event and ensure data is returned as expected.
      */
     public function test_all_files_downloaded() {
         $this->setAdminUser();

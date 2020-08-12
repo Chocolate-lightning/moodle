@@ -27,32 +27,8 @@ Feature: View an outline report
       | Name | Book name |
       | Description | Book description |
 
-  Scenario: View the outline report when only the legacy log reader is enabled
-    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And I click on "Enable" "link" in the "Legacy log" "table_row"
-    And I click on "Disable" "link" in the "Standard log" "table_row"
-    And the following config values are set as admin:
-      | loglegacy | 1 | logstore_legacy |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Forum name"
-    And I am on "Course 1" course homepage
-    And I follow "Book name"
-    And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Book name"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reports > Activity report" in current page administration
-    Then I should see "2 views by 2 users" in the "Book name" "table_row"
-    And I should see "1 views by 1 users" in the "Forum name" "table_row"
-
   Scenario: View the outline report when only the standard log reader is enabled
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And "Enable" "link" should exist in the "Legacy log" "table_row"
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And I log out
     And I log in as "student1"
@@ -71,32 +47,8 @@ Feature: View an outline report
     Then I should see "2 views by 2 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
-  Scenario: View the outline report when both the standard and legacy log readers are enabled
-    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And I click on "Enable" "link" in the "Legacy log" "table_row"
-    And "Disable" "link" should exist in the "Standard log" "table_row"
-    And the following config values are set as admin:
-      | loglegacy | 1 | logstore_legacy |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Forum name"
-    And I am on "Course 1" course homepage
-    And I follow "Book name"
-    And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Book name"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reports > Activity report" in current page administration
-    Then I should see "2 views by 2 users" in the "Book name" "table_row"
-    And I should see "1 views by 1 users" in the "Forum name" "table_row"
-
   Scenario: View the outline report when no log reader is enabled
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And "Enable" "link" should exist in the "Legacy log" "table_row"
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And I am on "Course 1" course homepage
     When I navigate to "Reports > Activity report" in current page administration

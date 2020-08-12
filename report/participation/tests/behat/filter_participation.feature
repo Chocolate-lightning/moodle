@@ -28,56 +28,6 @@ Feature: In a participation report, admin can filter student actions
     And I log out
 
   @javascript
-  Scenario: Filter participation report when only legacy log reader is enabled
-    Given I log in as "admin"
-    And I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And I click on "Disable" "link" in the "Standard log" "table_row"
-    And I click on "Enable" "link" in the "Legacy log" "table_row"
-    And the following config values are set as admin:
-      | loglegacy | 1 | logstore_legacy |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book name"
-    And I log out
-    When I log in as "admin"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reports > Course participation" in current page administration
-    And I set the field "instanceid" to "Test book name"
-    And I set the field "roleid" to "Student"
-    And I press "Go"
-    Then I should see "Yes (1)"
-
-  @javascript
-  Scenario: Filter participation report when standard log reader is enabled later
-    Given I log in as "admin"
-    And I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And I click on "Disable" "link" in the "Standard log" "table_row"
-    And I click on "Enable" "link" in the "Legacy log" "table_row"
-    And the following config values are set as admin:
-      | loglegacy | 1 | logstore_legacy |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book name"
-    And I log out
-    And I log in as "admin"
-    And I navigate to "Plugins > Logging > Manage log stores" in site administration
-    And I click on "Enable" "link" in the "Standard log" "table_row"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book name"
-    And I log out
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reports > Course participation" in current page administration
-    And I set the field "instanceid" to "Test book name"
-    And I set the field "roleid" to "Student"
-    And I press "Go"
-    Then I should see "Yes (2)"
-
-  @javascript
   Scenario: Filter participation report when only standard log reader is enabled by default
     Given I log in as "student1"
     And I am on "Course 1" course homepage

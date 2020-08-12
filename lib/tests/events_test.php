@@ -53,8 +53,7 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEquals(context_coursecat::instance($category->id), $event->get_context());
         $url = new moodle_url('/course/management.php', array('categoryid' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
-        $expected = array(SITEID, 'category', 'add', 'editcategory.php?id=' . $category->id, $category->id);
-        $this->assertEventLegacyLogData($expected, $event);
+
         $this->assertEventContextNotUsed($event);
     }
 
@@ -80,8 +79,6 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEquals(context_coursecat::instance($category->id), $event->get_context());
         $url = new moodle_url('/course/editcategory.php', array('id' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
-        $expected = array(SITEID, 'category', 'update', 'editcategory.php?id=' . $category->id, $category->id);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Create another category and a child category.
         $category2 = $this->getDataGenerator()->create_category();
@@ -96,8 +93,6 @@ class core_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\course_category_updated', $event);
         $this->assertEquals(context_coursecat::instance($childcat->id), $event->get_context());
-        $expected = array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id, $childcat->id);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Trigger and capture the event for changing the sortorder of a category.
         $sink = $this->redirectEvents();
@@ -108,8 +103,6 @@ class core_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\course_category_updated', $event);
         $this->assertEquals(context_coursecat::instance($category2->id), $event->get_context());
-        $expected = array(SITEID, 'category', 'move', 'management.php?categoryid=' . $category2->id, $category2->id);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Trigger and capture the event for deleting a category and moving it's children to another.
         $sink = $this->redirectEvents();
@@ -120,8 +113,6 @@ class core_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\course_category_updated', $event);
         $this->assertEquals(context_coursecat::instance($childcat->id), $event->get_context());
-        $expected = array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id, $childcat->id);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Trigger and capture the event for hiding a category.
         $sink = $this->redirectEvents();
@@ -132,8 +123,6 @@ class core_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\course_category_updated', $event);
         $this->assertEquals(context_coursecat::instance($category2->id), $event->get_context());
-        $expected = array(SITEID, 'category', 'hide', 'editcategory.php?id=' . $category2->id, $category2->id);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Trigger and capture the event for unhiding a category.
         $sink = $this->redirectEvents();
@@ -144,8 +133,6 @@ class core_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\course_category_updated', $event);
         $this->assertEquals(context_coursecat::instance($category2->id), $event->get_context());
-        $expected = array(SITEID, 'category', 'show', 'editcategory.php?id=' . $category2->id, $category2->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -176,8 +163,6 @@ class core_events_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\email_failed', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'library', 'mailer', qualified_me(), 'ERROR: The email failed to send!');
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -205,9 +190,6 @@ class core_events_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\course_user_report_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
-        $expected = array($course->id, 'course', 'user report', 'user.php?id=' . $course->id . '&amp;user='
-                . $user->id . '&amp;mode=grade', $user->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -233,8 +215,6 @@ class core_events_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\course_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
-        $expected = array($course->id, 'course', 'view', 'view.php?id=' . $course->id, $course->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         // Now try with optional parameters.
@@ -254,9 +234,6 @@ class core_events_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\course_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
-        $expected = array($course->id, 'course', 'view section', 'view.php?id=' . $course->id . '&amp;section='
-                . $sectionnumber, $sectionnumber);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         delete_course($course->id, false);
@@ -282,8 +259,6 @@ class core_events_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\recent_activity_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, "course", "recent", "recent.php?id=$course->id", $course->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new moodle_url('/course/recent.php', array('id' => $course->id));
         $this->assertEquals($url, $event->get_url());
@@ -319,8 +294,6 @@ class core_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\user_profile_viewed', $event);
-        $log = array($course->id, 'user', 'view', 'view.php?id=' . $user->id . '&course=' . $course->id, $user->id);
-        $this->assertEventLegacyLogData($log, $event);
         $this->assertEventContextNotUsed($event);
 
         // User profile viewed in user context.
@@ -336,8 +309,6 @@ class core_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\user_profile_viewed', $event);
-        $expected = null;
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
