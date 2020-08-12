@@ -39,8 +39,6 @@ debugging('core\\event\\role_capabilities_updated has been deprecated. Please us
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class role_capabilities_updated extends base {
-    /** @var array Legacy log data */
-    protected $legacylogdata = null;
 
     /**
      * Initialise event parameters.
@@ -81,25 +79,6 @@ class role_capabilities_updated extends base {
             return new \moodle_url('/admin/roles/override.php', array('contextid' => $this->contextid,
                 'roleid' => $this->objectid));
         }
-    }
-
-    /**
-     * Sets legacy log data.
-     *
-     * @param array $legacylogdata
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
-    }
-
-    /**
-     * Returns array of parameters to be passed to legacy add_to_log() function.
-     *
-     * @return null|array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
     }
 
     public static function get_objectid_mapping() {

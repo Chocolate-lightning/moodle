@@ -43,9 +43,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tag_updated extends base {
 
-    /** @var array The legacy log data. */
-    private $legacylogdata;
-
     /**
      * Initialise the event data.
      */
@@ -71,28 +68,6 @@ class tag_updated extends base {
      */
     public function get_description() {
         return "The user with id '$this->userid' updated the tag with id '$this->objectid'.";
-    }
-
-    /**
-     * Set the legacy data used for add_to_log().
-     *
-     * @param array $logdata
-     */
-    public function set_legacy_logdata($logdata) {
-        $this->legacylogdata = $logdata;
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        if (isset($this->legacylogdata)) {
-            return $this->legacylogdata;
-        }
-
-        return array($this->courseid, 'tag', 'update', 'index.php?id='. $this->objectid, $this->other['name']);
     }
 
     /**

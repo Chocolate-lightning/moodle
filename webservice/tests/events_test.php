@@ -53,7 +53,6 @@ class core_webservice_events_testcase extends advanced_testcase {
             )
         );
         $event = \core\event\webservice_function_called::create($params);
-        $event->set_legacy_logdata($fakelogdata);
         $event->trigger();
 
         $events = $sink->get_events();
@@ -82,7 +81,6 @@ class core_webservice_events_testcase extends advanced_testcase {
             )
         );
         $event = \core\event\webservice_login_failed::create($params);
-        $event->set_legacy_logdata($fakelogdata);
         $event->trigger();
 
         $events = $sink->get_events();

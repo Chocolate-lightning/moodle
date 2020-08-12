@@ -42,26 +42,12 @@ defined('MOODLE_INTERNAL') || die();
 class webservice_function_called extends base {
 
     /**
-     * Legacy log data.
-     */
-    protected $legacylogdata;
-
-    /**
      * Returns description of what happened.
      *
      * @return string
      */
     public function get_description() {
         return "The web service function '{$this->other['function']}' has been called.";
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
     }
 
     /**
@@ -82,15 +68,6 @@ class webservice_function_called extends base {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @param array $legacydata the legacy data to set
-     */
-    public function set_legacy_logdata($legacydata) {
-        $this->legacylogdata = $legacydata;
     }
 
     /**

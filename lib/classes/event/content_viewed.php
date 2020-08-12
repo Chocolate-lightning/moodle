@@ -50,9 +50,6 @@ debugging('core\event\content_viewed has been deprecated. Please extend base eve
  */
 abstract class content_viewed extends base {
 
-    /** @var null|array $legacylogdata  Legacy log data */
-    protected $legacylogdata = null;
-
     /**
      * Set basic properties of the event.
      */
@@ -93,24 +90,6 @@ abstract class content_viewed extends base {
      */
     public function get_description() {
         return "The user with id '$this->userid' viewed content.";
-    }
-
-    /**
-     * Set legacy logdata.
-     *
-     * @param array $legacydata legacy logdata.
-     */
-    public function set_legacy_logdata(array $legacydata) {
-        $this->legacylogdata = $legacydata;
-    }
-
-    /**
-     * Get legacy logdata.
-     *
-     * @return null|array legacy log data.
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
     }
 
     /**
