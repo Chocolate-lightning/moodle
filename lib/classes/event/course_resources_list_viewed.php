@@ -35,9 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class course_resources_list_viewed extends base {
 
-    /** @var array list of resource types for legacy logging */
-    private $resourceslist = null;
-
     /**
      * Init method.
      *

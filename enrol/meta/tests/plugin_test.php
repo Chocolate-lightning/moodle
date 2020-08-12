@@ -626,11 +626,7 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $user1->id));
         $this->assertInstanceOf('\core\event\user_enrolment_created', $event);
         $this->assertEquals($dbuserenrolled->id, $event->objectid);
-        $this->assertEquals('user_enrolled', $event->get_legacy_eventname());
-        $expectedlegacyeventdata = $dbuserenrolled;
-        $expectedlegacyeventdata->enrol = 'meta';
-        $expectedlegacyeventdata->courseid = $course2->id;
-        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
+
         $this->assertEventContextNotUsed($event);
     }
 
@@ -664,7 +660,7 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records('user_enrolments'));
         $this->assertInstanceOf('\core\event\user_enrolment_deleted', $event);
-        $this->assertEquals('user_unenrolled', $event->get_legacy_eventname());
+
         $this->assertEventContextNotUsed($event);
     }
 
@@ -700,13 +696,10 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $user1->id));
         $this->assertInstanceOf('\core\event\user_enrolment_updated', $event);
         $this->assertEquals($dbuserenrolled->id, $event->objectid);
-        $this->assertEquals('user_enrol_modified', $event->get_legacy_eventname());
-        $expectedlegacyeventdata = $dbuserenrolled;
-        $expectedlegacyeventdata->enrol = 'meta';
-        $expectedlegacyeventdata->courseid = $course2->id;
+
         $url = new \moodle_url('/enrol/editenrolment.php', array('ue' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
-        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
+
         $this->assertEventContextNotUsed($event);
     }
 

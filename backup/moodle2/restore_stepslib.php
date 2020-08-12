@@ -3297,12 +3297,6 @@ class restore_course_logs_structure_step extends restore_structure_step {
             if (empty($data->info)) {
                 $data->info = '';
             }
-            // Store the data in the legacy log table if we are still using it.
-            $manager = get_log_manager();
-            if (method_exists($manager, 'legacy_add_to_log')) {
-                $manager->legacy_add_to_log($data->course, $data->module, $data->action, $data->url,
-                    $data->info, $data->cmid, $data->userid, $data->ip, $data->time);
-            }
         }
     }
 }
@@ -3346,12 +3340,6 @@ class restore_activity_logs_structure_step extends restore_course_logs_structure
             }
             if (empty($data->info)) {
                 $data->info = '';
-            }
-            // Store the data in the legacy log table if we are still using it.
-            $manager = get_log_manager();
-            if (method_exists($manager, 'legacy_add_to_log')) {
-                $manager->legacy_add_to_log($data->course, $data->module, $data->action, $data->url,
-                    $data->info, $data->cmid, $data->userid, $data->ip, $data->time);
             }
         }
     }

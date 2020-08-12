@@ -82,10 +82,6 @@ function report_outline_get_common_log_variables() {
     // Get preferred reader.
     if (!empty($readers)) {
         foreach ($readers as $readerpluginname => $reader) {
-            // If legacy reader is preferred reader.
-            if ($readerpluginname == 'logstore_legacy') {
-                $uselegacyreader = true;
-            }
 
             // If sql_internal_table_reader is preferred reader.
             if ($reader instanceof \core\log\sql_internal_table_reader) {
@@ -114,37 +110,7 @@ function report_outline_user_outline($userid, $cmid, $module, $instanceid) {
 
     list($uselegacyreader, $useinternalreader, $minloginternalreader, $logtable) = report_outline_get_common_log_variables();
 
-    // If using legacy log then get users from old table.
-    if ($uselegacyreader) {
-        // Create the params for the query.
-        $params = array('userid' => $userid, 'module' => $module, 'action' => 'view', 'info' => $instanceid);
-        // If we are going to use the internal (not legacy) log table, we should only get records
-        // from the legacy table that exist before we started adding logs to the new table.
-        $limittime = '';
-        if (!empty($minloginternalreader)) {
-            $limittime = ' AND time < :timeto ';
-            $params['timeto'] = $minloginternalreader;
-        }
-        $select = "SELECT COUNT(id) ";
-        $from = "FROM {log} ";
-        $where = "WHERE userid = :userid
-                    AND module = :module
-                    AND action = :action
-                    AND info = :info ";
-        if ($legacylogcount = $DB->count_records_sql($select . $from . $where . $limittime, $params)) {
-            $numviews = $legacylogcount;
-
-            // Get the time for the last log.
-            $select = "SELECT MAX(time) ";
-            $lastlogtime = $DB->get_field_sql($select . $from . $where, $params);
-
-            $result = new stdClass();
-            $result->info = get_string('numviews', '', $numviews);
-            $result->time = $lastlogtime;
-        }
-    }
-
-    // Get record from sql_internal_table_reader and combine with the number of views from the legacy log table (if needed).
+    // Get record from sql_internal_table_reader.
     if ($useinternalreader) {
         $params = array('userid' => $userid, 'contextlevel' => CONTEXT_MODULE, 'contextinstanceid' => $cmid, 'crud' => 'r',
             'edulevel1' => core\event\base::LEVEL_PARTICIPATING, 'edulevel2' => core\event\base::LEVEL_TEACHING,
@@ -195,35 +161,7 @@ function report_outline_user_complete($userid, $cmid, $module, $instanceid) {
 
     list($uselegacyreader, $useinternalreader, $minloginternalreader, $logtable) = report_outline_get_common_log_variables();
 
-    // If using legacy log then get users from old table.
-    if ($uselegacyreader) {
-        // Create the params for the query.
-        $params = array('userid' => $userid, 'module' => $module, 'action' => 'view', 'info' => $instanceid);
-        // If we are going to use the internal (not legacy) log table, we should only get records
-        // from the legacy table that exist before we started adding logs to the new table.
-        $limittime = '';
-        if (!empty($minloginternalreader)) {
-            $limittime = ' AND time < :timeto ';
-            $params['timeto'] = $minloginternalreader;
-        }
-        $select = "SELECT COUNT(id) ";
-        $from = "FROM {log} ";
-        $where = "WHERE userid = :userid
-                    AND module = :module
-                    AND action = :action
-                    AND info = :info ";
-        if ($legacylogcount = $DB->count_records_sql($select . $from . $where . $limittime, $params)) {
-            $numviews = $legacylogcount;
-
-            // Get the time for the last log.
-            $select = "SELECT MAX(time) ";
-            $lastlogtime = $DB->get_field_sql($select . $from . $where, $params);
-
-            $strnumviews = get_string('numviews', '', $numviews);
-        }
-    }
-
-    // Get record from sql_internal_table_reader and combine with the number of views from the legacy log table (if needed).
+    // Get record from sql_internal_table_reader.
     if ($useinternalreader) {
         $params = array('userid' => $userid, 'contextlevel' => CONTEXT_MODULE, 'contextinstanceid' => $cmid, 'crud' => 'r',
             'edulevel1' => core\event\base::LEVEL_PARTICIPATING, 'edulevel2' => core\event\base::LEVEL_TEACHING,

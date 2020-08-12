@@ -609,10 +609,6 @@ class core_session_manager_testcase extends advanced_testcase {
         $this->assertSame($adminuser->id, $event->relateduserid);
         $this->assertSame($course->id, $event->courseid);
         $this->assertEquals($coursecontext, $event->get_context());
-        $oldfullname = fullname($user, true);
-        $newfullname = fullname($adminuser, true);
-        $expectedlogdata = array($course->id, "course", "loginas", "../user/view.php?id=$course->id&amp;user=$user->id", "$oldfullname -> $newfullname");
-        $this->assertEventLegacyLogData($expectedlogdata, $event);
     }
 
     public function test_is_loggedinas() {

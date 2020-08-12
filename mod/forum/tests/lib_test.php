@@ -89,7 +89,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $expected->userid = $user->id;
         $expected->content = $fakepost->message;
         $expected->pathnamehashes = array($fi->get_pathnamehash());
-        $this->assertEventLegacyData($expected, $event);
+
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1863,9 +1863,6 @@ class mod_forum_lib_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'view discussion', "discuss.php?d={$discussion->id}",
-            $discussion->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());

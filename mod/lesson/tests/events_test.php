@@ -173,7 +173,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
      * Test the essay attempt viewed event.
      *
      * There is no external API for viewing an essay attempt, so the unit test will simply
-     * create and trigger the event and ensure the legacy log data is returned as expected.
+     * create and trigger the event and ensure data is returned as expected.
      */
     public function test_essay_attempt_viewed() {
         // Create a essays list viewed event
@@ -193,9 +193,6 @@ class mod_lesson_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_lesson\event\essay_attempt_viewed', $event);
         $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
-        $expected = array($this->course->id, 'lesson', 'view grade', 'essay.php?id=' . $this->lesson->properties()->cmid .
-            '&mode=grade&attemptid='.$this->lesson->id, get_string('manualgrading', 'lesson'), $this->lesson->properties()->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -212,9 +209,6 @@ class mod_lesson_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_lesson\event\lesson_started', $event);
         $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
-        $expected = array($this->course->id, 'lesson', 'start', 'view.php?id=' . $this->lesson->properties()->cmid,
-            $this->lesson->properties()->id, $this->lesson->properties()->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -286,9 +280,6 @@ class mod_lesson_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_lesson\event\lesson_ended', $event);
         $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
-        $expected = array($this->course->id, 'lesson', 'end', 'view.php?id=' . $this->lesson->properties()->cmid,
-            $this->lesson->properties()->id, $this->lesson->properties()->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -296,7 +287,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
      * Test the essay assessed event.
      *
      * There is no external API for assessing an essay, so the unit test will simply
-     * create and trigger the event and ensure the legacy log data is returned as expected.
+     * create and trigger the event and ensure data is returned as expected.
      */
     public function test_essay_assessed() {
         // Create an essay assessed event
@@ -322,9 +313,6 @@ class mod_lesson_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_lesson\event\essay_assessed', $event);
         $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
-        $expected = array($this->course->id, 'lesson', 'update grade', 'essay.php?id=' . $this->lesson->properties()->cmid,
-                $this->lesson->name, $this->lesson->properties()->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 

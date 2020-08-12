@@ -215,11 +215,6 @@ if (!empty($instanceid) && !empty($roleid)) {
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $matchcount);
 
-    if ($uselegacyreader || $onlyuselegacyreader) {
-        list($actionsql, $actionparams) = report_participation_get_action_sql($action, $cm->modname);
-        $params = array_merge($params, $actionparams);
-    }
-
     if (!$onlyuselegacyreader) {
         list($crudsql, $crudparams) = report_participation_get_crud_sql($action);
         $params = array_merge($params, $crudparams);
@@ -227,31 +222,8 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     $usernamefields = get_all_user_name_fields(true, 'u');
     $users = array();
-    // If using legacy log then get users from old table.
-    if ($uselegacyreader || $onlyuselegacyreader) {
-        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
-                  FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
-                  JOIN {user} u ON u.id = ra.userid
-             $groupsql
-             LEFT JOIN (
-                    SELECT userid, COUNT(action) AS actioncount
-                      FROM {log}
-                     WHERE cmid = :instanceid
-                           AND time > :timefrom " . $actionsql .
-                " GROUP BY userid) l ON (l.userid = ra.userid)";
-        if ($twhere) {
-            $sql .= ' WHERE '.$twhere; // Initial bar.
-        }
 
-        if ($table->get_sql_sort()) {
-            $sql .= ' ORDER BY '.$table->get_sql_sort();
-        }
-        if (!$users = $DB->get_records_sql($sql, $params, $table->get_page_start(), $table->get_page_size())) {
-            $users = array(); // Tablelib will handle saying 'Nothing to display' for us.
-        }
-    }
-
-    // Get record from sql_internal_table_reader and merge with records got from legacy log (if needed).
+    // Get record from sql_internal_table_reader.
     if (!$onlyuselegacyreader) {
         $sql = "SELECT ra.userid, $usernamefields, u.idnumber, COUNT(DISTINCT l.timecreated) AS count
                   FROM {user} u

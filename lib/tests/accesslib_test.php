@@ -540,12 +540,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
         $this->assertInstanceOf('moodle_url', $event->get_url());
-        $this->assertSame('role_assigned', $event::get_legacy_eventname());
-        $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $context, ROLENAME_ORIGINAL, true);
-        $expectedlegacylog = array($course->id, 'role', 'assign',
-            'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$role->id, $rolenames[$role->id], '', $USER->id);
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -590,11 +584,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
         $this->assertInstanceOf('moodle_url', $event->get_url());
-        $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $context, ROLENAME_ORIGINAL, true);
-        $expectedlegacylog = array($course->id, 'role', 'unassign',
-            'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$role->id, $rolenames[$role->id], '', $USER->id);
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -736,10 +725,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertSame($role->shortname, $event->other['shortname']);
         $this->assertSame($role->description, $event->other['description']);
         $this->assertSame($role->archetype, $event->other['archetype']);
-
-        $expectedlegacylog = array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid='.$role->id,
-                                   $role->shortname, '');
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -1011,10 +996,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $sink->close();
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_assign_updated', $event);
-        $mode = 'assign';
-        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
-        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -1044,10 +1025,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $sink->close();
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_override_updated', $event);
-        $mode = 'override';
-        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
-        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -1077,10 +1054,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $sink->close();
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_switch_updated', $event);
-        $mode = 'switch';
-        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
-        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -1110,10 +1083,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $sink->close();
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_view_updated', $event);
-        $mode = 'view';
-        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
-        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**

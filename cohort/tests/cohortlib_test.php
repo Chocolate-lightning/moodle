@@ -109,7 +109,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $url = new moodle_url('/cohort/index.php', array('contextid' => $event->contextid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $id));
-        $this->assertEventLegacyData($cohort, $event);
+
         $this->assertEventContextNotUsed($event);
     }
 
@@ -186,7 +186,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $url = new moodle_url('/cohort/edit.php', array('id' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $id));
-        $this->assertEventLegacyData($cohort, $event);
+
         $this->assertEventContextNotUsed($event);
     }
 
@@ -226,7 +226,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $url = new moodle_url('/cohort/index.php', array('contextid' => $event->contextid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $cohort->id));
-        $this->assertEventLegacyData($cohort, $event);
+
         $this->assertEventContextNotUsed($event);
     }
 
@@ -286,7 +286,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $url = new moodle_url('/cohort/assign.php', array('id' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
-        $this->assertEventLegacyData((object) array('cohortid' => $cohort->id, 'userid' => $user->id), $event);
+
         $this->assertEventContextNotUsed($event);
     }
 
@@ -332,7 +332,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $url = new moodle_url('/cohort/assign.php', array('id' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
-        $this->assertEventLegacyData((object) array('cohortid' => $cohort->id, 'userid' => $user->id), $event);
+
         $this->assertEventContextNotUsed($event);
     }
 
