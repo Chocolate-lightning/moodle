@@ -145,3 +145,7 @@
         {{/children.count}}
     {{/node.children}}
 </div>
+
+{{#js}}
+    require(['core/settings/suggestions'], function(Suggestions) { Suggestions.init(); });
+{{/js}}
