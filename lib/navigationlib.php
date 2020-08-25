@@ -4211,7 +4211,8 @@ class settings_navigation extends navigation_node {
                     // and also make it fast for admin right after login.
                     $SESSION->load_navigation_admin = 1;
                     if ($isadminpage) {
-                        $adminsettings = $this->load_administration_settings();
+                        // TODO MOOTDACH
+                        $adminsettings = $this->load_administration_settings(null, null, '#linkusers');
                     }
 
                 } else if (!isset($SESSION->load_navigation_admin)) {
@@ -4328,6 +4329,7 @@ class settings_navigation extends navigation_node {
     }
 
     /**
+     * TODO: MOOTDACH
      * Load the site administration tree
      *
      * This function loads the site administration tree by using the lib/adminlib library functions
@@ -4338,7 +4340,7 @@ class settings_navigation extends navigation_node {
      *      tree and start at the beginning
      * @return mixed A key to access the admin tree by
      */
-    protected function load_administration_settings(navigation_node $referencebranch=null, part_of_admin_tree $adminbranch=null) {
+    protected function load_administration_settings(navigation_node $referencebranch=null, part_of_admin_tree $adminbranch=null, ?string $foobar = null) {
         global $CFG, $ADMIN;
 
         // Check if we are just starting to generate this navigation.
@@ -4354,7 +4356,7 @@ class settings_navigation extends navigation_node {
 
             // Disable the navigation from automatically finding the active node
             navigation_node::$autofindactive = false;
-            $referencebranch = $this->add(get_string('administrationsite'), '/admin/search.php', self::TYPE_SITE_ADMIN, null, 'root');
+            $referencebranch = $this->add(get_string('administrationsite'), '/admin/search.php'. $foobar, self::TYPE_SITE_ADMIN, null, 'root');
             foreach ($adminroot->children as $adminbranch) {
                 $this->load_administration_settings($referencebranch, $adminbranch);
             }
@@ -4395,7 +4397,7 @@ class settings_navigation extends navigation_node {
                 }
 
             }
-
+print_object($url);
             // Add the branch
             $reference = $referencebranch->add($adminbranch->visiblename, $url, self::TYPE_SETTING, null, $adminbranch->name, $icon);
 
