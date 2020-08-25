@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+ <title>i/server</title>
+ <g stroke="#999" stroke-width="1px">
+  <g>
+   <path d="m1 1h14v3h-14z" fill="none"/>
+   <path d="m9 1v3h4.5a1.5 1.5 0 0 1-1.5-1.5 1.5 1.5 0 0 1 1.5-1.5h-4.5zm4.5 0a1.5 1.5 0 0 1 1.5 1.5v-1.5h-1.5zm1.5 1.5a1.5 1.5 0 0 1-1.5 1.5h1.5v-1.5z" fill="#999"/>
+  </g>
+  <g transform="translate(0,5)">
+   <path d="m1 1h14v3h-14z" fill="none"/>
+   <path d="m9 1v3h4.5a1.5 1.5 0 0 1-1.5-1.5 1.5 1.5 0 0 1 1.5-1.5zm4.5 0a1.5 1.5 0 0 1 1.5 1.5v-1.5zm1.5 1.5a1.5 1.5 0 0 1-1.5 1.5h1.5z" fill="#999"/>
+  </g>
+  <g transform="translate(0,10)">
+   <path d="m1 1h14v3h-14z" fill="none"/>
+   <path d="m9 1v3h4.5a1.5 1.5 0 0 1-1.5-1.5 1.5 1.5 0 0 1 1.5-1.5zm4.5 0a1.5 1.5 0 0 1 1.5 1.5v-1.5zm1.5 1.5a1.5 1.5 0 0 1-1.5 1.5h1.5z" fill="#999"/>
+  </g>
+ </g>
+</svg>

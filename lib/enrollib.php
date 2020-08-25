@@ -431,7 +431,8 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
         }
     }
 
-    $usersnode = $coursenode->add(get_string('users'), null, navigation_node::TYPE_CONTAINER, null, 'users');
+    $icon = settings_navigation::get_node_icon('users');
+    $usersnode = $coursenode->add(get_string('users'), null, navigation_node::TYPE_CONTAINER, null, 'users', $icon);
 
     if ($course->id != SITEID) {
         // list all participants - allows assigning roles, groups, etc.

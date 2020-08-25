@@ -193,6 +193,7 @@ class icon_system_fontawesome extends icon_system_font {
             'theme:fp/view_list_active' => 'fa-list',
             'theme:fp/view_tree_active' => 'fa-folder',
             'core:i/addblock' => 'fa-plus-square',
+            'core:i/appearance' => 'fa-pencil', // TODO: fallback icon!
             'core:i/assignroles' => 'fa-user-plus',
             'core:i/backup' => 'fa-file-zip-o',
             'core:i/badge' => 'fa-shield',
@@ -218,6 +219,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/customfield' => 'fa-hand-o-right',
             'core:i/db' => 'fa-database',
             'core:i/delete' => 'fa-trash',
+            'core:i/development' => 'fa-code', // TODO: fallback icon!
             'core:i/down' => 'fa-arrow-down',
             'core:i/dragdrop' => 'fa-arrows',
             'core:i/duration' => 'fa-clock-o',
@@ -295,6 +297,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/permissionlock' => 'fa-lock',
             'core:i/permissions' => 'fa-pencil-square-o',
             'core:i/persona_sign_in_black' => 'fa-male',
+            'core:i/plugins' => 'fa-puzzle-piece', // TODO: fallback icon!
             'core:i/portfolio' => 'fa-id-badge',
             'core:i/preview' => 'fa-search-plus',
             'core:i/previous' => 'fa-chevron-left',
@@ -320,6 +323,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/search' => 'fa-search',
             'core:i/section' => 'fa-folder-o',
             'core:i/sendmessage' => 'fa-paper-plane',
+            'core:i/server' => 'fa-server', // TODO: fallback icon!
             'core:i/settings' => 'fa-cog',
             'core:i/show' => 'fa-eye-slash',
             'core:i/siteevent' => 'fa-globe',

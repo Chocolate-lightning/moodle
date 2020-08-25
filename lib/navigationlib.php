@@ -4328,6 +4328,29 @@ class settings_navigation extends navigation_node {
     }
 
     /**
+     * Return specific icon for node with certain key
+     *
+     * @param string $key node key
+     * @return null|pix_icon pix_icon for node or null if none applicable
+     */
+    public static function get_node_icon(string $key): ?pix_icon {
+        $icons = [
+            'root' => 't/preferences',
+            'users' => 'i/users',
+            'courses' => 'i/course',
+            'grades' => 'i/grades',
+            'modules' => 'i/plugins',
+            'appearance' => 'i/appearance',
+            'server' => 'i/server',
+            'reports' => 'i/report',
+            'development' => 'i/development',
+            'courseadmin' => 'i/course',
+        ];
+
+        return !empty($icons[$key]) ? new pix_icon($icons[$key], '') : null;
+    }
+
+    /**
      * Load the site administration tree
      *
      * This function loads the site administration tree by using the lib/adminlib library functions
@@ -4354,7 +4377,8 @@ class settings_navigation extends navigation_node {
 
             // Disable the navigation from automatically finding the active node
             navigation_node::$autofindactive = false;
-            $referencebranch = $this->add(get_string('administrationsite'), '/admin/search.php', self::TYPE_SITE_ADMIN, null, 'root');
+            $referencebranch = $this->add(get_string('administrationsite'), '/admin/search.php', self::TYPE_SITE_ADMIN, null,
+                    'root', static::get_node_icon('root'));
             foreach ($adminroot->children as $adminbranch) {
                 $this->load_administration_settings($referencebranch, $adminbranch);
             }
@@ -4377,7 +4401,7 @@ class settings_navigation extends navigation_node {
             // We have a reference branch that we can access and is not hidden `hurrah`
             // Now we need to display it and any children it may have
             $url = null;
-            $icon = null;
+            $icon = static::get_node_icon($adminbranch->name);
             if ($adminbranch instanceof admin_settingpage) {
                 $url = new moodle_url('/'.$CFG->admin.'/settings.php', array('section'=>$adminbranch->name));
             } else if ($adminbranch instanceof admin_externalpage) {
@@ -4407,7 +4431,7 @@ class settings_navigation extends navigation_node {
                     // Generate the child branches as well now using this branch as the reference
                     $this->load_administration_settings($reference, $branch);
                 }
-            } else {
+            } else if ($reference->icon === null) {
                 $reference->icon = new pix_icon('i/settings', '');
             }
         }
@@ -4456,8 +4480,8 @@ class settings_navigation extends navigation_node {
         $adminoptions = course_get_user_administration_options($course, $coursecontext);
 
         // note: do not test if enrolled or viewing here because we need the enrol link in Course administration section
-
-        $coursenode = $this->add(get_string('courseadministration'), null, self::TYPE_COURSE, null, 'courseadmin');
+        $icon = static::get_node_icon('courseadmin');
+        $coursenode = $this->add(get_string('courseadministration'), null, self::TYPE_COURSE, null, 'courseadmin', $icon);
         if ($forceopen) {
             $coursenode->force_open();
         }
@@ -5520,6 +5544,21 @@ class settings_navigation extends navigation_node {
         }
         // No links found for the user to access on the preferences page.
         return false;
+    }
+
+    /**
+     * Add icons to nodes displayed as tabs.
+     */
+    public function add_tab_icons() {
+        $this->find('root', self::TYPE_SITE_ADMIN)->icon = new pix_icon('t/preferences', '');
+        $this->find('users', self::TYPE_UNKNOWN)->icon = new pix_icon('i/users', '');
+        $this->find('courses', self::TYPE_UNKNOWN)->icon = new pix_icon('i/course', '');
+        $this->find('grades', self::TYPE_UNKNOWN)->icon = new pix_icon('i/grades', '');
+        $this->find('modules', self::TYPE_UNKNOWN)->icon = new pix_icon('i/plugins', ''); // TODO add fallback icon!
+        $this->find('appearance', self::TYPE_UNKNOWN)->icon = new pix_icon('i/appearance', ''); // TODO add fallback icon!
+        $this->find('server', self::TYPE_UNKNOWN)->icon = new pix_icon('i/server', ''); // TODO add fallback icon!
+        $this->find('reports', self::TYPE_UNKNOWN)->icon = new pix_icon('i/report', '');
+        $this->find('development', self::TYPE_UNKNOWN)->icon = new pix_icon('i/development', ''); // TODO add fallback icon!
     }
 }
 
