@@ -944,11 +944,6 @@ function stats_get_start_from($str) {
                 }
             }
 
-            $first = $DB->get_field_sql('SELECT MIN(time) FROM {log}');
-            if ($first and (!$firstlog or $firstlog > $first)) {
-                $firstlog = $first;
-            }
-
             if ($firstlog) {
                 return $firstlog;
             }

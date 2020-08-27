@@ -330,10 +330,6 @@ class assign_upgrade_manager {
                     $DB->update_record('course_completion_criteria', $criteria);
                 }
             }
-            // Roll back the log changes.
-            $logparams = array('cmid' => $newcoursemodule->id, 'course' => $newcoursemodule->course);
-            $DB->set_field('log', 'module', 'assignment', $logparams);
-            $DB->set_field('log', 'cmid', $oldcoursemodule->id, $logparams);
             // Roll back the advanced grading update.
             if ($gradingarea) {
                 foreach ($gradeidmap as $newgradeid => $oldsubmissionid) {
