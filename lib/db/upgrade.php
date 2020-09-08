@@ -3022,8 +3022,10 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->drop_table($table);
         }
 
-        upgrade_main_savepoint(true, 2021052500.50);
+        // Remove the old cleanup_task task.
+        $DB->delete_records('task_scheduled', ['classname' => '\logstore_legacy\task\cleanup_task']);
 
+        upgrade_main_savepoint(true, 2021052500.50);
     }
 
     return true;

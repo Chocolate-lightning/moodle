@@ -41,7 +41,6 @@ class report_loglive_lib_testcase extends advanced_testcase {
         $allstores = \core_component::get_plugin_list_with_class('logstore', 'log\store');
 
         $supportedstores = array(
-            'logstore_database' => '\logstore_legacy\log\database',
             'logstore_standard' => '\logstore_standard\log\store'
         );
 
