@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- No login test - Tests queries 2, 3, 5, 7, 9 (and 8), 10 (read) -->
 <dataset>
-    <table name="log">
-        <column>time</column>
+    <table name="logstore_standard_log">
+        <column>timecreated</column>
         <column>userid</column>
-        <column>course</column>
+        <column>courseid</column>
         <column>action</column>
+        <column>edulevel</column>
+        <column>contextid</column>
+        <column>contextlevel</column>
+        <column>contextinstanceid</column>
         <row>
             <value>[start_1]</value>
             <value>[guest_id]</value>
             <value>[site_id]</value>
             <value>view</value>
+            <value>0</value>
+            <value>1337</value>
+            <value>10</value>
+            <value>1337</value>
         </row>
     </table>
     <table name="stats_daily">

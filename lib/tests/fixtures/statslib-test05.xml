@@ -1,22 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- User login and view course - Tests queries 4, 6, 10, 12, 14 (read) -->
 <dataset>
-    <table name="log">
-        <column>time</column>
+    <table name="logstore_standard_log">
+        <column>timecreated</column>
         <column>userid</column>
-        <column>course</column>
+        <column>courseid</column>
         <column>action</column>
+        <column>edulevel</column>
+        <column>contextid</column>
+        <column>contextlevel</column>
+        <column>contextinstanceid</column>
         <row>
             <value>[start_1]</value>
             <value>[user1_id]</value>
             <value>[site_id]</value>
             <value>login</value>
+            <value>0</value>
+            <value>1337</value>
+            <value>10</value>
+            <value>1337</value>
         </row>
         <row>
             <value>[start_2]</value>
             <value>[user1_id]</value>
             <value>[course1_id]</value>
             <value>view</value>
+            <value>0</value>
+            <value>1337</value>
+            <value>10</value>
+            <value>1337</value>
         </row>
     </table>
     <table name="stats_daily">

@@ -61,7 +61,7 @@ class tool_log_manager_testcase extends advanced_testcase {
 
         $stores = $manager->get_readers('core\log\sql_reader');
         $this->assertIsArray($stores);
-        $this->assertCount(2, $stores);
+        $this->assertCount(1, $stores);
         foreach ($stores as $key => $store) {
             $this->assertIsString($key);
             $this->assertInstanceOf('core\log\sql_reader', $store);

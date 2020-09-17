@@ -200,11 +200,6 @@ class assign_upgrade_manager {
             }
             $completiondone = true;
 
-            // Migrate log entries so we don't lose them.
-            $logparams = array('cmid' => $oldcoursemodule->id, 'course' => $oldcoursemodule->course);
-            $DB->set_field('log', 'module', 'assign', $logparams);
-            $DB->set_field('log', 'cmid', $newcoursemodule->id, $logparams);
-
             // Copy all the submission data (and get plugins to do their bit).
             $oldsubmissions = $DB->get_records('assignment_submissions',
                                                array('assignment'=>$oldassignmentid));
@@ -347,7 +342,6 @@ class assign_upgrade_manager {
                 $DB->update_record('grading_areas', $params);
             }
             $newassignment->delete_instance();
-
             return false;
         }
         // Delete the old assignment (use object delete).

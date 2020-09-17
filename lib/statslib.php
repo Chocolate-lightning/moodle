@@ -209,19 +209,19 @@ function stats_cron_daily($maxdays=1) {
         }
 
         // Find out if any logs available for this day
-        $sql = "SELECT 'x' FROM {temp_log1} l";
+        $sql = "SELECT 'x' FROM {temp_logstore_standard_log1} l";
         $logspresent = $DB->get_records_sql($sql, null, 0, 1);
 
         if ($logspresent) {
             // Insert blank record to force Query 10 to generate additional row when no logs for
             // the site with userid 0 exist.  Added for backwards compatibility.
-            $DB->insert_record('temp_log1', array('userid' => 0, 'course' => SITEID, 'action' => ''));
+            $DB->insert_record('temp_logstore_standard_log1', array('userid' => 0, 'course' => SITEID, 'action' => ''));
         }
 
         // Calculate the number of active users today
         $sql = 'SELECT COUNT(DISTINCT u.id)
                   FROM {user} u
-                  JOIN {temp_log1} l ON l.userid = u.id
+                  JOIN {temp_logstore_standard_log1} l ON l.userid = u.id
                  WHERE u.deleted = 0';
         $dailyactiveusers = $DB->count_records_sql($sql);
 
@@ -234,7 +234,7 @@ function stats_cron_daily($maxdays=1) {
 
                 SELECT 'logins', $nextmidnight AS timeend, ".SITEID." AS courseid,
                         userid, COUNT(id) AS statsreads
-                  FROM {temp_log1} l
+                  FROM {temp_logstore_standard_log1} l
                  WHERE action = 'login'
               GROUP BY userid
                 HAVING COUNT(id) > 0";
@@ -296,7 +296,7 @@ function stats_cron_daily($maxdays=1) {
                        AND EXISTS (
 
                         SELECT 'x'
-                          FROM {temp_log1} l
+                          FROM {temp_logstore_standard_log1} l
                          WHERE l.course = {temp_stats_daily}.courseid
                            AND l.userid = te.userid
                                   )
@@ -305,7 +305,7 @@ function stats_cron_daily($maxdays=1) {
                    AND {temp_stats_daily}.timeend = $nextmidnight
                    AND {temp_stats_daily}.courseid IN (
 
-                    SELECT DISTINCT course FROM {temp_log2})";
+                    SELECT DISTINCT course FROM {temp_logstore_standard_log2})";
 
         if ($logspresent && !stats_run_query($sql, array('courselevel'=>CONTEXT_COURSE))) {
             $failed = true;
@@ -338,7 +338,7 @@ function stats_cron_daily($maxdays=1) {
                        AND EXISTS (
 
                         SELECT 'x'
-                          FROM {temp_log1} l
+                          FROM {temp_logstore_standard_log1} l
                          WHERE l.course = {temp_stats_daily}.courseid
                            AND l.userid = te.userid
                                   )
@@ -350,7 +350,7 @@ function stats_cron_daily($maxdays=1) {
                    AND {temp_stats_daily}.courseid IN (
 
                     SELECT l.course
-                      FROM {temp_log2} l
+                      FROM {temp_logstore_standard_log2} l
                      WHERE l.course <> ".SITEID.")";
 
         if ($logspresent && !stats_run_query($sql, array())) {
@@ -418,7 +418,7 @@ function stats_cron_daily($maxdays=1) {
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, course AS courseid, userid,
                        SUM(CASE WHEN action $viewactionssql THEN 1 ELSE 0 END) AS statsreads,
                        SUM(CASE WHEN action $postactionssql THEN 1 ELSE 0 END) AS statswrites
-                  FROM {temp_log1} l
+                  FROM {temp_logstore_standard_log1} l
               GROUP BY userid, course";
 
         if ($logspresent && !stats_run_query($sql, array_merge($params1, $params2))) {
@@ -434,7 +434,7 @@ function stats_cron_daily($maxdays=1) {
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, c.id AS courseid, 0,
                        SUM(CASE WHEN l.action $viewactionssql THEN 1 ELSE 0 END) AS stat1,
                        SUM(CASE WHEN l.action $postactionssql THEN 1 ELSE 0 END) AS stat2
-                  FROM {course} c, {temp_log1} l
+                  FROM {course} c, {temp_logstore_standard_log1} l
                  WHERE l.course = c.id
               GROUP BY c.id";
 
@@ -942,6 +942,11 @@ function stats_get_start_from($str) {
                         $firstlog = $first;
                     }
                 }
+            }
+
+            $first = $DB->get_field_sql('SELECT MIN(timecreated) FROM {logstore_standard_log}');
+            if ($first and (!$firstlog or $firstlog > $first)) {
+                $firstlog = $first;
             }
 
             if ($firstlog) {
@@ -1629,23 +1634,6 @@ function stats_temp_table_create() {
     $table->add_index('roleid', XMLDB_INDEX_NOTUNIQUE, array('roleid'));
     $tables['temp_enroled'] = $table;
 
-
-    $table = new xmldb_table('temp_log1');
-    $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    $table->add_field('userid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
-    $table->add_field('course', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, '0');
-    $table->add_field('action', XMLDB_TYPE_CHAR, 40, null, XMLDB_NOTNULL, null, null);
-    $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    $table->add_index('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
-    $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
-    $table->add_index('user', XMLDB_INDEX_NOTUNIQUE, array('userid'));
-    $table->add_index('usercourseaction', XMLDB_INDEX_NOTUNIQUE, array('userid','course','action'));
-    $tables['temp_log1'] = $table;
-
-    /// temp_log2 is exactly the same as temp_log1.
-    $tables['temp_log2'] = clone $tables['temp_log1'];
-    $tables['temp_log2']->setName('temp_log2');
-
     try {
 
         foreach ($tables as $table) {
@@ -1668,7 +1656,7 @@ function stats_temp_table_drop() {
 
     $dbman = $DB->get_manager();
 
-    $tables = array('temp_log1', 'temp_log2', 'temp_stats_daily', 'temp_stats_user_daily', 'temp_enroled');
+    $tables = array('temp_logstore_standard_log1', 'temp_logstore_standard_log2', 'temp_stats_daily', 'temp_stats_user_daily', 'temp_enroled');
 
     foreach ($tables as $name) {
 
@@ -1751,7 +1739,7 @@ function stats_temp_table_fill($timestart, $timeend) {
             // We want only data relevant to educational process
             // done by real users.
 
-            $sql = "INSERT INTO {temp_log1} (userid, course, action)
+            $sql = "INSERT INTO {temp_logstore_standard_log1} (userid, course, action)
 
             SELECT userid,
                    CASE
@@ -1776,18 +1764,18 @@ function stats_temp_table_fill($timestart, $timeend) {
 
     if (!$filled) {
         // Fallback to legacy data.
-        $sql = "INSERT INTO {temp_log1} (userid, course, action)
+        $sql = "INSERT INTO {temp_logstore_standard_log1} (userid, course, action)
 
-            SELECT userid, course, action
-              FROM {log}
+            SELECT userid, courseid, action
+              FROM {logstore_standard_log}
              WHERE time >= :timestart AND time < :timeend";
 
         $DB->execute($sql, $params);
     }
 
-    $sql = 'INSERT INTO {temp_log2} (userid, course, action)
+    $sql = 'INSERT INTO {temp_logstore_standard_log2} (userid, course, action)
 
-            SELECT userid, course, action FROM {temp_log1}';
+            SELECT userid, course, action FROM {temp_logstore_standard_log1}';
 
     $DB->execute($sql);
 
@@ -1825,7 +1813,7 @@ function stats_temp_table_clean() {
         }
     }
 
-    $tables = array('temp_log1', 'temp_log2', 'temp_stats_daily', 'temp_stats_user_daily');
+    $tables = array('temp_logstore_standard_log1', 'temp_logstore_standard_log2', 'temp_stats_daily', 'temp_stats_user_daily');
 
     foreach ($tables as $name) {
         $DB->delete_records($name);
