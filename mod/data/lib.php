@@ -453,6 +453,126 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         $stickyfooter = new core\output\sticky_footer($actionbuttons);
         echo $OUTPUT->render($stickyfooter);
 
+        if (!file_exists($CFG->dirroot . '/mod/data/field/' . $this->type . '/templates/' . $this->type . '.mustache')) {
+            // Fall back to display mod.html for backward compatibility.
+            require_once($CFG->dirroot . '/mod/data/field/' . $this->type . '/mod.html');
+
+            echo '<div class="mdl-align">';
+            echo '<input type="submit" class="btn btn-primary" value="' . $savebutton . '" />' . "\n";
+            echo '<input type="submit" class="btn btn-secondary" name="cancel" value="' . get_string('cancel') . '" />'."\n";
+
+        } else {
+            // Give out templated Bootstrap formatted form fields.
+
+            // Name and description of the field.
+            $data = [
+                'name' => $this->field->name,
+                'description' => $this->field->description
+            ];
+
+            // Whether the field is required.
+            if (isset($this->field->required)) {
+                $data["required"] = $this->field->required;
+            }
+
+            // For all field types, set param1.
+            // That parameter corrisponds to different things depending on the field type.
+            // Autolink, checkbox/menu/multimenu/rediobutton options, field width, latlong service default, decimal place.
+            // For latlong field, set latlonglinkservices and latlonglinkservicessize, too.
+            if (isset($this->field->param1)) {
+                $data["param1"] = $this->field->param1;
+                if (isset($this->linkoutservices)) {
+                    $serviceschosen = explode(',', htmlspecialchars($this->field->param1));
+                    foreach ($this->linkoutservices as $servicename => $serviceurl) {
+                        $servicename = htmlspecialchars($servicename);
+                        $data['latlonglinkservices'][] = [
+                            'name' => $servicename,
+                            'selected' => in_array($servicename, $serviceschosen)
+                        ];
+                        unset($this->serviceschosen[$servicename]);
+                    }
+                    $data['latlonglinkservicessize'] = count($this->linkoutservices);
+                }
+            }
+
+            // For file, picture, textarea, url and latlong field type, set param2.
+            // That parameter corrisponds to height, field cols, user-specified labelling method or url forcetext value.
+            // For latlong field, set otherfields and latlongotherfields, too.
+            if (isset($this->field->param2)) {
+                $data["param2"] = $this->field->param2;
+
+                $data["otherfields"][] = [
+                    'value' => -1,
+                    'name' => get_string('entry', 'data') . " #",
+                    'selected' => $this->field->param2 == -1
+                ];
+                $data['otherfields'][] = [
+                    'value' => -2,
+                    'name' => get_string('latitude', 'data') . "/" . get_string('longitude', 'data'),
+                    'selected' => $this->field->param2 == -2
+                ];
+
+                // Fetch all "suitable" other fields that exist for this database.
+                $textfields = $DB->get_records('data_fields', array('dataid' => $this->data->id, 'type' => 'text'));
+                if (count($textfields) > 0) {
+                    $data['otherfieldsoptgroups']['label'] = get_string('latlongotherfields', 'data') . ":";
+                    foreach ($textfields as $textfield) {
+                        $data['otherfieldsoptgroups']['options'][] = [
+                            'value' => $textfield->id,
+                            'name' => $textfield->name,
+                            'selected' => $this->field->param2 == $textfield->id
+                        ];
+                    }
+                }
+            }
+
+            // For file, url, picture and textarea field type, set param3.
+            // That parameter corrisponds to maximum bytes, field rows or target=_blank.
+            if (isset($this->field->param3)) {
+                $data["param3"] = $this->field->param3;
+                $course = $DB->get_record('course', array('id' => $this->data->course));
+                $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes, 0, $this->field->param3);
+                foreach ($choices as $value => $name) {
+                    $data['options'][] = [
+                        'value' => $value,
+                        'name' => $name,
+                        'selected' => in_array($value, $data)
+                    ];
+                    unset($this->choices[$value]);
+                }
+            }
+
+            // For picture and textarea field type, set param4.
+            // That parameter corrisponds to field width or displayed image width.
+            if (isset($this->field->param4)) {
+                $data["param4"] = $this->field->param4;
+            }
+
+            // For picture and textarea field type, set param5.
+            // That parameter corrisponds to field height or max file size.
+            if (isset($this->field->param5)) {
+                $data["param5"] = $this->field->param5;
+            }
+
+            // If fieldid is present, set dataid and fieldid.
+            // Fieldid is a URL parameter some form items add to certain items.
+            if (isset($this->field->id)) {
+                $data["dataid"] = $this->data->id;
+                $data["fieldid"] = $this->field->id;
+            }
+
+            echo $OUTPUT->render_from_template('datafield_' . $this->type . '/'  . $this->type, $data);
+
+            echo '<div class="form-group row fitem femptylabel"><div class="col-md-3"></div>' .
+                '<div class="col-md-9 form-inline align-items-start felement">';
+            echo '<fieldset>';
+            echo '<input type="submit" class="btn btn-primary" value="'.$savebutton.'" />'."\n";
+            echo '<input type="submit" class="btn btn-secondary" name="cancel" value="'.get_string('cancel').'" />'."\n";
+            echo '</fieldset>';
+            echo '</div>';
+        }
+
+        echo '</div>';
         echo '</form>';
 
         echo $OUTPUT->box_end();

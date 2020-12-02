@@ -64,6 +64,9 @@ constructor of this class.
 * The $hassaveaspreset and $haveexportpreset parameters in the get_fields_action_bar() action_bar class have been deprecated and
 are not used anymore.
 
+=== 3.11 ===
+* Use of mustache templates for rendering add/modify fields forms. Elimination of all mod/data/field/*/mod.html files.
+
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.
 

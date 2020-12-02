@@ -83,7 +83,8 @@ class data_field_checkbox extends data_field_base {
                 continue; // skip empty lines
             }
             $str .= '<input type="hidden" name="field_' . $this->field->id . '[]" value="" />';
-            $str .= '<input type="checkbox" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '[]" ';
+            $str .= '<input class="requiredfield form-check-input" type="checkbox" id="field_' . $this->field->id . '_' . $i .
+                '" name="field_' . $this->field->id . '[]" ';
             $str .= 'value="' . s($checkbox) . '" class="mod-data-input mr-1" ';
 
             if (array_search($checkbox, $content) !== false) {
