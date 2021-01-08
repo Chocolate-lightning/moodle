@@ -944,7 +944,7 @@ function stats_get_start_from($str) {
                 }
             }
 
-            $first = $DB->get_field_sql('SELECT MIN(time) FROM {log}');
+            $first = $DB->get_field_sql('SELECT MIN(timecreated) FROM {logstore_standard_log}');
             if ($first and (!$firstlog or $firstlog > $first)) {
                 $firstlog = $first;
             }
@@ -1779,12 +1779,13 @@ function stats_temp_table_fill($timestart, $timeend) {
         }
     }
 
-    if (!$filled) {
+    // TODO: gut.
+    /*if (!$filled) {
         // Fallback to legacy data.
         $sql = "INSERT INTO {temp_log1} (userid, course, action)
 
-            SELECT userid, course, action
-              FROM {log}
+            SELECT userid, courseid, action
+              FROM {timecreated}
              WHERE time >= :timestart AND time < :timeend";
 
         $DB->execute($sql, $params);
@@ -1794,7 +1795,7 @@ function stats_temp_table_fill($timestart, $timeend) {
 
             SELECT userid, course, action FROM {temp_log1}';
 
-    $DB->execute($sql);
+    $DB->execute($sql);*/
 
     // We have just loaded all the temp tables, collect statistics for that.
     $DB->update_temp_table_stats();

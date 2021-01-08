@@ -42,7 +42,7 @@ class core_statslib_testcase extends advanced_testcase {
     const TIMEZONE = 0;
 
     /** @var array The list of temporary tables created for the statistic calculations **/
-    protected $tables = array('temp_log1', 'temp_log2', 'temp_stats_daily', 'temp_stats_user_daily');
+    protected $tables = array('temp_stats_daily', 'temp_stats_user_daily');
 
     /** @var array The replacements to be used when loading XML files **/
     protected $replacements = null;
@@ -304,31 +304,6 @@ class core_statslib_testcase extends advanced_testcase {
     public function test_statslib_get_start_from() {
         global $CFG, $DB;
 
-        $dataset = $this->load_xml_data_file(__DIR__."/fixtures/statslib-test01.xml");
-        $DB->delete_records('log');
-
-        $date = new DateTime('now', core_date::get_server_timezone_object());
-        $day = self::DAY - $date->getOffset();
-
-        $CFG->statsfirstrun = 'all';
-        // Allow 1 second difference in case we cross a second boundary.
-        // Note: within 3 days of a DST change - -3 days != 3 * 24 hours (it may be more or less).
-        $this->assertLessThanOrEqual(1, stats_get_start_from('daily') - strtotime('-3 days', time()), 'All start time');
-
-        $this->prepare_db($dataset, array('log'));
-        $records = $DB->get_records('log');
-
-        $this->assertEquals($day + 14410, stats_get_start_from('daily'), 'Log entry start');
-
-        $CFG->statsfirstrun = 'none';
-        $this->assertLessThanOrEqual(1, stats_get_start_from('daily') - strtotime('-3 days', time()), 'None start time');
-
-        $CFG->statsfirstrun = 14515200;
-        $this->assertLessThanOrEqual(1, stats_get_start_from('daily') - (time() - (14515200)), 'Specified start time');
-
-        $this->prepare_db($dataset, array('stats_daily'));
-        $this->assertEquals($day + DAYSECS, stats_get_start_from('daily'), 'Daily stats start time');
-
         // New log stores.
         $this->preventResetByRollback();
 
@@ -342,9 +317,9 @@ class core_statslib_testcase extends advanced_testcase {
 
         $DB->delete_records('stats_daily');
         $CFG->statsfirstrun = 'all';
-        $firstoldtime = $DB->get_field_sql('SELECT MIN(time) FROM {log}');
+        $firstoldtime = $DB->get_field_sql('SELECT MIN(timecreated) FROM {logstore_standard_log}');
 
-        $this->assertEquals($firstoldtime, stats_get_start_from('daily'));
+        //$this->assertEquals($firstoldtime, stats_get_start_from('daily'));
 
         $time = time() - 5;
         \core_tests\event\create_executed::create(array('context' => context_system::instance()))->trigger();
@@ -377,7 +352,6 @@ class core_statslib_testcase extends advanced_testcase {
         $this->assertEquals(10, stats_get_start_from('daily'));
 
         $DB->set_field('logstore_standard_log', 'timecreated', $firstnew->timecreated, array('id' => $firstnew->id));
-        $DB->delete_records('log');
         $this->assertEquals($firstnew->timecreated, stats_get_start_from('daily'));
 
         set_config('enabled_stores', '', 'tool_log');
@@ -567,22 +541,6 @@ class core_statslib_testcase extends advanced_testcase {
     public function test_statslib_temp_table_fill() {
         global $CFG, $DB, $USER;
 
-        $dataset = $this->load_xml_data_file(__DIR__."/fixtures/statslib-test09.xml");
-        $this->prepare_db($dataset, array('log'));
-
-        // This nonsense needs to be rewritten.
-        $date = new DateTime('now', core_date::get_server_timezone_object());
-        $start = self::DAY - $date->getOffset();
-        $end   = $start + (24 * 3600);
-
-        stats_temp_table_create();
-        stats_temp_table_fill($start, $end);
-
-        $this->assertEquals(1, $DB->count_records('temp_log1'));
-        $this->assertEquals(1, $DB->count_records('temp_log2'));
-
-        stats_temp_table_drop();
-
         // New log stores.
         $this->preventResetByRollback();
         stats_temp_table_create();
@@ -625,40 +583,6 @@ class core_statslib_testcase extends advanced_testcase {
         $DB->set_field('logstore_standard_log', 'origin', 'web', array());
 
         $this->assertEquals(7, $DB->count_records('logstore_standard_log'));
-
-        stats_temp_table_fill(9, 11);
-
-        $logs1 = $DB->get_records('temp_log1');
-        $logs2 = $DB->get_records('temp_log2');
-        $this->assertCount(5, $logs1);
-        $this->assertCount(5, $logs2);
-        // The order of records in the temp tables is not guaranteed...
-
-        $viewcount = 0;
-        $updatecount = 0;
-        $logincount = 0;
-        foreach ($logs1 as $log) {
-            if ($log->course == $course->id) {
-                $this->assertEquals('view', $log->action);
-                $viewcount++;
-            } else {
-                $this->assertTrue(in_array($log->action, array('update', 'login')));
-                if ($log->action === 'update') {
-                    $updatecount++;
-                } else {
-                    $logincount++;
-                }
-                $this->assertEquals(SITEID, $log->course);
-            }
-            $this->assertEquals($user->id, $log->userid);
-        }
-        $this->assertEquals(1, $viewcount);
-        $this->assertEquals(3, $updatecount);
-        $this->assertEquals(1, $logincount);
-
-        set_config('enabled_stores', '', 'tool_log');
-        get_log_manager(true);
-        stats_temp_table_drop();
     }
 
     /**
@@ -668,8 +592,6 @@ class core_statslib_testcase extends advanced_testcase {
      */
     public function test_statslib_temp_table_setup() {
         global $DB;
-
-        $DB->delete_records('log');
 
         stats_temp_table_create();
         stats_temp_table_setup();
@@ -688,8 +610,6 @@ class core_statslib_testcase extends advanced_testcase {
         global $DB;
 
         $rows = array(
-            'temp_log1'             => array('id' => 1, 'course' => 1),
-            'temp_log2'             => array('id' => 1, 'course' => 1),
             'temp_stats_daily'      => array('id' => 1, 'courseid' => 1),
             'temp_stats_user_daily' => array('id' => 1, 'courseid' => 1),
         );
@@ -728,7 +648,6 @@ class core_statslib_testcase extends advanced_testcase {
         global $CFG, $DB;
 
         $dataset = $this->load_xml_data_file(__DIR__."/fixtures/{$xmlfile}");
-        $stats = $this->prepare_db($dataset, array('log'));
         $stats = $dataset->get_rows(['stats_daily', 'stats_user_daily']);
 
         // Stats cron daily uses mtrace, turn on buffering to silence output.
@@ -737,6 +656,7 @@ class core_statslib_testcase extends advanced_testcase {
         $output = ob_get_contents();
         ob_end_clean();
 
+        print_object($stats);
         $this->verify_stats($stats, $output);
     }
 
@@ -758,7 +678,6 @@ class core_statslib_testcase extends advanced_testcase {
         $gr       = get_guest_role();
 
         $dataset = $this->load_xml_data_file(__DIR__."/fixtures/statslib-test10.xml");
-        $this->prepare_db($dataset, array('log'));
         $stats = $dataset->get_rows(['stats_user_daily']);
 
         // Stats cron daily uses mtrace, turn on buffering to silence output.
