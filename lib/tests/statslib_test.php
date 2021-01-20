@@ -162,6 +162,8 @@ class core_statslib_testcase extends advanced_testcase {
             '[frontpage_roleid]' => (int) $CFG->defaultfrontpageroleid,
             '[guest_roleid]'     => $gr->id,
             '[student_roleid]'   => $studentrole->id,
+
+            // TODO: Mat add items for new columns in .xml files rather than scuff it.
         );
     }
 
@@ -656,7 +658,6 @@ class core_statslib_testcase extends advanced_testcase {
         $output = ob_get_contents();
         ob_end_clean();
 
-        print_object($stats);
         $this->verify_stats($stats, $output);
     }
 
