@@ -131,7 +131,7 @@ class core_statslib_testcase extends advanced_testcase {
         $course1 = $DB->get_record('course', array('shortname' => 'course1'));
 
         $sitecontext = context::instance_by_id(SITEID);
-        $coursecontext = context::instance_by_id($course1->id);
+        $coursecontext = context_course::instance($course1->id);
 
         if (($site === false) || ($course1 === false)) {
             trigger_error('Course setup incomplete', E_USER_ERROR);
