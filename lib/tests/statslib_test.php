@@ -130,6 +130,9 @@ class core_statslib_testcase extends advanced_testcase {
         $site    = $DB->get_record('course', array('id' => SITEID));
         $course1 = $DB->get_record('course', array('shortname' => 'course1'));
 
+        $sitecontext = context::instance_by_id(SITEID);
+        $coursecontext = context::instance_by_id($course1->id);
+
         if (($site === false) || ($course1 === false)) {
             trigger_error('Course setup incomplete', E_USER_ERROR);
         }
@@ -163,7 +166,15 @@ class core_statslib_testcase extends advanced_testcase {
             '[guest_roleid]'     => $gr->id,
             '[student_roleid]'   => $studentrole->id,
 
-            // TODO: Mat add items for new columns in .xml files rather than scuff it.
+            '[edulevel]' => 0,
+
+            '[context_id1]' => $sitecontext->id,
+            '[context_level1]' => $sitecontext->contextlevel,
+            '[context_instance_id1]' => $sitecontext->instanceid,
+
+            '[context_id2]' => $coursecontext->id,
+            '[context_level2]' => $coursecontext->contextlevel,
+            '[context_instance_id2]' => $coursecontext->instanceid,
         );
     }
 

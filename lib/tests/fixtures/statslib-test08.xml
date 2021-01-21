@@ -15,20 +15,20 @@
             <value>[user1_id]</value>
             <value>[site_id]</value>
             <value>login</value>
-            <value>0</value>
-            <value>25</value>
-            <value>10</value>
-            <value>50</value>
+            <value>[edulevel]</value>
+            <value>[context_id1]</value>
+            <value>[context_level1]</value>
+            <value>[context_instance_id1]</value>
         </row>
         <row>
             <value>[start_2]</value>
             <value>[user1_id]</value>
             <value>[site_id]</value>
             <value>view</value>
-            <value>0</value>
-            <value>30</value>
-            <value>10</value>
-            <value>60</value>
+            <value>[edulevel]</value>
+            <value>[context_id2]</value>
+            <value>[context_level2]</value>
+            <value>[context_instance_id2]</value>
         </row>
     </table>
     <table name="stats_daily">

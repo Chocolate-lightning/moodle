@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Tests no logs - Only query 3 should be processed -->
 <dataset>
-    <table name="log">
+    <table name="logstore_standard_log">
         <column>time</column>
         <column>userid</column>
         <column>course</column>
         <column>action</column>
+        <column>edulevel</column>
+        <column>contextid</column>
+        <column>contextlevel</column>
+        <column>contextinstanceid</column>
     </table>
     <table name="stats_daily">
         <column>courseid</column>

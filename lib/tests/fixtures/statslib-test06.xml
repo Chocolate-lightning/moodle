@@ -1,28 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- User login, view course and post - Tests queries 10, 12, 14 (write) -->
 <dataset>
-    <table name="log">
+    <table name="logstore_standard_log">
         <column>time</column>
         <column>userid</column>
         <column>course</column>
         <column>action</column>
+        <column>edulevel</column>
+        <column>contextid</column>
+        <column>contextlevel</column>
+        <column>contextinstanceid</column>
         <row>
             <value>[start_1]</value>
             <value>[user1_id]</value>
             <value>[site_id]</value>
             <value>login</value>
+            <value>[edulevel]</value>
+            <value>[context_id1]</value>
+            <value>[context_level1]</value>
+            <value>[context_instance_id1]</value>
         </row>
         <row>
             <value>[start_2]</value>
             <value>[user1_id]</value>
             <value>[course1_id]</value>
             <value>view</value>
+            <value>[edulevel]</value>
+            <value>[context_id2]</value>
+            <value>[context_level2]</value>
+            <value>[context_instance_id2]</value>
         </row>
         <row>
             <value>[start_3]</value>
             <value>[user1_id]</value>
             <value>[course1_id]</value>
             <value>add post</value>
+            <value>[edulevel]</value>
+            <value>[context_id2]</value>
+            <value>[context_level2]</value>
+            <value>[context_instance_id2]</value>
         </row>
     </table>
     <table name="stats_daily">
