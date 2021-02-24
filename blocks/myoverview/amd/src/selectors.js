@@ -21,11 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define([], function() {
-    return {
-        courseView: {
-            region: '[data-region="courses-view"]',
-            regionContent: '[data-region="course-view-content"]'
-        }
-    };
-});
+export default {
+    courseView: {
+        region: '[data-region="courses-view"]',
+        regionContent: '[data-region="course-view-content"]'
+    }
+};
