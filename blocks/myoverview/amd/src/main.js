@@ -25,12 +25,14 @@ define(
 [
     'jquery',
     'block_myoverview/view',
-    'block_myoverview/view_nav'
+    'block_myoverview/view_nav',
+    'block_myoverview/search_courses'
 ],
 function(
     $,
     View,
-    ViewNav
+    ViewNav,
+    SearchCourses
 ) {
     /**
      * Initialise all of the modules for the overview block.
@@ -43,6 +45,8 @@ function(
         ViewNav.init(root);
         // Initialise the courses view modules.
         View.init(root);
+
+        SearchCourses.init();
     };
 
     return {

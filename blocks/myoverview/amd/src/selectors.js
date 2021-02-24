@@ -26,6 +26,13 @@ define([], function() {
         courseView: {
             region: '[data-region="courses-view"]',
             regionContent: '[data-region="course-view-content"]'
-        }
+        },
+        region: {
+            courses: '[data-region="myoverview-courses"]',
+            selectPage: '[data-region="myoverview"]',
+            clearIcon: '[data-region="clear-icon"]',
+            searchIcon: '[data-region="search-icon"]',
+            searchInput: '[data-region="search-input"]',
+        },
     };
 });
