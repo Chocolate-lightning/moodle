@@ -85,6 +85,8 @@ function(
 
     var courseOffset = 0;
 
+    var courses = [];
+
     var lastPage = 0;
 
     var lastLimit = 0;
@@ -587,7 +589,12 @@ function(
                         filters,
                         limit
                     ).then(function(coursesData) {
-                        var courses = coursesData.courses;
+                        window.console.log(filters);
+                        window.console.log(limit);
+                        courses = coursesData.courses;
+                        window.console.log(courses);
+                        window.console.log('loadedpages');
+                        window.console.log(loadedPages);
                         var nextPageStart = 0;
                         var pageCourses = [];
 
