@@ -32,6 +32,7 @@ import * as CourseEvents from 'core_course/events';
 import Selectors from 'block_myoverview/selectors';
 import * as PagedContentEvents from 'core/paged_content_events';
 import * as Aria from 'core/aria';
+import {debounce} from 'core/utils';
 
 const SELECTORS = {
     COURSE_REGION: '[data-region="course-view-content"]',
@@ -148,7 +149,7 @@ const getPagedContentContainer = (root, index) => {
  * @param {Object} root The favourite icon container element.
  * @return {Number} Course id.
  */
-const getCourseId = (root) => {
+const getCourseId = root => {
     return root.attr('data-course-id');
 };
 
@@ -487,7 +488,7 @@ const renderCourses = (root, coursesData) => {
  *
  * @param {Number} limit The paged limit that is passed through the event
  */
-const setLimit = (limit) => {
+const setLimit = limit => {
     this.find(Selectors.courseView.region).attr('data-paging', limit);
 };
 
@@ -503,16 +504,7 @@ const registerPagedEventHandlers = (root, namespace) => {
     PubSub.subscribe(event, setLimit.bind(root));
 };
 
-/**
- * Intialise the courses list and cards views on page load.
- *
- * @param {object} root The root element for the courses view.
- * @param {object} content The content element for the courses view.
- */
-const initializePagedContent = (root) => {
-    namespace = "block_myoverview_" + root.attr('id') + "_" + Math.random();
-
-    const pagingLimit = parseInt(root.find(Selectors.courseView.region).attr('data-paging'), 10);
+const itemsPerPageFunc = (pagingLimit, root) => {
     let itemsPerPage = NUMCOURSES_PERPAGE.map((value) => {
         let active = false;
         if (value == pagingLimit) {
@@ -527,9 +519,66 @@ const initializePagedContent = (root) => {
 
     // Filter out all pagination options which are too large for the amount of courses user is enrolled in.
     const totalCourseCount = parseInt(root.find(Selectors.courseView.region).attr('data-totalcoursecount'), 10);
-    itemsPerPage = itemsPerPage.filter((pagingOption) => {
+    return itemsPerPage.filter((pagingOption) => {
         return pagingOption.value < totalCourseCount || pagingOption.value === 0;
     });
+};
+
+const pageBuilder = (coursesData, currentPage, pageData, actions) => {
+    let courses = coursesData.courses;
+    let nextPageStart = 0;
+    let pageCourses = [];
+
+    // If current page's data is loaded make sure we max it to page limit
+    if (loadedPages[currentPage] != undefined) {
+        pageCourses = loadedPages[currentPage].courses;
+        const currentPageLength = pageCourses.length;
+        if (currentPageLength < pageData.limit) {
+            nextPageStart = pageData.limit - currentPageLength;
+            pageCourses = $.merge(loadedPages[currentPage].courses, courses.slice(0, nextPageStart));
+        }
+    } else {
+        // When the page limit is zero, there is only one page of courses, no start for next page.
+        nextPageStart = pageData.limit || false;
+        pageCourses = (pageData.limit > 0) ? courses.slice(0, pageData.limit) : courses;
+    }
+
+    // Finished setting up the current page
+    loadedPages[currentPage] = {
+        courses: pageCourses
+    };
+
+    // Set up the next page (if there is more than one page).
+    const remainingCourses = nextPageStart !== false ? courses.slice(nextPageStart, courses.length) : [];
+    if (remainingCourses.length) {
+        loadedPages[currentPage + 1] = {
+            courses: remainingCourses
+        };
+    }
+
+    // Set the last page to either the current or next page
+    if (loadedPages[currentPage].courses.length < pageData.limit || !remainingCourses.length) {
+        lastPage = currentPage;
+        actions.allItemsLoaded(currentPage);
+    } else if (loadedPages[currentPage + 1] != undefined
+        && loadedPages[currentPage + 1].courses.length < pageData.limit) {
+        lastPage = currentPage + 1;
+    }
+
+    courseOffset = coursesData.nextoffset;
+};
+
+/**
+ * Intialise the courses list and cards views on page load.
+ *
+ * @param {object} root The root element for the courses view.
+ * @param {object} content The content element for the courses view.
+ */
+const initializePagedContent = root => {
+    namespace = "block_myoverview_" + root.attr('id') + "_" + Math.random();
+
+    const pagingLimit = parseInt(root.find(Selectors.courseView.region).attr('data-paging'), 10);
+    let itemsPerPage = itemsPerPageFunc(pagingLimit, root);
 
     const filters = getFilterValues(root);
     const config = $.extend({}, DEFAULT_PAGED_CONTENT_CONFIG);
@@ -571,47 +620,7 @@ const initializePagedContent = (root) => {
                     filters,
                     limit
                 ).then((coursesData) => {
-                    let courses = coursesData.courses;
-                    let nextPageStart = 0;
-                    let pageCourses = [];
-
-                    // If current page's data is loaded make sure we max it to page limit
-                    if (loadedPages[currentPage] != undefined) {
-                        pageCourses = loadedPages[currentPage].courses;
-                        const currentPageLength = pageCourses.length;
-                        if (currentPageLength < pageData.limit) {
-                            nextPageStart = pageData.limit - currentPageLength;
-                            pageCourses = $.merge(loadedPages[currentPage].courses, courses.slice(0, nextPageStart));
-                        }
-                    } else {
-                        // When the page limit is zero, there is only one page of courses, no start for next page.
-                        nextPageStart = pageData.limit || false;
-                        pageCourses = (pageData.limit > 0) ? courses.slice(0, pageData.limit) : courses;
-                    }
-
-                    // Finished setting up the current page
-                    loadedPages[currentPage] = {
-                        courses: pageCourses
-                    };
-
-                    // Set up the next page (if there is more than one page).
-                    const remainingCourses = nextPageStart !== false ? courses.slice(nextPageStart, courses.length) : [];
-                    if (remainingCourses.length) {
-                        loadedPages[currentPage + 1] = {
-                            courses: remainingCourses
-                        };
-                    }
-
-                    // Set the last page to either the current or next page
-                    if (loadedPages[currentPage].courses.length < pageData.limit || !remainingCourses.length) {
-                        lastPage = currentPage;
-                        actions.allItemsLoaded(currentPage);
-                    } else if (loadedPages[currentPage + 1] != undefined
-                        && loadedPages[currentPage + 1].courses.length < pageData.limit) {
-                        lastPage = currentPage + 1;
-                    }
-
-                    courseOffset = coursesData.nextoffset;
+                    pageBuilder(coursesData, currentPage, pageData, actions);
                     return renderCourses(root, loadedPages[currentPage]);
                 })
                     .catch(Notification.exception);
@@ -635,7 +644,7 @@ const initializePagedContent = (root) => {
  *
  * @param {Object} root The myoverview block container element.
  */
-const registerEventListeners = (root) => {
+const registerEventListeners = root => {
     CustomEvents.define(root, [
         CustomEvents.events.activate
     ]);
@@ -674,11 +683,156 @@ const registerEventListeners = (root) => {
 };
 
 /**
+ * Start bootstrapping the searching functionality.
+ *
+ * @method inbuiltSearchInit
+ * @param {Object} root The myoverview block container element.
+ */
+const inbuiltSearchInit = root => {
+    const page = document.querySelector(Selectors.region.selectBlock);
+    registerListenerEvents(page, root);
+};
+
+/**
+ * Add the event listeners to our page.
+ *
+ * @method registerListenerEvents
+ * @param {HTMLElement} page The whole page element for our page
+ * @param {Object} root The myoverview block container element.
+ */
+const registerListenerEvents = (page, root) => {
+    const input = page.querySelector(Selectors.region.searchInput);
+    const clearIcon = page.querySelector(Selectors.region.clearIcon);
+
+    clearIcon.addEventListener('click', () => {
+        input.value = '';
+        clearSearch(page, root);
+    });
+
+    input.addEventListener('input', debounce(() => {
+        // TODO: this would need work to avoid constant resets.
+        if (input.value === '') {
+            clearSearch(page, root);
+        } else {
+            activeSearch(page);
+            searchCourses(input.value, root);
+        }
+    }, 300));
+};
+
+const clearSearch = (page, root) => {
+    const searchIcon = page.querySelector(Selectors.region.searchIcon);
+    const clearIcon = page.querySelector(Selectors.region.clearIcon);
+    searchIcon.classList.remove('d-none');
+    clearIcon.parentElement.classList.add('d-none');
+    init(root);
+};
+
+const activeSearch = page => {
+    const searchIcon = page.querySelector(Selectors.region.searchIcon);
+    const clearIcon = page.querySelector(Selectors.region.clearIcon);
+
+    searchIcon.classList.add('d-none');
+    clearIcon.parentElement.classList.remove('d-none');
+};
+
+/**
+ * For a given input, the page & what to replace fetch courses and manage icons too.
+ *
+ * @method searchCourses
+ * @param {string} inputValue What to search for
+ * @param {HTMLElement} page The whole page element for our page
+ * @param {Object} root The myoverview block container element.
+ */
+const searchCourses = async(inputValue, root) => {
+    // Force the offset back to 0 so we get all courses from the start.
+    courseOffset = 0;
+
+    const filters = getFilterValues(root);
+    // Force the WS to return all of the users' courses even if they hid them.
+    filters.grouping = "allincludinghidden";
+
+    const searchTerm = inputValue.toLowerCase();
+
+    loadedPages = [];
+    const pagingLimit = parseInt(root.find(Selectors.courseView.region).attr('data-paging'), 10);
+    let itemsPerPage = itemsPerPageFunc(pagingLimit, root);
+
+    const config = $.extend({}, DEFAULT_PAGED_CONTENT_CONFIG);
+    config.eventNamespace = namespace;
+
+    const pagedContentPromise = PagedContentFactory.createWithLimit(
+        itemsPerPage,
+        (pagesData, actions) => {
+            let promises = [];
+
+            pagesData.forEach((pageData) => {
+                const currentPage = pageData.pageNumber;
+                let limit = (pageData.limit > 0) ? pageData.limit : 0;
+
+                // Reset local variables if limits have changed
+                if (lastLimit != limit) {
+                    loadedPages = [];
+                    courseOffset = 0;
+                    lastPage = 0;
+                }
+
+                if (lastPage == currentPage) {
+                    // If we are on the last page and have it's data then load it from cache
+                    actions.allItemsLoaded(lastPage);
+                    promises.push(renderCourses(root, loadedPages[currentPage]));
+                    return;
+                }
+
+                lastLimit = limit;
+
+                // Get 2 pages worth of data as we will need it for the hidden functionality.
+                if (loadedPages[currentPage + 1] == undefined) {
+                    if (loadedPages[currentPage] == undefined) {
+                        limit *= 2;
+                    }
+                }
+
+                const newpagePromise = getMyCourses(
+                    filters,
+                    0
+                ).then((coursesData) => {
+                    // eslint-disable-next-line array-callback-return
+                    coursesData.courses = coursesData.courses.filter((course) => {
+                        const courseFullName = course.fullname.toLowerCase();
+                        const courseShortName = course.shortname.toLowerCase();
+                        const courseSummary = course.summary.toLowerCase();
+                        if (courseFullName.includes(searchTerm) ||
+                            courseShortName.includes(searchTerm) ||
+                            courseSummary.includes(searchTerm)) {
+                            return course;
+                        }
+                    });
+                    pageBuilder(coursesData, currentPage, pageData, actions);
+                    return renderCourses(root, loadedPages[currentPage]);
+                })
+                    .catch(Notification.exception);
+
+                promises.push(newpagePromise);
+            });
+
+            return promises;
+        },
+        config
+    );
+
+    pagedContentPromise.then((html, js) => {
+        registerPagedEventHandlers(root, namespace);
+        return Templates.replaceNodeContents(root.find(Selectors.courseView.region), html, js);
+    }).catch(Notification.exception);
+};
+
+/**
  * Intialise the courses list and cards views on page load.
  *
  * @param {object} root The root element for the courses view.
  */
-export const init = (root) => {
+export const init = root => {
     root = $(root);
     loadedPages = [];
     lastPage = 0;
@@ -688,6 +842,7 @@ export const init = (root) => {
 
     if (!root.attr('data-init')) {
         registerEventListeners(root);
+        inbuiltSearchInit(root);
         root.attr('data-init', true);
     }
 };
@@ -702,7 +857,7 @@ export const init = (root) => {
  *
  * @param {Object} root The root element for the timeline view.
  */
-export const reset = (root) => {
+export const reset = root => {
     if (loadedPages.length > 0) {
         loadedPages.forEach((courseList, index) => {
             let pagedContentPage = getPagedContentContainer(root, index);

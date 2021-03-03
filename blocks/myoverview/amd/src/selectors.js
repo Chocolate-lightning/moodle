@@ -25,5 +25,11 @@ export default {
     courseView: {
         region: '[data-region="courses-view"]',
         regionContent: '[data-region="course-view-content"]'
-    }
+    },
+    region: {
+        selectBlock: '[data-region="myoverview"]',
+        clearIcon: '[data-region="clear-icon"]',
+        searchIcon: '[data-region="search-icon"]',
+        searchInput: '[data-region="search-input"]',
+    },
 };
