@@ -23,15 +23,25 @@
 import {classUtil} from 'core/utils';
 import ModalBackdrop from 'core/modal_backdrop';
 import Templates from 'core/templates';
+import Notification from 'core/notification';
 
-let backdropPromise = 0;
+let backdropPromise = null;
+/**
+ * Simple object of sizes to respond to so we can easily modify as required.
+ */
+const Sizes = {
+    medium: 768
+};
 
 const pageWrapper = document.querySelector('#page-wrapper');
 
 const getBackdrop = () => {
     if (!backdropPromise) {
+        // Would look to see if there is a way to migrate this to renderForPromise to remove the .then().
+        // Interesting idea to use some of the modal factory. Unsure if it is a good idea or
+        // if it should be more of a generic helper.
         backdropPromise = Templates.render('core/modal_backdrop', {})
-            .then(function(html) {
+            .then(html => {
                 return new ModalBackdrop(html);
             })
             .fail(Notification.exception);
@@ -40,11 +50,10 @@ const getBackdrop = () => {
 };
 
 const closeNav = (navRegion, closeBackdrop = true) => {
-    const small = document.body.clientWidth < 768;
 
     classUtil('remove', navRegion, 'show');
 
-    if (small && closeBackdrop) {
+    if (isSmall() && closeBackdrop) {
         getBackdrop().then(backdrop => {
             backdrop.hide();
             pageWrapper.style.overflow = 'auto';
@@ -53,11 +62,10 @@ const closeNav = (navRegion, closeBackdrop = true) => {
 };
 
 const showNav = (navRegion) => {
-    const small = document.body.clientWidth < 768;
 
     classUtil('add', navRegion, 'show');
 
-    if (small) {
+    if (isSmall()) {
         getBackdrop().then(backdrop => {
             backdrop.setZIndex(1020);
             backdrop.show();
@@ -72,6 +80,10 @@ const showNav = (navRegion) => {
     if (region) {
         navRegion.dispatchEvent(new CustomEvent('show-boost-drawer', { bubbles: true, detail: region }));
     }
+};
+
+const isSmall = () => {
+    return document.body.clientWidth < Sizes.medium;
 };
 
 export const region = (region, toggle) => {
