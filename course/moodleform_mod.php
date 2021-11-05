@@ -1304,7 +1304,7 @@ abstract class moodleform_mod extends moodleform {
         // This flag triggers the settings to be locked in apply_admin_locked_flags().
         $this->applyadminlockedflags = true;
 
-        $settings = get_config($this->_modname);
+        $settings = (object)array_merge((array)get_config($this->_modname), (array)get_config("mod_{$this->_modname}"));
         $mform = $this->_form;
         $usermidnight = usergetmidnight(time());
         $isupdate = !empty($this->_cm);
@@ -1338,6 +1338,30 @@ abstract class moodleform_mod extends moodleform {
                 $requiredsetting = $name . '_required';
                 if (!empty($settings->$requiredsetting)) {
                     $mform->addRule($name, null, 'required', null, 'client');
+                }
+            }
+            if ($mform->elementExists('grade')) {
+                $element = $mform->getElement('grade');
+                if (!$isupdate) {
+                    switch ($name) {
+                        case "gradetype":
+                            switch ((int)$value) {
+                                case GRADE_TYPE_NONE :
+                                    $element->currentgradetype = 'none';
+                                    break;
+                                case GRADE_TYPE_SCALE :
+                                    $element->currentgradetype = 'scale';
+                                    break;
+                                case GRADE_TYPE_VALUE :
+                                    $element->currentgradetype = 'point';
+                                    break;
+                            }
+                            break;
+                        case "gradescale":
+                            $element->currentscaleid = (int)$value;
+                            break;
+                    }
+                    $element->onQuickFormEvent('updateValue', null, $mform);
                 }
             }
         }

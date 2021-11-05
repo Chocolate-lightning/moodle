@@ -161,6 +161,31 @@ if ($ADMIN->fulltree) {
     );
     $settings->add($setting);
 
+    $name = new lang_string('gradetype', 'mod_assign');
+    $description = new lang_string('gradetype_help', 'mod_assign');
+    $setting = new admin_setting_configselect('mod_assign/gradetype',
+                                                    $name,
+                                                    $description,
+                                                    GRADE_TYPE_VALUE, [
+                                                        GRADE_TYPE_NONE => get_string('modgradetypenone', 'grades'),
+                                                        GRADE_TYPE_SCALE => get_string('modgradetypescale', 'grades'),
+                                                        GRADE_TYPE_VALUE => get_string('modgradetypepoint', 'grades')
+                                                    ]);
+    $settings->add($setting);
+
+    $scales = $DB->get_records('scale', ['courseid' => 0], '', 'id, name');
+    $choices = [];
+    foreach ($scales as $scale) {
+        $choices[$scale->id] = $scale->name;
+    }
+    $name = new lang_string('gradescale', 'mod_assign');
+    $description = new lang_string('gradescale_help', 'mod_assign');
+    $setting = new admin_setting_configselect('mod_assign/gradescale',
+                                                    $name,
+                                                    $description,
+                                                    0, $choices);
+    $settings->add($setting);
+
     $name = new lang_string('gradingduedate', 'mod_assign');
     $description = new lang_string('gradingduedate_help', 'mod_assign');
     $setting = new admin_setting_configduration('assign/gradingduedate',

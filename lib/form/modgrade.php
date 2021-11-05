@@ -514,6 +514,12 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                 // This means that the subelements data (inc const and default values) can be overridden by form code.
                 // So - when we call this code really we can't be sure that will be the end value for the element.
                 if (!empty($this->_elements)) {
+                    // If this is not an update, set the default values.
+                    if (!$this->isupdate) {
+                        $this->set_default_values();
+                        break;
+                    }
+
                     if (!empty($value)) {
                         if ($value < 0) {
                             $this->gradetypeformelement->setValue('scale');
@@ -547,5 +553,22 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
     protected function generate_modgrade_subelement_id($subname) {
         $gid = str_replace(array('[', ']'), array('_', ''), $this->getName());
         return clean_param('id_'.$gid.'_'.$subname, PARAM_ALPHANUMEXT);
+    }
+
+    /**
+     * Sets the default values
+     * @return void
+     */
+    protected function set_default_values(): void {
+        $this->gradetypeformelement->setValue($this->currentgradetype);
+
+        switch ($this->currentgradetype) {
+            case 'scale':
+                $this->scaleformelement->setValue($this->currentscaleid);
+                break;
+            case 'point':
+                $this->maxgradeformelement->setValue(100);
+                break;
+        }
     }
 }

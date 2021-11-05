@@ -4,7 +4,15 @@ information provided here is intended especially for developers.
 === 4.2 ===
 * course/mod.php now accepts parameter beforemod for adding course modules. It contains the course module id
   of an existing course module. The new module is inserted before this module.
-
+* course/moodleform_mod.php now checks for 2 new settings:
+  - "mod_{modname}/gradetype"
+    - The value of this setting dictates which of the GRADE_TYPE_X constants is the default option,
+      when creating new instances of the specific module.
+    - If this setting is not found it will default to use GRADE_TYPE_VALUE (Point)
+  - "mod_{modname}/gradescale"
+    - The value of this setting dictates which of the existing scales is the default option,
+      when creating new instances of the specific module.
+    - If this setting is not found it will default to use the first available option
 === 4.1 ===
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use
   course_activitychooser() instead.

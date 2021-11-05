@@ -291,6 +291,10 @@ $string['gradeoutofhelp_help'] = 'Enter the grade for the student\'s submission 
 $string['gradestudent'] = 'Grade student: (id={$a->id}, fullname={$a->fullname}). ';
 $string['grading'] = 'Grading';
 $string['gradingchangessaved'] = 'The grade changes were saved';
+$string['gradetype'] = 'Default grade type';
+$string['gradetype_help'] = 'The default grade type to be used when creating new assignments';
+$string['gradescale'] = 'Default grade scale';
+$string['gradescale_help'] = 'The default grade scale to be used when creating new assignments';
 $string['gradingduedate'] = 'Remind me to grade by';
 $string['gradingduedate_help'] = 'The expected date that marking of the submissions should be completed by. This date is used to prioritise dashboard notifications for teachers.';
 $string['gradingdueduedatevalidation'] = 'Remind me to grade by date cannot be earlier than the due date.';
