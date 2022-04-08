@@ -60,8 +60,13 @@ if ($id == SITEID) {
     $PAGE->set_heading(fullname($user));
 } else {
     $PAGE->set_context($coursecontext);
-    $PAGE->set_secondary_active_tab('participants');
     $PAGE->set_heading($course->fullname);
+    // Check if its the current user or if the user is viewing another user.
+    if ($user->id === $USER->id) {
+        $PAGE->set_secondary_active_tab('grades');
+    } else {
+        $PAGE->set_secondary_active_tab('participants');
+    }
 }
 
 $PAGE->set_url('/course/user.php', array('id'=>$id, 'user'=>$user->id, 'mode'=>$mode));
