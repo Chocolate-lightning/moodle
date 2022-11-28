@@ -1711,6 +1711,25 @@ class grade_structure {
     }
 
     /**
+     * Returns an action menu item leading to the grade analysis page
+     *
+     * @param grade_grade $grade
+     * @return action_menu_link_secondary|null
+     */
+    public function get_grade_analysis_menu_item(grade_grade $grade) : ?action_menu_link_secondary {
+        $url = $this->get_grade_analysis_url($grade);
+        if (is_null($url)) {
+            return null;
+        }
+
+        static $strgtradeanalysis = null;
+        if (is_null($strgtradeanalysis)) {
+            $strgtradeanalysis = get_string('gradeanalysis', 'core_grades');
+        }
+        return new action_menu_link_secondary($url, null, $strgtradeanalysis);
+    }
+
+    /**
      * Returns an action menu for the grade.
      *
      * @param grade_grade $grade A grade_grade object
@@ -1916,6 +1935,43 @@ class grade_structure {
     }
 
     /**
+     * Returns an action menu item leading to the edit grade page
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @return action_menu_link_secondary|null
+     */
+    public function get_edit_menu_item(array $element, object $gpr) : ?action_menu_link_secondary {
+        $url = null;
+        if (!has_capability('moodle/grade:manage', $this->context)) {
+            if (!($element['type'] == 'grade') || !has_capability('moodle/grade:edit', $this->context)) {
+                return null;
+            }
+        }
+
+        static $streditgrade = null;
+        if (is_null($streditgrade)) {
+            $streditgrade = get_string('editgrade', 'grades');
+        }
+
+        $object = $element['object'];
+
+        if ($element['type'] == 'grade') {
+            if (empty($object->id)) {
+                $url = new moodle_url('/grade/edit/tree/grade.php',
+                    ['courseid' => $this->courseid, 'itemid' => $object->itemid, 'userid' => $object->userid]);
+            } else {
+                $url = new moodle_url('/grade/edit/tree/grade.php',
+                    ['courseid' => $this->courseid, 'id' => $object->id]);
+            }
+            $title = $streditgrade;
+            $gpr->add_url_params($url);
+            $url = new action_menu_link_secondary($url, null, $title);
+        }
+        return $url;
+    }
+
+    /**
      * Return hiding icon for give element
      *
      * @param array  $element An array representing an element in the grade_tree
@@ -1974,6 +2030,58 @@ class grade_structure {
     }
 
     /**
+     * Returns an action menu item with url to hide/unhide grade
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @return mixed
+     */
+    public function get_hiding_menu_item(array $element, object $gpr) {
+        if (!$element['object']->can_control_visibility() ||
+            (!has_capability('moodle/grade:manage', $this->context) &&
+                !has_capability('moodle/grade:hide', $this->context))) {
+            return null;
+        }
+
+        $url = new moodle_url('/grade/edit/tree/action.php',
+            ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
+        $url = $gpr->add_url_params($url);
+
+        static $strshowgrade = null;
+        static $strhidegrade = null;
+
+        if (is_null($strshowgrade)) {
+            $strshowgrade = get_string('show');
+        }
+
+        if (is_null($strhidegrade)) {
+            $strhidegrade = get_string('hide');
+        }
+
+        if ($element['object']->is_hidden()) {
+            $url->param('action', 'show');
+            $title = $strshowgrade;
+        } else {
+            $url->param('action', 'hide');
+            $title = $strhidegrade;
+        }
+
+        if ($element['type'] == 'grade') {
+            $item = $element['object']->grade_item;
+            if ($item->hidden) {
+                $strparamobj = new stdClass();
+                $strparamobj->itemname = $item->get_name(true, true);
+                $strnonunhideable = get_string('nonunhideableverbose', 'grades', $strparamobj);
+                $url = html_writer::span($title, 'text-muted', ['title' => $strnonunhideable]);
+            } else {
+                $url = new action_menu_link_secondary($url, null, $title);
+            }
+        }
+
+        return $url;
+    }
+
+    /**
      * Return locking icon for given element
      *
      * @param array  $element An array representing an element in the grade_tree
@@ -2028,6 +2136,64 @@ class grade_structure {
         }
 
         return $action;
+    }
+
+    /**
+     * Returns an action menu item with url to lock/unlock grade
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     *
+     * @return mixed
+     */
+    public function get_locking_menu_item(array $element, object $gpr) {
+        static $strunlock = null;
+        static $strlock = null;
+
+        if (is_null($strunlock)) {
+            $strunlock = get_string('unlock', 'grades');
+        }
+
+        if (is_null($strlock)) {
+            $strlock = get_string('lock', 'grades');
+        }
+
+        $url = null;
+
+        if ($element['type'] == 'grade') {
+            $url = new moodle_url('/grade/edit/tree/action.php',
+                ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
+            $url = $gpr->add_url_params($url);
+
+            if ($element['object']->grade_item->is_locked()) {
+                // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon.
+                $strparamobj = new stdClass();
+                $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
+                $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
+                $title = $strunlock;
+                $url = html_writer::span($title, 'text-muted', ['title' => $strnonunlockable]);
+            } else if ($element['object']->is_locked()) {
+                $title = $strunlock;
+                if (!has_capability('moodle/grade:manage', $this->context) &&
+                    !has_capability('moodle/grade:unlock', $this->context)) {
+                    $url = html_writer::span($title, 'text-muted'); // May be we need a hint that capabilities are missing.
+                } else {
+                    $url->param('action', 'unlock');
+                    $url = new action_menu_link_secondary($url, null, $title);
+                }
+            } else {
+                $title = $strlock;
+                if (!has_capability('moodle/grade:manage', $this->context) &&
+                    !has_capability('moodle/grade:lock', $this->context)) {
+                    $url = html_writer::span($title, 'text-muted'); // May be we need a hint that capabilities are missing.
+                } else {
+                    $url->param('action', 'lock');
+                    $url = new action_menu_link_secondary($url, null, $title);
+                }
+            }
+        }
+
+        return $url;
     }
 
     /**
