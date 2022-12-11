@@ -1,6 +1,11 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+* The setting $CFG->grade_report_studentsperpage has been completely removed because it's not required anymore. This setting
+  was used to set the default number of students displayed per page in the grader report. Now the default is set to
+  20.
+
 === 3.6 ===
 * External function gradereport_user_external::get_grade_items now return the following information (only for course managers).
   - locked: Whether the grade item is locked.
