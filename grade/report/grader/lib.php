@@ -102,6 +102,12 @@ class grade_report_grader extends grade_report {
      */
     public $canviewhidden;
 
+    /** @var int Maximum number of students that can be shown on one page */
+    public const MAX_STUDENTS_PER_PAGE = 5000;
+
+    /** @var int[] List of available options on the pagination dropdown */
+    public const PAGINATION_OPTIONS = [20, 100];
+
     /**
      * Length at which feedback will be truncated (to the nearest word) and an ellipsis be added.
      * TODO replace this by a report preference
@@ -474,7 +480,8 @@ class grade_report_grader extends grade_report {
                    $this->userwheresql
                    $this->groupwheresql
               ORDER BY $sort";
-        $studentsperpage = $this->get_students_per_page();
+        // We never work with unlimited result. Limit the number of records by MAX_STUDENTS_PER_PAGE if no other limit is specified.
+        $studentsperpage = $this->get_students_per_page() ?: static::MAX_STUDENTS_PER_PAGE;
         $this->users = $DB->get_records_sql($sql, $params, $studentsperpage * $this->page, $studentsperpage);
 
         if (empty($this->users)) {
@@ -1995,6 +2002,7 @@ class grade_report_grader extends grade_report {
      * @return int The maximum number of students to display per page
      */
     public function get_students_per_page(): int {
-        return (int) $this->get_pref('studentsperpage');
+        // Default to the lowest available option.
+        return (int) get_user_preferences('grade_report_studentsperpage', min(static::PAGINATION_OPTIONS));
     }
 }
