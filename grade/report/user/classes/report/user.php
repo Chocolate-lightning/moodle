@@ -21,6 +21,8 @@ use course_modinfo;
 use grade_grade;
 use grade_report;
 use grade_tree;
+use html_writer;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -1301,5 +1303,35 @@ class user extends grade_report {
             ]
         );
         $event->trigger();
+    }
+
+    /**
+     * Returns link to user report for the current element
+     *
+     * @param context_course $context Course context
+     * @param int $courseid Course ID
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @param string $userreport Language string
+     * @return string|null
+     */
+    public static function get_userreport_link(context_course $context, int $courseid, array $element,
+            object $gpr, string $userreport): ?string {
+        global $CFG;
+
+        // FIXME: MDL-52678 This get_capability_info is hacky and we should have an API for inserting grade row links instead.
+        $canseeuserreport = false;
+        if (get_capability_info('gradereport/' . $CFG->grade_profilereport.':view')) {
+            $canseeuserreport = has_capability('gradereport/' . $CFG->grade_profilereport.':view', $context);
+        }
+
+        if ($canseeuserreport) {
+            $url = new moodle_url('/grade/report/' . $CFG->grade_profilereport . '/index.php',
+                ['userid' => $element['userid'], 'id' => $courseid]);
+            $gpr->add_url_params($url);
+            return html_writer::link($url, $userreport,
+                ['class' => 'dropdown-item', 'aria-label' => $userreport, 'role' => 'menuitem']);
+        }
+        return null;
     }
 }
