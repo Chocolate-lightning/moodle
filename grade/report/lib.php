@@ -412,13 +412,13 @@ abstract class grade_report {
     /**
      * Returns an arrow icon inside an <a> tag, for the purpose of sorting a column.
      * @param string $direction
-     * @param moodle_url $sortlink
+     * @param moodle_url|null $sortlink
      */
-    protected function get_sort_arrow($direction='move', $sortlink=null) {
+    protected function get_sort_arrow(string $direction = 'down', ?moodle_url $sortlink = null) {
         global $OUTPUT;
-        $pix = array('up' => 't/sort_desc', 'down' => 't/sort_asc', 'move' => 't/sort');
-        $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'asc');
-        $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
+        $pix = ['up' => 't/sort_desc', 'down' => 't/sort_asc'];
+        $matrix = ['up' => 'desc', 'down' => 'asc'];
+        $strsort = $this->get_lang_string($matrix[$direction], 'moodle');
 
         $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);
         return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort]);
