@@ -1540,17 +1540,24 @@ class grade_structure {
      * @param bool  $withdescription Show description if defined by this item.
      * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
      *                         instead of "Category total" or "Course total"
+     * @param bool  $dimmed If element is shown as dimmed.
+     * @param moodle_url|null  $sortlink Link to sort column.
      *
      * @return string header
      */
-    public function get_element_header(&$element, $withlink = false, $icon = true, $spacerifnone = false,
-        $withdescription = false, $fulltotal = false) {
+    public function get_element_header(array &$element, bool $withlink = false, bool $icon = true,
+            bool $spacerifnone = false, bool $withdescription = false, bool $fulltotal = false,
+            bool $dimmed = false, ?moodle_url $sortlink = null) {
         $header = '';
 
         if ($icon) {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
+        $dimmedclass = '';
+        if ($dimmed) {
+            $dimmedclass = ' dimmed_text';
+        }
         $title = $element['object']->get_name($fulltotal);
         $titleunescaped = $element['object']->get_name($fulltotal, false);
         $header .= $title;
@@ -1560,15 +1567,22 @@ class grade_structure {
             return $header;
         }
 
-        if ($withlink && $url = $this->get_activity_link($element)) {
+        if ($sortlink) {
+            $url = $sortlink;
+            $header = html_writer::link($url, $header,
+                ['title' => $titleunescaped, 'class' => 'gradeitemheader' . $dimmedclass]);
+        }
+
+        if (!$sortlink && $withlink && $url = $this->get_activity_link($element)) {
             $a = new stdClass();
             $a->name = get_string('modulename', $element['object']->itemmodule);
             $a->title = $titleunescaped;
             $title = get_string('linktoactivity', 'grades', $a);
-
-            $header = html_writer::link($url, $header, array('title' => $title, 'class' => 'gradeitemheader'));
+            $header = html_writer::link($url, $header,
+                ['title' => $title, 'class' => 'gradeitemheader' . $dimmedclass]);
         } else {
-            $header = html_writer::span($header, 'gradeitemheader', array('title' => $titleunescaped, 'tabindex' => '0'));
+            $header = html_writer::span($header, 'gradeitemheader' . $dimmedclass,
+                ['title' => $titleunescaped, 'tabindex' => '0']);
         }
 
         if ($withdescription) {
@@ -1960,10 +1974,53 @@ class grade_structure {
                     ['courseid' => $this->courseid, 'id' => $object->id]);
             }
             $title = $langstrings[0];
+        } else if (($element['type'] == 'item') || ($element['type'] == 'categoryitem') ||
+            ($element['type'] == 'courseitem')) {
+            if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
+                $url = new moodle_url('/grade/edit/tree/item.php',
+                    ['courseid' => $this->courseid, 'id' => $object->id]);
+            } else {
+                $url = new moodle_url('/grade/edit/tree/outcomeitem.php',
+                    ['courseid' => $this->courseid, 'id' => $object->id]);
+            }
+            $title = $langstrings[1];
+        } else if ($element['type'] == 'category') {
+            $url = new moodle_url('/grade/edit/tree/category.php',
+                ['courseid' => $this->courseid, 'id' => $object->id]);
+            $title = $langstrings[2];
         }
         $gpr->add_url_params($url);
         return html_writer::link($url, $title,
             ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
+    }
+
+    /**
+     * Returns link to singleview report for the current element
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @param string $singleviewstring Language string
+     * @return string|null
+     */
+    public function get_singleview_link(array $element, object $gpr, string $singleviewstring) : ?string {
+
+        // View all grades items.
+        // FIXME: MDL-52678 This is extremely hacky we should have an API for inserting grade column links.
+        if (get_capability_info('gradereport/singleview:view')) {
+            if (has_all_capabilities(['gradereport/singleview:view', 'moodle/grade:viewall',
+                'moodle/grade:edit'], $this->context)) {
+
+                $url = new moodle_url('/grade/report/singleview/index.php', [
+                    'id' => $this->courseid,
+                    'item' => 'grade',
+                    'itemid' => $element['object']->id
+                ]);
+                $gpr->add_url_params($url);
+                return html_writer::link($url, $singleviewstring,
+                    ['class' => 'dropdown-item', 'aria-label' => $singleviewstring, 'role' => 'menuitem']);
+            }
+        }
+        return null;
     }
 
     /**
@@ -2218,6 +2275,44 @@ class grade_structure {
         }
 
         return $returnactionmenulink ? null : '';
+    }
+
+    /**
+     * Returns link to edit calculation for a grade item.
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @param string $editcalculationstrings Language string
+     *
+     * @return string|null
+     */
+    public function get_edit_calculation_link(array $element, object $gpr, string $editcalculationstrings) : ?string {
+
+        $object = $element['object'];
+
+        $url = new moodle_url('/grade/edit/tree/calculation.php',
+            ['courseid' => $this->courseid, 'id' => $object->id]);
+        $url = $gpr->add_url_params($url);
+        return html_writer::link($url, $editcalculationstrings,
+            ['class' => 'dropdown-item', 'aria-label' => $editcalculationstrings, 'role' => 'menuitem']);
+    }
+
+    /**
+     * Returns link to change category view mode.
+     *
+     * @param moodle_url $url Url to grader report page
+     * @param string $title Menu item title
+     * @param string $action View mode to change to
+     * @param bool $active Whether link is active in dropdown
+     *
+     * @return string|null
+     */
+    public function get_category_view_mode_link(moodle_url $url, string $title, string $action, bool $active = false) :?string {
+        $urlnew = $url;
+        $urlnew->param('action', $action);
+        $active = $active ? 'true' : 'false';
+        return html_writer::link($urlnew, $title,
+            ['class' => 'dropdown-item', 'aria-label' => $title, 'aria-current' => $active, 'role' => 'menuitem']);
     }
 }
 

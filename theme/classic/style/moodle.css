@@ -19804,15 +19804,15 @@ p.arrow_button {
 
 .path-grade-report-grader .gradeparent tr.lastrow {
   position: sticky;
-  bottom: 0;
-  z-index: 1; }
+  bottom: 0; }
   .path-grade-report-grader .gradeparent tr.lastrow td,
   .path-grade-report-grader .gradeparent tr.lastrow th {
     border-top: 1px solid #dee2e6; }
 
 .path-grade-report-grader .gradeparent th.header {
   position: sticky;
-  left: -3rem; }
+  left: -3rem;
+  z-index: 1; }
 
 .path-grade-report-grader .gradeparent td.noborder {
   border-right: transparent; }
