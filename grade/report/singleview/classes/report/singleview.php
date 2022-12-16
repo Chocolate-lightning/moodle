@@ -18,6 +18,7 @@ namespace gradereport_singleview\report;
 
 use context_course;
 use grade_report;
+use html_writer;
 use moodle_url;
 use renderer_base;
 use stdClass;
@@ -195,6 +196,56 @@ class singleview extends grade_report {
         $menu->attributes['class'] .= ' float-left my-auto';
 
         return $output->render($menu);
+    }
+
+    /**
+     * Returns link to singleview report for the current element
+     *
+     * @param context_course $context Course context
+     * @param int $courseid Course ID
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @param string $singleviewstring Language string
+     * @param string $mode Mode - gradeitem or user
+     * @return string|null
+     */
+    public static function get_singleview_link(context_course $context, int $courseid, array $element,
+            object $gpr, string $singleviewstring, string $mode): ?string {
+
+        if ($mode == 'gradeitem') {
+            // View all grades items.
+            // FIXME: MDL-52678 This is extremely hacky we should have an API for inserting grade column links.
+            if (get_capability_info('gradereport/singleview:view')) {
+                if (has_all_capabilities(['gradereport/singleview:view', 'moodle/grade:viewall',
+                    'moodle/grade:edit'], $context)) {
+
+                    $url = new moodle_url('/grade/report/singleview/index.php', [
+                        'id' => $courseid,
+                        'item' => 'grade',
+                        'itemid' => $element['object']->id
+                    ]);
+                    $gpr->add_url_params($url);
+                    return html_writer::link($url, $singleviewstring,
+                        ['class' => 'dropdown-item', 'aria-label' => $singleviewstring, 'role' => 'menuitem']);
+                }
+            }
+        } else if ($mode == 'user') {
+            // FIXME: MDL-52678 This get_capability_info is hacky and we should have an API for inserting grade row links instead.
+            $canseesingleview = false;
+            if (get_capability_info('gradereport/singleview:view')) {
+                $canseesingleview = has_all_capabilities(['gradereport/singleview:view',
+                    'moodle/grade:viewall', 'moodle/grade:edit'], $context);
+            }
+
+            if ($canseesingleview) {
+                $url = new moodle_url('/grade/report/singleview/index.php',
+                    ['id' => $courseid, 'itemid' => $element['userid'], 'item' => 'user']);
+                $gpr->add_url_params($url);
+                return html_writer::link($url, $singleviewstring,
+                    ['class' => 'dropdown-item', 'aria-label' => $singleviewstring, 'role' => 'menuitem']);
+            }
+        }
+        return null;
     }
 
 }
