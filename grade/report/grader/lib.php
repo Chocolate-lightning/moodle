@@ -412,7 +412,7 @@ class grade_report_grader extends grade_report {
     /**
      * pulls out the userids of the users to be display, and sorts them
      */
-    public function load_users() {
+    public function load_users(bool $allusers = false) {
         global $CFG, $DB;
 
         if (!empty($this->users)) {
@@ -482,7 +482,8 @@ class grade_report_grader extends grade_report {
               ORDER BY $sort";
         // We never work with unlimited result. Limit the number of records by MAX_STUDENTS_PER_PAGE if no other limit is specified.
         $studentsperpage = $this->get_students_per_page() ?: static::MAX_STUDENTS_PER_PAGE;
-        $this->users = $DB->get_records_sql($sql, $params, $studentsperpage * $this->page, $studentsperpage);
+        $studentsforwebservice = !$allusers ? $studentsperpage : static::MAX_STUDENTS_PER_PAGE;
+        $this->users = $DB->get_records_sql($sql, $params, $studentsperpage * $this->page, $studentsforwebservice);
 
         if (empty($this->users)) {
             $this->userselect = '';
