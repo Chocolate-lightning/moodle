@@ -63,7 +63,10 @@ Feature: I can grade a students interaction across a marking guide forum
     And I navigate to "Forum" in current page administration
     # Open the grader interface.
     And I click on "Grade users" "button"
+    # Some browsers run faster than others, a small wait to ensure we have the correct data.
+    And I wait "3" seconds
     And I click on "Save changes and proceed to the next user" "button"
+    And I wait until "Well done" "text" does not exist
     # Xpaths used to get around the name needing to be a very specific dynamic name.
     And I set the field with xpath "//input[contains(@aria-label,'Guide criterion A score')]" to "25"
     And I set the field with xpath "//textarea[contains(@aria-label,'Additional comments for criterion, Guide criterion A')]" to "Very good"
@@ -71,8 +74,10 @@ Feature: I can grade a students interaction across a marking guide forum
     And I set the field with xpath "//input[contains(@aria-label,'Guide criterion C score')]" to "35"
     And I set the field with xpath "//textarea[contains(@aria-label,'Additional comments for criterion, Guide criterion C')]" to "Nice!"
     And I click on "Save changes and proceed to the previous user" "button"
+    And I wait until "Very good" "text" does not exist
     And the field with xpath "//textarea[contains(@aria-label,'Additional comments for criterion, Guide criterion A')]" does not match value "Very good"
     And I click on "Save changes and proceed to the next user" "button"
+    And I wait until "Very good" "text" exists
     And the field with xpath "//textarea[contains(@aria-label,'Additional comments for criterion, Guide criterion A')]" matches value "Very good"
     # Confirm the grade is now in the grading report.
     And I am on "Course 1" course homepage
