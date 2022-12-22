@@ -101,7 +101,7 @@ class grader extends core_course_external {
             $userpicture->size = 0; // Size f2.
             $user->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
             return $user;
-        }, $report->load_users());
+        }, $report->load_users(true));
         sort($users);
 
         return [
