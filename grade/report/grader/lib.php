@@ -1657,9 +1657,7 @@ class grade_report_grader extends grade_report {
                 $editcalculationicon = $this->gtree->get_calculation_icon($element, $this->gpr);
             }
 
-            if ($this->get_pref('showeyecons')) {
-                $showhideicon = $this->gtree->get_hiding_icon($element, $this->gpr);
-            }
+            $showhideicon = $this->gtree->get_hiding_icon($element, $this->gpr);
 
             if ($this->get_pref('showlocks')) {
                 $lockunlockicon = $this->gtree->get_locking_icon($element, $this->gpr);
@@ -1701,9 +1699,7 @@ class grade_report_grader extends grade_report {
             }
 
             if (has_capability('moodle/grade:manage', $this->context)) {
-                if ($this->get_pref('showeyecons')) {
-                    $menuitems[] = $this->gtree->get_hiding_menu_item($element, $this->gpr);
-                }
+                $menuitems[] = $this->gtree->get_hiding_menu_item($element, $this->gpr);
 
                 if ($this->get_pref('showlocks')) {
                     $menuitems[] = $this->gtree->get_locking_menu_item($element, $this->gpr);
