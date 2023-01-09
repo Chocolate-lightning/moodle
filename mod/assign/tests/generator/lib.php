@@ -65,6 +65,18 @@ class mod_assign_generator extends testing_module_generator {
             $record->teamsubmissiongroupingid = $this->get_grouping_id($record->teamsubmissiongroupingid);
         }
 
+        if (property_exists($record, 'gradetype')) {
+            if ($record->gradetype == GRADE_TYPE_SCALE) {
+                // Get the scale id and apply it.
+                $defaultsettings['grade[modgrade_type]'] = GRADE_TYPE_SCALE;
+                $defaultsettings['grade[modgrade_scale]'] = $record->gradescale;
+                $defaultsettings['grade'] = -1 * $record->gradescale;
+            } else if ($record->gradetype == GRADE_TYPE_NONE) {
+                $defaultsettings['grade[modgrade_type]'] = GRADE_TYPE_NONE;
+                $defaultsettings['grade'] = 0;
+            }
+        }
+
         foreach ($defaultsettings as $name => $value) {
             if (!isset($record->{$name})) {
                 $record->{$name} = $value;
