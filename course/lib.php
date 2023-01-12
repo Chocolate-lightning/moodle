@@ -2478,7 +2478,6 @@ function update_course($data, $editoroptions = NULL) {
                          'updatedfields' => $updatedfields)
     ));
 
-    $event->set_legacy_logdata(array($course->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id));
     $event->trigger();
 
     if ($oldcourse->format !== $course->format) {
