@@ -94,19 +94,6 @@ abstract class base extends \core\event\base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        if (isset($this->legacylogdata)) {
-            return $this->legacylogdata;
-        }
-
-        return null;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws coding_exception

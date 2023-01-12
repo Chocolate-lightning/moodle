@@ -54,43 +54,6 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
     }
 
     /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $eventdata = new \stdClass();
-        $eventdata->modulename   = 'workshop';
-        $eventdata->cmid         = $this->contextinstanceid;
-        $eventdata->itemid       = $this->objectid;
-        $eventdata->courseid     = $this->courseid;
-        $eventdata->userid       = $this->userid;
-        $eventdata->content      = $this->other['content'];
-        if ($this->other['pathnamehashes']) {
-            $eventdata->pathnamehashes = $this->other['pathnamehashes'];
-        }
-        return $eventdata;
-    }
-
-    /**
-     * Return the legacy event name.
-     *
-     * @return string
-     */
-    public static function get_legacy_eventname() {
-        return 'assessable_content_uploaded';
-    }
-
-    /**
-     * Return the legacy log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string
