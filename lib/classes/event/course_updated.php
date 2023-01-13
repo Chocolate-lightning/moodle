@@ -83,15 +83,6 @@ class course_updated extends base {
         return new \moodle_url('/course/edit.php', array('id' => $this->objectid));
     }
 
-    /**
-     * Set the legacy data used for add_to_log().
-     *
-     * @param array $logdata
-     */
-    public function set_legacy_logdata($logdata) {
-        $this->legacylogdata = $logdata;
-    }
-
     public static function get_objectid_mapping() {
         return array('db' => 'course', 'restore' => 'course');
     }

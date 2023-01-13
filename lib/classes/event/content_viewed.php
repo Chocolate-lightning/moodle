@@ -96,15 +96,6 @@ abstract class content_viewed extends base {
     }
 
     /**
-     * Set legacy logdata.
-     *
-     * @param array $legacydata legacy logdata.
-     */
-    public function set_legacy_logdata(array $legacydata) {
-        $this->legacylogdata = $legacydata;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.

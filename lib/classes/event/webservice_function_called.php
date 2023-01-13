@@ -76,15 +76,6 @@ class webservice_function_called extends base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @param array $legacydata the legacy data to set
-     */
-    public function set_legacy_logdata($legacydata) {
-        $this->legacylogdata = $legacydata;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -2012,7 +2012,6 @@ function move_courses($courseids, $categoryid) {
                              'fullname' => $dbcourse->fullname,
                              'updatedfields' => array('category' => $category->id))
         ));
-        $event->set_legacy_logdata(array($course->id, 'course', 'move', 'edit.php?id=' . $course->id, $course->id));
         $event->trigger();
     }
     fix_course_sortorder();

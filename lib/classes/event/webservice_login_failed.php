@@ -80,16 +80,6 @@ class webservice_login_failed extends base {
     }
 
     /**
-     * Set the legacy event log data.
-     *
-     * @param array $logdata The log data.
-     * @return void
-     */
-    public function set_legacy_logdata($logdata) {
-        $this->legacylogdata = $logdata;
-    }
-
-    /**
      * Custom validation.
      *
      * It is recommended to set the properties:
