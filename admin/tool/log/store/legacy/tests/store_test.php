@@ -32,6 +32,7 @@ class store_test extends \advanced_testcase {
     public function test_log_writing() {
         global $DB;
         $this->resetAfterTest();
+        set_debugging(DEBUG_NONE);
 
         $this->setAdminUser();
         $user1 = $this->getDataGenerator()->create_user();

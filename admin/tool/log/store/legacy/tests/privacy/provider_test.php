@@ -51,6 +51,7 @@ class provider_test extends provider_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
+        set_debugging(DEBUG_NONE);
     }
 
     public function test_get_contexts_for_userid() {
