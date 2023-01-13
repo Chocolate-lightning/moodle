@@ -89,22 +89,6 @@ class course_resources_list_viewed extends base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        if (empty($this->resourceslist)) {
-            return null;
-        }
-        $logs = array();
-        foreach ($this->resourceslist as $resourcename) {
-            $logs[] = array($this->courseid, $resourcename, 'view all', 'index.php?id=' . $this->courseid, '');
-        }
-        return $logs;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -105,15 +105,6 @@ abstract class content_viewed extends base {
     }
 
     /**
-     * Get legacy logdata.
-     *
-     * @return null|array legacy log data.
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.
