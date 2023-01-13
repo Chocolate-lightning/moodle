@@ -134,19 +134,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEquals($attempt->userid, $event->relateduserid);
         $this->assertEquals(null, $event->other['submitterid']); // Should be the user, but PHP Unit complains...
-        $this->assertEquals('quiz_attempt_submitted', $event->get_legacy_eventname());
-        $legacydata = new \stdClass();
-        $legacydata->component = 'mod_quiz';
-        $legacydata->attemptid = (string) $attempt->id;
-        $legacydata->timestamp = $timefinish;
-        $legacydata->userid = $attempt->userid;
-        $legacydata->cmid = $quizobj->get_cmid();
-        $legacydata->courseid = $quizobj->get_courseid();
-        $legacydata->quizid = $quizobj->get_quizid();
-        // Submitterid should be the user, but as we are in PHP Unit, CLI_SCRIPT is set to true which sets null in submitterid.
-        $legacydata->submitterid = null;
-        $legacydata->timefinish = $timefinish;
-        $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -171,17 +158,6 @@ class events_test extends \advanced_testcase {
         $this->assertNotEmpty($event->get_description());
         // Submitterid should be the user, but as we are in PHP Unit, CLI_SCRIPT is set to true which sets null in submitterid.
         $this->assertEquals(null, $event->other['submitterid']);
-        $this->assertEquals('quiz_attempt_overdue', $event->get_legacy_eventname());
-        $legacydata = new \stdClass();
-        $legacydata->component = 'mod_quiz';
-        $legacydata->attemptid = (string) $attempt->id;
-        $legacydata->timestamp = $timefinish;
-        $legacydata->userid = $attempt->userid;
-        $legacydata->cmid = $quizobj->get_cmid();
-        $legacydata->courseid = $quizobj->get_courseid();
-        $legacydata->quizid = $quizobj->get_quizid();
-        $legacydata->submitterid = null; // Should be the user, but PHP Unit complains...
-        $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -205,17 +181,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($attempt->userid, $event->relateduserid);
         // Submitterid should be the user, but as we are in PHP Unit, CLI_SCRIPT is set to true which sets null in submitterid.
         $this->assertEquals(null, $event->other['submitterid']);
-        $this->assertEquals('quiz_attempt_abandoned', $event->get_legacy_eventname());
-        $legacydata = new \stdClass();
-        $legacydata->component = 'mod_quiz';
-        $legacydata->attemptid = (string) $attempt->id;
-        $legacydata->timestamp = $timefinish;
-        $legacydata->userid = $attempt->userid;
-        $legacydata->cmid = $quizobj->get_cmid();
-        $legacydata->courseid = $quizobj->get_courseid();
-        $legacydata->quizid = $quizobj->get_quizid();
-        $legacydata->submitterid = null; // Should be the user, but PHP Unit complains...
-        $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -241,24 +206,7 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($attempt->id, $event->objectid);
         $this->assertEquals($attempt->userid, $event->relateduserid);
         $this->assertEquals($quizobj->get_context(), $event->get_context());
-        $this->assertEquals('quiz_attempt_started', $event->get_legacy_eventname());
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        // Check legacy log data.
-        $expected = array($quizobj->get_courseid(), 'quiz', 'attempt', 'review.php?attempt=' . $attempt->id,
-            $quizobj->get_quizid(), $quizobj->get_cmid());
-        $this->assertEventLegacyLogData($expected, $event);
-        // Check legacy event data.
-        $legacydata = new \stdClass();
-        $legacydata->component = 'mod_quiz';
-        $legacydata->attemptid = $attempt->id;
-        $legacydata->timestart = $attempt->timestart;
-        $legacydata->timestamp = $attempt->timestart;
-        $legacydata->userid = $attempt->userid;
-        $legacydata->quizid = $quizobj->get_quizid();
-        $legacydata->cmid = $quizobj->get_cmid();
-        $legacydata->courseid = $quizobj->get_courseid();
-        $this->assertEventLegacyData($legacydata, $event);
-        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -394,8 +342,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\edit_page_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'editquestions', 'view.php?id=' . $quiz->cmid, $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -414,9 +360,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_deleted', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'delete attempt', 'report.php?id=' . $quizobj->get_cmid(),
-            $attempt->id, $quizobj->get_cmid());
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -466,9 +409,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\report_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'report', 'report.php?id=' . $quiz->cmid . '&mode=overview',
-            $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -505,8 +445,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_reviewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'review', 'review.php?attempt=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -543,8 +481,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_summary_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'view summary', 'summary.php?attempt=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -650,8 +586,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\user_override_updated', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -687,8 +621,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\group_override_updated', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -719,8 +651,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\user_override_deleted', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -751,8 +681,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\group_override_deleted', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -790,8 +718,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'continue attempt', 'review.php?attempt=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -817,9 +743,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_preview_started', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'preview', 'view.php?id=' . $quizobj->get_cmid(),
-            $quizobj->get_quizid(), $quizobj->get_cmid());
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -853,9 +776,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\question_manually_graded', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'manualgrade', 'comment.php?attempt=2&slot=3',
-            $quizobj->get_quizid(), $quizobj->get_cmid());
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
