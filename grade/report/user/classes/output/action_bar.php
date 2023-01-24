@@ -16,6 +16,7 @@
 
 namespace gradereport_user\output;
 
+use core_grades\output\gradebook_dropdown;
 use moodle_url;
 use core_grades\output\general_action_bar;
 
@@ -68,7 +69,7 @@ class action_bar extends \core_grades\output\action_bar {
      * @return array
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE, $USER;
+        global $PAGE, $USER, $OUTPUT;
 
         // If in the course context, we should display the general navigation selector in gradebook.
         $courseid = $this->context->instanceid;
@@ -91,6 +92,22 @@ class action_bar extends \core_grades\output\action_bar {
             if (!is_null($this->userid) && $USER->id != $this->userid) {
                 $data['viewasselector'] = $userreportrenderer->view_mode_selector($this->userid, $this->userview, $courseid);
             }
+
+            $searchinput = $OUTPUT->render_from_template('gradereport_grader/search/searchinput', [
+                'currentvalue' => '',
+                'courseid' => $courseid,
+            ]);
+            $searchdropdown = new gradebook_dropdown(
+                true,
+                $searchinput,
+                null,
+                'user-search',
+                'usersearchwidget',
+                'usersearchdropdown overflow-auto',
+                null,
+                false,
+            );
+            $data['searchdropdown'] = $searchdropdown->export_for_template($output);
         }
 
         return $data;
