@@ -1,4 +1,4 @@
-@core @javascript @gradereport @gradereport_grader
+@core @javascript @gradereport @gradereport_grader @matt
 Feature: Within the grader report, test that we can search for users
   In order to find specific users in the course gradebook
   As a teacher
