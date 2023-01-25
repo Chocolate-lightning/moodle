@@ -32,6 +32,7 @@ import {debounce} from 'core/utils';
 import * as Repository from 'gradereport_grader/search/repository';
 import {get_strings as getStrings} from 'core/str';
 import Url from 'core/url';
+import {moveToFirstNode, moveToLastNode, moveToNode} from 'gradereport_grader/search/node_handling';
 
 /**
  * Whether the event listener has already been registered for this module.
@@ -54,6 +55,8 @@ let profilestringmap = null;
  */
 const bannedFilterFields = ['profileimageurlsmall', 'profileimageurl', 'id', 'link', 'matchingField', 'matchingFieldName'];
 
+const Up = -1;
+const Down = 1;
 /**
  * Build up the view all link.
  *
@@ -168,13 +171,13 @@ const registerListenerEvents = (users, component, courseID) => {
         clearSearchButton.classList.add('d-none');
         // Clear the entered search query in the search bar and hide the search results container.
         searchInput.value = "";
-    };
 
+    };
     // Prevent the click triggering the dropdown.
+
     $searchButton.on('click', () => {
         dropdownHandler(component, $searchButton, searchDropdown);
     });
-
     // Register click events.
     events.forEach((event) => {
         component.addEventListener(event, (e) => {
@@ -197,47 +200,18 @@ const registerListenerEvents = (users, component, courseID) => {
             // Switch the key presses to handle keyboard nav.
             switch (e.which) {
                 case arrowUp:
-                    e.preventDefault();
-                    // Stop Bootstrap from being clever.
-                    e.stopPropagation();
-                    if (document.activeElement === searchInput && resultnodes.length > 0) {
-                        resultnodes[resultnodes.length - 1].focus({preventScroll: true});
-                    }
-                    if (current) {
-                        const index = resultnodes.indexOf(current);
-                        if (index === 0) {
-                            resultnodes[resultnodes.length - 1].focus({preventScroll: true});
-                        } else {
-                            resultnodes[index - 1].focus({preventScroll: true});
-                        }
-                    }
+                    moveUpDown(resultnodes, Up, searchInput, current, e);
                     break;
                 case arrowDown:
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (document.activeElement === searchInput && resultnodes.length > 0) {
-                        resultnodes[0].focus({preventScroll: true});
-                    }
-                    if (current) {
-                        const index = resultnodes.indexOf(current);
-                        if (index + 1 >= resultnodes.length) {
-                            resultnodes[0].focus({preventScroll: true});
-                        } else {
-                            resultnodes[index + 1].focus({preventScroll: true});
-                        }
-                    }
+                    moveUpDown(resultnodes, Down, searchInput, current, e);
                     break;
                 case home:
                     e.preventDefault();
-                    if (resultnodes.length > 0) {
-                        resultnodes[0].focus({preventScroll: true});
-                    }
+                    moveToFirstNode(resultnodes);
                     break;
                 case end:
                     e.preventDefault();
-                    if (resultnodes.length > 0) {
-                        resultnodes[resultnodes.length - 1].focus({preventScroll: true});
-                    }
+                    moveToLastNode(resultnodes);
                     break;
                 case escape:
                     dropdownHandler(component, $searchButton, searchDropdown);
@@ -301,7 +275,7 @@ const registerListenerEvents = (users, component, courseID) => {
             // Await to prevent the little flash of template render.
             await makeDropdownBodyContent(
                 users.length,
-                filterUsers(searchTerm, users, courseID),
+                filterUsers(searchTerm, users),
                 searchTerm,
                 component,
                 courseID,
@@ -337,31 +311,19 @@ const dropdownHandler = (component, $searchButton, searchDropdown, on = false) =
  *
  * @param {String} searchTerm The current users' search term from the text input element.
  * @param {Array} users The array of users that we can debounce & filter against.
- * @param {Number} courseID The ID of the course to fetch the report of.
  * @returns {Array} The users found for the given search term.
  */
-const filterUsers = (searchTerm, users, courseID) => {
+const filterUsers = (searchTerm, users) => {
     if (searchTerm === '') {
         return users;
     }
     const preppedSearchTerm = searchTerm.toLowerCase();
-    return users.filter((user) => {
-        return Object.keys(user).some((key) => {
-            if (user[key] === "" || bannedFilterFields.includes(key)) {
-                return false;
-            } else {
-                const hasTerm = user[key].toString().toLowerCase().includes(preppedSearchTerm);
-                if (hasTerm) {
-                    const str = user[key].toString().toLowerCase();
-                    // Ensure we have a good string, otherwise fallback to the key.
-                    user.matchingFieldName = profilestringmap.get(key) ? profilestringmap.get(key) : key;
-                    user.matchingField = str.replace(preppedSearchTerm, `<span class="font-weight-bold">${searchTerm}</span>`);
-                    user.link = selectAllResultsLink(searchTerm, courseID, user.id);
-                }
-                return hasTerm;
-            }
-        });
-    });
+    return users.filter((user) => Object.keys(user).some((key) => {
+        if (user[key] === "" || bannedFilterFields.includes(key)) {
+            return false;
+        }
+        return user[key].toString().toLowerCase().includes(preppedSearchTerm);
+    }));
 };
 
 /**
@@ -376,13 +338,79 @@ const filterUsers = (searchTerm, users, courseID) => {
  * @returns {Promise<void>}
  */
 const makeDropdownBodyContent = async(datasetSize, userData, searchTerm, component, courseID, searchDropdown) => {
+    const users = addMatchIndicatorToUsers(userData.slice(0, 20), searchTerm, courseID);
     const {html, js} = await Templates.renderForPromise('gradereport_grader/search/resultset', {
-        'users': userData.slice(0, 20), // Slicing this array to show max 20 raises questions about the "Showing 25 of 50" string
-        'hasusers': userData.length > 0,
+        'users': users,
+        'hasusers': users.length > 0,
         'total': datasetSize,
-        'found': userData.length,
+        'found': users.length,
         'searchterm': searchTerm,
         'selectall': selectAllResultsLink(searchTerm, courseID),
     });
     Templates.replaceNodeContents(searchDropdown, html, js);
+};
+
+/**
+ * Given we have a subset of users, set the field that we matched upon to inform the end user.
+ *
+ * @param {Array} users The users we will render out.
+ * @param {String} searchTerm The current users' search term.
+ * @param {Number} courseID The ID of the course to fetch the report of.
+ * @returns {Array} The user to render with the matched fields set.
+ */
+const addMatchIndicatorToUsers = (users, searchTerm, courseID) => {
+    const preppedSearchTerm = searchTerm.toLowerCase();
+    return users.map((user) => {
+        for (const [key, value] of Object.entries(user)) {
+            const valueString = value.toString().toLowerCase();
+            if (!valueString.includes(preppedSearchTerm)) {
+                continue;
+            }
+
+            // Ensure we have a good string, otherwise fallback to the key.
+            user.matchingFieldName = profilestringmap.get(key) ?? key;
+            user.matchingField = valueString.replace(preppedSearchTerm, `<span class="font-weight-bold">${searchTerm}</span>`);
+            user.link = selectAllResultsLink(searchTerm, courseID, user.id);
+            break;
+        }
+        return user;
+    });
+};
+
+/**
+ * Set the current focus either on the preceding or next result item.
+ *
+ * @param {Array} resultNodes The array of nodes to switch focus upon.
+ * @param {Number} direction Is the user moving up or down the resultset?
+ * @param {HTMLElement} searchInput The input field that contains focus potentially.
+ * @param {HTMLElement} current The currently focused field.
+ * @param {Event} e The JS event from the event handler.
+ */
+const moveUpDown = (resultNodes, direction, searchInput, current, e) => {
+    e.preventDefault();
+    // Stop Bootstrap from being clever.
+    e.stopPropagation();
+    if (document.activeElement === searchInput && resultNodes.length > 0) {
+        if (direction === Up) {
+            moveToLastNode(resultNodes);
+        } else {
+            moveToFirstNode(resultNodes);
+        }
+    }
+    const index = resultNodes.indexOf(current);
+    if (current) {
+        if (direction === Up) {
+            if (index === 0) {
+                moveToLastNode(resultNodes);
+            } else {
+                moveToNode(resultNodes, index - 1);
+            }
+        } else {
+            if (index + 1 >= resultNodes.length) {
+                moveToFirstNode(resultNodes);
+            } else {
+                moveToNode(resultNodes, index + 1);
+            }
+        }
+    }
 };
