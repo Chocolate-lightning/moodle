@@ -83,3 +83,5 @@ showanalysisicon_desc,core_grades
 showanalysisicon_help,core_grades
 showactivityicons,core_grades
 showactivityicons_help,core_grades
+showcalculations,core_grades
+showcalculations_help,core_grades
