@@ -997,6 +997,13 @@ class core_user {
             }
         ];
 
+        // Allow the user to define which columns to collapse.
+        $preferences['grade_report_grader_collapsed_columns'] = [
+            'type' => PARAM_TAGLIST,
+            'null' => NULL_ALLOWED,
+            'default' => '',
+        ];
+
         // Core components that may want to define their preferences.
         // List of core components implementing callback is hardcoded here for performance reasons.
         // TODO MDL-58184 cache list of core components implementing a function.

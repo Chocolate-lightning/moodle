@@ -596,12 +596,17 @@ class grade_report_grader extends grade_report {
 
         $rows = [];
 
+        $colstohide = explode(
+            ',',
+            get_user_preferences('grade_report_grader_collapsed_columns')
+        );
+
         $showuserimage = $this->get_pref('showuserimage');
         $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
 
         $extrafields = \core_user\fields::get_identity_fields($this->context);
 
-        $arrows = $this->get_sort_arrows($extrafields);
+        $arrows = $this->get_sort_arrows($extrafields, $colstohide);
 
         $colspan = 1 + count($extrafields);
 
@@ -639,9 +644,22 @@ class grade_report_grader extends grade_report {
         foreach ($extrafields as $field) {
             $fieldheader = new html_table_cell();
             $fieldheader->attributes['class'] = 'userfield user' . $field;
+            $fieldheader->attributes['data-col'] = $field;
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
-            $fieldheader->text = $arrows[$field];
+
+            $collapsecontext = ['field' => $field, 'classes' => 'd-none', 'name' => $field];
+            $classes = '';
+            $hidden = 'false';
+            if (in_array($field, $colstohide)) {
+                $collapsecontext['classes'] = '';
+                $classes = 'd-none';
+                $hidden = 'true';
+            }
+            $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
+            $singleview = $this->get_cell_action_menu(['field' => $field], 'userinfo', $classes, $hidden);
+            $fieldheader->text = $arrows[$field] . $singleview . $collapsedicon;
+
             $headerrow->cells[] = $fieldheader;
         }
 
@@ -692,10 +710,22 @@ class grade_report_grader extends grade_report {
             $userrow->cells[] = $usercell;
 
             foreach ($extrafields as $field) {
+                $classes = '';
+                $hidden = 'false';
                 $fieldcell = new html_table_cell();
                 $fieldcell->attributes['class'] = 'userfield user' . $field;
+                $fieldcell->attributes['data-col'] = $field;
                 $fieldcell->header = false;
-                $fieldcell->text = s($user->{$field});
+                if (in_array($field, $colstohide)) {
+                    $classes = 'd-none';
+                    $hidden = 'true';
+                }
+                $fieldcell->text = html_writer::tag('div', s($user->{$field}), [
+                    'class' => $classes,
+                    'aria-hidden' => $hidden,
+                    'data-collapse' => 'content'
+                ]);
+
                 $userrow->cells[] = $fieldcell;
             }
 
@@ -725,7 +755,10 @@ class grade_report_grader extends grade_report {
         $numusers = count($this->users);
         $gradetabindex = 1;
         $strgrade = $this->get_lang_string('gradenoun');
-        $this->get_sort_arrows();
+        $colstohide = explode(
+            ',',
+            get_user_preferences('grade_report_grader_collapsed_columns')
+        );
 
         // Get preferences once.
         $quickgrading = $this->get_pref('quickgrading');
@@ -803,22 +836,34 @@ class grade_report_grader extends grade_report {
                         }
                     }
 
+                    $classes = '';
+                    $hidden = '';
+                    $collapsed = '';
+                    $collapsecontext = ['field' => $element['object']->id, 'classes' => 'd-none', 'name' => $element['object']->get_name()];
+                    if (in_array($element['object']->id, $colstohide)) {
+                        $classes = 'd-none';
+                        $hidden = 'true';
+                        $collapsecontext['classes'] = '';
+                        $collapsed = ' collapsed';
+                    }
+
+                    $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
                     $headerlink = $this->gtree->get_element_header($element, true,
-                        true, false, false, true, $sortlink);
+                        true, false, false, true, $sortlink, $classes, $hidden);
 
                     $itemcell = new html_table_cell();
                     $itemcell->attributes['class'] = $type . ' ' . $catlevel .
-                        ' highlightable'. ' i'. $element['object']->id;
+                        ' highlightable'. ' i'. $element['object']->id . $collapsed;
                     $itemcell->attributes['data-itemid'] = $element['object']->id;
 
-                    $singleview = $this->get_cell_action_menu($element, 'gradeitem');
+                    $singleview = $this->get_cell_action_menu($element, 'gradeitem', $classes, $hidden);
                     $statusicons = $this->set_grade_status_icons($element);
                     if ($statusicons) {
                         $itemcell->attributes['class'] .= ' statusicons';
                     }
 
                     $itemcell->colspan = $colspan;
-                    $itemcell->text = $headerlink . $arrow . $singleview . $statusicons;
+                    $itemcell->text = $headerlink . $arrow . $singleview . $statusicons . $collapsedicon;
                     $itemcell->header = true;
                     $itemcell->scope = 'col';
 
@@ -1067,6 +1112,11 @@ class grade_report_grader extends grade_report {
 
                 if (!$item->needsupdate) {
                     $context->actionmenu = $this->get_cell_action_menu($element, 'gradeitem');
+                }
+
+                if (in_array($itemid, $colstohide)) {
+                    $context->classes = 'd-none';
+                    $context->hidden = 'true';
                 }
 
                 $itemcell->text = $OUTPUT->render_from_template('gradereport_grader/cell', $context);
@@ -1607,12 +1657,17 @@ class grade_report_grader extends grade_report {
      *
      * @param array $element Array with cell info.
      * @param string $mode Mode - gradeitem or user
+     * @param ?string $classes Is this menu hidden from the user?
+     * @param ?string $hidden Is this menu aria hidden?
      * @return string
      */
-    public function get_cell_action_menu(array $element, string $mode): string {
+    public function get_cell_action_menu(array $element, string $mode, ?string $classes = '', ?string $hidden = 'false'): string {
         global $OUTPUT, $USER;
 
         $context = new stdClass();
+
+        $context->classes = $classes;
+        $context->hidden = $hidden;
 
         if ($mode == 'gradeitem') {
             $editable = true;
@@ -1690,6 +1745,7 @@ class grade_report_grader extends grade_report {
                         $context->lockurl = $this->gtree->get_locking_link($element, $this->gpr, $lockstrings);
                     }
                 }
+                $context->columncollapse = self::get_hide_show_link($element);
             } else if ($element['type'] == 'category') {
                 $categoryid = $element['object']->id;
 
@@ -1740,10 +1796,13 @@ class grade_report_grader extends grade_report {
             $context->userreporturl =
                 \gradereport_user\report\user::get_userreport_link($this->context, $this->courseid,
                     $element, $this->gpr, $userreportstring);
+        } else if ($mode == 'userinfo') {
+            $context->columncollapse = self::get_hide_show_link();
+            $context->dataid = $element['field'];
         }
 
         if (!empty($USER->editing) || isset($context->gradeanalysisurl)
-            || isset($context->singleviewreporturl)  || isset($context->gradesonlyurl)) {
+            || isset($context->singleviewreporturl)  || isset($context->gradesonlyurl) || isset($context->columncollapse)) {
             return $OUTPUT->render_from_template('gradereport_grader/cellmenu', $context);
         }
         return '';
@@ -1956,7 +2015,7 @@ class grade_report_grader extends grade_report {
      *   user idnumber
      * @return array An associative array of HTML sorting links+arrows
      */
-    public function get_sort_arrows(array $extrafields = array()) {
+    public function get_sort_arrows(array $extrafields = [], array $colstohide = []) {
         global $OUTPUT, $CFG;
         $arrows = array();
 
@@ -1994,8 +2053,18 @@ class grade_report_grader extends grade_report {
         }
 
         foreach ($extrafields as $field) {
-            $fieldlink = html_writer::link(new moodle_url($this->baseurl,
-                    array('sortitemid' => $field)), \core_user\fields::get_display_name($field));
+            $classes = '';
+            $hidden = 'false';
+            if (in_array($field, $colstohide)) {
+                $hidden = 'true';
+                $classes = 'd-none';
+            }
+            $fieldlink = html_writer::link(new moodle_url($this->baseurl, ['sortitemid' => $field]),
+                \core_user\fields::get_display_name($field), [
+                    'class' => $classes,
+                    'aria-hidden' => $hidden,
+                    'data-collapse' => 'content'
+                ]);
             $arrows[$field] = $fieldlink;
 
             if ($field == $this->sortitemid) {
@@ -2017,5 +2086,21 @@ class grade_report_grader extends grade_report {
      */
     public function get_students_per_page(): int {
         return (int) $this->get_pref('studentsperpage');
+    }
+
+    /**
+     * Return the link to allow the field to collapse from the users view.
+     *
+     * @return string Downdown menu link that'll trigger the collapsing functionality.
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
+    public function get_hide_show_link() {
+        $link = new moodle_url('#', []);
+        return html_writer::link(
+            $link->out(false),
+            get_string('collapse'),
+            ['class' => 'dropdown-item', 'data-hider' => 'hide', 'aria-label' => get_string('collapse'), 'role' => 'menuitem'],
+        );
     }
 }

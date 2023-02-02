@@ -30,19 +30,24 @@
         "extraclasses": "statusicons",
         "value": "Text information",
         "tabindex": "1",
-        "name": "grade[313][624]"
+        "name": "grade[313][624]",
+        "classes": "d-none",
+        "hidden": "true"
     }
 }}
-{{#iseditable}}
-    {{#scale}}
-        {{>core_grades/grades/grader/scale}}
-    {{/scale}}
-    {{^scale}}
-        {{>core_grades/grades/grader/input}}
-    {{/scale}}
-{{/iseditable}}
-{{^iseditable}}
-    {{>core_grades/grades/grader/text}}
-{{/iseditable}}
-{{{actionmenu}}}
-{{{statusicons}}}
+<div class="{{classes}}" aria-hidden="{{hidden}}" data-collapse="content">
+    {{#iseditable}}
+        {{#scale}}
+            {{>core_grades/grades/grader/scale}}
+        {{/scale}}
+        {{^scale}}
+            {{>core_grades/grades/grader/input}}
+        {{/scale}}
+    {{/iseditable}}
+    {{^iseditable}}
+        {{>core_grades/grades/grader/text}}
+    {{/iseditable}}
+    {{{actionmenu}}}
+    {{{statusicons}}}
+</div>
+
