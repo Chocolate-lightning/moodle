@@ -1307,6 +1307,8 @@ class renderer extends \plugin_renderer_base {
         if ($submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
             $latecalculation = $submission->timemodified - ($timelimitenabledbeforeduedate ? $submission->timestarted : 0);
             $latethreshold = $timelimitenabledbeforeduedate ? $status->timelimit : $status->duedate;
+            // Sometimes, a submission has an extension which defers the applicable due date.
+            $latethreshold = $status->extensionduedate ?: $latethreshold;
             $earlystring = $timelimitenabledbeforeduedate ? 'submittedundertime' : 'submittedearly';
             $latestring = $timelimitenabledbeforeduedate ? 'submittedovertime' : 'submittedlate';
             $ontime = $latecalculation <= $latethreshold;
