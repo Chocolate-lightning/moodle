@@ -1539,13 +1539,15 @@ class grade_structure {
      * @param bool  $withdescription Show description if defined by this item.
      * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
      *                         instead of "Category total" or "Course total"
-     * @param moodle_url|null  $sortlink Link to sort column.
+     * @param moodle_url|null $sortlink Link to sort column.
+     * @param string|null $classes Classes for the header div.
+     * @param string|null $hidden Is the header aria-hidden?
      *
      * @return string header
      */
     public function get_element_header(array &$element, bool $withlink = false, bool $icon = true,
             bool $spacerifnone = false, bool $withdescription = false, bool $fulltotal = false,
-            ?moodle_url $sortlink = null) {
+            ?moodle_url $sortlink = null, ?string $classes = '', ?string $hidden = '') {
         $header = '';
 
         if ($icon) {
@@ -1563,8 +1565,12 @@ class grade_structure {
 
         if ($sortlink) {
             $url = $sortlink;
-            $header = html_writer::link($url, $header,
-                ['title' => $titleunescaped, 'class' => 'gradeitemheader']);
+            $header = html_writer::link($url, $header, [
+                'title' => $titleunescaped,
+                'class' => 'gradeitemheader ' . $classes,
+                'aria-hidden' => $hidden,
+                'data-collapse' => 'content'
+            ]);
         }
 
         if (!$sortlink) {
@@ -1573,9 +1579,17 @@ class grade_structure {
                 $a->name = get_string('modulename', $element['object']->itemmodule);
                 $a->title = $titleunescaped;
                 $title = get_string('linktoactivity', 'grades', $a);
-                $header = html_writer::link($url, $header, ['title' => $title, 'class' => 'gradeitemheader']);
+                $header = html_writer::link($url, $header, [
+                    'title' => $title,
+                    'class' => 'gradeitemheader ',
+                ]);
             } else {
-                $header = html_writer::span($header, 'gradeitemheader', ['title' => $titleunescaped, 'tabindex' => '0']);
+                $header = html_writer::span($header, 'gradeitemheader ' . $classes, [
+                    'title' => $titleunescaped,
+                    'tabindex' => '0',
+                    'aria-hidden' => $hidden,
+                    'data-collapse' => 'content'
+                ]);
             }
         }
 
@@ -2477,13 +2491,17 @@ class grade_structure {
      * @param string $mode Mode - gradeitem or user
      * @param grade_plugin_return $gpr
      * @param moodle_url|null $baseurl
+     * @param ?string $classes Is this menu hidden from the user?
+     * @param ?string $hidden Is this menu aria hidden?
      * @return string
      */
     public function get_cell_action_menu(array $element, string $mode, grade_plugin_return $gpr,
-            ?moodle_url $baseurl = null): string {
+            ?moodle_url $baseurl = null, ?string $classes = '', ?string $hidden = 'false'): string {
         global $OUTPUT, $USER;
 
         $context = new stdClass();
+        $context->classes = $classes;
+        $context->hidden = $hidden;
 
         if ($mode == 'gradeitem' || $mode == 'setup') {
             $editable = true;
@@ -2518,14 +2536,18 @@ class grade_structure {
                                 $element, $gpr, $mode, $context, true);
                         $context->advancedgradingurl = $this->get_advanced_grading_link($element, $gpr);
                     }
-                }
-
-                if ($element['type'] == 'item') {
                     $context->divider1 = true;
                 }
 
+                if (($element['type'] == 'item') ||
+                    (($element['type'] == 'userfield') && ($element['name'] !== 'fullname'))) {
+                    $context->divider2 = true;
+                }
+
                 if (!empty($USER->editing) || $mode == 'setup') {
-                    if (($element['type'] !== 'userfield') && ($mode !== 'setup')) {
+                    if (($element['type'] == 'userfield') && ($element['name'] !== 'fullname')) {
+                        $context->divider2 = true;
+                    } else if (($mode !== 'setup') && ($element['type'] !== 'userfield')) {
                         $context->divider1 = true;
                         $context->divider2 = true;
                     }
@@ -2569,6 +2591,8 @@ class grade_structure {
                         $context->descendingurl = $this->get_sorting_link($sortlink, $gpr, 'desc');
                     }
                 }
+                $context = grade_report::get_additional_context($this->context, $this->courseid,
+                    $element, $gpr, $mode, $context);
             } else if ($element['type'] == 'category') {
                 $context->datatype = 'category';
                 if ($mode !== 'setup') {
