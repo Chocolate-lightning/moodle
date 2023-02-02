@@ -1539,13 +1539,15 @@ class grade_structure {
      * @param bool  $withdescription Show description if defined by this item.
      * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
      *                         instead of "Category total" or "Course total"
-     * @param moodle_url|null  $sortlink Link to sort column.
+     * @param moodle_url|null $sortlink Link to sort column.
+     * @param string|null $classes Classes for the header div.
+     * @param string|null $hidden Is the header aria-hidden?
      *
      * @return string header
      */
     public function get_element_header(array &$element, bool $withlink = false, bool $icon = true,
             bool $spacerifnone = false, bool $withdescription = false, bool $fulltotal = false,
-            ?moodle_url $sortlink = null) {
+            ?moodle_url $sortlink = null, ?string $classes = '', ?string $hidden = '') {
         $header = '';
 
         if ($icon) {
@@ -1563,8 +1565,12 @@ class grade_structure {
 
         if ($sortlink) {
             $url = $sortlink;
-            $header = html_writer::link($url, $header,
-                ['title' => $titleunescaped, 'class' => 'gradeitemheader']);
+            $header = html_writer::link($url, $header, [
+                'title' => $titleunescaped,
+                'class' => 'gradeitemheader ' . $classes,
+                'aria-hidden' => $hidden,
+                'data-collapse' => 'content'
+            ]);
         }
 
         if (!$sortlink) {
@@ -1573,9 +1579,17 @@ class grade_structure {
                 $a->name = get_string('modulename', $element['object']->itemmodule);
                 $a->title = $titleunescaped;
                 $title = get_string('linktoactivity', 'grades', $a);
-                $header = html_writer::link($url, $header, ['title' => $title, 'class' => 'gradeitemheader']);
+                $header = html_writer::link($url, $header, [
+                    'title' => $title,
+                    'class' => 'gradeitemheader ',
+                ]);
             } else {
-                $header = html_writer::span($header, 'gradeitemheader', ['title' => $titleunescaped, 'tabindex' => '0']);
+                $header = html_writer::span($header, 'gradeitemheader ' . $classes, [
+                    'title' => $titleunescaped,
+                    'tabindex' => '0',
+                    'aria-hidden' => $hidden,
+                    'data-collapse' => 'content'
+                ]);
             }
         }
 

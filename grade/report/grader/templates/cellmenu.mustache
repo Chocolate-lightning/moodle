@@ -31,10 +31,13 @@
         "ascendinglastnameurl": "<a class='dropdown-item' aria-label='Ascending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=asc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Ascending</a>",
         "descendinglastnameurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
         "divider1": "true",
-        "divider2": "true"
+        "divider2": "true",
+        "classes": "d-none",
+        "hidden": "true",
+        "columncollapse": "<a class='dropdown-item' data-hider='hide' aria-label='Collapse' role='menuitem' href='#'>Collapse</a>"
     }
 }}
-<div class="action-menu mb-1 moodle-actionmenu grader">
+<div class="action-menu mb-1 moodle-actionmenu grader {{classes}}" data-collapse="menu" aria-hidden="{{hidden}}">
     <div class="dropdown">
         <button class="btn btn-link btn-icon icon-size-3 cellmenubtn"
             type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id={{dataid}}>
@@ -71,6 +74,7 @@
                 <div class="dropdown-divider" role="separator"></div>
             {{/divider2}}
             {{#hideurl}}{{{hideurl}}}{{/hideurl}}
+            {{#columncollapse}}{{{columncollapse}}}{{/columncollapse}}
             {{#lockurl}}{{{lockurl}}}{{/lockurl}}
         </div>
     </div>

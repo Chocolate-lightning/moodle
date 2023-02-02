@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['collapsedcolumns'] = 'Collapsed columns <span class="badge badge-pill badge-primary ml-1" data-collapse="count">{$a}</span>';
 $string['eventgradereportviewed'] = 'Grader report viewed';
 $string['grader:manage'] = 'Manage the grader report';
 $string['grader:view'] = 'View grader report';
@@ -32,6 +33,7 @@ $string['privacy:metadata:preference:grade_report_aggregationposition'] = 'Wheth
 $string['privacy:metadata:preference:grade_report_averagesdecimalpoints'] = 'The number of decimal places to display for each average or whether the overall decimal places setting for the category or grade item is used (inherit).';
 $string['privacy:metadata:preference:grade_report_averagesdisplaytype'] = 'Whether the average (mean) is displayed as real grades, percentages or letters, or whether the display type for the category or grade item is used (inherit).';
 $string['privacy:metadata:preference:grade_report_grader_collapsed_categories'] = 'List of gradebook categories to be collapsed';
+$string['privacy:metadata:preference:grade_report_grader_collapsed_columns'] = 'List of grader report columns that are collapsed';
 $string['privacy:metadata:preference:grade_report_meanselection'] = 'Whether cells with no grade should be included when calculating the average (mean) for each category or grade item';
 $string['privacy:metadata:preference:grade_report_quickgrading'] = 'Whether to display a text input box for each grade, allowing many grades to be edited at the same time';
 $string['privacy:metadata:preference:grade_report_rangesdecimalpoints'] = 'The number of decimal places to display for each range or whether the overall decimal places setting for the category or grade item is used (inherit)';

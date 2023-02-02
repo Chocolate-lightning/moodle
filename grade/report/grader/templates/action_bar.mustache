@@ -89,5 +89,12 @@
             </div>
             <div class="navitem-divider"></div>
         {{/initialselector}}
+        {{#collapsedcolumns}}
+            <div class="navitem flex-column align-self-center ml-auto {{#classes}}{{.}}{{/classes}}">
+                {{#content}}
+                    {{>core_grades/tertiary_navigation_dropdown}}
+                {{/content}}
+            </div>
+        {{/collapsedcolumns}}
     </div>
 </div>
