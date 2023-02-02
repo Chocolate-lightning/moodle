@@ -47,6 +47,7 @@ $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$cou
 $PAGE->set_pagelayout('report');
 $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
 $PAGE->requires->js_call_amd('gradereport_grader/search', 'init');
+$PAGE->requires->js_call_amd('gradereport_grader/collapse', 'init', ['userID' => $USER->id, 'courseID' => $courseid]);
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
