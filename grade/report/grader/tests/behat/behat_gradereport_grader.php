@@ -230,6 +230,18 @@ class behat_gradereport_grader extends behat_base {
     }
 
     /**
+     * Clicks on given user column menu.
+     *
+     * @Given /^I click on user column menu "([^"]*)"$/
+     * @param string $student
+     */
+    public function i_click_on_user_column_menu(string $field) {
+
+        $xpath = $this->get_user_selectors(mb_strtolower($field));
+
+        $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
+    }
+    /**
      * Gets unique xpath selector for a user.
      *
      * @throws Exception
@@ -241,5 +253,22 @@ class behat_gradereport_grader extends behat_base {
         $userid = $this->get_user_id($student);
         return "//table[@id='user-grades']//*[@data-id='" . $userid . "']";
     }
+    protected function get_user_selectors(string $field) : string {
 
+        return "//table[@id='user-grades']//*[@data-id='" . $field . "']";
+    }
+
+    /**
+     * Return the list of partial named selectors.
+     *
+     * @return array
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector(
+                'collapse search',
+                [".//*[contains(concat(' ', @class, ' '), ' collapsecolumndropdown ')]"]
+            ),
+        ];
+    }
 }
