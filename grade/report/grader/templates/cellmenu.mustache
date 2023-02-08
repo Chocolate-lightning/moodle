@@ -38,6 +38,22 @@
             {{#editcalculationurl}}{{{editcalculationurl}}}{{/editcalculationurl}}
             {{#singleviewreporturl}}{{{singleviewreporturl}}}{{/singleviewreporturl}}
             {{#userreporturl}}{{{userreporturl}}}{{/userreporturl}}
+            {{#advancedgradingurl}}{{{advancedgradingurl}}}{{/advancedgradingurl}}
+            {{#divider}}
+                <div class="dropdown-divider" role="separator"></div>
+            {{/divider}}
+            {{#ascendingfirstnameurl}}
+                <h6 class="dropdown-header">{{#str}} firstname, moodle {{/str}}</h6>
+                {{{ascendingfirstnameurl}}}
+                {{{descendingfirstnameurl}}}
+                <h6 class="dropdown-header">{{#str}} lastname, moodle {{/str}}</h6>
+                {{{ascendinglastnameurl}}}
+                {{{descendinglastnameurl}}}
+            {{/ascendingfirstnameurl}}
+            {{#ascendingurl}}
+                {{{ascendingurl}}}
+                {{{descendingurl}}}
+            {{/ascendingurl}}
             {{#gradesonlyurl}}
                 {{{gradesonlyurl}}}
                 {{{aggregatesonlyurl}}}

@@ -115,9 +115,10 @@ class grade_report_grader extends grade_report {
      * @param context_course $context Course context
      * @param int|null $page The current page being viewed (when report is paged)
      * @param string|null $sortitemid The id of the grade_item by which to sort the table
+     * @param string $sort Sorting direction
      */
-    public function __construct(int $courseid, object $gpr, context_course $context, ?int $page = null,
-            ?string $sortitemid = null) {
+    public function __construct(int $courseid, object $gpr, object $context, ?int $page = null,
+            ?string $sortitemid = null, string $sort = '') {
         global $CFG;
         parent::__construct($courseid, $gpr, $context, $page);
 
@@ -156,7 +157,7 @@ class grade_report_grader extends grade_report {
 
         $this->setup_groups();
         $this->setup_users();
-        $this->setup_sortitemid();
+        $this->setup_sortitemid($sort);
 
         $this->overridecat = (bool)get_config('moodle', 'grade_overridecat');
     }
@@ -325,8 +326,10 @@ class grade_report_grader extends grade_report {
      * Setting the sort order, this depends on last state
      * all this should be in the new table class that we might need to use
      * for displaying grades.
+
+     * @param string $sort sorting direction
      */
-    private function setup_sortitemid() {
+    private function setup_sortitemid(string $sort = '') {
 
         global $SESSION;
 
@@ -337,7 +340,7 @@ class grade_report_grader extends grade_report {
         if ($this->sortitemid) {
             if (!isset($SESSION->gradeuserreport->sort)) {
                 $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
-            } else {
+            } else if (!$sort) {
                 // this is the first sort, i.e. by last name
                 if (!isset($SESSION->gradeuserreport->sortitemid)) {
                     $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
@@ -367,6 +370,12 @@ class grade_report_grader extends grade_report {
             } else {
                 $this->sortorder = 'ASC';
             }
+        }
+
+        // If explicit sorting direction exists.
+        if ($sort) {
+            $this->sortorder = $sort;
+            $SESSION->gradeuserreport->sort = $sort;
         }
     }
 
@@ -633,7 +642,11 @@ class grade_report_grader extends grade_report {
         $studentheader->scope = 'col';
         $studentheader->header = true;
         $studentheader->id = 'studentheader';
-        $studentheader->text = $arrows['studentname'];
+        $element = [];
+        $element['type'] = 'userfield';
+        $element['name'] = 'fullname';
+        $studentheader->text = $arrows['studentname'] . $this->get_cell_action_menu($element, 'gradeitem');
+
         $headerrow->cells[] = $studentheader;
 
         foreach ($extrafields as $field) {
@@ -641,7 +654,10 @@ class grade_report_grader extends grade_report {
             $fieldheader->attributes['class'] = 'userfield user' . $field;
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
-            $fieldheader->text = $arrows[$field];
+            $element = [];
+            $element['type'] = 'userfield';
+            $element['name'] = $field;
+            $fieldheader->text = $arrows[$field] . $this->get_cell_action_menu($element, 'gradeitem');
             $headerrow->cells[] = $fieldheader;
         }
 
@@ -797,9 +813,9 @@ class grade_report_grader extends grade_report {
                     $arrow = '';
                     if ($element['object']->id == $this->sortitemid) {
                         if ($this->sortorder == 'ASC') {
-                            $arrow = $this->get_sort_arrow('up', $sortlink);
-                        } else {
                             $arrow = $this->get_sort_arrow('down', $sortlink);
+                        } else {
+                            $arrow = $this->get_sort_arrow('up', $sortlink);
                         }
                     }
 
@@ -1635,6 +1651,9 @@ class grade_report_grader extends grade_report {
 
             $singleviewstring = $this->get_lang_string('singleview', 'grades');
 
+            $titleasc = $this->get_lang_string('asc');
+            $titledesc = $this->get_lang_string('desc');
+
             if ($element['type'] == 'grade') {
                 $item = $element['object']->grade_item;
                 if ($item->is_course_item() || $item->is_category_item()) {
@@ -1652,7 +1671,8 @@ class grade_report_grader extends grade_report {
                 $context->gradeanalysisurl = $this->gtree->get_grade_analysis_link($element['object'], $gradeanalysisstring);
             } else if (($element['type'] == 'item') ||
                 ($element['type'] == 'categoryitem') ||
-                ($element['type'] == 'courseitem')) {
+                ($element['type'] == 'courseitem') ||
+                ($element['type'] == 'userfield')) {
 
                 if ($element['type'] == 'item') {
                     $context->singleviewreporturl =
@@ -1661,9 +1681,10 @@ class grade_report_grader extends grade_report {
                     $context->advancedgradingurl = $this->gtree->get_advanced_grading_link($element, $this->gpr);
                 }
 
-                if (!empty($USER->editing)) {
+                if ($element['type'] !== 'userfield') {
                     $context->divider = true;
-
+                }
+                if (!empty($USER->editing)) {
                     if ($element['type'] == 'item') {
                         $context->editurl = $this->gtree->get_edit_link($element, $this->gpr, $editstrings);
                     }
@@ -1671,12 +1692,36 @@ class grade_report_grader extends grade_report {
                     $context->editcalculationurl =
                         $this->gtree->get_edit_calculation_link($element, $this->gpr, $editcalculationstrings);
 
-                    $object = $element['object'];
-                    if ($object->itemmodule !== 'quiz') {
-                        $context->hideurl = $this->gtree->get_hiding_link($element, $this->gpr, $hidestrings);
+                    if (isset($element['object'])) {
+                        $object = $element['object'];
+                        if ($object->itemmodule !== 'quiz') {
+                            $context->hideurl = $this->gtree->get_hiding_link($element, $this->gpr, $hidestrings);
+                        }
                     }
                     $context->lockurl = $this->gtree->get_locking_link($element, $this->gpr, $lockstrings);
                 }
+
+                // Sorting item.
+                $sortlink = clone($this->baseurl);
+                if (isset($element['object']->id)) {
+                    $sortlink->param('sortitemid', $element['object']->id);
+                } else if ($element['type'] == 'userfield') {
+                    $sortlink->param('sortitemid', $this->sortitemid);
+                }
+
+                if (($element['type'] == 'userfield') && ($element['name'] == 'fullname')) {
+                    $sortlink->param('sortitemid', 'firstname');
+                    $context->ascendingfirstnameurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titleasc, 'asc');
+                    $context->descendingfirstnameurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titledesc, 'desc');
+
+                    $sortlink->param('sortitemid', 'lastname');
+                    $context->ascendinglastnameurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titleasc, 'asc');
+                    $context->descendinglastnameurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titledesc, 'desc');
+                } else {
+                    $context->ascendingurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titleasc, 'asc');
+                    $context->descendingurl = $this->gtree->get_sorting_link($sortlink, $this->gpr, $titledesc, 'desc');
+                }
+
             } else if ($element['type'] == 'category') {
                 $categoryid = $element['object']->id;
 
@@ -1714,7 +1759,9 @@ class grade_report_grader extends grade_report {
 
             }
 
-            $context->dataid = $element['object']->id;
+            if (isset($element['object'])) {
+                $context->dataid = $element['object']->id;
+            }
         } else if ($mode == 'user') {
             $singleviewstring = $this->get_lang_string('singleviewuser', 'grades');
             $userreportstring = $this->get_lang_string('userreport', 'gradereport_grader');
@@ -1727,8 +1774,8 @@ class grade_report_grader extends grade_report {
             $context->dataid = $element['userid'];
         }
 
-        if (!empty($USER->editing) || isset($context->gradeanalysisurl)
-            || isset($context->singleviewreporturl)  || isset($context->gradesonlyurl)) {
+        if (!empty($USER->editing) || isset($context->gradeanalysisurl) || isset($context->singleviewreporturl) ||
+            isset($context->gradesonlyurl) || isset($context->ascendingurl) || isset($context->ascendingfirstnameurl)) {
             return $OUTPUT->render_from_template('gradereport_grader/cellmenu', $context);
         }
         return '';
