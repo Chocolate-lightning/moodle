@@ -16,9 +16,7 @@
 import $ from 'jquery';
 import CustomEvents from "core/custom_interaction_events";
 import {enter, arrowUp, arrowDown, home, end, space, escape, tab} from 'core/key_codes';
-import * as Templates from 'core/templates';
 import {debounce} from 'core/utils';
-import Url from 'core/url';
 import {moveToFirstNode, moveToLastNode, moveToNode} from 'gradereport_grader/search/node_handling';
 
 /**
@@ -31,22 +29,26 @@ import {moveToFirstNode, moveToLastNode, moveToNode} from 'gradereport_grader/se
 
 // Define our standard lookups.
 const selectors = {
-    'component': '.user-search',
     'courseid': '[data-region="courseid"]',
-    'trigger': '.usersearchwidget',
     'input': '[data-action="search"]',
     'clearSearch': '[data-action="clearsearch"]',
-    'dropdown': '.usersearchdropdown',
     'resultitems': '[role="menuitem"]',
     'viewall': '#select-all',
 };
 
+const selectorsAbstract = {
+    'component': '.user-search',
+    'dropdown': '.usersearchdropdown',
+    'trigger': '.usersearchwidget',
+};
+
 // DOM nodes that persist.
-const component = document.querySelector(selectors.component);
+const component = document.querySelector(selectorsAbstract.component);
+const searchDropdown = component.querySelector(selectorsAbstract.dropdown);
+const $searchButton = $(selectorsAbstract.trigger);
+
 const courseID = component.querySelector(selectors.courseid).dataset.courseid;
 const searchInput = component.querySelector(selectors.input);
-const searchDropdown = component.querySelector(selectors.dropdown);
-const $searchButton = $(selectors.trigger);
 const clearSearchButton = component.querySelector(selectors.clearSearch);
 
 // Reused variables for the class.
@@ -82,13 +84,22 @@ export const gradebookSearchClass = class {
     // The function defined by the caller that mutates the results to indicate to the user what matched.
     filterFunctionIndicator = null;
 
-    constructor(fetchFunc, filterFunc, filterMatchIndFunc) {
+    // The function defined by the caller that allows the mutation of the matching dataset.
+    matchAllFunction = false;
+
+    // The function defined by the caller that dictates how the results are rendered out.
+    render = null;
+
+    constructor(fetchFunc, filterFunc, filterMatchIndFunc, render, matchAllBuild = false) {
         // Assign the appropriate filter and indicator functions for this search.
         this.filterFunction = filterFunc;
         this.filterFunctionIndicator = filterMatchIndFunc;
 
-        // Grab the dataset via the passed in function that dicates what we are filtering.
+        // Grab the dataset via the passed in function that dictates what we are filtering.
         this.fetchDataset(fetchFunc);
+
+        this.matchAllFunction = matchAllBuild ? matchAllBuild : false;
+        this.render = render;
 
         // Begin handling the base search component.
         this.registerClickHandlers();
@@ -130,7 +141,7 @@ export const gradebookSearchClass = class {
 
             // Since we are handling dropdowns manually, ensure we can close it when clicking off.
             document.addEventListener(event, (e) => {
-                if (!e.target.closest(selectors.component) && searchDropdown.classList.contains('show')) {
+                if (!e.target.closest(selectorsAbstract.component) && searchDropdown.classList.contains('show')) {
                     this.mutateDropdown();
                 }
             });
@@ -155,12 +166,17 @@ export const gradebookSearchClass = class {
                 // User has given something for us to filter against.
                 this.matchedResults = this.filterDataset();
                 // Replace the dropdown node contents and show the results.
-                await this.renderDropdown(
+                await this.render(
                     this.filterFunctionIndicator(
                         this.matchedResults.slice(0, 20),
-                        selectOneLink(this.searchTerm),
-                        this.searchTerm
-                    )
+                        this.searchTerm,
+                        courseID
+                    ),
+                    dataset,
+                    courseID,
+                    searchDropdown,
+                    this.searchTerm,
+                    this.matchAllFunction,
                 );
                 // Set the dropdown to open.
                 this.mutateDropdown(true);
@@ -175,23 +191,6 @@ export const gradebookSearchClass = class {
      */
     filterDataset() {
         return this.filterFunction(dataset, this.searchTerm);
-    }
-
-    /**
-     * Build the content then replace the node.
-     *
-     * @param {Array} results The results of the dataset having its' matching indicators applied.
-     */
-    async renderDropdown(results) {
-        const {html, js} = await Templates.renderForPromise('gradereport_grader/search/resultset', {
-            'users': results,
-            'hasusers': results.length > 0,
-            'total': dataset.length,
-            'found': results.length,
-            'searchterm': this.searchTerm,
-            'selectall': selectAllResultsLink(this.searchTerm),
-        });
-        Templates.replaceNodeContents(searchDropdown, html, js);
     }
 
     /**
@@ -268,7 +267,9 @@ export const gradebookSearchClass = class {
             window.location = e.target.closest('.dropdown-item').href;
         }
         if (e.target === this.currentViewAll && (e.which === enter || e.which === space || e.which === 1)) {
-            window.location = selectAllResultsLink(this.searchTerm);
+            if (this.matchAllFunction) {
+                window.location = this.matchAllFunction(this.searchTerm, courseID);
+            }
         }
         // The "clear search" button is triggered.
         if (e.target.closest(selectors.clearSearch) && e.which === 1) {
@@ -312,7 +313,9 @@ export const gradebookSearchClass = class {
                     if (e.which === space) {
                         break;
                     } else {
-                        window.location = selectAllResultsLink(this.searchTerm);
+                        if (this.matchAllFunction) {
+                            window.location = this.matchAllFunction(this.searchTerm, courseID);
+                        }
                         break;
                     }
                 }
@@ -340,39 +343,4 @@ export const gradebookSearchClass = class {
                 break;
         }
     }
-};
-
-/**
- * Build up the view all link.
- *
- * @param {String} searchTerm The current users' search term.
- * @param {Null|Number} userID The potential ID of the user selected.
- * @returns {string|*}
- */
-const selectAllResultsLink = (searchTerm, userID = null) => {
-    const params = {
-        id: courseID,
-        searchvalue: searchTerm
-    };
-    if (userID !== null) {
-        params.userid = userID;
-    }
-    return Url.relativeUrl('/grade/report/grader/index.php', params, false);
-};
-
-/**
- * Build up the view all link that is dedicated to a particular result.
- *
- * @param {String} searchTerm The current users' search term.
- * @returns {Function|*}
- */
-const selectOneLink = (searchTerm) => {
-    return (userID = null) => {
-        const params = {
-            id: courseID,
-            searchvalue: searchTerm
-        };
-        params.userid = userID;
-        return Url.relativeUrl('/grade/report/grader/index.php', params, false);
-    };
 };

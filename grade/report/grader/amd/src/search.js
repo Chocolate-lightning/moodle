@@ -26,6 +26,8 @@ import {gradebookSearchClass} from 'gradereport_grader/search/search_class';
 import * as Repository from 'gradereport_grader/search/repository';
 import Notification from 'core/notification';
 import {get_strings as getStrings} from 'core/str';
+import Url from 'core/url';
+import * as Templates from 'core/templates';
 
 const bannedFilterFields = ['profileimageurlsmall', 'profileimageurl', 'id', 'link', 'matchingField', 'matchingFieldName'];
 let profilestringmap = null;
@@ -64,7 +66,7 @@ const fetchRequiredStrings = async() => {
 export const init = async() => {
     const pendingPromise = new Pending();
     await fetchRequiredStrings();
-    new gradebookSearchClass(fetchFilterbleData(), filter(), filterMatchIndicator());
+    new gradebookSearchClass(fetchFilterbleData(), filter(), filterMatchIndicator(), render(), selectAll());
     pendingPromise.resolve();
 };
 
@@ -103,11 +105,11 @@ const filterMatchIndicator = () => {
      * Given we have a subset of the dataset, set the field that we matched upon to inform the end user.
      *
      * @param {Array} matchedResultsSubset The results we will render out.
-     * @param {Function} selectOneLink wow.
      * @param {String} searchTerm wow.
+     * @param {Number} courseID wow.
      * @returns {Array} The results with the matched fields inserted.
      */
-    return (matchedResultsSubset, selectOneLink, searchTerm) => {
+    return (matchedResultsSubset, searchTerm, courseID) => {
         const preppedSearchTerm = searchTerm.toLowerCase();
         return matchedResultsSubset.map((user) => {
             for (const [key, value] of Object.entries(user)) {
@@ -122,10 +124,61 @@ const filterMatchIndicator = () => {
                     preppedSearchTerm,
                     `<span class="font-weight-bold">${searchTerm}</span>`
                 );
-                user.link = selectOneLink(user.id);
+                user.link = selectOneLink(user.id, searchTerm, courseID);
                 break;
             }
             return user;
         });
     };
+};
+
+/**
+ * Build the content then replace the node.
+ *
+ */
+const render = () => {
+    return async(results, dataset, courseID, searchDropdown, searchTerm, selectAllResultsLink) => {
+        const {html, js} = await Templates.renderForPromise('gradereport_grader/search/resultset', {
+            'users': results,
+            'hasusers': results.length > 0,
+            'total': dataset.length,
+            'found': results.length,
+            'searchterm': searchTerm,
+            'selectall': selectAllResultsLink(searchTerm, courseID),
+        });
+        Templates.replaceNodeContents(searchDropdown, html, js);
+    };
+};
+
+/**
+ * Build up the view all link.
+ *
+ * @returns {string|*}
+ */
+const selectAll = () => {
+    return (searchTerm, courseID) => {
+        const params = {
+            id: courseID,
+            searchvalue: searchTerm
+        };
+        return Url.relativeUrl('/grade/report/grader/index.php', params, false);
+    };
+};
+
+/**
+ * Build up the view all link that is dedicated to a particular result.
+ *
+ * @param {Number} userID The selected users' ID.
+ * @param {String} searchTerm What the current user is looking for.
+ * @param {Number} courseID The course ID that the grader report belongs to.
+ *
+ * @returns {string|*}
+ */
+const selectOneLink = (userID, searchTerm, courseID) => {
+    const params = {
+        id: courseID,
+        searchvalue: searchTerm,
+        userid: userID,
+    };
+    return Url.relativeUrl('/grade/report/grader/index.php', params, false);
 };
