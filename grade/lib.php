@@ -1711,22 +1711,20 @@ class grade_structure {
     }
 
     /**
-     * Returns an action menu item leading to the grade analysis page
+     * Returns a link leading to the grade analysis page
      *
      * @param grade_grade $grade
-     * @return action_menu_link_secondary|null
+     * @param string $gradeanalysisstring Language string
+     * @return string|null
      */
-    public function get_grade_analysis_menu_item(grade_grade $grade) : ?action_menu_link_secondary {
+    public function get_grade_analysis_link(grade_grade $grade, string $gradeanalysisstring) : ?string {
         $url = $this->get_grade_analysis_url($grade);
         if (is_null($url)) {
             return null;
         }
 
-        static $strgtradeanalysis = null;
-        if (is_null($strgtradeanalysis)) {
-            $strgtradeanalysis = get_string('gradeanalysis', 'core_grades');
-        }
-        return new action_menu_link_secondary($url, null, $strgtradeanalysis);
+        return html_writer::link($url, $gradeanalysisstring,
+            ['class' => 'dropdown-item', 'aria-label' => $gradeanalysisstring, 'role' => 'menuitem']);
     }
 
     /**
@@ -1935,23 +1933,20 @@ class grade_structure {
     }
 
     /**
-     * Returns an action menu item leading to the edit grade page
+     * Returns a link leading to the edit grade/grade item/category page
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     * @return action_menu_link_secondary|null
+     * @param array $langstrings Language strings
+     * @return string|null
      */
-    public function get_edit_menu_item(array $element, object $gpr) : ?action_menu_link_secondary {
+    public function get_edit_link(array $element, object $gpr, array $langstrings) : ?string {
         $url = null;
+        $title = '';
         if (!has_capability('moodle/grade:manage', $this->context)) {
             if (!($element['type'] == 'grade') || !has_capability('moodle/grade:edit', $this->context)) {
                 return null;
             }
-        }
-
-        static $streditgrade = null;
-        if (is_null($streditgrade)) {
-            $streditgrade = get_string('editgrade', 'grades');
         }
 
         $object = $element['object'];
@@ -1964,11 +1959,11 @@ class grade_structure {
                 $url = new moodle_url('/grade/edit/tree/grade.php',
                     ['courseid' => $this->courseid, 'id' => $object->id]);
             }
-            $title = $streditgrade;
-            $gpr->add_url_params($url);
-            $url = new action_menu_link_secondary($url, null, $title);
+            $title = $langstrings[0];
         }
-        return $url;
+        $gpr->add_url_params($url);
+        return html_writer::link($url, $title,
+            ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
     }
 
     /**
@@ -2030,13 +2025,14 @@ class grade_structure {
     }
 
     /**
-     * Returns an action menu item with url to hide/unhide grade
+     * Returns a link with url to hide/unhide grade/grade item/grade category
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     * @return mixed
+     * @param array $langstrings Language strings
+     * @return string|null
      */
-    public function get_hiding_menu_item(array $element, object $gpr) {
+    public function get_hiding_link(array $element, object $gpr, array $langstrings) :?string {
         if (!$element['object']->can_control_visibility() ||
             (!has_capability('moodle/grade:manage', $this->context) &&
                 !has_capability('moodle/grade:hide', $this->context))) {
@@ -2047,24 +2043,16 @@ class grade_structure {
             ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
         $url = $gpr->add_url_params($url);
 
-        static $strshowgrade = null;
-        static $strhidegrade = null;
-
-        if (is_null($strshowgrade)) {
-            $strshowgrade = get_string('show');
-        }
-
-        if (is_null($strhidegrade)) {
-            $strhidegrade = get_string('hide');
-        }
-
         if ($element['object']->is_hidden()) {
             $url->param('action', 'show');
-            $title = $strshowgrade;
+            $title = $langstrings[0];
         } else {
             $url->param('action', 'hide');
-            $title = $strhidegrade;
+            $title = $langstrings[1];
         }
+
+        $url = html_writer::link($url, $title,
+            ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
 
         if ($element['type'] == 'grade') {
             $item = $element['object']->grade_item;
@@ -2072,9 +2060,8 @@ class grade_structure {
                 $strparamobj = new stdClass();
                 $strparamobj->itemname = $item->get_name(true, true);
                 $strnonunhideable = get_string('nonunhideableverbose', 'grades', $strparamobj);
-                $url = html_writer::span($title, 'text-muted', ['title' => $strnonunhideable]);
-            } else {
-                $url = new action_menu_link_secondary($url, null, $title);
+                $url = html_writer::span($title, 'text-muted dropdown-item',
+                    ['title' => $strnonunhideable, 'aria-label' => $title, 'role' => 'menuitem']);
             }
         }
 
@@ -2139,61 +2126,51 @@ class grade_structure {
     }
 
     /**
-     * Returns an action menu item with url to lock/unlock grade
+     * Returns link to lock/unlock grade/grade item/grade category
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
+     * @param array $langstrings Language strings
      *
-     * @return mixed
+     * @return string|null
      */
-    public function get_locking_menu_item(array $element, object $gpr) {
-        static $strunlock = null;
-        static $strlock = null;
+    public function get_locking_link(array $element, object $gpr, array $langstrings) : ?string {
 
-        if (is_null($strunlock)) {
-            $strunlock = get_string('unlock', 'grades');
-        }
+        $title = '';
+        $url = new moodle_url('/grade/edit/tree/action.php',
+            ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
+        $url = $gpr->add_url_params($url);
 
-        if (is_null($strlock)) {
-            $strlock = get_string('lock', 'grades');
-        }
-
-        $url = null;
-
-        if ($element['type'] == 'grade') {
-            $url = new moodle_url('/grade/edit/tree/action.php',
-                ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
-            $url = $gpr->add_url_params($url);
-
-            if ($element['object']->grade_item->is_locked()) {
-                // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon.
-                $strparamobj = new stdClass();
-                $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
-                $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
-                $title = $strunlock;
-                $url = html_writer::span($title, 'text-muted', ['title' => $strnonunlockable]);
-            } else if ($element['object']->is_locked()) {
-                $title = $strunlock;
-                if (!has_capability('moodle/grade:manage', $this->context) &&
-                    !has_capability('moodle/grade:unlock', $this->context)) {
-                    $url = html_writer::span($title, 'text-muted'); // May be we need a hint that capabilities are missing.
-                } else {
-                    $url->param('action', 'unlock');
-                    $url = new action_menu_link_secondary($url, null, $title);
-                }
+        if (($element['type'] == 'grade') && ($element['object']->grade_item->is_locked())) {
+            // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon.
+            $strparamobj = new stdClass();
+            $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
+            $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
+            $title = $langstrings[0];
+            return html_writer::span($title, 'text-muted dropdown-item', ['title' => $strnonunlockable,
+                'aria-label' => $title, 'role' => 'menuitem']);
+        } else if ($element['object']->is_locked()) {
+            $title = $langstrings[0];
+            if (!has_capability('moodle/grade:manage', $this->context) &&
+                !has_capability('moodle/grade:unlock', $this->context)) {
+                return html_writer::span($title, 'text-muted dropdown-item',
+                    ['aria-label' => $title, 'role' => 'menuitem']);
             } else {
-                $title = $strlock;
-                if (!has_capability('moodle/grade:manage', $this->context) &&
-                    !has_capability('moodle/grade:lock', $this->context)) {
-                    $url = html_writer::span($title, 'text-muted'); // May be we need a hint that capabilities are missing.
-                } else {
-                    $url->param('action', 'lock');
-                    $url = new action_menu_link_secondary($url, null, $title);
-                }
+                $url->param('action', 'unlock');
+            }
+        } else {
+            $title = $langstrings[1];
+            if (!has_capability('moodle/grade:manage', $this->context) &&
+                !has_capability('moodle/grade:lock', $this->context)) {
+                return html_writer::span($title, 'text-muted dropdown-item',
+                    ['aria-label' => $title, 'role' => 'menuitem']);
+            } else {
+                $url->param('action', 'lock');
             }
         }
 
-        return $url;
+        return html_writer::link($url, $title,
+            ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
     }
 
     /**

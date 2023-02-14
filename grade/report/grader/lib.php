@@ -1681,45 +1681,46 @@ class grade_report_grader extends grade_report {
 
         $editable = true;
 
+        $context = new stdClass();
+
+        $editstrings = [];
+        $editstrings[] = $this->get_lang_string('editgrade', 'grades');
+
+        $hidestrings = [];
+        $hidestrings[] = $this->get_lang_string('show');
+        $hidestrings[] = $this->get_lang_string('hide');
+
+        $lockstrings = [];
+        $lockstrings[] = $this->get_lang_string('unlock', 'grades');
+        $lockstrings[] = $this->get_lang_string('lock', 'grades');
+
+        $gradeanalysisstring = $this->get_lang_string('gradeanalysis', 'grades');
+
         if ($element['type'] == 'grade') {
+            $context->isgrade = true;
             $item = $element['object']->grade_item;
             if ($item->is_course_item() || $item->is_category_item()) {
                 $editable = $this->overridecat;
             }
-        }
 
-        $menuitems = [];
+            if (!empty($USER->editing)) {
+                if ($editable) {
+                    $context->editurl = $this->gtree->get_edit_link($element, $this->gpr, $editstrings);
+                }
 
-        if (!empty($USER->editing)) {
-            if ($element['type'] != 'categoryitem' && $element['type'] != 'courseitem' && $editable) {
-                $menuitems[] = $this->gtree->get_edit_menu_item($element, $this->gpr);
+                if (has_capability('moodle/grade:manage', $this->context)) {
+                    $context->hideurl = $this->gtree->get_hiding_link($element, $this->gpr, $hidestrings);
+                    $context->lockurl = $this->gtree->get_locking_link($element, $this->gpr, $lockstrings);
+                }
             }
 
-            if (has_capability('moodle/grade:manage', $this->context)) {
-                $menuitems[] = $this->gtree->get_hiding_menu_item($element, $this->gpr);
-
-                $menuitems[] = $this->gtree->get_locking_menu_item($element, $this->gpr);
-            }
+            $context->gradeanalysisurl = $this->gtree->get_grade_analysis_link($element['object'], $gradeanalysisstring);
         }
 
-        if ($element['type'] == 'grade') {
-            $gradeanalysismenuitem = $this->gtree->get_grade_analysis_menu_item($element['object']);
-            if ($gradeanalysismenuitem) {
-                $menuitems[] = $gradeanalysismenuitem;
-            }
+        if (!empty($USER->editing) || isset($context->gradeanalysisurl)) {
+            return $OUTPUT->render_from_template('gradereport_grader/grademenu', $context);
         }
-
-        if ($menuitems) {
-            $menu = new action_menu($menuitems);
-            $menu->set_additional_classes('grader');
-            $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
-            $menu->set_menu_trigger($icon);
-            $menu->set_menu_left();
-
-            return $OUTPUT->render($menu);
-        } else {
-            return '';
-        }
+        return '';
     }
 
 

@@ -202,16 +202,12 @@
     text-align: center;
 }
 
-.path-grade-report-grader .grade_icons {
-    padding-top: 10px;
-}
-
-.path-grade-report-grader .locked .grade_icons {
-    padding-top: 17px;
-}
-
 .path-grade-report-grader .action-menu {
     padding-left: 10px;
+}
+
+.path-grade-report-grader .dropdown-menu {
+    width: max-content;
 }
 
 .path-grade-report-grader .yui3-overlay {
