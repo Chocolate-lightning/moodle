@@ -629,6 +629,11 @@ class grade_report_grader extends grade_report {
 
         $rows = array();
 
+        $colstohide = explode(
+            ',',
+            get_user_preferences('gradereport_grader_collapsed_columns')
+        );
+
         $showuserimage = $this->get_pref('showuserimage');
         // FIXME: MDL-52678 This get_capability_info is hacky and we should have an API for inserting grade row links instead.
         $canseeuserreport = false;
@@ -687,12 +692,48 @@ class grade_report_grader extends grade_report {
             $headerrow->cells[] = $emptyheader;
         }
 
+        // usort($colstohide, fn(string $a, string $b) => array_flip($extrafields)[$a] <=> array_flip($extrafields)[$b]);
+
+        // Get the difference between where an element is in $extrafields and $colstohide. Produces something like:
+        // [0, 0, 1, 1, 1, 2, 2]
+        // $contiguous = array_map(fn(string $e): int => array_flip($extrafields)[$e] - array_flip($colstohide)[$e], $colstohide);
+
+        // Count the values in the contiguous array, tells us the contiguous block sizes. Produces something like:
+        // [0 => 2, 1 => 3, 2 => 2]
+        //
+        // The keys here also correspond to the number that was counted (e.g., the number 1 is present in the $contiguous array
+        // 3 times, so the key 1 here has a value of 3)
+        // $counts = array_count_values($contiguous);
+
+        // Take the keys from the $counts array, then use array_keys on the $contiguous array to find the position
+        // of all elements in the contiguous array matching that value. e.g., for the key 1, we get keys 2, 3, and 4
+        // from the $contiguous array.
+        //
+        // These correspond 1-1 with the elements in the $colstohide array. So just slice from the first one (2 in this example)
+        // up to the column count, and we get the contiguous block of column names.
+        //$countsAndColumns = array_map(
+        //    fn(int $n): array => [
+        //        'count' => $counts[$n],
+        //        'columns' => array_slice($colstohide, array_search($n, $contiguous), $counts[$n])
+        //    ],
+        //    array_keys($counts)
+        //);
+
+        // TODO: @Matt, The fields and stuff.
+        //print_object('Fields that will not be shown');
+        //print_object($countsAndColumns);
+
         foreach ($extrafields as $field) {
             $fieldheader = new html_table_cell();
-            $fieldheader->attributes['class'] = 'userfield user' . $field;
+            $fieldheader->attributes['class'] = 'userfield collapsible user' . $field;
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
             $fieldheader->text = $arrows[$field];
+            if (in_array($field, $colstohide)) {
+                //$fieldheader->text = '+';
+                $fieldheader->attributes['aria-hidden'] = 'true';
+                $fieldheader->attributes['class'] .= ' d-none';
+            }
 
             $headerrow->cells[] = $fieldheader;
         }
@@ -772,9 +813,15 @@ class grade_report_grader extends grade_report {
 
             foreach ($extrafields as $field) {
                 $fieldcell = new html_table_cell();
-                $fieldcell->attributes['class'] = 'userfield user' . $field;
+                $fieldcell->attributes['class'] = 'userfield collapsible user' . $field;
                 $fieldcell->header = false;
                 $fieldcell->text = s($user->{$field});
+                if (in_array($field, $colstohide)) {
+                    //$fieldcell->text = '';
+                    $fieldheader->attributes['aria-hidden'] = 'true';
+                    $fieldcell->attributes['class'] .= ' d-none';
+                }
+
                 $userrow->cells[] = $fieldcell;
             }
 
@@ -1996,5 +2043,20 @@ class grade_report_grader extends grade_report {
      */
     public function get_students_per_page(): int {
         return (int) $this->get_pref('studentsperpage');
+    }
+
+    /**
+     * Get the current user preferences that are available
+     *
+     * @return array Array representing current options along with defaults
+     */
+    function gradereport_grader_user_preferences(): array {
+        $preferences = [];
+        $preferences['gradereport_grader_collapsed_columns'] = [
+            'type' => PARAM_TAGLIST,
+            'null' => NULL_ALLOWED,
+            'default' => '',
+        ];
+        return $preferences;
     }
 }

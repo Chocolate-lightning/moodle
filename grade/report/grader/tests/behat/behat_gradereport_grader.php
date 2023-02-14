@@ -25,6 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
+namespace lang\tests\behat;
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
@@ -80,11 +81,11 @@ class behat_gradereport_grader extends behat_base {
      * Checks grade values with or without a edit box.
      *
      * @Then /^the grade for "([^"]*)" in grade item "([^"]*)" should match "([^"]*)"$/
-     * @throws Exception
-     * @throws ElementNotFoundException
      * @param string $student
      * @param string $itemname
      * @param string $value
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
     public function the_grade_should_match($student, $itemname, $value) {
         $xpath = $this->get_student_and_grade_value_selector($student, $itemname);
@@ -100,7 +101,7 @@ class behat_gradereport_grader extends behat_base {
             if (!$field->matches($value)) {
                 $fieldvalue = $field->get_value();
                 throw new ExpectationException(
-                    'The "' . $student . '" and "' . $itemname . '" grade is "' . $fieldvalue . '", "' . $value . '" expected' ,
+                    'The "' . $student . '" and "' . $itemname . '" grade is "' . $fieldvalue . '", "' . $value . '" expected',
                     $this->getSession()
                 );
             }
@@ -174,9 +175,9 @@ class behat_gradereport_grader extends behat_base {
     /**
      * Gets the user id from its name.
      *
-     * @throws Exception
      * @param string $name
      * @return int
+     * @throws Exception
      */
     protected function get_user_id($name) {
         global $DB;
@@ -191,9 +192,9 @@ class behat_gradereport_grader extends behat_base {
     /**
      * Gets the grade item id from its name.
      *
-     * @throws Exception
      * @param string $itemname
      * @return int
+     * @throws Exception
      */
     protected function get_grade_item_id($itemname) {
         global $DB;
@@ -223,10 +224,10 @@ class behat_gradereport_grader extends behat_base {
     /**
      * Gets unique xpath selector for a student/grade item combo.
      *
-     * @throws Exception
      * @param string $student
      * @param string $itemname
      * @return string
+     * @throws Exception
      */
     protected function get_student_and_grade_cell_selector($student, $itemname) {
         $itemid = 'u' . $this->get_user_id($student) . 'i' . $this->get_grade_item_id($itemname);
@@ -236,10 +237,10 @@ class behat_gradereport_grader extends behat_base {
     /**
      * Gets xpath for a particular student/grade item grade value cell.
      *
-     * @throws Exception
      * @param string $student
      * @param string $itemname
      * @return string
+     * @throws Exception
      */
     protected function get_student_and_grade_value_selector($student, $itemname) {
         $cell = $this->get_student_and_grade_cell_selector($student, $itemname);
@@ -249,10 +250,10 @@ class behat_gradereport_grader extends behat_base {
     /**
      * Gets xpath for a particular student/grade item feedback cell.
      *
-     * @throws Exception
      * @param string $student
      * @param string $itemname
      * @return string
+     * @throws Exception
      */
     protected function get_student_and_grade_feedback_selector($student, $itemname) {
         $cell = $this->get_student_and_grade_cell_selector($student, $itemname);
