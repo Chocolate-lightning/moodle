@@ -3006,5 +3006,19 @@ privatefiles,moodle|/user/files.php';
 
     }
 
+    if ($oldversion < 2023021500.00) {
+        // Remove grade_report_showactivityicons, grade_report_showcalculations preferences for every user.
+        $DB->delete_records('user_preferences', ['name' => 'grade_report_showactivityicons']);
+        $DB->delete_records('user_preferences', ['name' => 'grade_report_showcalculations']);
+
+        // The grade_report_showactivityicons, grade_report_showcalculations settings have been removed.
+        unset_config('grade_report_showactivityicons');
+        unset_config('grade_report_showcalculations');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023021500.00);
+
+    }
+
     return true;
 }
