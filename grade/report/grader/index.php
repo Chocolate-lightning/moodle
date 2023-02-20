@@ -47,6 +47,7 @@ $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$cou
 $PAGE->set_pagelayout('report');
 $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
 $PAGE->requires->js_call_amd('gradereport_grader/search', 'init');
+$PAGE->requires->js_call_amd('gradereport_grader/collapse', 'init');
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
@@ -112,7 +113,7 @@ $reportname = get_string('pluginname', 'gradereport_grader');
 
 // Do this check just before printing the grade header (and only do it once).
 grade_regrade_final_grades_if_required($course);
-
+print_object(get_plugins_with_function('user_preferences'));
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);

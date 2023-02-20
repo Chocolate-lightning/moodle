@@ -70,6 +70,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         set_user_preference('grade_report_meanselection', GRADE_REPORT_MEAN_GRADED, $user);
         set_user_preference('grade_report_studentsperpage', 50, $user);
+        set_user_preference('gradereport_grader_collapsed_columns', 'email,phone', $user);
 
         // Switch to admin user (so we can validate preferences of our test user are still exported).
         $this->setAdminUser();
@@ -80,9 +81,10 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $prefs = $writer->get_user_preferences('gradereport_grader');
-        $this->assertCount(2, (array) $prefs);
+        $this->assertCount(3, (array) $prefs);
         $this->assertEquals(get_string('meangraded', 'grades'), $prefs->grade_report_meanselection->value);
         $this->assertEquals(50, $prefs->grade_report_studentsperpage->value);
+        $this->assertEquals('email,phone', $prefs->gradereport_grader_collapsed_columns->value);
     }
 
     /**

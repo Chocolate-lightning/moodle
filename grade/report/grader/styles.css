@@ -276,3 +276,7 @@
     border-top: 1px solid #dee2e6;
     font-size: 90%;
 }
+
+.collapsecolumndropdown {
+    width: 300px;
+}

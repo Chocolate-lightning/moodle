@@ -60,7 +60,7 @@ class action_bar extends \core_grades\output\action_bar {
      * @throws \moodle_exception
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE, $OUTPUT;
+        global $PAGE, $OUTPUT, $USER;
         // If in the course context, we should display the general navigation selector in gradebook.
         $courseid = $this->context->instanceid;
         // Get the data used to output the general navigation selector.
@@ -107,6 +107,27 @@ class action_bar extends \core_grades\output\action_bar {
                 false,
             );
             $data['searchdropdown'] = $searchdropdown->export_for_template($output);
+
+            $collapsedplaceholder = $OUTPUT->render_from_template('gradereport_grader/collapse/collapsebody', [
+                'courseid' => $courseid,
+                'userid' => $USER->id,
+                'currentvalue' => '',
+                'results' => explode(
+                    ',',
+                    get_user_preferences('gradereport_grader_collapsed_columns')
+                ),
+            ]);
+            $collapse = new gradebook_dropdown(
+                false,
+                'Collapsed columns',
+                $collapsedplaceholder,
+                'collapse-columns',
+                'collapsecolumn',
+                'collapsecolumndropdown overflow-auto',
+                null,
+                true,
+            );
+            $data['collapsedcolumns'] = $collapse->export_for_template($output);
         }
 
         return $data;
