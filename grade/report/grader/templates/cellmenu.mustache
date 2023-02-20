@@ -21,10 +21,12 @@
     Example context (json):
     {
         "editurl": "<a class='dropdown-item' aria-label='Edit grade' role='menuitem' href='grade/edit/tree/grade.php?courseid=13&itemid=608&userid=85&gpr_type=report&gpr_plugin=grader&gpr_courseid=13'>Edit grade</a>",
-        "hideurl": "<a class='dropdown-item' aria-label='Single view for this item' role='menuitem' href='grade/edit/tree/action.php?id=13&sesskey=sMAOMLAAN5&eid=n608u85&gpr_type=report&gpr_plugin=grader&gpr_courseid=13&action=hide'>Hide</a>"
+        "hideurl": "<a class='dropdown-item' aria-label='Single view for this item' role='menuitem' href='grade/edit/tree/action.php?id=13&sesskey=sMAOMLAAN5&eid=n608u85&gpr_type=report&gpr_plugin=grader&gpr_courseid=13&action=hide'>Hide</a>",
+        "classes": "d-none",
+        "hidden": "true"
     }
 }}
-<div class="action-menu mb-1 moodle-actionmenu grader">
+<div class="action-menu mb-1 moodle-actionmenu grader {{classes}}" data-collapse="menu" aria-hidden="{{hidden}}">
     <div class="dropdown">
         <button class="btn btn-link btn-icon icon-size-3 cellmenubtn"
             type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-id={{dataid}}>
@@ -47,6 +49,7 @@
                 <div class="dropdown-divider" role="separator"></div>
             {{/divider}}
             {{#hideurl}}{{{hideurl}}}{{/hideurl}}
+            {{#columncollapse}}{{{columncollapse}}}{{/columncollapse}}
             {{#lockurl}}{{{lockurl}}}{{/lockurl}}
         </div>
     </div>

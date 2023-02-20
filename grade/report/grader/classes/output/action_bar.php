@@ -107,6 +107,18 @@ class action_bar extends \core_grades\output\action_bar {
                 false,
             );
             $data['searchdropdown'] = $searchdropdown->export_for_template($output);
+
+            $collapse = new gradebook_dropdown(
+                true,
+                'Collapsed columns',
+                null,
+                'collapse-columns',
+                'collapsecolumn',
+                'collapsecolumndropdown overflow-auto',
+                null,
+                true,
+            );
+            $data['collapsedcolumns'] = $collapse->export_for_template($output);
         }
 
         return $data;
