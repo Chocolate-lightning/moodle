@@ -73,36 +73,38 @@
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
     <div class="row">
         {{#generalnavselector}}
-            <div class="navitem" id="navitem-general-selector">
+            <div class="navitem order-1">
                 {{>core/tertiary_navigation_selector}}
             </div>
-            <div class="navitem-divider"></div>
+            <div class="navitem-divider d-none d-sm-flex order-1"></div>
         {{/generalnavselector}}
         {{#groupselector}}
-            <div class="navitem" id="navitem-group-selector">
+            <div class="navitem order-2">
                 {{{.}}}
             </div>
-            <div class="navitem-divider"></div>
+            <div class="navitem-divider d-none d-sm-flex order-2"></div>
         {{/groupselector}}
         {{#itemselector}}
-            <div class="navitem" id="navitem-item-selector">
+            <div class="navitem order-3">
                 {{{.}}}
             </div>
-            <div class="navitem-divider"></div>
+            <div class="navitem-divider d-none d-sm-flex order-3"></div>
         {{/itemselector}}
-        <div class="navitem-break"></div>
+        <div class="navitem-break d-flex d-xl-none h-0 order-4"></div>
         {{#pagetoggler}}
-            {{#bulkactions}}
-                <div class="navitem" id="navitem-bulk-actions">{{{bulkactions}}}</div>
-                {{#js}}
-                    require(['gradereport_singleview/bulkactions'], function(bulkactions) {
-                    bulkactions.init();
-                    });
-                {{/js}}
-                <div class="navitem-divider"></div>
-            {{/bulkactions}}
-            <div class="navitem" id="navitem-page-toggle">
-                {{>gradereport_singleview/page_toggler}}
+            <div class="d-flex ml-0 ml-sm-auto order-5">
+                {{#bulkactions}}
+                    <div class="navitem ml-auto mr-3" id="navitem-bulk-actions">{{{bulkactions}}}</div>
+                    {{#js}}
+                        require(['gradereport_singleview/bulkactions'], function(bulkactions) {
+                        bulkactions.init();
+                        });
+                    {{/js}}
+                    <div class="navitem-divider d-flex"></div>
+                {{/bulkactions}}
+                <div class="navitem ml-0 mr-auto mr-sm-0 ml-sm-auto" id="navitem-page-toggle">
+                    {{>gradereport_singleview/page_toggler}}
+                </div>
             </div>
         {{/pagetoggler}}
     </div>

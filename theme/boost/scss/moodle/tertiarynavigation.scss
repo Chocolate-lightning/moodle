@@ -54,77 +54,16 @@
         margin-right: 20px;
     }
 
-    .navitem-break {
-        flex-basis: 100%;
-        height: 0;
-        display: none;
-    }
-
-    .page-toggler {
-        display: flex;
-        white-space: nowrap;
-    }
-
+    // Constrain the width of each tertiary buttons triggering element.
     .btn {
         & > div {
             max-width: 200px;
-
-            & > div:last-child,
-            span {
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
         }
-    }
-
-    #navitem-page-toggle {
-        margin-left: auto;
     }
 
     #navitem-bulk-actions {
-        margin-left: auto;
-
         & ~ #navitem-page-toggle {
             margin-left: 0;
-        }
-    }
-}
-
-@include media-breakpoint-down(lg) {
-    .tertiary-navigation {
-        #navitem-general-selector,
-        #navitem-general-selector + .navitem-divider {
-            order: 1;
-        }
-
-        #navitem-page-toggle,
-        #navitem-page-toggle + .navitem-divider {
-            order: 2;
-            margin-left: auto !important; /* stylelint-disable-line declaration-no-important */
-        }
-
-        .navitem-break {
-            display: flex;
-            order: 3;
-        }
-
-        #navitem-group-selector,
-        #navitem-group-selector + .navitem-divider {
-            order: 4;
-        }
-
-        #navitem-item-selector,
-        #navitem-item-selector + .navitem-divider {
-            order: 5;
-        }
-
-        #navitem-bulk-actions {
-            order: 6;
-            margin-right: 0;
-        }
-
-        #navitem-bulk-actions + .navitem-divider {
-            display: none;
         }
     }
 }
@@ -138,24 +77,8 @@
 }
 
 @include media-breakpoint-down(xs) {
-    .tertiary-navigation {
-        #navitem-page-toggle {
-            margin-right: auto;
-            margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
-
-            .page-toggler {
-                display: block !important; /* stylelint-disable-line declaration-no-important */
-
-                p {
-                    font-size: 80%;
-                    font-weight: 400;
-                }
-            }
-        }
-
-        .navitem-divider {
-            display: none;
-        }
+    .tertiary-navigation .page-toggler > p {
+        font-size: 80%;
     }
 }
 
