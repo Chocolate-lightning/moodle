@@ -73,7 +73,7 @@ Feature: Within the grader report, test that we can search for users
   Scenario: A teacher can search the grader report to find specified users
     # Case: Standard search.
     Given I set the field "Search users" to "Dummy"
-    And I click on "Dummy User" "list_item"
+    And I click on "Dummy User" "option_role"
     And I wait until the page is ready
     And the following should exist in the "user-grades" table:
       | -1-                |
@@ -227,17 +227,17 @@ Feature: Within the grader report, test that we can search for users
     And I press the tab key
     And the focused element is "Search users" "field"
     When I set the field "Search users" to "ABC"
-    And I wait until "Turtle Manatee" "option" exists
+    And I wait until "Turtle Manatee" "option_role" exists
     And I press the down key
-    And the focused element is "Student 1" "option"
+    And the focused element is "Student 1" "option_role"
     And I press the end key
-    And the focused element is "Turtle Manatee" "option"
+    And the focused element is "Turtle Manatee" "option_role"
     And I press the home key
-    And the focused element is "Student 1" "option"
+    And the focused element is "Student 1" "option_role"
     And I press the up key
-    And the focused element is "Turtle Manatee" "option"
+    And the focused element is "Turtle Manatee" "option_role"
     And I press the down key
-    And the focused element is "Student 1" "option"
+    And the focused element is "Student 1" "option_role"
     And I press the escape key
     And the focused element is "Search users" "field"
     Then I set the field "Search users" to "Goodmeme"
@@ -272,7 +272,7 @@ Feature: Within the grader report, test that we can search for users
     # Sometimes with behat we get unattached nodes causing spurious failures.
     And I wait "1" seconds
     And I set the field "Search users" to "ABC"
-    And I wait until "Turtle Manatee" "option" exists
+    And I wait until "Turtle Manatee" "option_role" exists
     And I press the tab key
     And the focused element is "Clear search input" "button"
     And I press the enter key
