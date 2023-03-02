@@ -57,6 +57,7 @@ export const prefSet = (prefs) => {
     };
     return ajax.call([request])[0];
 };
+
 /**
  * Fetch all the information on gradeitems we'll need in the column collapser.
  *

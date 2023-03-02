@@ -14,13 +14,21 @@
 {{!
     @template gradereport_grader/collapse/collapseresults
 
-    Foo
-
     Context variables required for this template:
-    * Foo - Bar.
+    * results - An array of found columns that are currently hidden.
+    * searchTerm - What the user is currently searching for.
 
     Example context (json):
-    {}
+    {
+        "results": [
+            {
+                "name": "42",
+                "displayName": "The meaning of life",
+                "category": "Hitchhikers grade  category"
+            }
+        ],
+        "searchTerm": "Meaning of"
+    }
 }}
 {{#results}}
     {{>gradereport_grader/collapse/collapseresultitems}}

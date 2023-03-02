@@ -598,7 +598,7 @@ class grade_report_grader extends grade_report {
 
         $colstohide = explode(
             ',',
-            get_user_preferences('gradereport_grader_collapsed_columns')
+            get_user_preferences('grade_report_grader_collapsed_columns')
         );
 
         $showuserimage = $this->get_pref('showuserimage');
@@ -757,7 +757,7 @@ class grade_report_grader extends grade_report {
         $strgrade = $this->get_lang_string('gradenoun');
         $colstohide = explode(
             ',',
-            get_user_preferences('gradereport_grader_collapsed_columns')
+            get_user_preferences('grade_report_grader_collapsed_columns')
         );
 
         // Get preferences once.
@@ -2087,6 +2087,13 @@ class grade_report_grader extends grade_report {
         return (int) $this->get_pref('studentsperpage');
     }
 
+    /**
+     * Return the link to allow the field to collapse from the users view.
+     *
+     * @return string Downdown menu link that'll trigger the collapsing functionality.
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     public function get_hide_show_link() {
         $link = new moodle_url('#', []);
         return html_writer::link(

@@ -14,13 +14,15 @@
 {{!
     @template gradereport_grader/collapse/icon
 
-    Foo
-
     Context variables required for this template:
-    * Foo - Bar.
+    * classes - Any classes that may be needed i.e. in the case the column is not collapsed, we want this hidden.
+    * field - Either the shortname of the user field or a grade item ID.
 
     Example context (json):
-    {}
+    {
+        "classes": "d-none",
+        "field": "42"
+    }
 }}
 <button class="btn btn-link btn-icon icon-size-3 {{classes}}" data-collapse="expandbutton" data-hider="expand" data-col="{{field}}">
     <i class="icon fa fa-plus m-0" title="Reopen column" aria-hidden="true"></i>

@@ -71,10 +71,12 @@ class get_gradeitems extends external_api {
         $context = context_course::instance($params['courseid']);
         parent::validate_context($context);
 
-        $allgradeitems = grade_item::fetch_all(array('courseid' => $params['courseid']));
+        $allgradeitems = grade_item::fetch_all(['courseid' => $params['courseid']]);
         $gradeitems = array_filter($allgradeitems, function($item) {
             // Sometimes gradeitems have no name, Throw a default name in just in case.
             $item->itemname = $item->itemname ?: get_string('grade');
+            // TODO: Get the grade item categories as well.
+            $item->category = 'Chef on DVD';
             // We don't want gradeitems that aren't real or that are category & course gradeitems
             return $item->gradetype != GRADE_TYPE_NONE && $item->itemtype !== 'category' && $item->itemtype !== 'course';
         });
@@ -95,7 +97,8 @@ class get_gradeitems extends external_api {
             'gradeitems' => new external_multiple_structure(
                 new external_single_structure([
                     'id' => new external_value(PARAM_ALPHANUM, 'An ID for the grade item', VALUE_REQUIRED),
-                    'itemname' => new external_value(PARAM_TEXT, 'The full name of the grade item', VALUE_REQUIRED)
+                    'itemname' => new external_value(PARAM_TEXT, 'The full name of the grade item', VALUE_REQUIRED),
+                    'category' => new external_value(PARAM_TEXT, 'The grade category of the grade item', VALUE_OPTIONAL),
                 ])
             ),
             'warnings' => new external_warnings(),

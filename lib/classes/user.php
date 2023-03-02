@@ -997,7 +997,8 @@ class core_user {
             }
         ];
 
-        $preferences['gradereport_grader_collapsed_columns'] = [
+        // Allow the user to define which columns to collapse.
+        $preferences['grade_report_grader_collapsed_columns'] = [
             'type' => PARAM_TAGLIST,
             'null' => NULL_ALLOWED,
             'default' => '',
