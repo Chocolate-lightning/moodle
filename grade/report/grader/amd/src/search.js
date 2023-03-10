@@ -25,9 +25,7 @@ import GradebookSearchClass from 'gradereport_grader/search/search_class';
 import * as Repository from 'gradereport_grader/search/repository';
 import {get_strings as getStrings} from 'core/str';
 import Url from 'core/url';
-import * as Templates from 'core/templates';
-
-const bannedFilterFields = ['profileimageurlsmall', 'profileimageurl', 'id', 'link', 'matchingField', 'matchingFieldName'];
+import {renderForPromise, replaceNodeContents} from 'core/templates';
 
 // Define our standard lookups.
 const selectors = {
@@ -36,6 +34,7 @@ const selectors = {
 };
 const component = document.querySelector(selectors.component);
 const courseID = component.querySelector(selectors.courseid).dataset.courseid;
+const bannedFilterFields = ['profileimageurlsmall', 'profileimageurl', 'id', 'link', 'matchingField', 'matchingFieldName'];
 
 export default class UserSearch extends GradebookSearchClass {
 
@@ -46,19 +45,50 @@ export default class UserSearch extends GradebookSearchClass {
         super();
     }
 
+    static init() {
+        return new UserSearch();
+    }
+
+    /**
+     * The overall div that contains the searching widget.
+     *
+     * @returns {string}
+     */
+    setComponentSelector() {
+        return '.user-search';
+    }
+
+    /**
+     * The dropdown div that contains the searching widget result space.
+     *
+     * @returns {string}
+     */
+    setDropdownSelector() {
+        return '.usersearchdropdown';
+    }
+
+    /**
+     * The triggering div that contains the searching widget.
+     *
+     * @returns {string}
+     */
+    setTriggerSelector() {
+        return '.usersearchwidget';
+    }
+
     /**
      * Build the content then replace the node.
      */
     async renderDropdown() {
-        const {html, js} = await Templates.renderForPromise('gradereport_grader/search/resultset', {
-            users: this.results,
-            hasusers: this.results.length > 0,
-            total: this.dataset.length,
-            found: this.results.length,
-            searchterm: this.searchTerm,
+        const {html, js} = await renderForPromise('gradereport_grader/search/resultset', {
+            users: this.getMatchedResults(),
+            hasusers: this.getMatchedResults().length > 0,
+            total: this.getDatasetSize(),
+            found: this.getMatchedResults().length,
+            searchterm: this.getSearchTerm(),
             selectall: this.selectAllResultsLink(),
         });
-        Templates.replaceNodeContents(this.searchDropdown, html, js);
+        replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
     }
 
     /**
@@ -73,17 +103,15 @@ export default class UserSearch extends GradebookSearchClass {
     /**
      * Dictate to the search component how and what we want to match upon.
      *
+     * @param {Array} filterableData
      * @returns {Array} The users that match the given criteria.
      */
-    async filterDataset() {
-        // Conditionally fetch the users we want to search upon.
-        this.dataset = this.dataset || await this.fetchDataset();
-
-        return this.dataset.filter((user) => Object.keys(user).some((key) => {
+    async filterDataset(filterableData) {
+        return filterableData.filter((user) => Object.keys(user).some((key) => {
             if (user[key] === "" || bannedFilterFields.includes(key)) {
                 return false;
             }
-            return user[key].toString().toLowerCase().includes(this.preppedSearchTerm);
+            return user[key].toString().toLowerCase().includes(this.getPreppedSearchTerm());
         }));
     }
 
@@ -93,36 +121,36 @@ export default class UserSearch extends GradebookSearchClass {
      * @returns {Array} The results with the matched fields inserted.
      */
     async filterMatchDataset() {
-        // Conditionally grab the user profile field name string map.
-        this.profilestringmap = this.profilestringmap || await fetchRequiredStrings();
-
-        this.results = this.matchedResults.map((user) => {
-            for (const [key, value] of Object.entries(user)) {
-                const valueString = value.toString().toLowerCase();
-                if (!valueString.includes(this.preppedSearchTerm)) {
-                    continue;
+        const stringMap = await this.getStringMap();
+        this.setMatchedResults(
+            this.getMatchedResults().map((user) => {
+                for (const [key, value] of Object.entries(user)) {
+                    const valueString = value.toString().toLowerCase();
+                    if (!valueString.includes(this.getPreppedSearchTerm())) {
+                        continue;
+                    }
+                    // Ensure we have a good string, otherwise fallback to the key.
+                    user.matchingFieldName = stringMap.get(key) ?? key;
+                    user.matchingField = valueString.replace(
+                        this.getPreppedSearchTerm(),
+                        `<span class="font-weight-bold">${this.getSearchTerm()}</span>`
+                    );
+                    user.link = this.selectOneLink(user.id);
+                    break;
                 }
-                // Ensure we have a good string, otherwise fallback to the key.
-                user.matchingFieldName = this.profilestringmap.get(key) ?? key;
-                user.matchingField = valueString.replace(
-                    this.preppedSearchTerm,
-                    `<span class="font-weight-bold">${this.searchTerm}</span>`
-                );
-                user.link = this.selectOneLink(user.id);
-                break;
-            }
-            return user;
-        });
+                return user;
+            })
+        );
     }
 
     /**
      * The handler for when a user interacts with the component.
      *
-     * @param {Event} e The triggering event that we are working with.
+     * @param {MouseEvent} e The triggering event that we are working with.
      */
     clickHandler(e) {
         super.clickHandler(e);
-        if (e.target === this.currentViewAll && e.button === 0) {
+        if (e.target === this.getHTMLElements().currentViewAll && e.button === 0) {
             window.location = this.selectAllResultsLink();
         }
     }
@@ -130,12 +158,12 @@ export default class UserSearch extends GradebookSearchClass {
     /**
      * The handler for when a user presses a key within the component.
      *
-     * @param {Event} e The triggering event that we are working with.
+     * @param {KeyboardEvent} e The triggering event that we are working with.
      */
     keyHandler(e) {
         super.keyHandler(e);
 
-        if (e.target === this.currentViewAll && (e.key === 'Enter' || e.key === 'Space')) {
+        if (e.target === this.getHTMLElements().currentViewAll && (e.key === 'Enter' || e.key === 'Space')) {
             window.location = this.selectAllResultsLink();
         }
 
@@ -143,7 +171,7 @@ export default class UserSearch extends GradebookSearchClass {
         switch (e.key) {
             case 'Enter':
             case ' ':
-                if (document.activeElement === this.searchInput) {
+                if (document.activeElement === this.getHTMLElements().searchInput) {
                     if (e.key === ' ') {
                         break;
                     } else {
@@ -151,7 +179,7 @@ export default class UserSearch extends GradebookSearchClass {
                         break;
                     }
                 }
-                if (document.activeElement === this.clearSearchButton) {
+                if (document.activeElement === this.getHTMLElements().clearSearchButton) {
                     this.closeSearch();
                     break;
                 }
@@ -169,7 +197,7 @@ export default class UserSearch extends GradebookSearchClass {
     selectAllResultsLink() {
         return Url.relativeUrl('/grade/report/grader/index.php', {
             id: courseID,
-            searchvalue: this.searchTerm
+            searchvalue: this.getSearchTerm()
         }, false);
     }
 
@@ -182,38 +210,37 @@ export default class UserSearch extends GradebookSearchClass {
     selectOneLink(userID) {
         return Url.relativeUrl('/grade/report/grader/index.php', {
             id: courseID,
-            searchvalue: this.searchTerm,
+            searchvalue: this.getSearchTerm(),
             userid: userID,
             }, false);
     }
 
-    static init() {
-        return new UserSearch();
+    /**
+     * Given the set of profile fields we can possibly search, fetch their strings,
+     * so we can report to screen readers the field that matched.
+     *
+     * @returns {Promise<void>}
+     */
+    getStringMap() {
+        if (!this.profilestringmap) {
+            const requiredStrings = [
+                'username',
+                'firstname',
+                'lastname',
+                'email',
+                'city',
+                'country',
+                'department',
+                'institution',
+                'idnumber',
+                'phone1',
+                'phone2',
+            ];
+            this.profilestringmap = getStrings(requiredStrings.map((key) => ({key})))
+                .then((stringArray) => new Map(
+                    requiredStrings.map((key, index) => ([key, stringArray[index]]))
+                ));
+        }
+        return this.profilestringmap;
     }
 }
-
-/**
- * Given the set of profile fields we can possibly search, fetch their strings,
- * so we can report to screen readers the field that matched.
- *
- * @returns {Promise<void>}
- */
-const fetchRequiredStrings = () => {
-    const requiredStrings = [
-        'username',
-        'firstname',
-        'lastname',
-        'email',
-        'city',
-        'country',
-        'department',
-        'institution',
-        'idnumber',
-        'phone1',
-        'phone2',
-    ];
-    return getStrings(requiredStrings.map((key) => ({key})))
-        .then((stringArray) => new Map(
-            requiredStrings.map((key, index) => ([key, stringArray[index]]))
-        ));
-};

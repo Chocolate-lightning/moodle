@@ -24,18 +24,6 @@ import {debounce} from 'core/utils';
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-// Define our standard lookups.
-const selectors = {
-    component: '.user-search',
-    trigger: '.usersearchwidget',
-    input: '[data-action="search"]',
-    clearSearch: '[data-action="clearsearch"]',
-    dropdown: '.usersearchdropdown',
-    resultitems: '[role="option"]',
-    viewall: '#select-all',
-};
-
 // Reused variables for the class.
 const events = [
     'keydown',
@@ -46,13 +34,24 @@ const UP = -1;
 const DOWN = 1;
 
 export default class {
+    // Define our standard lookups.
+    selectors = {
+        component: this.setComponentSelector(),
+        trigger: this.setTriggerSelector(),
+        input: '[data-action="search"]',
+        clearSearch: '[data-action="clearsearch"]',
+        dropdown: this.setDropdownSelector(),
+        resultitems: '[role="option"]',
+        viewall: '#select-all',
+    };
+
     // The results from the called filter function.
     matchedResults = [];
 
     // What did the user search for?
     searchTerm = '';
 
-    // What did the user search for as a lowercase.
+    // What the user searched for as a lowercase.
     preppedSearchTerm = null;
 
     // The DOM nodes after the dropdown render.
@@ -64,20 +63,20 @@ export default class {
     // The current node for the view all link.
     currentViewAll = null;
 
-    results = [];
-
     dataset = null;
 
+    datasetSize = 0;
+
     // DOM nodes that persist.
-    component = document.querySelector(selectors.component);
-    searchInput = this.component.querySelector(selectors.input);
-    searchDropdown = this.component.querySelector(selectors.dropdown);
-    $searchButton = $(selectors.trigger);
-    clearSearchButton = this.component.querySelector(selectors.clearSearch);
+    component = document.querySelector(this.selectors.component);
+    searchInput = this.component.querySelector(this.selectors.input);
+    searchDropdown = this.component.querySelector(this.selectors.dropdown);
+    $searchButton = $(this.selectors.trigger);
+    clearSearchButton = this.component.querySelector(this.selectors.clearSearch);
     $component = $(this.component);
 
     constructor() {
-        this.searchTerm = this.searchInput.value ?? '';
+        this.setSearchTerms(this.searchInput.value ?? '');
         // Begin handling the base search component.
         this.registerClickHandlers();
         this.registerKeyHandlers();
@@ -93,9 +92,10 @@ export default class {
 
     /**
      * Stub out a required function.
+     * @param {Array} dataset
      */
-    filterDataset() {
-        throw new Error(`filterDataset() must be implemented in ${this.constructor.name}`);
+    filterDataset(dataset) {
+        throw new Error(`filterDataset(${dataset}) must be implemented in ${this.constructor.name}`);
     }
 
     /**
@@ -113,6 +113,110 @@ export default class {
     }
 
     /**
+     * Stub out a required function.
+     */
+    setComponentSelector() {
+        throw new Error(`setComponentSelector() must be implemented in ${this.constructor.name}`);
+    }
+
+    /**
+     * Stub out a required function.
+     */
+    setDropdownSelector() {
+        throw new Error(`setDropdownSelector() must be implemented in ${this.constructor.name}`);
+    }
+
+    /**
+     * Stub out a required function.
+     */
+    setTriggerSelector() {
+        throw new Error(`setTriggerSelector() must be implemented in ${this.constructor.name}`);
+    }
+
+    /**
+     * Return the dataset that we will be searching upon.
+     *
+     * @returns {Promise<null>}
+     */
+    async getDataset() {
+        if (!this.dataset) {
+            this.dataset = await this.fetchDataset();
+        }
+        this.datasetSize = this.dataset.length;
+        return this.dataset;
+    }
+
+    /**
+     * Return the size of the dataset.
+     *
+     * @returns {number}
+     */
+    getDatasetSize() {
+        return this.datasetSize;
+    }
+
+    /**
+     * Return the results of the filter upon the dataset.
+     *
+     * @returns {Array}
+     */
+    getMatchedResults() {
+        return this.matchedResults;
+    }
+
+    /**
+     * Given a filter has been run across the dataset, store the matched results.
+     *
+     * @param {Array} result
+     */
+    setMatchedResults(result) {
+        this.matchedResults = result;
+    }
+
+    /**
+     * Get the value that the user entered.
+     *
+     * @returns {string}
+     */
+    getSearchTerm() {
+        return this.searchTerm;
+    }
+
+    /**
+     * Get the transformed search value.
+     *
+     * @returns {string}
+     */
+    getPreppedSearchTerm() {
+        return this.preppedSearchTerm;
+    }
+
+    /**
+     * When a user searches for something, set our variable to manage it.
+     *
+     * @param {string} result
+     */
+    setSearchTerms(result) {
+        this.searchTerm = result;
+        this.preppedSearchTerm = result.toLowerCase();
+    }
+
+    /**
+     * Return an object containing a handfull of dom nodes that we sometimes need the value of.
+     *
+     * @returns {object}
+     */
+    getHTMLElements() {
+        this.updateNodes();
+        return {
+            searchDropdown: this.searchDropdown,
+            currentViewAll: this.currentViewAll,
+            searchInput: this.searchInput,
+            clearSearchButton: this.clearSearchButton
+        };
+    }
+
+    /**
      * When called, close the dropdown and reset the input field attributes.
      */
     closeSearch() {
@@ -120,7 +224,7 @@ export default class {
         // Hide the "clear" search button search bar.
         this.clearSearchButton.classList.add('d-none');
         // Clear the entered search query in the search bar and hide the search results container.
-        this.searchTerm = "";
+        this.setSearchTerms('');
         this.searchInput.value = "";
     }
 
@@ -145,9 +249,9 @@ export default class {
      * These class members change when a new result set is rendered. So update for fresh data.
      */
     updateNodes() {
-        this.resultNodes = [...this.component.querySelectorAll(selectors.resultitems)];
+        this.resultNodes = [...this.component.querySelectorAll(this.selectors.resultitems)];
         this.currentNode = this.resultNodes.find(r => r.id === document.activeElement.id);
-        this.currentViewAll = this.component.querySelector(selectors.viewall);
+        this.currentViewAll = this.component.querySelector(this.selectors.viewall);
     }
 
     /**
@@ -165,7 +269,7 @@ export default class {
         // Register a small click event onto the document since we need to check if they are clicking off the component.
         document.addEventListener('click', (e) => {
             // Since we are handling dropdowns manually, ensure we can close it when clicking off.
-            if (!e.target.closest(selectors.component) && this.searchDropdown.classList.contains('show')) {
+            if (!e.target.closest(this.selectors.component) && this.searchDropdown.classList.contains('show')) {
                 this.toggleDropdown();
             }
         });
@@ -189,9 +293,9 @@ export default class {
     registerInputHandlers() {
         // Register & handle the text input.
         this.searchInput.addEventListener('input', debounce(async() => {
-            this.searchTerm = this.searchInput.value;
+            this.setSearchTerms(this.searchInput.value);
             // We can also require a set amount of input before search.
-            if (this.searchTerm === '') {
+            if (this.getSearchTerm() === '') {
                 this.toggleDropdown();
                 // Hide the "clear" search button in the search bar.
                 this.clearSearchButton.classList.add('d-none');
@@ -209,11 +313,11 @@ export default class {
      * @returns {Promise<void>}
      */
     async renderAndShow() {
-        this.preppedSearchTerm = this.searchTerm.toLowerCase();
         // User has given something for us to filter against.
-        this.matchedResults = await this.filterDataset();
+        this.setMatchedResults(await this.filterDataset(await this.getDataset()));
+        await this.filterMatchDataset();
         // Replace the dropdown node contents and show the results.
-        await this.renderDropdown(await this.filterMatchDataset());
+        await this.renderDropdown();
         // Set the dropdown to open.
         this.toggleDropdown(true);
     }
@@ -222,7 +326,7 @@ export default class {
      * Set the current focus either on the preceding or next result item.
      *
      * @param {Number} direction Is the user moving up or down the resultset?
-     * @param {Event} e The JS event from the event handler.
+     * @param {KeyboardEvent} e The JS event from the event handler.
      */
     keyUpDown(direction, e) {
         e.preventDefault();
@@ -257,9 +361,9 @@ export default class {
     /**
      * The handler for when a user interacts with the component.
      *
-     * @param {Event} e The triggering event that we are working with.
+     * @param {MouseEvent} e The triggering event that we are working with.
      */
-    clickHandler(e) {
+    async clickHandler(e) {
         this.updateNodes();
 
         // Prevent normal key presses activating this.
@@ -267,20 +371,20 @@ export default class {
             window.location = e.target.closest('.dropdown-item').href;
         }
         // The "clear search" button is triggered.
-        if (e.target.closest(selectors.clearSearch) && e.button === 0) {
+        if (e.target.closest(this.selectors.clearSearch) && e.button === 0) {
             this.closeSearch();
             this.searchInput.focus({preventScroll: true});
         }
         // User may have accidentally clicked off the dropdown and wants to reopen it.
-        if (e.target.closest(selectors.input) && this.searchTerm !== '' && e.button === 0) {
-            this.renderAndShow();
+        if (e.target.closest(this.selectors.input) && this.getSearchTerm() !== '' && e.button === 0) {
+            await this.renderAndShow();
         }
     }
 
     /**
      * The handler for when a user presses a key within the component.
      *
-     * @param {Event} e The triggering event that we are working with.
+     * @param {KeyboardEvent} e The triggering event that we are working with.
      */
     keyHandler(e) {
         this.updateNodes();
@@ -306,7 +410,7 @@ export default class {
                 break;
             case 'Tab':
                 // If the current focus is on clear search, then check if viewall exists then around tab to it.
-                if (e.target.closest(selectors.clearSearch)) {
+                if (e.target.closest(this.selectors.clearSearch)) {
                     if (this.currentViewAll) {
                         e.preventDefault();
                         this.currentViewAll.focus({preventScroll: true});
@@ -314,8 +418,8 @@ export default class {
                         this.closeSearch();
                     }
                 }
-                // If the current focus is on the view all link, then close the widget then set focus on the next tert nav item.
-                if (e.target.closest(selectors.viewall)) {
+                // If the current focus is on the view all link, then close the widget then set focus on the next tertiary nav item.
+                if (e.target.closest(this.selectors.viewall)) {
                     this.closeSearch();
                 }
                 break;
