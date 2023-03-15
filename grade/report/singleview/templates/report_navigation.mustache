@@ -33,33 +33,37 @@
         }
     }
 }}
-<div class="report-navigation w-100">
-    <div class="container w-100 d-flex">
-        {{#perpageselect}}
-            <div class="d-flex report-paging">
-                {{{perpageselect}}}
-                {{{pager}}}
+{{< core/sticky_footer }}
+    {{$ stickycontent }}
+        <div class="report-navigation w-100">
+            <div class="container-fluid w-100 d-flex">
+                {{#perpageselect}}
+                    <div class="d-flex report-paging">
+                        {{{perpageselect}}}
+                        {{{pager}}}
+                    </div>
+                {{/perpageselect}}
+                <div class="d-flex mx-auto">
+                    {{#previoususer}}
+                        <div class="previous d-flex">
+                            <a href="{{url}}" aria-label="{{#str}} gotopreviousreport, gradereport_singleview {{/str}}">
+                                <i class="fa fa-caret-{{previousarrow}} fa-lg pr-1"></i>
+                                {{name}}
+                            </a>
+                        </div>
+                    {{/previoususer}}
+                </div>
+                <div class="d-flex mx-auto">
+                    {{#nextuser}}
+                        <div class="next d-flex ml-auto">
+                            <a href="{{url}}" aria-label="{{#str}} gotonextreport, gradereport_singleview {{/str}}">
+                                {{name}}
+                                <i class="fa fa-caret-{{nextarrow}} fa-lg pl-1"></i>
+                            </a>
+                        </div>
+                    {{/nextuser}}
+                </div>
             </div>
-        {{/perpageselect}}
-        <div class="d-flex ml-auto">
-            {{#previoususer}}
-                <div class="previous d-flex">
-                    <a href="{{url}}" aria-label="{{#str}} gotopreviousreport, gradereport_singleview {{/str}}">
-                        <i class="fa fa-caret-{{previousarrow}} fa-lg pr-1"></i>
-                        {{name}}
-                    </a>
-                </div>
-            {{/previoususer}}
         </div>
-        <div class="d-flex ml-auto">
-            {{#nextuser}}
-                <div class="next d-flex ml-auto">
-                    <a href="{{url}}" aria-label="{{#str}} gotonextreport, gradereport_singleview {{/str}}">
-                        {{name}}
-                        <i class="fa fa-caret-{{nextarrow}} fa-lg pl-1"></i>
-                    </a>
-                </div>
-            {{/nextuser}}
-        </div>
-    </div>
-</div>
+    {{/ stickycontent }}
+{{/ core/sticky_footer }}
