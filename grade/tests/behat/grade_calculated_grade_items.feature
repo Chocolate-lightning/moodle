@@ -49,7 +49,7 @@ Feature: Calculated grade items can be used in the gradebook
       | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–50  | 75.00 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–50  | 75.00 %    | -                            |
 
-  @javascript
+  @javascript @MDL-77637
   Scenario: Changing max grade for a category item with a calculation that has existing grades will display the same points with the new max grade values immediately.
     Given I press "Add category"
     And I set the following fields to these values:

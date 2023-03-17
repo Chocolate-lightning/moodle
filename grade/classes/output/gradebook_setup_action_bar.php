@@ -17,6 +17,7 @@
 namespace core_grades\output;
 
 use moodle_url;
+use html_writer;
 
 /**
  * Renderable class for the action bar elements in the gradebook setup pages.
@@ -55,9 +56,14 @@ class gradebook_setup_action_bar extends action_bar {
         $data = $generalnavselector->export_for_template($output);
 
         // Add a button to the action bar with a link to the 'add grade item' page.
-        $addgradeitemlink = new moodle_url('/grade/edit/tree/item.php', ['courseid' => $courseid]);
-        $addgradeitembutton = new \single_button($addgradeitemlink, get_string('additem', 'grades'), 'get');
-        $data['addgradeitembutton'] = $addgradeitembutton->export_for_template($output);
+        $addgradeitemlink = new moodle_url('#');
+        // TODO: Implement this stuff.
+        $itemid = -1;
+        //$itemid = 89;
+        $data['addgradeitembutton'] = html_writer::link($addgradeitemlink->out(false),
+            get_string('additem', 'grades'),
+            ['class' => 'btn btn-secondary', 'data-courseid' => $courseid, 'data-itemid' => $itemid, 'data-trigger' => 'add-item-form']
+        );
 
         // If outcomes are enabled, add a button to the action bar with a link to the 'add outcome item' page.
         if (!empty($CFG->enableoutcomes)) {
