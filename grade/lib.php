@@ -1977,10 +1977,12 @@ class grade_structure {
                 $url = new moodle_url('/grade/edit/tree/outcomeitem.php',
                     ['courseid' => $this->courseid, 'id' => $object->id]);
             }
+            $url = $gpr->add_url_params($url);
             $title = $langstrings[1];
         } else if ($element['type'] == 'category') {
             $url = new moodle_url('/grade/edit/tree/category.php',
                 ['courseid' => $this->courseid, 'id' => $object->id]);
+            $url = $gpr->add_url_params($url);
             $title = $langstrings[2];
         }
         return html_writer::link($url, $title,
@@ -3175,6 +3177,27 @@ abstract class grade_helper {
      * @var array
      */
     protected static $aggregationstrings = null;
+
+    /**
+     * Cached grade tree plugin strings
+     * @var array
+     */
+    protected static $langstrings = [];
+
+    /**
+     * First checks the cached language strings, then returns match if found, or uses get_string()
+     * to get it from the DB, caches it then returns it.
+     *
+     * @param string $strcode
+     * @param string|null $section Optional language section
+     * @return string
+     */
+    public static function get_lang_string(string $strcode, ?string $section = null): string {
+        if (empty(self::$langstrings[$strcode])) {
+            self::$langstrings[$strcode] = get_string($strcode, $section);
+        }
+        return self::$langstrings[$strcode];
+    }
 
     /**
      * Gets strings commonly used by the describe plugins

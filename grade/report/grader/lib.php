@@ -1610,9 +1610,22 @@ class grade_report_grader extends grade_report {
      * @return string
      */
     public function get_cell_action_menu(array $element, string $mode): string {
-        global $OUTPUT, $USER;
+        global $OUTPUT, $USER, $CFG;
 
         $context = new stdClass();
+
+        static $externalreportlinks = [];
+        if (!$externalreportlinks) {
+            foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
+                if (file_exists($plugindir . '/lib.php')) {
+                    require_once($plugindir . '/lib.php');
+                    $functionname = 'gradereport_' . $plugin . '_get_report_link';
+                    if (function_exists($functionname)) {
+                        $externalreportlinks[] = $plugin;
+                    }
+                }
+            }
+        }
 
         if ($mode == 'gradeitem') {
             $editable = true;
@@ -1632,8 +1645,6 @@ class grade_report_grader extends grade_report {
             $lockstrings[] = $this->get_lang_string('lock', 'grades');
 
             $gradeanalysisstring = $this->get_lang_string('gradeanalysis', 'grades');
-
-            $singleviewstring = $this->get_lang_string('singleview', 'grades');
 
             if ($element['type'] == 'grade') {
                 $item = $element['object']->grade_item;
@@ -1655,9 +1666,11 @@ class grade_report_grader extends grade_report {
                 ($element['type'] == 'courseitem')) {
 
                 if ($element['type'] == 'item') {
-                    $context->singleviewreporturl =
-                        \gradereport_singleview\report\singleview::get_singleview_link($this->context, $this->courseid,
-                            $element, $this->gpr, $singleviewstring, $mode);
+                    foreach ($externalreportlinks as $externalreportlink) {
+                        $functionname = 'gradereport_' . $externalreportlink . '_get_report_link';
+                        $reporturl = $externalreportlink . 'reporturl';
+                        $context->$reporturl = $functionname($this->context, $this->courseid, $element, $this->gpr, $mode);
+                    }
                     $context->advancedgradingurl = $this->gtree->get_advanced_grading_link($element, $this->gpr);
                 }
 
@@ -1716,14 +1729,11 @@ class grade_report_grader extends grade_report {
 
             $context->dataid = $element['object']->id;
         } else if ($mode == 'user') {
-            $singleviewstring = $this->get_lang_string('singleviewuser', 'grades');
-            $userreportstring = $this->get_lang_string('userreport', 'gradereport_grader');
-            $context->singleviewreporturl =
-                \gradereport_singleview\report\singleview::get_singleview_link($this->context, $this->courseid,
-                    $element, $this->gpr, $singleviewstring, $mode);
-            $context->userreporturl =
-                \gradereport_user\report\user::get_userreport_link($this->context, $this->courseid,
-                    $element, $this->gpr, $userreportstring);
+            foreach ($externalreportlinks as $externalreportlink) {
+                $functionname = 'gradereport_' . $externalreportlink . '_get_report_link';
+                $reporturl = $externalreportlink . 'reporturl';
+                $context->$reporturl = $functionname($this->context, $this->courseid, $element, $this->gpr, $mode);
+            }
             $context->dataid = $element['userid'];
         }
 

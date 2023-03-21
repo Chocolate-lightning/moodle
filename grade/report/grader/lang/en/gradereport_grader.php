@@ -45,7 +45,6 @@ $string['privacy:metadata:preference:grade_report_studentsperpage'] = 'The numbe
 $string['privacy:request:preference:grade_report_grader_collapsed_categories'] = 'You have some gradebook categories collapsed in the "{$a->name}" course';
 $string['summarygrader'] = 'A table with the names of students in the first column, with assessable activities grouped by course and category across the top.';
 $string['useractivitygrade'] = '{$a} grade';
-$string['userreport'] = 'User report';
 $string['overriddengrade'] = 'Overridden grade';
 $string['advancedgrading'] = 'View {$a} results';
 $string['cellactions'] = 'Cell actions';
