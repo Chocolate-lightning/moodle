@@ -36,6 +36,139 @@ require_once $CFG->dirroot.'/grade/lib.php';
  */
 class add_item extends dynamic_form {
 
+    private function get_gradeitem(): array {
+        $courseid = $this->optional_param('courseid', null, PARAM_INT);
+        $id = $this->optional_param('itemid', null, PARAM_INT);
+        $gpr = new grade_plugin_return();
+
+        if ($gradeitem = grade_item::fetch(['id' => $id, 'courseid' => $courseid])) {
+            // redirect if outcomeid present
+            if (!empty($gradeitem->outcomeid) && !empty($CFG->enableoutcomes)) {
+                $url = new moodle_url('/grade/edit/tree/outcomeitem.php', ['id' => $id, 'courseid' => $courseid]);
+                redirect($gpr->add_url_params($url));
+            }
+            if ($gradeitem->is_course_item() || $gradeitem->is_category_item()) {
+                $grade_category = $gradeitem->get_item_category();
+                $url = new moodle_url('/grade/edit/tree/category.php', ['id' => $grade_category->id, 'courseid' => $courseid]);
+                redirect($gpr->add_url_params($url));
+            }
+
+            $item = $gradeitem->get_record_data();
+            $parent_category = $gradeitem->get_parent_category();
+            $item->parentcategory = $parent_category->id;
+
+        } else {
+            $gradeitem = new grade_item(['courseid' => $courseid, 'itemtype' => 'manual'], false);
+            $item = $gradeitem->get_record_data();
+            $parent_category = grade_category::fetch_course_category($courseid);
+            $item->parentcategory = $parent_category->id;
+        }
+        $decimalpoints = $gradeitem->get_decimals();
+
+        if ($item->hidden > 1) {
+            $item->hiddenuntil = $item->hidden;
+            $item->hidden = 0;
+        } else {
+            $item->hiddenuntil = 0;
+        }
+
+        $item->locked = !empty($item->locked);
+
+        $item->grademax   = format_float($item->grademax, $decimalpoints);
+        $item->grademin   = format_float($item->grademin, $decimalpoints);
+        $item->gradepass  = format_float($item->gradepass, $decimalpoints);
+        $item->multfactor = format_float($item->multfactor, 4);
+        $item->plusfactor = format_float($item->plusfactor, 4);
+
+        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM || $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
+            $item->aggregationcoef = $item->aggregationcoef == 0 ? 0 : 1;
+        } else {
+            $item->aggregationcoef = format_float($item->aggregationcoef, 4);
+        }
+        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+            $item->aggregationcoef2 = format_float($item->aggregationcoef2 * 100.0);
+        }
+        $item->cancontrolvisibility = $gradeitem->can_control_visibility();
+        return [
+            'gradeitem' => $gradeitem,
+            'item' => $item
+        ];
+    }
+
+    /**
+     * @param object|null $data
+     * @param mixed $gradeitem
+     * @return array
+     */
+    private function error_validation(?object $data, mixed $gradeitem): array {
+        $errors = [];
+
+        if ($data->idnumber) {
+            if ($gradeitem) {
+                if ($gradeitem->itemtype == 'mod') {
+                    $cm = get_coursemodule_from_instance($gradeitem->itemmodule, $gradeitem->iteminstance, $gradeitem->courseid);
+                } else {
+                    $cm = null;
+                }
+            } else {
+                $gradeitem = null;
+                $cm = null;
+            }
+            if (!grade_verify_idnumber($data->idnumber, $data->courseid, $gradeitem, $cm)) {
+                $errors['idnumber'] = get_string('idnumbertaken');
+            }
+        }
+
+        if ($data->gradetype && $data->gradetype == GRADE_TYPE_SCALE) {
+            if (empty($data->scaleid)) {
+                $errors['scaleid'] = get_string('missingscale', 'grades');
+            }
+        }
+
+        // We need to make all the validations related with grademax and grademin
+        // with them being correct floats, keeping the originals unmodified for
+        // later validations / showing the form back...
+        // TODO: Note that once MDL-73994 is fixed we'll have to re-visit this and
+        // adapt the code below to the new values arriving here, without forgetting
+        // the special case of empties and nulls.
+        $grademax = isset($data->grademax) ? unformat_float($data->grademax) : null;
+        $grademin = isset($data->grademin) ? unformat_float($data->grademin) : null;
+
+        if (!is_null($grademin) && !is_null($grademax)) {
+            if ($grademax == $grademin || $grademax < $grademin) {
+                $errors['grademin'] = get_string('incorrectminmax', 'grades');
+                $errors['grademax'] = get_string('incorrectminmax', 'grades');
+            }
+        }
+
+        // We do not want the user to be able to change the grade type or scale for this item if grades exist.
+        if ($gradeitem && $gradeitem->has_grades()) {
+            // Check that grade type is set - should never not be set unless form has been modified.
+            if (!isset($data->gradetype)) {
+                $errors['gradetype'] = get_string('modgradecantchangegradetype', 'grades');
+            } else if ($data->gradetype !== $gradeitem->gradetype) { // Check if we are changing the grade type.
+                $errors['gradetype'] = get_string('modgradecantchangegradetype', 'grades');
+            } else if ($data->gradetype == GRADE_TYPE_SCALE) {
+                // Check if we are changing the scale - can't do this when grades exist.
+                if (isset($data->scaleid) && ($data->scaleid !== $gradeitem->scaleid)) {
+                    $errors['scaleid'] = get_string('modgradecantchangescale', 'grades');
+                }
+            }
+        }
+        if ($gradeitem) {
+            if ($gradeitem->gradetype == GRADE_TYPE_VALUE) {
+                if ((((bool) get_config('moodle', 'grade_report_showmin')) &&
+                        grade_floats_different($grademin, $gradeitem->grademin)) ||
+                    grade_floats_different($grademax, $gradeitem->grademax)) {
+                    if ($gradeitem->has_grades() && empty($data->rescalegrades)) {
+                        $errors['rescalegrades'] = get_string('mustchooserescaleyesorno', 'grades');
+                    }
+                }
+            }
+        }
+        return $errors;
+    }
+
     protected function definition() {
         global $CFG;
         $courseid = $this->optional_param('courseid', null, PARAM_INT);
@@ -98,7 +231,7 @@ class add_item extends dynamic_form {
         }
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
         $mform->addHelpButton('scaleid', 'typescale', 'grades');
-        $mform->disabledIf('scaleid', 'gradetype', 'noteq', GRADE_TYPE_SCALE);
+        $mform->hideIf('scaleid', 'gradetype', 'noteq', GRADE_TYPE_SCALE);
 
         $mform->addElement('select', 'rescalegrades', get_string('modgraderescalegrades', 'grades'), [
             '' => get_string('choose'),
@@ -106,34 +239,34 @@ class add_item extends dynamic_form {
             'yes' => get_string('yes')
         ]);
         $mform->addHelpButton('rescalegrades', 'modgraderescalegrades', 'grades');
-        $mform->disabledIf('rescalegrades', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
+        $mform->hideIf('rescalegrades', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
 
         $mform->addElement('float', 'grademax', get_string('grademax', 'grades'));
         $mform->addHelpButton('grademax', 'grademax', 'grades');
-        $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
+        $mform->hideIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
 
         if (get_config('moodle', 'grade_report_showmin')) {
             $mform->addElement('float', 'grademin', get_string('grademin', 'grades'));
             $mform->addHelpButton('grademin', 'grademin', 'grades');
-            $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
+            $mform->hideIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
         }
 
         $mform->addElement('float', 'gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
-        $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $mform->addElement('float', 'multfactor', get_string('multfactor', 'grades'));
         $mform->addHelpButton('multfactor', 'multfactor', 'grades');
         $mform->setAdvanced('multfactor');
-        $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $mform->addElement('float', 'plusfactor', get_string('plusfactor', 'grades'));
         $mform->addHelpButton('plusfactor', 'plusfactor', 'grades');
         $mform->setAdvanced('plusfactor');
-        $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         // Grade display prefs.
         $default_gradedisplaytype = grade_get_setting($courseid, 'displaytype', $CFG->grade_displaytype);
@@ -160,7 +293,7 @@ class add_item extends dynamic_form {
         }
         $mform->addElement('select', 'display', get_string('gradedisplaytype', 'grades'), $options);
         $mform->addHelpButton('display', 'gradedisplaytype', 'grades');
-        $mform->disabledIf('display', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('display', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $default_gradedecimals = grade_get_setting($courseid, 'decimalpoints', $CFG->grade_decimalpoints);
         $mform->addElement('select', 'decimals', get_string('decimalpoints', 'grades'), [
@@ -174,17 +307,17 @@ class add_item extends dynamic_form {
         ]);
         $mform->addHelpButton('decimals', 'decimalpoints', 'grades');
         $mform->setDefault('decimals', -1);
-        $mform->disabledIf('decimals', 'display', 'eq', GRADE_DISPLAY_TYPE_LETTER);
+        $mform->hideIf('decimals', 'display', 'eq', GRADE_DISPLAY_TYPE_LETTER);
         if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
-            $mform->disabledIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
+            $mform->hideIf('decimals', 'display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
         }
-        $mform->disabledIf('decimals', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('decimals', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         // Hiding.
         if ($item->cancontrolvisibility) {
             $mform->addElement('advcheckbox', 'hidden', get_string('hidden', 'grades'), '', [], [0, 1]);
             $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), ['optional' => true]);
-            $mform->disabledIf('hidden', 'hiddenuntil[enabled]', 'checked');
+            $mform->hideIf('hidden', 'hiddenuntil[enabled]', 'checked');
         } else {
             $mform->addElement('static', 'hidden', get_string('hidden', 'grades'),
                 get_string('componentcontrolsvisibility', 'grades'));
@@ -198,20 +331,20 @@ class add_item extends dynamic_form {
         $mform->addHelpButton('locked', 'locked', 'grades');
 
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), ['optional' => true]);
-        $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         // Parent category related settings.
 
         $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
         $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
-        $mform->disabledIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $mform->addElement('float', 'aggregationcoef2', get_string('weight', 'grades'));
         $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
-        $mform->disabledIf('aggregationcoef2', 'weightoverride');
-        $mform->disabledIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->hideIf('aggregationcoef2', 'weightoverride');
+        $mform->hideIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->hideIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $options = [];
         $categories = grade_category::fetch_all(['courseid' => $courseid]);
@@ -224,9 +357,6 @@ class add_item extends dynamic_form {
         if (count($categories) > 1) {
             $mform->addElement('select', 'parentcategory', get_string('gradecategory', 'grades'), $options);
         }
-
-        // Add return tracking info.
-        $gpr->add_mform_elements($mform);
 
         // Mark advanced according to site settings.
         if (isset($CFG->grade_item_advanced)) {
@@ -303,16 +433,16 @@ class add_item extends dynamic_form {
                 } else { // Remove the scale field.
                     $mform->removeElement('scaleid');
                     // Set the maximum grade to disabled unless a grade is chosen.
-                    $mform->disabledIf('grademax', 'rescalegrades', 'eq', '');
+                    $mform->hideIf('grademax', 'rescalegrades', 'eq', '');
                 }
             } else {
-                // Remove the rescale element if there are no grades.
+                // Remove rescale element if there are no grades.
                 $mform->removeElement('rescalegrades');
             }
         }
 
         // If we wanted to change parent of existing item - we would have to verify there are no circular references in parents!!!
-        if ($id && $mform->elementExists('parentcategory')) {
+        if ($id > -1 && $mform->elementExists('parentcategory')) {
             $mform->hardFreeze('parentcategory');
         }
 
@@ -341,9 +471,9 @@ class add_item extends dynamic_form {
                 }
                 $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
             }
-            $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_NONE);
-            $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-            $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parentcategory->id);
+            $mform->hideIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_NONE);
+            $mform->hideIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+            $mform->hideIf('aggregationcoef', 'parentcategory', 'eq', $parentcategory->id);
         }
 
         // Remove fields used by natural weighting if the parent category is not using natural weighting.
@@ -375,11 +505,17 @@ class add_item extends dynamic_form {
             }
         }
 
+        // Add return tracking info.
+        $gpr->add_mform_elements($mform);
+
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('hidden', 'courseid', $courseid);
         $mform->setType('courseid', PARAM_INT);
+
+        $mform->addElement('hidden', 'itemid', $id);
+        $mform->setType('itemid', PARAM_INT);
 
         $mform->addElement('hidden', 'itemtype', 'manual'); // all new items are manual only
         $mform->setType('itemtype', PARAM_ALPHA);
@@ -403,65 +539,6 @@ class add_item extends dynamic_form {
         ]);
     }
 
-    private function get_gradeitem(): array {
-        $courseid = $this->optional_param('courseid', null, PARAM_INT);
-        $id = $this->optional_param('itemid', null, PARAM_INT);
-        $gpr = new grade_plugin_return();
-
-        if ($gradeitem = grade_item::fetch(['id' => $id, 'courseid' => $courseid])) {
-            // redirect if outcomeid present
-            if (!empty($gradeitem->outcomeid) && !empty($CFG->enableoutcomes)) {
-                $url = new moodle_url('/grade/edit/tree/outcomeitem.php', ['id' => $id, 'courseid' => $courseid]);
-                redirect($gpr->add_url_params($url));
-            }
-            if ($gradeitem->is_course_item() || $gradeitem->is_category_item()) {
-                $grade_category = $gradeitem->get_item_category();
-                $url = new moodle_url('/grade/edit/tree/category.php', ['id' => $grade_category->id, 'courseid' => $courseid]);
-                redirect($gpr->add_url_params($url));
-            }
-
-            $item = $gradeitem->get_record_data();
-            $parent_category = $gradeitem->get_parent_category();
-            $item->parentcategory = $parent_category->id;
-
-        } else {
-            $gradeitem = new grade_item(['courseid' => $courseid, 'itemtype' => 'manual'], false);
-            $item = $gradeitem->get_record_data();
-            $parent_category = grade_category::fetch_course_category($courseid);
-            $item->parentcategory = $parent_category->id;
-        }
-        $decimalpoints = $gradeitem->get_decimals();
-
-        if ($item->hidden > 1) {
-            $item->hiddenuntil = $item->hidden;
-            $item->hidden = 0;
-        } else {
-            $item->hiddenuntil = 0;
-        }
-
-        $item->locked = !empty($item->locked);
-
-        $item->grademax   = format_float($item->grademax, $decimalpoints);
-        $item->grademin   = format_float($item->grademin, $decimalpoints);
-        $item->gradepass  = format_float($item->gradepass, $decimalpoints);
-        $item->multfactor = format_float($item->multfactor, 4);
-        $item->plusfactor = format_float($item->plusfactor, 4);
-
-        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM || $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
-            $item->aggregationcoef = $item->aggregationcoef == 0 ? 0 : 1;
-        } else {
-            $item->aggregationcoef = format_float($item->aggregationcoef, 4);
-        }
-        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
-            $item->aggregationcoef2 = format_float($item->aggregationcoef2 * 100.0);
-        }
-        $item->cancontrolvisibility = $gradeitem->can_control_visibility();
-        return [
-            'gradeitem' => $gradeitem,
-            'item' => $item
-        ];
-    }
-
     protected function get_page_url_for_dynamic_submission(): moodle_url {
         $params = [
             'id' => $this->optional_param('courseid', null, PARAM_INT),
@@ -474,81 +551,18 @@ class add_item extends dynamic_form {
         $data = $this->get_data();
 
         $url = new moodle_url('#', ['id' => $data->courseid]);
-        $gradeitem = new grade_item(['id' => $data->id, 'courseid' => $data->courseid]);
+        $local = $this->get_gradeitem();
+        $gradeitem = $local['gradeitem'];
+        $item = $local['item'];
         $parent_category = grade_category::fetch_course_category($data->courseid);
-        $errors = [];
 
-        // TODO: IDK?
-        if ($data->idnumber) {
-            if ($gradeitem) {
-                if ($gradeitem->itemtype == 'mod') {
-                    $cm = get_coursemodule_from_instance($gradeitem->itemmodule, $gradeitem->iteminstance, $gradeitem->courseid);
-                } else {
-                    $cm = null;
-                }
-            } else {
-                $gradeitem = null;
-                $cm = null;
-            }
-            if (!grade_verify_idnumber($data->idnumber, $data->courseid, $gradeitem, $cm)) {
-                $errors['idnumber'] = get_string('idnumbertaken');
-            }
-        }
-
-        if ($data->gradetype && $data->gradetype == GRADE_TYPE_SCALE) {
-            if (empty($data->scaleid)) {
-                $errors['scaleid'] = get_string('missingscale', 'grades');
-            }
-        }
-
-        // We need to make all the validations related with grademax and grademin
-        // with them being correct floats, keeping the originals unmodified for
-        // later validations / showing the form back...
-        // TODO: Note that once MDL-73994 is fixed we'll have to re-visit this and
-        // adapt the code below to the new values arriving here, without forgetting
-        // the special case of empties and nulls.
-        $grademax = isset($data->grademax) ? unformat_float($data->grademax) : null;
-        $grademin = isset($data->grademin) ? unformat_float($data->grademin) : null;
-
-        if (!is_null($grademin) && !is_null($grademax)) {
-            if ($grademax == $grademin || $grademax < $grademin) {
-                $errors['grademin'] = get_string('incorrectminmax', 'grades');
-                $errors['grademax'] = get_string('incorrectminmax', 'grades');
-            }
-        }
-
-        // We do not want the user to be able to change the grade type or scale for this item if grades exist.
-        if ($gradeitem && $gradeitem->has_grades()) {
-            // Check that grade type is set - should never not be set unless form has been modified.
-            if (!isset($data->gradetype)) {
-                $errors['gradetype'] = get_string('modgradecantchangegradetype', 'grades');
-            } else if ($data->gradetype !== $gradeitem->gradetype) { // Check if we are changing the grade type.
-                $errors['gradetype'] = get_string('modgradecantchangegradetype', 'grades');
-            } else if ($data->gradetype == GRADE_TYPE_SCALE) {
-                // Check if we are changing the scale - can't do this when grades exist.
-                if (isset($data->scaleid) && ($data->scaleid !== $gradeitem->scaleid)) {
-                    $errors['scaleid'] = get_string('modgradecantchangescale', 'grades');
-                }
-            }
-        }
-        if ($gradeitem) {
-            if ($gradeitem->gradetype == GRADE_TYPE_VALUE) {
-                if ((((bool) get_config('moodle', 'grade_report_showmin')) &&
-                        grade_floats_different($grademin, $gradeitem->grademin)) ||
-                    grade_floats_different($grademax, $gradeitem->grademax)) {
-                    if ($gradeitem->has_grades() && empty($data->rescalegrades)) {
-                        $errors['rescalegrades'] = get_string('mustchooserescaleyesorno', 'grades');
-                    }
-                }
-            }
-        }
+        // Form submission handling.
 
         // This is a new item, and the category chosen is different than the default category.
         if (empty($gradeitem->id) && isset($data->parentcategory) && $parent_category->id != $data->parentcategory) {
             $parent_category = grade_category::fetch(['id' => $data->parentcategory]);
         }
 
-        // TODO: From item.php
         // If unset, give the aggregation values a default based on parent aggregation method.
         $defaults = grade_category::get_default_aggregation_coefficient_values($parent_category->aggregation);
         if (!isset($data->aggregationcoef) || $data->aggregationcoef == '') {
@@ -566,18 +580,13 @@ class add_item extends dynamic_form {
             $data->grademin = 0;
         }
 
-        $hide = empty($data->hiddenuntil) ? 0 : $data->hiddenuntil;
+        $hide = !$data->hiddenuntil ? 0 : $data->hiddenuntil;
         if (!$hide) {
             $hide = empty($data->hidden) ? 0 : $data->hidden;
         }
 
-        unset($data->hidden);
-        unset($data->hiddenuntil);
-
         $locked   = empty($data->locked) ? 0 : $data->locked;
         $locktime = empty($data->locktime) ? 0 : $data->locktime;
-        unset($data->locked);
-        unset($data->locktime);
 
         $convert = ['grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2'];
         foreach ($convert as $param) {
@@ -620,7 +629,7 @@ class add_item extends dynamic_form {
             }
         }
 
-        if ($data->cancontrolvisibility) {
+        if ($item->cancontrolvisibility) {
             // Update hiding flag.
             $gradeitem->set_hidden($hide, true);
         }
@@ -630,7 +639,7 @@ class add_item extends dynamic_form {
         return [
             'result' => true,
             'url' => $url->out(),
-            'errors' => $errors,
+            'errors' => $this->error_validation($data, $gradeitem),
         ];
     }
 }

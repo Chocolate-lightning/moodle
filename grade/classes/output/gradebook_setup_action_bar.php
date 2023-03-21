@@ -57,9 +57,7 @@ class gradebook_setup_action_bar extends action_bar {
 
         // Add a button to the action bar with a link to the 'add grade item' page.
         $addgradeitemlink = new moodle_url('#');
-        // TODO: Implement this stuff.
         $itemid = -1;
-        //$itemid = 89;
         $data['addgradeitembutton'] = html_writer::link($addgradeitemlink->out(false),
             get_string('additem', 'grades'),
             ['class' => 'btn btn-secondary', 'data-courseid' => $courseid, 'data-itemid' => $itemid, 'data-trigger' => 'add-item-form']

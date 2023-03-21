@@ -29,40 +29,40 @@ import Notification from 'core/notification';
  * Initialize module
  */
 export const init = () => {
-    const trigger = document.querySelector('[data-trigger="add-item-form"]');
-
     // Sometimes the trigger does not exist, so lets conditionally add it.
-    trigger?.addEventListener('click', event => {
-        event.preventDefault();
+    document.addEventListener('click', event => {
+        if (event.target.closest('[data-trigger="add-item-form"]')) {
+            event.preventDefault();
+            const trigger = event.target.closest('[data-trigger="add-item-form"]');
+            // If we are adding or editing a grade item change the Modal header.
+            const title = trigger.getAttribute('data-itemid') === '-1' ?
+                getString('newitem', 'core_grades') : getString('itemsedit', 'core_grades');
+            const modalForm = new ModalForm({
+                modalConfig: {
+                    title: title,
+                },
+                formClass: 'core_grades\\form\\add_item',
+                args: {
+                    itemid: trigger.getAttribute('data-itemid'),
+                    courseid: trigger.getAttribute('data-courseid')
+                },
+                saveButtonText: getString('save', 'core'),
+                returnFocus: trigger,
+            });
 
-        // If we are adding or editing a grade item change the Modal header.
-        const title = trigger.getAttribute('data-itemid') === '-1' ?
-            getString('newitem', 'core_grades') : getString('itemsedit', 'core_grades');
-        const modalForm = new ModalForm({
-            modalConfig: {
-                title: title,
-            },
-            formClass: 'core_grades\\form\\add_item',
-            args: {
-                itemid: trigger.getAttribute('data-itemid'),
-                courseid: trigger.getAttribute('data-courseid')
-            },
-            saveButtonText: getString('save', 'core'),
-            returnFocus: trigger,
-        });
+            // Show a toast notification when the form is submitted.
+            modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, event => {
+                if (event.detail.result) {
+                    window.location.assign(event.detail.url);
+                } else {
+                    Notification.addNotification({
+                        type: 'error',
+                        message:  getString('saving_failed', 'core_grades')
+                    });
+                }
+            });
 
-        // Show a toast notification when the form is submitted.
-        modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, event => {
-            if (event.detail.result) {
-                window.location.assign(event.detail.url);
-            } else {
-                Notification.addNotification({
-                    type: 'error',
-                    message:  getString('saving_failed', 'core_grades')
-                });
-            }
-        });
-
-        modalForm.show();
+            modalForm.show();
+        }
     });
 };
