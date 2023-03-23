@@ -1999,6 +1999,7 @@ class grade_report_grader extends grade_report {
      * to inject into a table header cell.
      * @param array $extrafields Array of extra fields being displayed, such as
      *   user idnumber
+     * @param array $colstohide An array of columns that we want to hide from view
      * @return array An associative array of HTML sorting links+arrows
      */
     public function get_sort_arrows(array $extrafields = [], array $colstohide = []) {

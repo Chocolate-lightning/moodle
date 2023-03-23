@@ -31,16 +31,8 @@ import {get_strings as getStrings} from 'core/str';
 // Contain our selectors within this file until they could be of use elsewhere.
 const selectors = {
     component: '.collapse-columns',
-    trigger: '.collapsecolumn',
-    dropdown: '.collapsecolumndropdown',
-    parentDomNode: '.collapse-columns',
-    input: '[data-action="search"]',
-    clearSearch: '[data-action="clearsearch"]',
-    userid: '[data-region="userid"]',
     formDropdown: '.columnsdropdownform',
     formItems: {
-        type: 'submit',
-        save: 'save',
         cancel: 'cancel'
     },
     hider: 'hide',
