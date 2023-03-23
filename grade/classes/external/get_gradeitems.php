@@ -72,19 +72,10 @@ class get_gradeitems extends external_api {
         parent::validate_context($context);
 
         $allgradeitems = grade_item::fetch_all(['courseid' => $params['courseid']]);
-        $gradeitems = array_filter($allgradeitems, function($item) use ($params) {
-            // Sometimes gradeitems have no name, Throw a default name in just in case.
-            $item->itemname = $item->itemname ?: get_string('grade');
-            $gradeCategory = \grade_category::fetch(['id' => $item->categoryid]);
-            // Sometimes grade categories exist other times not.
-            if ($gradeCategory) {
-                // Assuming we have a category try to fetch its full name for the user.
-                $item->category = $gradeCategory->fullname !== '?' ? $gradeCategory->fullname : get_course($params['courseid'])->fullname;
-            } else {
-                $item->category = get_course($params['courseid'])->fullname;
-            }
-            // We don't want gradeitems that aren't real or that are category & course gradeitems
-            return $item->gradetype != GRADE_TYPE_NONE && $item->itemtype !== 'category' && $item->itemtype !== 'course';
+        $gradeitems = array_filter($allgradeitems, function($item) {
+            $item->itemname = $item->get_name();
+            $item->category = $item->get_parent_category()->get_name();
+            return $item->gradetype != GRADE_TYPE_NONE && !$item->is_category_item() && !$item->is_course_item();
         });
 
         return [

@@ -31,16 +31,8 @@ import {get_strings as getStrings} from 'core/str';
 // Contain our selectors within this file until they could be of use elsewhere.
 const selectors = {
     component: '.collapse-columns',
-    trigger: '.collapsecolumn',
-    dropdown: '.collapsecolumndropdown',
-    parentDomNode: '.collapse-columns',
-    input: '[data-action="search"]',
-    clearSearch: '[data-action="clearsearch"]',
-    userid: '[data-region="userid"]',
     formDropdown: '.columnsdropdownform',
     formItems: {
-        type: 'submit',
-        save: 'save',
         cancel: 'cancel'
     },
     hider: 'hide',
@@ -114,7 +106,11 @@ export default class ColumnSearch extends GradebookSearchClass {
     async getDataset() {
         if (!this.dataset) {
             const cols = await this.fetchDataset();
-            this.dataset = cols[0].value?.split(',') ?? [];
+            if (cols[0].value === '') {
+                this.dataset = [];
+            } else {
+                this.dataset = cols[0].value?.split(',') ?? [];
+            }
         }
         this.datasetSize = this.dataset.length;
         return this.dataset;
@@ -139,7 +135,7 @@ export default class ColumnSearch extends GradebookSearchClass {
             }
             this.setPreferences();
             // Update the collapsed button pill.
-            countIndicator.textContent = this.getDatasetSize();
+            this.countUpdate();
 
             // User has given something for us to filter against.
             this.setMatchedResults(await this.filterDataset(await this.getDataset()));
@@ -161,7 +157,7 @@ export default class ColumnSearch extends GradebookSearchClass {
 
             this.setPreferences();
             // Update the collapsed button pill.
-            countIndicator.textContent = this.getDatasetSize();
+            this.countUpdate();
 
             const colNodesToHide = [...document.querySelectorAll(
                 `[data-col="${e.target.closest(selectors.colVal)?.dataset.col}"]`
@@ -192,9 +188,9 @@ export default class ColumnSearch extends GradebookSearchClass {
      * @returns {Array} An array of objects containing the system reference and the user readable value.
      */
     async filterDataset(filterableData) {
-        const stringMap = await this.fetchRequiredUserStrings();
+        const stringUserMap = await this.fetchRequiredUserStrings();
         const stringGradeMap = await this.fetchRequiredGradeStrings();
-        this.stringMap = new Map([...stringMap, ...stringGradeMap]);
+        this.stringMap = new Map([...stringGradeMap, ...stringUserMap]);
 
         const searching = filterableData.map(s => {
             const mapObj = this.stringMap.get(s);
@@ -310,7 +306,7 @@ export default class ColumnSearch extends GradebookSearchClass {
             await this.filterMatchDataset();
             await this.renderDropdown();
             // Update the collapsed button pill.
-            countIndicator.textContent = this.getDatasetSize();
+            this.countUpdate();
         }, false);
     }
 
@@ -346,6 +342,18 @@ export default class ColumnSearch extends GradebookSearchClass {
                 }
             }
         });
+    }
+
+    countUpdate() {
+        countIndicator.textContent = this.getDatasetSize();
+        // TODO: Add SR handling.
+        if (this.getDatasetSize() > 0) {
+            this.component.parentElement.classList.add('d-flex');
+            this.component.parentElement.classList.remove('d-none');
+        } else {
+            this.component.parentElement.classList.remove('d-flex');
+            this.component.parentElement.classList.add('d-none');
+        }
     }
 
     /**
@@ -385,7 +393,7 @@ export default class ColumnSearch extends GradebookSearchClass {
         await this.filterMatchDataset();
 
         // Update the collapsed button pill.
-        countIndicator.textContent = this.getDatasetSize();
+        this.countUpdate();
         const {html, js} = await renderForPromise('gradereport_grader/collapse/collapsebody', {
             'results': this.getMatchedResults(),
             'userid': this.userID,

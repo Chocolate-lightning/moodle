@@ -1784,14 +1784,11 @@ class grade_report_grader extends grade_report {
 
             $context->dataid = $element['object']->id;
         } else if ($mode == 'user') {
-            $singleviewstring = $this->get_lang_string('singleviewuser', 'grades');
-            $userreportstring = $this->get_lang_string('userreport', 'gradereport_grader');
-            $context->singleviewreporturl =
-                \gradereport_singleview\report\singleview::get_singleview_link($this->context, $this->courseid,
-                    $element, $this->gpr, $singleviewstring, $mode);
-            $context->userreporturl =
-                \gradereport_user\report\user::get_userreport_link($this->context, $this->courseid,
-                    $element, $this->gpr, $userreportstring);
+            foreach ($externalreportlinks as $externalreportlink) {
+                $functionname = 'gradereport_' . $externalreportlink . '_get_report_link';
+                $reporturl = $externalreportlink . 'reporturl';
+                $context->$reporturl = $functionname($this->context, $this->courseid, $element, $this->gpr, $mode);
+            }
 
             $context->dataid = $element['userid'];
         } else if ($mode == 'userinfo') {
@@ -2015,6 +2012,7 @@ class grade_report_grader extends grade_report {
      * to inject into a table header cell.
      * @param array $extrafields Array of extra fields being displayed, such as
      *   user idnumber
+     * @param array $colstohide An array of columns that we want to hide from view
      * @return array An associative array of HTML sorting links+arrows
      */
     public function get_sort_arrows(array $extrafields = [], array $colstohide = []) {

@@ -253,6 +253,13 @@ class behat_gradereport_grader extends behat_base {
         $userid = $this->get_user_id($student);
         return "//table[@id='user-grades']//*[@data-id='" . $userid . "']";
     }
+
+    /**
+     * Return the xpath for the user column in a report.
+     *
+     * @param string $field
+     * @return string
+     */
     protected function get_user_selectors(string $field) : string {
 
         return "//table[@id='user-grades']//*[@data-id='" . $field . "']";
