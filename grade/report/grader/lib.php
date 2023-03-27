@@ -839,7 +839,11 @@ class grade_report_grader extends grade_report {
                     $classes = '';
                     $hidden = '';
                     $collapsed = '';
-                    $collapsecontext = ['field' => $element['object']->id, 'classes' => 'd-none', 'name' => $element['object']->get_name()];
+                    $collapsecontext = [
+                        'field' => $element['object']->id,
+                        'classes' => 'd-none',
+                        'name' => $element['object']->get_name()
+                    ];
                     if (in_array($element['object']->id, $colstohide)) {
                         $classes = 'd-none';
                         $hidden = 'true';
@@ -847,7 +851,11 @@ class grade_report_grader extends grade_report {
                         $collapsed = ' collapsed';
                     }
 
-                    $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
+                    $collapsedicon = '';
+                    // We do not want grade category total items to be hidden away as it is controlled by something else.
+                    if (!$element['object']->is_aggregate_item()) {
+                        $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
+                    }
                     $headerlink = $this->gtree->get_element_header($element, true,
                         true, false, false, true, $sortlink, $classes, $hidden);
 
@@ -1744,7 +1752,10 @@ class grade_report_grader extends grade_report {
                     }
                     $context->lockurl = $this->gtree->get_locking_link($element, $this->gpr, $lockstrings);
                 }
-                $context->columncollapse = self::get_hide_show_link($element);
+                // We do not want grade category total items to be hidden away as it is controlled by something else.
+                if (!$element['object']->is_aggregate_item()) {
+                    $context->columncollapse = self::get_hide_show_link($element);
+                }
             } else if ($element['type'] == 'category') {
                 $categoryid = $element['object']->id;
 

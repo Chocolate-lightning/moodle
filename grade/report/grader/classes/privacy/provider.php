@@ -55,7 +55,8 @@ class provider implements
         $items->add_user_preference('grade_report_showaverages', 'privacy:metadata:preference:grade_report_showaverages');
         $items->add_user_preference('grade_report_showuserimage', 'privacy:metadata:preference:grade_report_showuserimage');
         $items->add_user_preference('grade_report_showranges', 'privacy:metadata:preference:grade_report_showranges');
-        $items->add_user_preference('grade_report_grader_collapsed_columns', 'privacy:metadata:preference:grade_report_grader_collapsed_columns');
+        $items->add_user_preference('grade_report_grader_collapsed_columns',
+            'privacy:metadata:preference:grade_report_grader_collapsed_columns');
         // Special rows preferences.
         $items->add_user_preference('grade_report_rangesdisplaytype', 'privacy:metadata:preference:grade_report_rangesdisplaytype');
         $items->add_user_preference('grade_report_rangesdecimalpoints', 'privacy:metadata:preference:grade_report_rangesdecimalpoints');

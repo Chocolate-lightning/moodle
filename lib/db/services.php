@@ -978,7 +978,7 @@ $functions = array(
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'core_grades_get_gradeitems' => [
-        'classname' =>  'core_grades\external\get_gradeitems',
+        'classname' => 'core_grades\external\get_gradeitems',
         'description' => 'Get the gradeitems for a course',
         'type' => 'read',
         'ajax' => true,

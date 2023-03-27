@@ -108,13 +108,13 @@ class action_bar extends \core_grades\output\action_bar {
             );
             $data['searchdropdown'] = $searchdropdown->export_for_template($output);
 
-            $colPref = get_user_preferences('grade_report_grader_collapsed_columns');
-            $showcollapse = $colPref ? 'd-flex' : 'd-none';
+            $usercolpref = get_user_preferences('grade_report_grader_collapsed_columns');
+            $showcollapse = $usercolpref ? 'd-flex' : 'd-none';
             $colstohide = explode(
                 ',',
-                $colPref
+                $usercolpref
             );
-            $count = $colPref ? count($colstohide) : 0;
+            $count = $usercolpref ? count($colstohide) : 0;
             $collapse = new gradebook_dropdown(
                 true,
                 get_string('collapsedcolumns', 'gradereport_grader', $count),

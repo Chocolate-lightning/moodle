@@ -233,7 +233,7 @@ class behat_gradereport_grader extends behat_base {
      * Clicks on given user column menu.
      *
      * @Given /^I click on user column menu "([^"]*)"$/
-     * @param string $student
+     * @param string $field Which user field column we want to expand.
      */
     public function i_click_on_user_column_menu(string $field) {
 

@@ -16,7 +16,7 @@
 
 namespace core_grades\external;
 
-require_once($CFG->libdir . '/gradelib.php');
+defined('MOODLE_INTERNAL') || die;
 
 use context_course;
 use core_external\external_api;
@@ -27,6 +27,8 @@ use core_external\external_value;
 use core_external\external_warnings;
 use core_external\restricted_context_exception;
 use grade_item;
+
+require_once($CFG->libdir . '/gradelib.php');
 
 /**
  * External grade get gradeitems API implementation
