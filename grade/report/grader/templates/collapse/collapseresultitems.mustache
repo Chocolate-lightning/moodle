@@ -28,16 +28,14 @@
 }}
 <li class="w-100 result-row form-check mb-1" role="none">
     <input class="form-check-input" data-collapse="{{name}}" type="checkbox" value="" id="check-{{name}}">
-    <label for="check-{{name}}" role="menuitem" class="form-check-label d-block" tabindex="-1" aria-label="{{#str}}viewresultsuser, gradereport_grader, {{displayName}}{{/str}}">
-        <div class="selected-option-info d-block pr-3 text-truncate">
-            <span class="selected-option-text w-100 p-0">
-                {{displayName}}
+    <label class="selected-option-info d-block pr-3 text-truncate" for="check-{{name}}" role="menuitem" class="form-check-label d-block" tabindex="-1" aria-label="{{#str}}viewresultsuser, gradereport_grader, {{displayName}}{{/str}}">
+        <span class="selected-option-text w-100 p-0">
+            {{displayName}}
+        </span>
+        {{#category}}
+            <span class="d-block w-100 pull-left text-muted text-truncate small">
+                {{category}}
             </span>
-            {{#category}}
-                <span class="d-block w-100 pull-left text-muted text-truncate small">
-                    {{category}}
-                </span>
-            {{/category}}
-        </div>
+        {{/category}}
     </label>
 </li>

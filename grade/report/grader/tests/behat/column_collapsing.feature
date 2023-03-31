@@ -11,6 +11,9 @@ Feature: Within the grader report, test that we can collapse columns
     And the following "grade categories" exist:
       | fullname                 | course |
       | Some cool grade category | C1     |
+    And the following "custom profile fields" exist:
+      | datatype | shortname | name                  |
+      | text     | enduro    | Favourite enduro race |
     And the following "users" exist:
       | username | firstname | lastname | email                | idnumber | phone1     | phone2     | department | institution | city    | country  |
       | teacher1 | Teacher   | 1        | teacher1@example.com | t1       | 1234567892 | 1234567893 | ABC1       | ABCD        | Perth   | AU       |
@@ -36,7 +39,7 @@ Feature: Within the grader report, test that we can collapse columns
       | assign   | C1     | a2       | Test assignment two   |
       | assign   | C1     | a4       | Test assignment four  |
     And the following config values are set as admin:
-      | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution |
+      | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution,profile_field_enduro |
     And I am on the "Course 1" "Course" page logged in as "teacher1"
     And I change window size to "large"
     And I navigate to "View > Grader report" in the course gradebook
@@ -46,6 +49,9 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Email"
     And I choose "Collapse" in the open action menu
     And I should not see "Email" in the "First name / Last name" "table_row"
+    And I click on user profile field menu "profile_field_enduro"
+    And I choose "Collapse" in the open action menu
+    And I should not see "Favourite enduro race" in the "First name / Last name" "table_row"
     When I reload the page
     Then I should not see "Email" in the "First name / Last name" "table_row"
     # Check that the collapsed column is only for the user that set it.
@@ -57,14 +63,14 @@ Feature: Within the grader report, test that we can collapse columns
 
   Scenario: A teacher collapses a grade item column and then reloads the page to find the column still collapsed
     Given I should see "Test assignment one" in the "First name / Last name" "table_row"
-    And I click on grade item menu "Test assignment one"
+    And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Collapse" in the open action menu
     And I should not see "Test assignment one</a>" in the "First name / Last name" "table_row"
     When I reload the page
     Then I should not see "Test assignment one</a>" in the "First name / Last name" "table_row"
 
   Scenario: When a user collapses a column, inform them within the report and tertiary nav area
-    Given I click on grade item menu "Test assignment one"
+    Given I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     When I choose "Collapse" in the open action menu
     And I should not see "Test assignment one</a>" in the "First name / Last name" "table_row"
     Then I should see "Reopen Test assignment one column"
@@ -91,13 +97,13 @@ Feature: Within the grader report, test that we can collapse columns
     And I should see "ID number"
 
   Scenario: Expand multiple columns at once
-    Given I click on grade item menu "Test assignment one"
+    Given I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Collapse" in the open action menu
-    And I click on grade item menu "Test assignment two"
+    And I click on grade item menu "Test assignment two" of type "gradeitem" on "grader" page
     And I choose "Collapse" in the open action menu
-    And I click on grade item menu "Test assignment three"
+    And I click on grade item menu "Test assignment three" of type "gradeitem" on "grader" page
     And I choose "Collapse" in the open action menu
-    And I click on grade item menu "Test assignment four"
+    And I click on grade item menu "Test assignment four" of type "gradeitem" on "grader" page
     And I choose "Collapse" in the open action menu
     And I click on user profile field menu "Email"
     And I choose "Collapse" in the open action menu
@@ -127,9 +133,9 @@ Feature: Within the grader report, test that we can collapse columns
     Then I should see "Email" in the "First name / Last name" "table_row"
 
   Scenario: When a grade item is collapsed, the grade category is shown alongside the column name.
-    Given I click on grade item menu "Test assignment one"
+    Given I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Collapse" in the open action menu
-    And I click on grade item menu "Test assignment two"
+    And I click on grade item menu "Test assignment two" of type "gradeitem" on "grader" page
     And I choose "Collapse" in the open action menu
     And I click on user profile field menu "Email"
     And I choose "Collapse" in the open action menu
@@ -158,11 +164,11 @@ Feature: Within the grader report, test that we can collapse columns
 
   Scenario: Resulting columns from hidden grade categories cant be collapsed
     # Hiding columns already tested elsewhere, これはこれ、それはそれ。
-    Given I click on grade category menu "Some cool grade category"
+    Given I click on grade item menu "Some cool grade category" of type "category" on "grader" page
     And I choose "Show totals only" in the open action menu
     And I should not see "Test assignment name 1"
     And I should see "Some cool grade category total"
-    When I click on grade category menu "Some cool grade category"
+    When I click on grade item menu "Some cool grade category" of type "category" on "grader" page
     Then I should not see "Collapse" in the ".dropdown-menu.show" "css_element"
 
   @accessibility
@@ -205,6 +211,9 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Email"
     When I choose "Collapse" in the open action menu
     And I wait to be redirected
+    # Sometimes behat runs faster than the comparisons can handle.
+    And I navigate to "View > Grader report" in the course gradebook
+    And I wait until the page is ready
     And I should not see "Email" in the "First name / Last name" "table_row"
     Then "Dummy User" "table_row" should appear before "Student 1" "table_row"
     And "Student 1" "table_row" should appear before "Turtle Manatee" "table_row"

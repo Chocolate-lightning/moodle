@@ -127,7 +127,7 @@ if ($sort) {
 }
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid, $sort);
 
-// We call this a little later since we need some infor from the grader report.
+// We call this a little later since we need some info from the grader report.
 $PAGE->requires->js_call_amd('gradereport_grader/collapse', 'init', [
     'userID' => $USER->id,
     'courseID' => $courseid,

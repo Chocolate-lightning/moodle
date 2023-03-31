@@ -1571,9 +1571,7 @@ class grade_structure {
                 'aria-hidden' => $hidden,
                 'data-collapse' => 'content'
             ]);
-        }
-
-        if (!$sortlink) {
+        } else {
             if ($withlink && $url = $this->get_activity_link($element)) {
                 $a = new stdClass();
                 $a->name = get_string('modulename', $element['object']->itemmodule);
@@ -2591,8 +2589,10 @@ class grade_structure {
                         $context->descendingurl = $this->get_sorting_link($sortlink, $gpr, 'desc');
                     }
                 }
-                $context = grade_report::get_additional_context($this->context, $this->courseid,
-                    $element, $gpr, $mode, $context);
+                if ($mode !== 'setup') {
+                    $context = grade_report::get_additional_context($this->context, $this->courseid,
+                        $element, $gpr, $mode, $context);
+                }
             } else if ($element['type'] == 'category') {
                 $context->datatype = 'category';
                 if ($mode !== 'setup') {

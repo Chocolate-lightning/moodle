@@ -49,7 +49,7 @@ export const prefFetch = (userID) => {
  * @return {object} jQuery promise
  */
 export const prefSet = (prefs) => {
-    var request = {
+    const request = {
         methodname: 'core_user_set_user_preferences',
         args: {
             preferences: prefs

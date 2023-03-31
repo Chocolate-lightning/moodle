@@ -867,7 +867,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     $classes = '';
-                    $hidden = '';
+                    $hidden = 'false';
                     $collapsed = '';
                     $collapsecontext = [
                         'field' => $element['object']->id,
@@ -897,6 +897,7 @@ class grade_report_grader extends grade_report {
                     $singleview = $this->gtree->get_cell_action_menu($element, 'gradeitem', $this->gpr, $this->baseurl, $classes, $hidden);
                     $statusicons = $this->gtree->set_grade_status_icons($element);
                     if ($statusicons) {
+                        $statusicons = html_writer::div($statusicons, $classes, ['data-collapse' => 'gradeicons', 'aria-hidden' => $hidden]);
                         $itemcell->attributes['class'] .= ' statusicons';
                     }
 
@@ -1024,7 +1025,8 @@ class grade_report_grader extends grade_report {
                     $gradepass = '';
                     $context->gradepassicon = '';
                 }
-                $context->statusicons = $this->gtree->set_grade_status_icons($element);
+                $rawstatusicons = $this->gtree->set_grade_status_icons($element);
+                $context->statusicons = html_writer::div($rawstatusicons, '', ['data-collapse' => 'gradeicons']);
 
                 // If in editing mode, we need to print either a text box or a drop down (for scales)
                 // grades in item of type grade category or course are not directly editable.
@@ -1858,7 +1860,7 @@ class grade_report_grader extends grade_report {
      * @return array An associative array of HTML sorting links+arrows
      */
     public function get_sort_arrows(array $extrafields = [], array $colstohide = []) {
-        global $OUTPUT, $CFG;
+        global $CFG;
         $arrows = array();
         $sortlink = clone($this->baseurl);
 
@@ -1903,12 +1905,17 @@ class grade_report_grader extends grade_report {
                 $hidden = 'true';
                 $classes = 'd-none';
             }
+            $attributes = [
+                'class' => $classes,
+                'aria-hidden' => $hidden,
+                'data-collapse' => 'content'
+            ];
+            // With additional user profile fields, we can't grab the name via WS, so conditionally add it to rip out of the DOM.
+            if (preg_match(\core_user\fields::PROFILE_FIELD_REGEX, $field)) {
+                $attributes['data-collapse-name'] = \core_user\fields::get_display_name($field);
+            }
             $fieldlink = html_writer::link(new moodle_url($this->baseurl, ['sortitemid' => $field]),
-                \core_user\fields::get_display_name($field), [
-                    'class' => $classes,
-                    'aria-hidden' => $hidden,
-                    'data-collapse' => 'content'
-                ]);
+                \core_user\fields::get_display_name($field), $attributes);
             $arrows[$field] = $fieldlink;
 
             if ($field == $this->sortitemid) {
@@ -1957,11 +1964,11 @@ class grade_report_grader extends grade_report {
     /**
      * Return the link to allow the field to collapse from the users view.
      *
-     * @return string Downdown menu link that'll trigger the collapsing functionality.
+     * @return string Dropdown menu link that'll trigger the collapsing functionality.
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public function get_hide_show_link() {
+    public function get_hide_show_link(): string {
         $link = new moodle_url('#', []);
         return html_writer::link(
             $link->out(false),

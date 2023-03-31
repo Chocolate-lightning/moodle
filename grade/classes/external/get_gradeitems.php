@@ -81,7 +81,7 @@ class get_gradeitems extends external_api {
         });
 
         return [
-            'gradeitems' => $gradeitems,
+            'gradeItems' => $gradeitems,
             'warnings' => $warnings,
         ];
     }
@@ -93,7 +93,7 @@ class get_gradeitems extends external_api {
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
-            'gradeitems' => new external_multiple_structure(
+            'gradeItems' => new external_multiple_structure(
                 new external_single_structure([
                     'id' => new external_value(PARAM_ALPHANUM, 'An ID for the grade item', VALUE_REQUIRED),
                     'itemname' => new external_value(PARAM_TEXT, 'The full name of the grade item', VALUE_REQUIRED),

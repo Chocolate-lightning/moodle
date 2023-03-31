@@ -27,13 +27,16 @@ import {renderForPromise, replaceNodeContents, replaceNode} from 'core/templates
 import {debounce} from 'core/utils';
 import $ from 'jquery';
 import {get_strings as getStrings} from 'core/str';
+import CustomEvents from "core/custom_interaction_events";
 
 // Contain our selectors within this file until they could be of use elsewhere.
 const selectors = {
     component: '.collapse-columns',
     formDropdown: '.columnsdropdownform',
     formItems: {
-        cancel: 'cancel'
+        cancel: 'cancel',
+        save: 'save',
+        checked: 'input[type="checkbox"]:checked'
     },
     hider: 'hide',
     expand: 'expand',
@@ -43,6 +46,7 @@ const selectors = {
     sort: '[data-collapse="sort"]',
     expandbutton: '[data-collapse="expandbutton"]',
     menu: '[data-collapse="menu"]',
+    icons: '[data-collapse="gradeicons"]',
     count: '[data-collapse="count"]',
     placeholder: '.collapsecolumndropdown [data-region="placeholder"]',
 };
@@ -136,12 +140,12 @@ export default class ColumnSearch extends GradebookSearchClass {
             if (idx === -1) {
                 ds.push(desiredToHide);
             }
-            this.setPreferences();
+            await this.setPreferences();
             // Update the collapsed button pill.
             this.countUpdate();
 
             // User has given something for us to filter against.
-            this.setMatchedResults(await this.filterDataset(await this.getDataset()));
+            this.setMatchedResults(await this.filterDataset(ds));
             await this.filterMatchDataset();
             await this.renderDropdown();
 
@@ -152,13 +156,14 @@ export default class ColumnSearch extends GradebookSearchClass {
         }
 
         if (e.target.closest('button')?.dataset.hider === selectors.expand) {
+            e.preventDefault();
             const desiredToHide = e.target.closest(selectors.colVal) ?
                 e.target.closest(selectors.colVal)?.dataset.col :
                 e.target.closest(selectors.itemVal)?.dataset.itemid;
             const idx = ds.indexOf(desiredToHide);
             ds.splice(idx, 1);
 
-            this.setPreferences();
+            await this.setPreferences();
             // Update the collapsed button pill.
             this.countUpdate();
 
@@ -193,10 +198,19 @@ export default class ColumnSearch extends GradebookSearchClass {
     async filterDataset(filterableData) {
         const stringUserMap = await this.fetchRequiredUserStrings();
         const stringGradeMap = await this.fetchRequiredGradeStrings();
-        this.stringMap = new Map([...stringGradeMap, ...stringUserMap]);
+        // Custom user profile fields are not in our string map and need a bit of extra love.
+        const customFieldMap = this.fetchCustomFieldValues();
+        this.stringMap = new Map([...stringGradeMap, ...stringUserMap, ...customFieldMap]);
 
         const searching = filterableData.map(s => {
             const mapObj = this.stringMap.get(s);
+            if (mapObj === undefined) {
+                return {
+                    key: s,
+                    string: s,
+                    category: '',
+                };
+            }
             return {
                 key: s,
                 string: mapObj.itemname ?? this.stringMap.get(s),
@@ -285,6 +299,28 @@ export default class ColumnSearch extends GradebookSearchClass {
      */
     registerFormEvents() {
         const form = this.component.querySelector(selectors.formDropdown);
+        const events = [
+            'click',
+            CustomEvents.events.activate,
+            CustomEvents.events.keyboardActivate
+        ];
+        CustomEvents.define(document, events);
+
+        // Register clicks & keyboard form handling.
+        events.forEach((event) => {
+            form.addEventListener(event, (e) => {
+                // Stop Bootstrap from being clever.
+                e.stopPropagation();
+                const submitBtn = form.querySelector(`[data-action="${selectors.formItems.save}"`);
+                if (e.target.closest('input')) {
+                    const checkedCount = Array.from(form.querySelectorAll(selectors.formItems.checked)).length;
+                    // Check if any are clicked or not then change disabled.
+                    submitBtn.disabled = checkedCount > 0 ? false : true;
+
+                }
+            }, false);
+        });
+
         form.addEventListener('submit', async(e) => {
             e.preventDefault();
             if (e.submitter.dataset.action === selectors.formItems.cancel) {
@@ -321,6 +357,7 @@ export default class ColumnSearch extends GradebookSearchClass {
             const content = element.querySelector(selectors.content);
             const sort = element.querySelector(selectors.sort);
             const menu = element.querySelector(selectors.menu);
+            const icons = element.querySelector(selectors.icons);
             const expandButton = element.querySelector(selectors.expandbutton);
 
             if (element.classList.contains('cell')) {
@@ -336,6 +373,8 @@ export default class ColumnSearch extends GradebookSearchClass {
 
                     menu?.classList.remove('d-none');
                     menu?.setAttribute('aria-hidden', 'false');
+                    icons?.classList.remove('d-none');
+                    icons?.setAttribute('aria-hidden', 'false');
                     expandButton?.classList.add('d-none');
                     expandButton?.setAttribute('aria-hidden', 'true');
                 } else {
@@ -345,6 +384,8 @@ export default class ColumnSearch extends GradebookSearchClass {
 
                     menu?.classList.add('d-none');
                     menu?.setAttribute('aria-hidden', 'true');
+                    icons?.classList.add('d-none');
+                    icons?.setAttribute('aria-hidden', 'true');
                     expandButton?.classList.remove('d-none');
                     expandButton?.setAttribute('aria-hidden', 'false');
                 }
@@ -387,7 +428,7 @@ export default class ColumnSearch extends GradebookSearchClass {
         if (!this.gradeStrings) {
             this.gradeStrings = Repository.gradeItems(this.courseID)
                 .then((result) => new Map(
-                    result.gradeitems.map(key => ([key.id, key]))
+                    result.gradeItems.map(key => ([key.id, key]))
                 ));
         }
         return this.gradeStrings;
@@ -412,6 +453,17 @@ export default class ColumnSearch extends GradebookSearchClass {
         // Given we now have the body, we can set up more triggers.
         this.registerFormEvents();
         this.registerInputEvents();
+    }
+
+    /**
+     * If we have any custom user profile fields, grab their system & readable names to add to our string map.
+     *
+     * @returns {[string,*][]} An array of associated string arrays ready for our map.
+     */
+    fetchCustomFieldValues() {
+        const customFields = document.querySelectorAll('[data-collapse-name]');
+        // Cast from NodeList to array to grab all the values.
+        return [...customFields].map(field => [field.parentElement.dataset.col, field.dataset.collapseName]);
     }
 
     /**
