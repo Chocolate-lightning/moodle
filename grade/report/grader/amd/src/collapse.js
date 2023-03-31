@@ -141,7 +141,7 @@ export default class ColumnSearch extends GradebookSearchClass {
             this.countUpdate();
 
             // User has given something for us to filter against.
-            this.setMatchedResults(await this.filterDataset(await this.getDataset()));
+            this.setMatchedResults(await this.filterDataset(ds));
             await this.filterMatchDataset();
             await this.renderDropdown();
 
@@ -197,6 +197,15 @@ export default class ColumnSearch extends GradebookSearchClass {
 
         const searching = filterableData.map(s => {
             const mapObj = this.stringMap.get(s);
+            // Custom user profile fields are not in our string map and need a bit of extra love.
+            // TODO: Add the proper name into the dom and throw it in here.
+            if (mapObj === undefined) {
+                return {
+                    key: s,
+                    string: s,
+                    category: '',
+                };
+            }
             return {
                 key: s,
                 string: mapObj.itemname ?? this.stringMap.get(s),
