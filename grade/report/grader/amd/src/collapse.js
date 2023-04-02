@@ -43,6 +43,7 @@ const selectors = {
     sort: '[data-collapse="sort"]',
     expandbutton: '[data-collapse="expandbutton"]',
     menu: '[data-collapse="menu"]',
+    icons: '[data-collapse="gradeicons"]',
     count: '[data-collapse="count"]',
     placeholder: '.collapsecolumndropdown [data-region="placeholder"]',
 };
@@ -193,12 +194,12 @@ export default class ColumnSearch extends GradebookSearchClass {
     async filterDataset(filterableData) {
         const stringUserMap = await this.fetchRequiredUserStrings();
         const stringGradeMap = await this.fetchRequiredGradeStrings();
-        this.stringMap = new Map([...stringGradeMap, ...stringUserMap]);
+        // Custom user profile fields are not in our string map and need a bit of extra love.
+        const customFieldMap = this.fetchCustomFieldValues();
+        this.stringMap = new Map([...stringGradeMap, ...stringUserMap, ...customFieldMap]);
 
         const searching = filterableData.map(s => {
             const mapObj = this.stringMap.get(s);
-            // Custom user profile fields are not in our string map and need a bit of extra love.
-            // TODO: Add the proper name into the dom and throw it in here.
             if (mapObj === undefined) {
                 return {
                     key: s,
@@ -330,6 +331,7 @@ export default class ColumnSearch extends GradebookSearchClass {
             const content = element.querySelector(selectors.content);
             const sort = element.querySelector(selectors.sort);
             const menu = element.querySelector(selectors.menu);
+            const icons = element.querySelector(selectors.icons);
             const expandButton = element.querySelector(selectors.expandbutton);
 
             if (element.classList.contains('cell')) {
@@ -345,6 +347,8 @@ export default class ColumnSearch extends GradebookSearchClass {
 
                     menu?.classList.remove('d-none');
                     menu?.setAttribute('aria-hidden', 'false');
+                    icons?.classList.remove('d-none');
+                    icons?.setAttribute('aria-hidden', 'false');
                     expandButton?.classList.add('d-none');
                     expandButton?.setAttribute('aria-hidden', 'true');
                 } else {
@@ -354,6 +358,8 @@ export default class ColumnSearch extends GradebookSearchClass {
 
                     menu?.classList.add('d-none');
                     menu?.setAttribute('aria-hidden', 'true');
+                    icons?.classList.add('d-none');
+                    icons?.setAttribute('aria-hidden', 'true');
                     expandButton?.classList.remove('d-none');
                     expandButton?.setAttribute('aria-hidden', 'false');
                 }
@@ -421,6 +427,17 @@ export default class ColumnSearch extends GradebookSearchClass {
         // Given we now have the body, we can set up more triggers.
         this.registerFormEvents();
         this.registerInputEvents();
+    }
+
+    /**
+     * If we have any custom user profile fields, grab their system & readable names to add to our string map.
+     *
+     * @returns {[string,*][]} An array of associated string arrays ready for our map.
+     */
+    fetchCustomFieldValues() {
+        const customFields = document.querySelectorAll('[data-collapse-name]');
+        // Cast from NodeList to array to grab all the values.
+        return [...customFields].map(field => [field.parentElement.dataset.col, field.dataset.collapseName]);
     }
 
     /**
