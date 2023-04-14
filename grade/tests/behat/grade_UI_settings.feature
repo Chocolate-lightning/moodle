@@ -27,6 +27,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     Given I click on grade item menu "Assignment1" of type "gradeitem" on "grader" page
     When I choose "Edit grade item" in the open action menu
     And I should see "Minimum grade"
+    And I select "Cancel" in the "form" "core_grades > gradeitem modal"
     Then I navigate to "Grades > General settings" in site administration
     And I set the field "Show minimum grade" to "0"
     And I press "Save changes"

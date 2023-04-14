@@ -1976,8 +1976,12 @@ class grade_structure {
             case 'courseitem':
                 $stredit = get_string('editverbose', 'grades', $strparams);
                 if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
-                    $url = new moodle_url('/grade/edit/tree/item.php',
-                            array('courseid' => $this->courseid, 'id' => $object->id));
+                    $url = new moodle_url('#');
+                    return new action_menu_link_secondary($url,
+                        new pix_icon('t/edit', $stredit),
+                        get_string('editsettings'),
+                        ['data-courseid' => $this->courseid, 'data-itemid' => $object->id, 'data-trigger' => 'add-item-form']
+                    );
                 } else {
                     $url = new moodle_url('/grade/edit/tree/outcomeitem.php',
                             array('courseid' => $this->courseid, 'id' => $object->id));
@@ -2030,6 +2034,8 @@ class grade_structure {
      * @return string|null
      */
     public function get_edit_link(array $element, object $gpr): ?string {
+        global $CFG;
+
         $url = null;
         $title = '';
         if ((!has_capability('moodle/grade:manage', $this->context) &&
@@ -2052,8 +2058,10 @@ class grade_structure {
         } else if (($element['type'] == 'item') || ($element['type'] == 'categoryitem') ||
             ($element['type'] == 'courseitem')) {
             if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
-                $url = new moodle_url('/grade/edit/tree/item.php',
-                    ['courseid' => $this->courseid, 'id' => $object->id]);
+                $url = new moodle_url('#');
+                return html_writer::link($url, get_string('itemsedit', 'grades'),
+                    ['class' => 'dropdown-item', 'aria-label' => get_string('itemsedit', 'grades'), 'role' => 'menuitem',
+                        'data-courseid' => $this->courseid, 'data-itemid' => $object->id, 'data-trigger' => 'add-item-form']);
             } else {
                 $url = new moodle_url('/grade/edit/tree/outcomeitem.php',
                     ['courseid' => $this->courseid, 'id' => $object->id]);

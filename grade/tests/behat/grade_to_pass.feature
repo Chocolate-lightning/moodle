@@ -91,7 +91,7 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "3"
     And I set the field "Grade to pass" to "4"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I am on "Course 1" course homepage
     And I am on the "Test Assignment 1" "assign activity" page
     And I navigate to "Settings" in current page administration
@@ -126,13 +126,13 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "40"
     And I set the field "Grade to pass" to "45"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I click on grade item menu "Test Workshop 1 (assessment)" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     And I expand all fieldsets
     And the field "Grade to pass" matches value "10"
     And I set the field "Grade to pass" to "15"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I am on the "Test Workshop 1" "workshop activity editing" page
     And the field "Submission grade to pass" matches value "45"
     And the field "Assessment grade to pass" matches value "15"
@@ -168,7 +168,7 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "9.5"
     And I set the field "Grade to pass" to "8"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I am on "Course 1" course homepage
     And I am on the "Test Quiz 1" "quiz activity" page
     And I follow "Settings"
@@ -189,7 +189,7 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I am on the "Test Lesson 1" "lesson activity editing" page
     And the field "Grade to pass" matches value "80"
 
@@ -211,7 +211,7 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90#50"
     And I set the field "Grade to pass" to "80"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I am on the "Test Lesson 1" "lesson activity editing" page
     And the field "Grade to pass" matches value "80#00"
 
@@ -234,7 +234,7 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I am on "Course 1" course homepage
     And I am on the "Test Database 1" "data activity" page
     And I follow "Settings"
@@ -275,7 +275,7 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I am on "Course 1" course homepage
     And I am on the "Test Forum 1" "forum activity" page
     And I follow "Settings"
@@ -299,7 +299,7 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
-    And I press "Save changes"
+    And I select "Save" in the "form" "core_grades > gradeitem modal"
     And I am on "Course 1" course homepage
     And I am on the "Test Glossary 1" "glossary activity" page
     And I follow "Settings"

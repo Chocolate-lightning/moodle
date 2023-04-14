@@ -71,7 +71,7 @@ Feature: I can grade a students interaction across a forum
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
-    And I should see "Tutor" in the "Parent category" "fieldset"
+    And I should see "Tutor" in the "Grade item" "fieldset"
 
   Scenario: Ensure that Ratings settings do not leak to Forum grading
     Given I add a "Forum" to section "1"
@@ -127,7 +127,7 @@ Feature: I can grade a students interaction across a forum
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
-    And I should see "Tutor" in the "Parent category" "fieldset"
+    And I should see "Tutor" in the "Grade item" "fieldset"
 
   Scenario: Setting both a rating and a whole forum grade does not bleed
     Given the following "activity" exists:
@@ -164,12 +164,12 @@ Feature: I can grade a students interaction across a forum
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "100"
     Then the field "Grade to pass" matches value "40"
-    And I should see "Peers" in the "Parent category" "fieldset"
-    And I press "cancel"
+    And I should see "Peers" in the "Grade item" "fieldset"
+    And I select "Cancel" in the "form" "core_grades > gradeitem modal"
 
     And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
     And I choose "Edit grade item" in the open action menu
     When I expand all fieldsets
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
-    And I should see "Tutor" in the "Parent category" "fieldset"
+    And I should see "Tutor" in the "Grade item" "fieldset"

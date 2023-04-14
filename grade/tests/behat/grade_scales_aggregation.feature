@@ -95,7 +95,7 @@ Feature: Control the aggregation of the scales
     And I choose "Edit grade item" in the open action menu
     And I follow "Show more..."
     And I should not see "Weight adjusted"
-    And I should not see "Weight"
+    And I should not see "Weight" in the "form" "core_grades > gradeitem modal"
     And the following config values are set as admin:
       | grade_includescalesinaggregation | 1 |
     And I am on "Course 1" course homepage
