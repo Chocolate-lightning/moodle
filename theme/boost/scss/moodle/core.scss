@@ -3232,6 +3232,15 @@ blockquote {
     }
 }
 
+/* Bulk actions in sticky footer. */
+#sticky-footer {
+    [data-type="bulk"] {
+        display: flex;
+        flex: 0 0 100%;
+        align-items: center;
+    }
+}
+
 /* Choice list component. */
 .choicelist {
     min-width: $modal-sm;
