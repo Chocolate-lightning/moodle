@@ -161,10 +161,9 @@ Feature: Within the grader report, test that we can search for users
     And I wait until the page is ready
     # The search input remains in the field on reload this is in keeping with other search implementations.
     When the field "Search users" matches value "Turtle"
-    And "View all results (1)" "link" should not exist
     # Test if we can then further retain the turtle result set and further filter from there.
     Then I set the field "Search users" to "Turtle plagiarism"
-    And "Turtle Manatee" "list_item" should not exist
+    And I wait until "Turtle Manatee" "list_item" does not exist
     And I should see "No results for \"Turtle plagiarism\""
 
   Scenario: A teacher can search for values besides the users' name
@@ -237,27 +236,27 @@ Feature: Within the grader report, test that we can search for users
 
   @accessibility
   Scenario: A teacher can set focus and search using the input are with a keyboard
-    # Basic tests for the page.
-    Given the page should meet accessibility standards
-    And the page should meet "wcag131, wcag141, wcag412" accessibility standards
-    And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
-    # Move onto general keyboard navigation testing.
-    When I set the field "Search users" to "ABC"
+    Given I set the field "Search users" to "ABC"
     And the focused element is "Search users" "field"
     And I wait until "Turtle Manatee" "option_role" exists
+    # Basic tests for the page.
+    When the page should meet accessibility standards
+    And the page should meet "wcag131, wcag141, wcag412" accessibility standards
+    And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
     And I press the down key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the end key
-    And the focused element is "View all results (5)" "option_role"
+    And ".active" "css_element" should exist in the "View all results (5)" "option_role"
     And I press the home key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the up key
-    And the focused element is "View all results (5)" "option_role"
+    And ".active" "css_element" should exist in the "View all results (5)" "option_role"
     And I press the down key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the escape key
     And the focused element is "Search users" "field"
     Then I set the field "Search users" to "Goodmeme"
+    And I wait until "No results for \"Goodmeme\"" "text" exists
     And I press the down key
     And the focused element is "Search users" "field"
 
@@ -265,21 +264,19 @@ Feature: Within the grader report, test that we can search for users
     And I set the field "Search users" to "ABC"
     And I wait until "Turtle Manatee" "option_role" exists
     And I press the down key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
 
     # Lets check the tabbing order.
     And I set the field "Search users" to "ABC"
-    And I wait until "View all results (5)" "option_role" exists
+    And I click on "Search users" "field"
+    And I wait until "Turtle Manatee" "option_role" exists
     And I press the tab key
     And the focused element is "Clear search input" "button"
-    And I press the tab key
-    And the focused element is "View all results (5)" "option_role"
     And I press the tab key
     And the focused element is ".search-widget[data-searchtype='group'] [data-toggle='dropdown']" "css_element"
     # Ensure we can interact with the input & clear search options with the keyboard.
     # Space & Enter have the same handling for triggering the two functionalities.
     And I set the field "Search users" to "User"
-    And I click on ".usersearchwidget [data-action=search]" "css_element"
     And I press the enter key
     And I wait to be redirected
     And the following should exist in the "user-grades" table:
@@ -292,19 +289,10 @@ Feature: Within the grader report, test that we can search for users
       | Teacher 1          |
       | Student 1          |
       | Turtle Manatee     |
-    # Sometimes with behat we get unattached nodes causing spurious failures.
-    And I wait "1" seconds
-    And I set the field "Search users" to "ABC"
-    And I wait until "Turtle Manatee" "option_role" exists
-    And I press the tab key
-    And the focused element is "Clear search input" "button"
-    And I press the enter key
-    And I wait until the page is ready
-    And I should not see "Turtle Manatee" in the ".user-search" "css_element"
 
   Scenario: Once a teacher searches, it'll apply the currently set filters and inform the teacher as such
     # Set up a basic filtering case.
-    Given I press "Filter by name"
+    Given I click on "Filter by name" "combobox"
     And I select "U" in the "First name" "core_grades > initials bar"
     And I select "E" in the "Last name" "core_grades > initials bar"
     And I press "Apply"

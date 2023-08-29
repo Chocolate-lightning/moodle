@@ -32,17 +32,47 @@
         "dropdowncontent": "Some body content to render right now",
         "parentclasses": "my-dropdown",
         "buttonclasses": "my-button",
-        "dropdownclasses": "my-cool-dropdown"
+        "dropdownclasses": "my-cool-dropdown",
+        "instance": 25
     }
 }}
 {{#buttonheader}}
     <small>{{.}}</small>
 {{/buttonheader}}
-<div class="{{#parentclasses}}{{.}}{{/parentclasses}}">
-    <div class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold" data-toggle="dropdown" aria-haspopup="true" {{#usebutton}}role="button" aria-expanded="false" tabindex="0"{{/usebutton}} {{^usebutton}}tabindex="-1"{{/usebutton}} aria-label="{{#str}} aria-toggledropdown, core_grades {{/str}}" >
-        {{{buttoncontent}}}
-    </div>
-    <div class="{{#dropdownclasses}}{{.}}{{/dropdownclasses}} dropdown-menu {{#rtl}}dropdown-menu-right{{/rtl}}">
+<div class="{{#parentclasses}}{{.}}{{/parentclasses}}"
+    {{^usebutton}}
+     tabindex="-1"
+     data-toggle="dropdown"
+     aria-expanded="false"
+     role="combobox"
+     aria-haspopup="dialog"
+     aria-controls="dialog-{{instance}}-{{uniqid}}"
+     aria-label="{{#cleanstr}} aria-toggledropdown, core_grades {{/cleanstr}}"
+     data-input-element="input-{{uniqid}}"
+    {{/usebutton}}>
+
+    {{#usebutton}}
+        <div tabindex="0"
+             data-toggle="dropdown"
+             aria-expanded="false"
+             role="combobox"
+             aria-haspopup="dialog"
+             aria-controls="dialog-{{instance}}-{{uniqid}}"
+             class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold"
+             aria-label="{{#cleanstr}} aria-toggledropdown, core_grades {{/cleanstr}}"
+             data-input-element="input-{{uniqid}}">
+            {{{buttoncontent}}}
+        </div>
+    {{/usebutton}}
+
+    {{^usebutton}}{{{buttoncontent}}}{{/usebutton}}
+
+    <div class="{{#dropdownclasses}}{{.}}{{/dropdownclasses}} dropdown-menu {{#rtl}}dropdown-menu-right{{/rtl}}"
+         id="dialog-{{instance}}-{{uniqid}}"
+         role="dialog"
+         aria-modal="true"
+         aria-label="{{#cleanstr}} selectagroup, core {{/cleanstr}}"
+    >
         <div class="w-100 p-3" data-region="placeholder">
             {{#renderlater}}
                 <div class="d-flex flex-column align-items-stretch justify-content-between" style="height: 150px; width: 300px;">

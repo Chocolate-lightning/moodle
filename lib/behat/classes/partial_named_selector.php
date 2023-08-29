@@ -79,6 +79,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'group_message' => 'group_message',
         'autocomplete' => 'autocomplete',
         'iframe' => 'iframe',
+        'option_role' => 'option_role',
     );
 
     /**
@@ -91,6 +92,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'block' => 'block',
         'button' => 'button',
         'checkbox' => 'checkbox',
+        'combobox' => 'combobox',
         'css_element' => 'css_element',
         'dialogue' => 'dialogue',
         'field' => 'field',
@@ -160,7 +162,10 @@ XPATH
      descendant::*[self::h2|self::h3|self::h4|self::h5][normalize-space(.) = %locator%]  or
      @aria-label = %locator%]
 XPATH
-        , 'dialogue' => <<<XPATH
+    , 'combobox' => <<<XPATH
+.//*[@role='combobox'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
+XPATH
+    , 'dialogue' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue ') and
     not(contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue-hidden ')) and
     normalize-space(descendant::div[

@@ -119,6 +119,7 @@ class gradebook_dropdown implements renderable, templatable {
             'dropdownclasses' => $this->dropdownclasses,
             'buttonheader' => $this->buttonheader,
             'usebutton' => $this->usesbutton,
+            'instance' => rand(), // Template uniqid is per render out so sometimes these conflict.
         ];
     }
 

@@ -21,6 +21,7 @@
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+import $ from 'jquery';
 import GradebookSearchClass from 'gradereport_grader/search/search_class';
 import * as Repository from 'gradereport_grader/search/repository';
 import {get_strings as getStrings} from 'core/str';
@@ -44,6 +45,8 @@ export default class UserSearch extends GradebookSearchClass {
 
     constructor() {
         super();
+        // We need to render some content by default for ARIA purposes.
+        this.renderDefault();
     }
 
     static init() {
@@ -81,6 +84,24 @@ export default class UserSearch extends GradebookSearchClass {
      * Build the content then replace the node.
      */
     async renderDropdown() {
+        const {html, js} = await renderForPromise('gradereport_grader/search/resultset', {
+            users: this.getMatchedResults().slice(0, 5),
+            hasusers: this.getMatchedResults().length > 0,
+            matches: this.getMatchedResults().length,
+            showing: this.getMatchedResults().slice(0, 5).length,
+            searchterm: this.getSearchTerm(),
+            selectall: this.selectAllResultsLink(),
+        });
+        replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+    }
+
+    /**
+     * Build the content then replace the node by default we want our form to exist.
+     */
+    async renderDefault() {
+        this.setMatchedResults(await this.filterDataset(await this.getDataset()));
+        await this.filterMatchDataset();
+
         const {html, js} = await renderForPromise('gradereport_grader/search/resultset', {
             users: this.getMatchedResults().slice(0, 5),
             hasusers: this.getMatchedResults().length > 0,
@@ -152,6 +173,11 @@ export default class UserSearch extends GradebookSearchClass {
      */
     clickHandler(e) {
         super.clickHandler(e);
+        if (e.target.closest(this.selectors.component)) {
+            // Forcibly prevent BS events so that we can control the open and close.
+            // Really needed because by default input elements cant trigger a dropdown.
+            e.stopImmediatePropagation();
+        }
         if (e.target === this.getHTMLElements().currentViewAll && e.button === 0) {
             window.location = this.selectAllResultsLink();
         }
@@ -166,7 +192,7 @@ export default class UserSearch extends GradebookSearchClass {
      * @param {KeyboardEvent} e The triggering event that we are working with.
      */
     keyHandler(e) {
-        super.keyHandler(e);
+        // We don't call the super here because we want to let aria.js handle the key presses mostly.
 
         if (e.target === this.getHTMLElements().currentViewAll && (e.key === 'Enter' || e.key === 'Space')) {
             window.location = this.selectAllResultsLink();
@@ -176,6 +202,7 @@ export default class UserSearch extends GradebookSearchClass {
         switch (e.key) {
             case 'Enter':
             case ' ':
+                e.stopPropagation();
                 if (document.activeElement === this.getHTMLElements().searchInput) {
                     if (e.key === ' ') {
                         break;
@@ -206,13 +233,27 @@ export default class UserSearch extends GradebookSearchClass {
                 // If the current focus is on clear search, then check if viewall exists then around tab to it.
                 if (e.target.closest(this.selectors.clearSearch)) {
                     if (this.currentViewAll && !e.shiftKey) {
-                        e.preventDefault();
-                        this.currentViewAll.focus({preventScroll: true});
-                    } else {
                         this.closeSearch();
                     }
                 }
                 break;
+        }
+    }
+
+    /**
+     * When called, hide or show the users dropdown.
+     *
+     * @param {Boolean} on Flag to toggle hiding or showing values.
+     */
+    toggleDropdown(on = false) {
+        if (on) {
+            this.searchDropdown.classList.add('show');
+            $(this.searchDropdown).show();
+            this.getHTMLElements().searchInput.setAttribute('aria-expanded', 'true');
+        } else {
+            this.searchDropdown.classList.remove('show');
+            $(this.searchDropdown).hide();
+            this.getHTMLElements().searchInput.setAttribute('aria-expanded', 'false');
         }
     }
 

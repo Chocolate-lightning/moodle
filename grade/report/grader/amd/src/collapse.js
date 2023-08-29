@@ -218,25 +218,6 @@ export default class ColumnSearch extends GradebookSearchClass {
     }
 
     /**
-     * The handler for when a user presses a key within the component.
-     *
-     * @param {KeyboardEvent} e The triggering event that we are working with.
-     */
-    async keyHandler(e) {
-        super.keyHandler(e);
-
-        // Switch the key presses to handle keyboard nav.
-        switch (e.key) {
-            case 'Tab':
-                if (e.target.closest(this.selectors.input)) {
-                    e.preventDefault();
-                    this.clearSearchButton.focus({preventScroll: true});
-                }
-                break;
-        }
-    }
-
-    /**
      * Handle any keyboard inputs.
      */
     registerInputEvents() {

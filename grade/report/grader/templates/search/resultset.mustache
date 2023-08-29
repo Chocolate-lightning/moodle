@@ -52,7 +52,7 @@
 }}
 <div class="d-flex flex-column mh-100 h-100">
     {{#hasusers}}
-        <ul class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mh-100 mx-0" role="listbox" data-region="search-result-items-container" tabindex="-1">
+        <ul id="user-result-listbox" class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mh-100 mx-0" role="listbox" data-region="search-result-items-container" tabindex="-1" aria-label="{{#cleanstr}} aria-comboboxsearchitems, core {{/cleanstr}}">
             {{#users}}
                 {{>gradereport_grader/search/resultitem}}
             {{/users}}
