@@ -39,5 +39,5 @@
 <input type="hidden" name="search" id="input-{{uniqid}}"/>
 <div role="listbox" id="listbox-{{uniqid}}" class="searchresultscontainer" data-region="search-results-container-widget"></div>
 {{#displayunsearchablecontent}}
-    <div class="unsearchablecontentcontainer" data-region="unsearchable-content-container-widget"></div>
+    <div class="unsearchablecontentcontainer" data-region="unsearchable-content-container-widget" aria-label="{{#cleanstr}} aria:dropdowncolumns, gradereport_grader {{/cleanstr}}" aria-busy="true"></div>
 {{/displayunsearchablecontent}}

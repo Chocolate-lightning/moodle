@@ -44,17 +44,17 @@
 }}
 <div class="search-widget dropdown d-flex" data-searchtype="user">
     <div
-        tabindex="0"
-        aria-expanded="false"
-        role="combobox"
-        aria-haspopup="dialog"
-        aria-controls="dialog-{{uniqid}}"
-        data-toggle="dropdown"
-        class="btn dropdown-toggle d-flex text-left align-items-center p-0"
-        data-courseid="{{courseid}}"
-        data-groupid="{{groupid}}"
-        aria-label="{{#cleanstr}} selectauser, core_grades {{/cleanstr}}"
-        data-input-element="input-{{uniqid}}"
+         tabindex="0"
+         data-toggle="dropdown"
+         aria-expanded="false"
+         role="combobox"
+         aria-haspopup="dialog"
+         aria-controls="dialog-{{instance}}-{{uniqid}}"
+         class="btn dropdown-toggle d-flex text-left align-items-center p-0"
+         data-courseid="{{courseid}}"
+         data-groupid="{{groupid}}"
+         aria-label="{{#cleanstr}} selectauser, core_grades {{/cleanstr}}"
+         data-input-element="input-{{uniqid}}"
     >
         <div class="align-items-center d-flex">
             {{#selectedoption}}
@@ -87,7 +87,7 @@
             {{/selectedoption}}
         </div>
     </div>
-    <div class="dropdown-menu wide" id="dialog-{{uniqid}}" role="dialog" aria-modal="true" aria-label="{{#cleanstr}} selectauser, core_grades {{/cleanstr}}">
+    <div class="dropdown-menu wide" id="dialog-{{instance}}-{{uniqid}}" role="dialog" aria-modal="true" aria-label="{{#cleanstr}} selectauser, core_grades {{/cleanstr}}">
     </div>
     <input type="hidden" name="{{name}}" value="{{userid}}" id="input-{{uniqid}}" />
 </div>

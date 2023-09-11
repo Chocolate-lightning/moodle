@@ -49,6 +49,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
             'name' => 'userid',
             'courseid' => $course->id,
             'groupid' => $groupid ?? 0,
+            'instance' => rand(),
         ];
 
         // If a particular user option is selected (not in zero state).
