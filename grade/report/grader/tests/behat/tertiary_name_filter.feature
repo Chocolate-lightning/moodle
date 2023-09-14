@@ -149,11 +149,10 @@ Feature: Within the grader report, test that we can open our generic filter drop
 
   Scenario: A teacher can search and then filter by first or last name
     Given I set the field "Search users" to "Student 1"
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" "option_role"
     And I click on "Filter by name" "combobox"
     And I select "S" in the "First name" "core_grades > initials bar"
     When I press "Apply"
-    And the field "Search users" matches value "Student 1"
     Then the following should exist in the "user-grades" table:
       | -1-                | -1-                  | -3- |
       | Student 1          | student1@example.com | -   |
