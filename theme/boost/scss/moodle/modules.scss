@@ -517,7 +517,8 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     }
 }
 
-.path-mod-forum .unified-grader {
+.path-mod-forum .unified-grader,
+.path-mod-assign .unified-grader {
     @include media-breakpoint-up(xs) {
         .navbar {
             max-height: none;
