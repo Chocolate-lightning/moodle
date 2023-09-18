@@ -41,11 +41,11 @@
     {{#userid}}data-first-userid="{{.}}"{{/userid}}
     data-cmid="{{cmid}}"
 >
-    {{> mod_forum/local/grades/local/grader/navigation }}
+    {{> core_grades/grades/grader/gradingpanel/util/navigation }}
 
     <div class="d-flex flex-grow-1 overflow-hidden position-relative">
-        {{> mod_forum/local/grades/local/grader/content }}
-        {{#drawer}}{{> mod_forum/local/grades/local/grader/grading }}{{/drawer}}
+        {{> core_grades/grades/grader/gradingpanel/content/content }}
+        {{#drawer}}{{> core_grades/grades/grader/gradingpanel/util/grading }}{{/drawer}}
     </div>
 </div>
 {{#js}}
