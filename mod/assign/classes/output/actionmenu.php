@@ -16,9 +16,14 @@
 
 namespace mod_assign\output;
 
+use core_grades\external\get_gradeitems;
+use mod_assign\grades\assign_gradeitem;
+use mod_assign\grades\submissions_gradeitem;
 use templatable;
 use renderable;
 use moodle_url;
+
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 /**
  * Output the actionbar for this activity.
@@ -48,7 +53,27 @@ class actionmenu implements templatable, renderable {
      * @return array Data to be used for a template.
      */
     public function export_for_template(\renderer_base $output): array {
-        $return = [];
+
+        list($course, $cm) = get_course_and_cm_from_cmid($this->cmid, 'assign');
+        $context = \context_module::instance($cm->id);
+        $assign = new \assign($context, null, null);
+        $groupid = groups_get_activity_group($cm, true) ?: null;
+        $assigngradeitem = submissions_gradeitem::load_from_assign($assign);
+        $return = [
+            'submissionlink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grading']))->out(false),
+            'gradelink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grader']))->out(false),
+            'contextid' => $context->id,
+            'cmid' => $this->cmid,
+            'name' => $assign->get_instance()->name,
+            'courseid' => $course->id,
+            'coursename' => format_string($course->shortname),
+            'groupid' => $groupid,
+            'gradingcomponent' => $assigngradeitem->get_grading_component_name(),
+            'gradingcomponentsubtype' => $assigngradeitem->get_grading_component_subtype(),
+            'sendstudentnotifications' => $assign->get_instance()->sendstudentnotifications,
+            'gradeonlyactiveusers' => $assigngradeitem->should_grade_only_active_users(),
+            'moduleid' => $assign->get_instance()->id,
+        ];
 
         if (has_capability('mod/assign:grade', \context_module::instance($this->cmid))) {
             $gradelink = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grader']);

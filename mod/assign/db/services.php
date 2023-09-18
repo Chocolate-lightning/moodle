@@ -196,6 +196,7 @@ $functions = array(
             'classpath'     => 'mod/assign/externallib.php',
             'description'   => 'Returns information about an assignment submission status for a given user.',
             'type'          => 'read',
+            'ajax'          => true,
             'capabilities'  => 'mod/assign:view',
             'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),

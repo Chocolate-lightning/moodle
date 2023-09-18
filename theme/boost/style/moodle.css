@@ -34097,37 +34097,46 @@ select {
     background-color: #e9ecef;
   }
 }
-.path-mod-forum .unified-grader .navbar {
+.path-mod-forum .unified-grader .navbar,
+.path-mod-assign .unified-grader .navbar {
   max-height: none;
   z-index: 1;
 }
-.path-mod-forum .unified-grader .body-container {
+.path-mod-forum .unified-grader .body-container,
+.path-mod-assign .unified-grader .body-container {
   overflow: auto;
 }
-.path-mod-forum .unified-grader .body-container.hidden {
+.path-mod-forum .unified-grader .body-container.hidden,
+.path-mod-assign .unified-grader .body-container.hidden {
   display: none !important; /* stylelint-disable-line declaration-no-important */
 }
-.path-mod-forum .unified-grader .userpicture {
+.path-mod-forum .unified-grader .userpicture,
+.path-mod-assign .unified-grader .userpicture {
   height: 60px;
   width: 60px;
 }
-.path-mod-forum .unified-grader .grader-grading-panel {
+.path-mod-forum .unified-grader .grader-grading-panel,
+.path-mod-assign .unified-grader .grader-grading-panel {
   top: 0;
   position: absolute;
   height: 100%;
   z-index: 0;
   width: 430px;
 }
-.path-mod-forum .unified-grader .grader-grading-panel.hidden {
+.path-mod-forum .unified-grader .grader-grading-panel.hidden,
+.path-mod-assign .unified-grader .grader-grading-panel.hidden {
   right: -430px;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .grading-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .grading-icon,
+.path-mod-assign .unified-grader .grader-grading-panel .grading-icon {
   width: 36px;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .user-picker-container .user-full-name {
+.path-mod-forum .unified-grader .grader-grading-panel .user-picker-container .user-full-name,
+.path-mod-assign .unified-grader .grader-grading-panel .user-picker-container .user-full-name {
   max-width: 240px;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .user-picker-container .page-link {
+.path-mod-forum .unified-grader .grader-grading-panel .user-picker-container .page-link,
+.path-mod-assign .unified-grader .grader-grading-panel .user-picker-container .page-link {
   width: 36px;
   height: 36px;
   display: flex;
@@ -34135,12 +34144,14 @@ select {
   align-items: center;
   justify-content: center;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container {
   height: 65px;
   position: relative;
   overflow: hidden;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .info-container {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .info-container,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .info-container {
   position: absolute;
   top: 50%;
   left: 0;
@@ -34154,17 +34165,20 @@ select {
   transition: left 0.3s ease-in-out;
   z-index: 1;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.expanded {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.expanded,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .toggle-search-button.expanded {
   animation-name: expandSearchButton;
   animation-duration: 0.3s;
   animation-timing-function: ease-in-out;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.collapsed {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .toggle-search-button.collapsed,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .toggle-search-button.collapsed {
   animation-name: collapseSearchButton;
   animation-duration: 0.3s;
   animation-timing-function: ease-in-out;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container {
   overflow: hidden;
   position: absolute;
   top: 50%;
@@ -34175,19 +34189,22 @@ select {
   height: 100% !important; /* stylelint-disable-line declaration-no-important */
   padding: 0.5rem;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container {
   position: relative;
   overflow: visible;
   flex-wrap: nowrap;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container input {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container input,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container input {
   padding-left: calc(0.5rem + 0.5rem + 34px);
   padding-right: calc(0.5rem + 36px);
   opacity: 1;
   visibility: visible;
   transition: opacity 0s linear 0.3s, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .search-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .search-icon,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .search-icon {
   position: absolute;
   top: 50%;
   left: 0.5rem;
@@ -34200,7 +34217,8 @@ select {
   visibility: visible;
   transition: opacity 0s linear 0.3s, visibility 0s linear 0.3s;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button {
   position: absolute;
   top: 50%;
   right: 0.5rem;
@@ -34211,14 +34229,16 @@ select {
   padding-left: 9px;
   transition: right 0s linear 0.3s;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .expanded-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .expanded-icon,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .expanded-icon {
   opacity: 1;
   visibility: visible;
   max-width: 50px;
   max-height: 50px;
   transition: opacity 0s linear 0.3s, max-height 0s linear 0.3s, max-width 0s linear 0.3s, visibility 0s linear 0.3s;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .collapsed-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .collapsed-icon,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .collapsed-icon {
   opacity: 0;
   visibility: hidden;
   max-height: 0;
@@ -34226,24 +34246,30 @@ select {
   overflow: hidden;
   transition: opacity 0s linear 0.3s, max-height 0s linear 0.3s, max-width 0s linear 0.3s, visibility 0s linear 0.3s;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box {
   width: calc(36px + 0.5rem + 0.5rem);
   transition: width 0.3s ease-in-out;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container {
   flex-wrap: nowrap;
 }
 .path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container input,
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .search-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .search-icon,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container input,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .search-icon {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0s linear, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container input {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container input,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container input {
   padding-left: 0;
   padding-right: 0;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .toggle-search-button .expanded-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .toggle-search-button .expanded-icon,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .toggle-search-button .expanded-icon {
   opacity: 0;
   visibility: hidden;
   max-height: 0;
@@ -34251,33 +34277,39 @@ select {
   overflow: hidden;
   transition: opacity 0s linear, max-height 0s linear, max-width 0s linear, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .toggle-search-button .collapsed-icon {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .toggle-search-button .collapsed-icon,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed-box .search-input-container .toggle-search-button .collapsed-icon {
   opacity: 1;
   visibility: visible;
   max-width: 50px;
   max-height: 50px;
   transition: opacity 0s linear, max-height 0s linear, max-width 0s linear, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container:not(.collapsed) + .info-container {
+.path-mod-forum .unified-grader .grader-grading-panel .header-container .user-search-container:not(.collapsed) + .info-container,
+.path-mod-assign .unified-grader .grader-grading-panel .header-container .user-search-container:not(.collapsed) + .info-container {
   opacity: 0;
   visibility: hidden;
   left: -100%;
   transition: left 0.3s ease-in-out, opacity 0s linear 0.3s, visibility 0s linear 0.3s, padding 0s linear 0.3s;
 }
-.path-mod-forum .unified-grader .grader-module-content {
+.path-mod-forum .unified-grader .grader-module-content,
+.path-mod-assign .unified-grader .grader-module-content {
   overflow-y: auto;
   margin-right: 430px;
   transition: margin-right 0.2s ease-in-out;
 }
 @media (prefers-reduced-motion: reduce) {
-  .path-mod-forum .unified-grader .grader-module-content {
+  .path-mod-forum .unified-grader .grader-module-content,
+  .path-mod-assign .unified-grader .grader-module-content {
     transition: none;
   }
 }
-.path-mod-forum .unified-grader .drawer-button {
+.path-mod-forum .unified-grader .drawer-button,
+.path-mod-assign .unified-grader .drawer-button {
   position: relative;
 }
-.path-mod-forum .unified-grader .drawer-button.active::after {
+.path-mod-forum .unified-grader .drawer-button.active::after,
+.path-mod-assign .unified-grader .drawer-button.active::after {
   content: "";
   position: absolute;
   bottom: calc(-0.5rem - 1px);
@@ -34286,21 +34318,26 @@ select {
   height: 3px;
   background-color: #0f6cbf;
 }
-.path-mod-forum .unified-grader .drawer-button .icon {
+.path-mod-forum .unified-grader .drawer-button .icon,
+.path-mod-assign .unified-grader .drawer-button .icon {
   font-size: 20px;
   height: 20px;
   width: 20px;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container:last-of-type > hr {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container:last-of-type > hr,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container:last-of-type > hr {
   display: none;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container:last-of-type > hr {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container:last-of-type > hr,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container:last-of-type > hr {
   display: none;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container {
   position: relative;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -34310,80 +34347,99 @@ select {
   text-align: left;
   z-index: 1;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button:not(.collapsed) {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button:not(.collapsed),
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button:not(.collapsed) {
   display: none;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content {
   display: block;
   height: auto !important; /* stylelint-disable-line declaration-no-important */
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header {
   transition: margin-bottom 0.3s ease-in-out;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header div + div {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header div + div,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .header div + div {
   opacity: 1;
   visibility: visible;
   max-height: none;
   transition: opacity 0.3s linear, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .body-content-container {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .body-content-container,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .body-content-container {
   opacity: 1;
   visibility: visible;
   max-height: none;
   transition: opacity 0.3s linear, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .forum-post-core {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .forum-post-core,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .content .forum-post-core {
   opacity: 1;
   visibility: visible;
   max-height: none;
   transition: opacity 0.3s linear, visibility 0s linear;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content {
   opacity: 0.3;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header {
   margin-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header div + div {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header div + div,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .header div + div {
   opacity: 0;
   visibility: hidden;
   max-height: 0;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .body-content-container {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .body-content-container,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .body-content-container {
   opacity: 0;
   visibility: hidden;
   max-height: 0;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .forum-post-core {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .forum-post-core,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed + .content .forum-post-core {
   opacity: 0;
   visibility: hidden;
   max-height: 0;
 }
 .path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:hover + .content,
-.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:focus + .content {
+.path-mod-forum .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:focus + .content,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:hover + .content,
+.path-mod-assign .unified-grader .grader-module-content-display .discussion-container .posts-container .parent-container .show-content-button.collapsed:focus + .content {
   opacity: 1;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .no-post-container .icon {
+.path-mod-forum .unified-grader .grader-module-content-display .no-post-container .icon,
+.path-mod-assign .unified-grader .grader-module-content-display .no-post-container .icon {
   height: 250px;
   width: 250px;
   margin-right: 0;
 }
-.path-mod-forum .unified-grader .grader-module-content-display .nested-v2-display-mode .discussion-container .posts-container .parent-container .show-content-button {
+.path-mod-forum .unified-grader .grader-module-content-display .nested-v2-display-mode .discussion-container .posts-container .parent-container .show-content-button,
+.path-mod-assign .unified-grader .grader-module-content-display .nested-v2-display-mode .discussion-container .posts-container .parent-container .show-content-button {
   padding-left: 94px;
 }
-.path-mod-forum .unified-grader .no-search-results-container .icon {
+.path-mod-forum .unified-grader .no-search-results-container .icon,
+.path-mod-assign .unified-grader .no-search-results-container .icon {
   height: 250px;
   width: 250px;
   margin-right: 0;
 }
-.path-mod-forum .unified-grader .nested-v2-display-mode .view-context-button {
+.path-mod-forum .unified-grader .nested-v2-display-mode .view-context-button,
+.path-mod-assign .unified-grader .nested-v2-display-mode .view-context-button {
   margin-left: 94px;
   border-radius: 0.6rem;
 }
-.path-mod-forum .unified-grader .nested-v2-display-mode .parent-container .author-image-container {
+.path-mod-forum .unified-grader .nested-v2-display-mode .parent-container .author-image-container,
+.path-mod-assign .unified-grader .nested-v2-display-mode .parent-container .author-image-container {
   position: relative;
 }
-.path-mod-forum .unified-grader .nested-v2-display-mode .parent-container .author-image-container:after {
+.path-mod-forum .unified-grader .nested-v2-display-mode .parent-container .author-image-container:after,
+.path-mod-assign .unified-grader .nested-v2-display-mode .parent-container .author-image-container:after {
   position: absolute;
   top: calc(70px + 0.5rem);
   content: "";
@@ -34391,7 +34447,8 @@ select {
   width: 2px;
   height: calc(100% - 70px + 0.5rem);
 }
-.path-mod-forum .unified-grader .nested-v2-display-mode .parent-container + .post-container .author-image-container img {
+.path-mod-forum .unified-grader .nested-v2-display-mode .parent-container + .post-container .author-image-container img,
+.path-mod-assign .unified-grader .nested-v2-display-mode .parent-container + .post-container .author-image-container img {
   width: 30px !important; /* stylelint-disable-line declaration-no-important */
 }
 

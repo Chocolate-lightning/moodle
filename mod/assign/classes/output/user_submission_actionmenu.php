@@ -24,6 +24,7 @@
 
 namespace mod_assign\output;
 
+use mod_assign\grades\submissions_gradeitem;
 use templatable;
 use renderable;
 use moodle_url;
@@ -96,6 +97,8 @@ class user_submission_actionmenu implements templatable, renderable {
      * @return array The data to be rendered.
      */
     public function export_for_template(\renderer_base $output): array {
+        global $USER;
+
         $data = ['edit' => false, 'submit' => false, 'remove' => false, 'previoussubmission' => false];
         if ($this->showedit) {
             $url = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'editsubmission']);
@@ -169,6 +172,24 @@ class user_submission_actionmenu implements templatable, renderable {
                 'help' => $help->export_for_template($output)
             ];
         }
+        list($course, $cm) = get_course_and_cm_from_cmid($this->cmid, 'assign');
+        $context = \context_module::instance($cm->id);
+        $assign = new \assign($context, null, null);
+        $groupid = groups_get_activity_group($cm, true) ?: null;
+        $assigngradeitem = submissions_gradeitem::load_from_assign($assign);
+        $data = array_merge($data, [
+            'contextid' => $context->id,
+            'cmid' => $this->cmid,
+            'name' => $assign->get_instance()->name,
+            'courseid' => $course->id,
+            'coursename' => format_string($course->shortname),
+            'groupid' => $groupid,
+            'gradingcomponent' => $assigngradeitem->get_grading_component_name(),
+            'gradingcomponentsubtype' => $assigngradeitem->get_grading_component_subtype(),
+            'moduleid' => $assign->get_instance()->id,
+            'userid' => $USER->id,
+        ]);
+
         return $data;
     }
 }
