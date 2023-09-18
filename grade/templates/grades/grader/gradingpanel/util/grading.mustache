@@ -52,7 +52,7 @@
                             <span class="dir-rtl-hide">{{#pix}} t/right, core {{/pix}}</span>
                         </button>
                         <div class="mx-auto text-center" data-region="status-container">
-                            {{> mod_forum/local/grades/local/grader/status_placeholder }}
+                            {{> core_grades/grades/grader/gradingpanel/util/status_placeholder }}
                         </div>
                     </div>
                     <div
@@ -90,7 +90,7 @@
                     </div>
                 </div>
                 <div class="border-bottom px-3 pt-2" data-region="user_picker">
-                    {{> mod_forum/local/grades/local/grader/user_picker_placeholder }}
+                    {{> core_grades/grades/grader/gradingpanel/user_picker/user_picker_placeholder }}
                 </div>
             </div>
             <div class="body-container position-relative d-flex flex-column" data-region="body-container">
@@ -99,7 +99,7 @@
                         {{#pix}} i/grading, core {{/pix}}{{#str}} gradingmodulename, core_grades, {{moduleName}} {{/str}}
                     </h4>
                     <div data-region="grade" class="pt-3 px-3">
-                        {{> mod_forum/local/grades/local/grader/grade_placeholder }}
+                        {{> core_grades/grades/grader/gradingpanel/util/grade_placeholder }}
                     </div>
                     <h4 id="send-student-notifications-setting" class="mb-0 h5 px-3 font-weight-normal">
                         {{#pix}} i/gradingnotifications, core {{/pix}}{{#str}}notifications, core{{/str}}
