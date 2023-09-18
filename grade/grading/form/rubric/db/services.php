@@ -31,12 +31,14 @@ $functions = [
             'creating the grade item if required',
         'type' => 'write',
         'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'gradingform_rubric_grader_gradingpanel_store' => [
         'classname' => 'gradingform_rubric\\grades\\grader\\gradingpanel\\external\\store',
         'description' => 'Store the grading data for a user from the grader grading panel.',
         'type' => 'write',
         'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 ];
 

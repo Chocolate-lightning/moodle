@@ -21,10 +21,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import Templates from 'core/templates';
-import Selectors from './local/grader/selectors';
-import getUserPicker from './local/grader/user_picker';
+import Selectors from './grader/selectors';
+import getUserPicker from './grader/user_picker';
 import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/fullscreen';
-import getGradingPanelFunctions from './local/grader/gradingpanel';
+import getGradingPanelFunctions from './grader/gradingpanel';
 import {add as addToast} from 'core/toast';
 import {addNotification} from 'core/notification';
 import {getString} from 'core/str';
@@ -39,12 +39,12 @@ import Pending from 'core/pending';
 
 const templateNames = {
     grader: {
-        app: 'mod_forum/local/grades/grader',
+        app: 'core_grades/grades/grader',
         gradingPanel: {
-            error: 'mod_forum/local/grades/local/grader/gradingpanel/error',
+            error: 'core_grades/grades/grader/gradingpanel/util/error',
         },
-        searchResults: 'mod_forum/local/grades/local/grader/user_picker/user_search',
-        status: 'mod_forum/local/grades/local/grader/status',
+        searchResults: 'core_grades/grades/grader/gradingpanel/user_picker/user_search',
+        status: 'core_grades/grades/grader/gradingpanel/util/status',
     },
 };
 
