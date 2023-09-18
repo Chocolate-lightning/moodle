@@ -24,9 +24,13 @@
 
 namespace mod_assign\output;
 
+use core_grades\external\get_gradeitems;
+use mod_assign\grades\assign_gradeitem;
 use templatable;
 use renderable;
 use moodle_url;
+
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 /**
  * Output the actionbar for this activity.
@@ -56,10 +60,21 @@ class actionmenu implements templatable, renderable {
      * @return array Data to be used for a template.
      */
     public function export_for_template(\renderer_base $output): array {
+        list($course, $cm) = get_course_and_cm_from_cmid($this->cmid, 'assign');
+        $groupid = groups_get_activity_group($cm, true) ?: null;
         return [
             'submissionlink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grading']))->out(false),
-            'gradelink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grader']))->out(false)
+            'gradelink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grader']))->out(false),
+            'contextid' => $cm->id,
+            'cmid' => $this->cmid,
+            'name' => format_string('Fake name'),
+            'courseid' => $course->id,
+            'coursename' => format_string($course->shortname),
+            'groupid' => $groupid,
+            'gradingcomponent' => 'core_grades',
+            'gradingcomponentsubtype' => 'point',
+            'sendstudentnotifications' => false,
+            'gradeonlyactiveusers' => true,
         ];
     }
-
 }
