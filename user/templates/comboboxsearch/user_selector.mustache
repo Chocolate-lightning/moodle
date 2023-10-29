@@ -27,6 +27,8 @@
 
     Example context (json):
     {
+        "name": "input-1",
+        "value": "0",
         "currentvalue": "bar",
         "courseid": 2,
         "group": 25,
@@ -68,4 +70,4 @@
         {{/additionalattributes}}
     {{/ core/search_input_auto }}
 {{/currentvalue}}
-<input type="hidden" name="search" id="user-input-{{uniqid}}"/>
+<input type="hidden" name="{{name}}" value="{{value}}" id="user-input-{{uniqid}}"/>
