@@ -57,7 +57,13 @@
     {{/results}}
     {{$selectall}}
         {{#selectall}}
-            <li id="result-row-0" class="w-100 p-1 border-top bottom-0 position-sticky  dropdown-item d-flex small p-3" role="option" data-value="0">
+            <li
+                id="result-row-0"
+                class="w-100 p-1 border-top bottom-0 position-sticky dropdown-item d-flex small p-3"
+                role="option"
+                data-short-text="{{searchterm}}"
+                data-value="0"
+            >
                 {{#str}}viewallresults, core, {{matches}}{{/str}}
             </li>
         {{/selectall}}
