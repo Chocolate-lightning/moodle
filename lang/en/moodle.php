@@ -160,8 +160,6 @@ $string['applyfilters'] = 'Apply filters';
 $string['areyousure'] = 'Are you sure?';
 $string['areyousuretorestorethis'] = 'Do you want to continue?';
 $string['areyousuretorestorethisinfo'] = 'Later in this process you will have a choice of adding this backup to an existing course or creating a completely new course.';
-$string['aria-toggledropdown'] = 'Toggle the following dropdown';
-$string['aria-comboboxsearchitems'] = 'Select an option';
 $string['asc'] = 'Ascending';
 $string['assessment'] = 'Assessment';
 $string['assignadmins'] = 'Assign admins';
@@ -2391,7 +2389,6 @@ $string['viewallresults'] = 'View all results ({$a})';
 $string['viewmore'] = 'View more';
 $string['viewallsubcategories'] = 'View all subcategories';
 $string['viewfileinpopup'] = 'View file in a popup window';
-$string['viewresults'] = 'View results for {$a}';
 $string['viewprofile'] = 'View profile';
 $string['views'] = 'Views';
 $string['viewsolution'] = 'view solution';
@@ -2480,6 +2477,7 @@ $string['clicktochangeinbrackets'] = '{$a} (Click to change)';
 $string['modshowcmtitle'] = 'Show activity';
 $string['makeavailablecmtitle'] = 'Make activity available';
 $string['moodlenet:sharetyperesource'] = 'resource';
+$string['viewresults'] = 'View results for {$a}';
 
 // Deprecated since Moodle 4.4.
 $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
