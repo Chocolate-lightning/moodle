@@ -37,6 +37,7 @@
 }}
 <span class="d-none" data-region="courseid" data-courseid="{{courseid}}"></span>
 <span class="d-none" data-region="groupid" data-groupid="{{group}}"></span>
+<span class="d-none" data-region="instance" data-instance="{{instance}}" aria-hidden="true"></span>
 {{< core/search_input_auto }}
     {{$label}}{{#str}}searchusers, core{{/str}}{{/label}}
     {{$placeholder}}{{#str}}searchusers, core{{/str}}{{/placeholder}}
@@ -44,10 +45,10 @@
     {{$additionalattributes}}
         role="combobox"
         aria-expanded="false"
-        aria-controls="user-result-listbox"
+        aria-controls="user-{{instance}}-result-listbox"
         aria-autocomplete="list"
         aria-haspopup="listbox"
-        data-input-element="user-input-{{uniqid}}"
+        data-input-element="user-input-{{uniqid}}-{{instance}}"
     {{/additionalattributes}}
 {{/ core/search_input_auto }}
 {{#currentvalue}}
@@ -55,4 +56,4 @@
         {{#str}}clear{{/str}}
     </a>
 {{/currentvalue}}
-<input type="hidden" name="{{name}}" value="{{value}}" id="user-input-{{uniqid}}"/>
+<input type="hidden" name="{{name}}" value="{{value}}" id="user-input-{{uniqid}}-{{instance}}"/>
