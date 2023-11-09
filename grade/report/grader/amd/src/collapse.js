@@ -464,6 +464,7 @@ export default class ColumnSearch extends search_combobox {
         // Update the collapsed button pill.
         this.countUpdate();
         const {html, js} = await renderForPromise('gradereport_grader/collapse/collapsebody', {
+            'instance': this.instance,
             'results': this.getMatchedResults(),
             'userid': this.userID,
         });
@@ -486,6 +487,7 @@ export default class ColumnSearch extends search_combobox {
      */
     async renderDropdown() {
         const {html, js} = await renderForPromise('gradereport_grader/collapse/collapseresults', {
+            instance: this.instance,
             'results': this.getMatchedResults(),
             'searchTerm': this.getSearchTerm(),
         });
