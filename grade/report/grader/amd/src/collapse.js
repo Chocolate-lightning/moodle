@@ -98,6 +98,19 @@ export default class ColumnSearch extends search_combobox {
                 document.querySelector('.gradereport-grader-table').classList.remove('d-none');
             }, 10);
         }).then(() => pendingPromise.resolve()).catch(Notification.exception);
+
+        this.$component.on('hide.bs.dropdown', () => {
+            const listbox = this.component.querySelector('[role="listbox"]');
+            listbox.scrollTop = 0;
+
+            // Use setTimeout to make sure the following code is executed after the click event is handled.
+            setTimeout(() => {
+                if (this.searchInput.value !== '') {
+                    this.searchInput.value = '';
+                    this.searchInput.dispatchEvent(new Event('input', {bubbles: true}));
+                }
+            });
+        });
     }
 
     /**
