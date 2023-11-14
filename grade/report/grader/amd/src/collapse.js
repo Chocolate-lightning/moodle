@@ -132,15 +132,6 @@ export default class ColumnSearch extends search_combobox {
     }
 
     /**
-     * The triggering div that contains the searching widget.
-     *
-     * @returns {string}
-     */
-    triggerSelector() {
-        return '.collapsecolumn';
-    }
-
-    /**
      * Return the dataset that we will be searching upon.
      *
      * @returns {Array}
