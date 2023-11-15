@@ -169,7 +169,7 @@ Feature: Within the grader report, test that we can collapse columns
     When I click on grade item menu "Some cool grade category" of type "category" on "grader" page
     Then I should not see "Collapse" in the ".dropdown-menu.show" "css_element"
 
-  @accessibility
+  @accessibility @MDL-78885
   Scenario: A teacher can manipulate the report display in an accessible way
     # Hide a bunch of columns.
     Given I click on user profile field menu "Email"
@@ -291,6 +291,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I should see "Mobile phone" in the "First name / Last name" "table_row"
     And I should see "Country" in the "First name / Last name" "table_row"
 
+  @MDL-78885
   Scenario: If multiple columns are collapsed, when selecting all and then unselecting an option, the select all is then unchecked
     # Hide some columns.
     Given I click on user profile field menu "Email"

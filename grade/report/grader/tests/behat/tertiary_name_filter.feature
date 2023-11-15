@@ -111,6 +111,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
     And I should see "Filter by name"
     And I should not see "First (T)"
 
+  @MDL-78885
   Scenario: A teacher can close the filter either by clicking close or clicking off the dropdown
     Given I click on "Filter by name" "combobox"
     And "input[data-action=save]" "css_element" should be visible

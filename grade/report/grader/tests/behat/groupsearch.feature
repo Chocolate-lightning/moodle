@@ -69,7 +69,7 @@ Feature: Group searching functionality within the grader report.
     And I confirm "Student 1" in "user" search within the gradebook widget exists
     And I confirm "Student 2" in "user" search within the gradebook widget exists
 
-  @accessibility
+  @accessibility @MDL-78885
   Scenario: A teacher can set focus and search using the input with a keyboard
     Given I click on ".groupsearchwidget" "css_element"
     # Basic tests for the page.
@@ -80,15 +80,15 @@ Feature: Group searching functionality within the grader report.
     And I click on "Search groups" "field"
     And I wait until "Default group" "option_role" exists
     And I press the down key
-    And the focused element is "All participants" "option_role"
+    And ".active" "css_element" should exist in the "All participants" "option_role"
     And I press the end key
-    And the focused element is "Tutor group" "option_role"
+    And ".active" "css_element" should exist in the "Tutor group" "option_role"
     And I press the home key
-    And the focused element is "All participants" "option_role"
+    And ".active" "css_element" should exist in the "All participants" "option_role"
     And I press the up key
-    And the focused element is "Tutor group" "option_role"
+    And ".active" "css_element" should exist in the "Tutor group" "option_role"
     And I press the down key
-    And the focused element is "All participants" "option_role"
+    And ".active" "css_element" should exist in the "All participants" "option_role"
     And I press the escape key
     And the focused element is "Search groups" "field"
     Then I set the field "Search groups" to "Goodmeme"

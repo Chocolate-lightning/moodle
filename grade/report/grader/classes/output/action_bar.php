@@ -148,6 +148,9 @@ class action_bar extends \core_grades\output\action_bar {
                 'collapsecolumndropdown p-3 flex-column ' . $collapsemenudirection,
                 null,
                 true,
+                 get_string('aria:dropdowncolumns', 'gradereport_grader'),
+                'search',
+                ''
             );
             $data['collapsedcolumns'] = [
                 'classes' => 'd-none',
