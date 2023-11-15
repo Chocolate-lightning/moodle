@@ -29,8 +29,8 @@ use question_hint_with_parts;
 /**
  * Question hint for ordering.
  *
- * An extension of {@link question_hint} for questions like match and multiple
- * choice with multile answers, where there are options for whether to show the
+ * An extension of {@see question_hint} for questions like match and multiple
+ * choice with multiple answers, where there are options for whether to show the
  * number of parts right at each stage, and to reset the wrong parts.
  *
  * @package    qtype_ordering
@@ -39,18 +39,20 @@ use question_hint_with_parts;
  */
 class question_hint_ordering extends question_hint_with_parts {
     /** Highlight response in the hint options. */
-    public $highlightresponse;
+    public bool $highlightresponse;
 
     /**
      * Constructor.
      *
-     * @param int The hint id from the database.
+     * @param int $id The hint id from the database.
      * @param string $hint The hint text.
-     * @param int The corresponding text FORMAT_... type.
+     * @param int $hintformat The corresponding text FORMAT_... type.
      * @param bool $shownumcorrect Whether the number of right parts should be shown.
      * @param bool $clearwrong Whether the wrong parts should be reset.
+     * @param bool $highlightresponse Whether to highlight response.
      */
-    public function __construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong, $highlightresponse) {
+    public function __construct(int $id, string $hint, int $hintformat, bool $shownumcorrect,
+            bool $clearwrong, bool $highlightresponse) {
         parent::__construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong);
         $this->highlightresponse = $highlightresponse;
     }
@@ -61,7 +63,7 @@ class question_hint_ordering extends question_hint_with_parts {
      * @param object $row With property options as well as hint, shownumcorrect and clearwrong set.
      * @return question_hint_ordering
      */
-    public static function load_from_record($row) {
+    public static function load_from_record($row): question_hint_ordering {
         global $DB;
 
         // Initialize with the old questions.
@@ -80,7 +82,7 @@ class question_hint_ordering extends question_hint_with_parts {
      *
      * @param question_display_options $options
      */
-    public function adjust_display_options(question_display_options $options) {
+    public function adjust_display_options(question_display_options $options): void {
         parent::adjust_display_options($options);
         $options->highlightresponse = $this->highlightresponse;
     }
