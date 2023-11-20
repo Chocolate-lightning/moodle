@@ -15,34 +15,26 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_assign/submission_actionmenu
+    @template mod_forum/grades/grader/discussion/posts
 
-    Actions for grading submissions in the assignment.
+    Template to render a list of posts for a discussion.
 
     Classes required for JS:
     * none
 
-    Context variables required for this template:
-    * see mod/assign/classes/output/actionmenu.php
+    Data attributes required for JS:
+    * data-region="posts"
 
     Example context (json):
     {
-        "submissionlink": "https://moodle.org",
-        "gradelink": "https://moodle.org"
     }
-
 }}
-<div class="container-fluid tertiary-navigation">
-    <div class="row">
-        <div class="navitem">
-            <a class="btn btn-secondary mr-1" href="{{submissionlink}}">{{#str}}viewgrading, mod_assign{{/str}}</a>
-        </div>
-        <div class="navitem">
-            <a class="btn btn-primary" href="{{gradelink}}">{{#str}}gradeverb, core{{/str}}</a>
-        </div>
-        <div class="navitem">
-            {{> mod_assign/grades/grade_button }}
-        </div>
-
+<div
+    data-region="posts"
+    id="post-region-{{uniqid}}"
+>
+    <div class="no-post-container text-center p-5">
+        {{#pix}} no-posts, mod_forum {{/pix}}
+        <h2 class="mt-3 font-weight-bold">WIP: Assign submission content not fetched</h2>
     </div>
 </div>

@@ -1,6 +1,5 @@
-import * as Selectors from './grader/selectors';
+import * as Selectors from 'mod_assign/grader/selectors';
 import * as Grader from 'core_grades/local/grader';
-import Repository from './grader/repo';
 import Notification from 'core/notification';
 import Templates from 'core/templates';
 import CourseRepository from 'core_course/repository';
@@ -12,16 +11,8 @@ import {relativeUrl} from 'core/url';
  * @param {Number} cmid
  */
 const getContentForUserIdFunction = (cmid) => (userid) => {
-    /**
-     * Given the parent function is called with the second param set execute the partially executed function.
-     *
-     * @param {Number} userid
-     */
-    return Repository.foo(userid, cmid)
-        .then((context) => {
-            return Templates.render('gradereport_singleview/page_toggler', context);
-        })
-        .catch(Notification.exception);
+    window.console.log('getContentForUserIdFunction', cmid, userid);
+    return Templates.render('mod_assign/grades/grader/submission', {}).catch(Notification.exception);
 };
 
 /**

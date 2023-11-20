@@ -15,34 +15,36 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_assign/submission_actionmenu
+    @template mod_forum/grades/view_grade_button
 
-    Actions for grading submissions in the assignment.
+    Template which defines a forum post for sending in a single-post HTML email.
 
     Classes required for JS:
     * none
 
-    Context variables required for this template:
-    * see mod/assign/classes/output/actionmenu.php
+    Data attributes required for JS:
+    * none
 
     Example context (json):
     {
-        "submissionlink": "https://moodle.org",
-        "gradelink": "https://moodle.org"
     }
-
 }}
-<div class="container-fluid tertiary-navigation">
-    <div class="row">
-        <div class="navitem">
-            <a class="btn btn-secondary mr-1" href="{{submissionlink}}">{{#str}}viewgrading, mod_assign{{/str}}</a>
-        </div>
-        <div class="navitem">
-            <a class="btn btn-primary" href="{{gradelink}}">{{#str}}gradeverb, core{{/str}}</a>
-        </div>
-        <div class="navitem">
-            {{> mod_assign/grades/grade_button }}
-        </div>
-
-    </div>
-</div>
+<button
+    class="btn btn-secondary"
+    data-grade-action="view"
+    data-contextid="{{contextid}}"
+    data-cmid="{{cmid}}"
+    data-name="{{name}}"
+    data-group="{{groupid}}"
+    data-userid="{{userid}}"
+    data-grading-component="{{gradingcomponent}}"
+    data-grading-component-subtype="{{gradingcomponentsubtype}}"
+    data-gradable-itemtype="forum"
+    >
+        {{#str}}viewgrades, forum{{/str}}
+</button>
+{{#js}}
+    require(['mod_forum/grades/grader'], function(Grader) {
+    Grader.registerLaunchListeners();
+    });
+{{/js}}

@@ -61,13 +61,15 @@ class actionmenu implements templatable, renderable {
      */
     public function export_for_template(\renderer_base $output): array {
         list($course, $cm) = get_course_and_cm_from_cmid($this->cmid, 'assign');
+        $context = \context_module::instance($cm->id);
+        $assign = new \assign($context, null, null);
         $groupid = groups_get_activity_group($cm, true) ?: null;
         return [
             'submissionlink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grading']))->out(false),
             'gradelink' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grader']))->out(false),
-            'contextid' => $cm->id,
+            'contextid' => $context->id,
             'cmid' => $this->cmid,
-            'name' => format_string('Fake name'),
+            'name' => $assign->get_instance()->name,
             'courseid' => $course->id,
             'coursename' => format_string($course->shortname),
             'groupid' => $groupid,

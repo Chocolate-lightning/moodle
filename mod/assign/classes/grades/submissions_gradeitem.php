@@ -34,6 +34,7 @@ use mod_forum\local\container as forum_container;
 use mod_forum\local\entities\forum as forum_entity;
 use required_capability_exception;
 use stdClass;
+require_once($CFG->dirroot.'/mod/assign/locallib.php');
 
 /**
  * Grade item storage for mod_forum.
@@ -44,6 +45,7 @@ use stdClass;
  */
 class submissions_gradeitem extends component_gradeitem {
     protected $assign;
+    protected $cm;
 
     /**
      * Return an instance based on the context in which it is used.
@@ -51,10 +53,26 @@ class submissions_gradeitem extends component_gradeitem {
      * @param context $context
      */
     public static function load_from_context(context $context): parent {
+        $cm = \context_module::instance($context->id);
+        $assign = new \assign($cm, null, null);
+        //$assigninstance = $assign->get_instance();
+        //$instance->assign = $assign;
+        //$assign = $forumvault->get_from_course_module_id((int) $context->instanceid);
+        return static::load_from_assign($assign);
+    }
 
-        $forum = $context;
+    /**
+     * Return an instance using the assign instance.
+     *
+     * @param $assign
+     *
+     * @return submissions_gradeitem
+     */
+    public static function load_from_assign($assign): self {
+        $instance = new static('mod_assign', $assign->get_context(), 'submissions');
+        $instance->assign = $assign;
 
-        return static::load_from_forum_entity($forum);
+        return $instance;
     }
 
     /**
@@ -72,7 +90,7 @@ class submissions_gradeitem extends component_gradeitem {
      * @return bool
      */
     public function is_grading_enabled(): bool {
-        return $this->assign->is_grading_enabled();
+        return true;
     }
 
     /**
@@ -107,9 +125,7 @@ class submissions_gradeitem extends component_gradeitem {
      * @return int
      */
     protected function get_gradeitem_value(): int {
-        $getter = "get_grade_for_{$this->itemname}";
-
-        return $this->assign->{$getter}();
+        return (int) $this->assign->get_instance()->grade;
     }
 
     /**
@@ -124,8 +140,8 @@ class submissions_gradeitem extends component_gradeitem {
         global $DB;
 
         $grade = (object) [
-            'assign' => $this->assign->get_id(),
-            'itemnumber' => $this->itemnumber,
+            'assignment' => $this->assign->get_instance()->id,
+            'attemptnumber' => $this->itemnumber,
             'userid' => $gradeduser->id,
             'timemodified' => time(),
         ];
@@ -148,8 +164,8 @@ class submissions_gradeitem extends component_gradeitem {
         global $DB;
 
         $params = [
-            'assign' => $this->assign->get_id(),
-            'itemnumber' => $this->itemnumber,
+            'assignment' => $this->assign->get_instance()->id,
+            'attemptnumber' => $this->itemnumber,
             'userid' => $gradeduser->id,
         ];
 
@@ -175,8 +191,8 @@ class submissions_gradeitem extends component_gradeitem {
         global $DB;
 
         $params = [
-            'assign' => $this->forum->get_id(),
-            'itemnumber' => $this->itemnumber,
+            'assignment' => $this->assign->get_instance()->id,
+            'attemptnumber' => $this->itemnumber,
             'userid' => $gradeduser->id,
         ];
 
@@ -198,8 +214,8 @@ class submissions_gradeitem extends component_gradeitem {
         global $DB;
 
         return $DB->get_records($this->get_table_name(), [
-            'assign' => $this->assign->get_id(),
-            'itemnumber' => $this->itemnumber,
+            'assignment' => $this->assign->get_instance()->id,
+            'attemptnumber' => $this->itemnumber,
         ]);
     }
 
@@ -212,7 +228,7 @@ class submissions_gradeitem extends component_gradeitem {
      * @return int
      */
     public function get_grade_instance_id(): int {
-        return (int) $this->assign->get_id();
+        return (int) $this->assign->get_grade_item()->id;
     }
 
     /**
@@ -229,7 +245,7 @@ class submissions_gradeitem extends component_gradeitem {
         // course. In cases where the 'grade_report_showonlyactiveenrol' user preference is not set we are falling back
         // to the set value for the 'grade_report_showonlyactiveenrol' config.
         return get_user_preferences('grade_report_showonlyactiveenrol', $showonlyactiveenrolconfig) ||
-            !has_capability('moodle/course:viewsuspendedusers', \context_course::instance($this->forum->get_course_id()));
+            !has_capability('moodle/course:viewsuspendedusers', \context_course::instance($this->assign->get_course_id()));
     }
 
     /**
@@ -243,10 +259,9 @@ class submissions_gradeitem extends component_gradeitem {
      */
     protected function store_grade(stdClass $grade): bool {
         global $CFG, $DB;
-        require_once("{$CFG->dirroot}/mod/forum/lib.php");
 
-        if ($grade->forum != $this->forum->get_id()) {
-            throw new coding_exception('Incorrect forum provided for this grade');
+        if ($grade->assignment != $this->assign->get_instance()->id) {
+            throw new coding_exception('Incorrect assignment provided for this grade');
         }
 
         if ($grade->itemnumber != $this->itemnumber) {
@@ -256,17 +271,12 @@ class submissions_gradeitem extends component_gradeitem {
         // Ensure that the grade is valid.
         $this->check_grade_validity($grade->grade);
 
-        $grade->forum = $this->forum->get_id();
+        $grade->assignment = $this->assign->get_instance()->id;
         $grade->timemodified = time();
 
         $DB->update_record($this->get_table_name(), $grade);
 
-        // Update in the gradebook (note that 'cmidnumber' is required in order to update grades).
-        $mapper = forum_container::get_legacy_data_mapper_factory()->get_forum_data_mapper();
-        $forumrecord = $mapper->to_legacy_object($this->forum);
-        $forumrecord->cmidnumber = $this->forum->get_course_module_record()->idnumber;
-
-        forum_update_grades($forumrecord, $grade->userid);
+        $this->assign->update_gradebook(false, $this->assign->get_instance()->id);
 
         return true;
     }
