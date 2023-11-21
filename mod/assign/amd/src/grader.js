@@ -1,3 +1,26 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This module will tie together all the different calls the gradable module will make.
+ *
+ * @module     mod_assign/grades/grader
+ * @copyright  2023 Mathew May <mathew.solutions>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+import Ajax from 'core/ajax';
 import * as Selectors from 'mod_assign/grader/selectors';
 import * as Grader from 'core_grades/local/grader';
 import Notification from 'core/notification';
@@ -6,13 +29,34 @@ import CourseRepository from 'core_course/repository';
 import {relativeUrl} from 'core/url';
 
 /**
- * Curried function with CMID set, this is then used in unified grader as a fetch a users content.
+ * Get the submissions for the user and cmid provided.
  *
- * @param {Number} cmid
+ * @param {number} userid
+ * @param {number} moduleid
+ * @return {*|Promise}
  */
-const getContentForUserIdFunction = (cmid) => (userid) => {
-    window.console.log('getContentForUserIdFunction', cmid, userid);
-    return Templates.render('mod_assign/grades/grader/submission', {}).catch(Notification.exception);
+const getSubmissionByUserID = (userid, moduleid) => {
+    const request = {
+        methodname: 'mod_assign_get_submission_status',
+        args: {
+            assignid: moduleid,
+            userid: userid,
+        },
+    };
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Curried function with module id set, this is then used in unified grader as a fetch a users content.
+ *
+ * @param {Number} moduleid
+ */
+const getContentForUserIdFunction = (moduleid) => (userid) => {
+    return getSubmissionByUserID(userid, moduleid)
+        .then(context => {
+            return Templates.render('mod_assign/grades/grader/submission', context);
+        })
+        .catch(Notification.exception);
 };
 
 /**
@@ -40,7 +84,7 @@ const findGradableNode = node => node.closest(Selectors.gradableItem);
  * @param {object} param
  * @param {bool} [param.focusOnClose=null]
  */
-const launchWholeForumGrading = async(rootNode, {
+const launchSubmissionGrading = async(rootNode, {
     focusOnClose = null,
 } = {}) => {
     const data = rootNode.dataset;
@@ -57,7 +101,7 @@ const launchWholeForumGrading = async(rootNode, {
 
     await Grader.launch(
         getUsersForCmidFunction(data.cmid, groupID, onlyActive),
-        getContentForUserIdFunction(data.cmid),
+        getContentForUserIdFunction(data.moduleId),
         gradingPanelFunctions.getter,
         gradingPanelFunctions.setter,
         {
@@ -89,7 +133,7 @@ export const registerLaunchListeners = () => {
                 // at that point and the default action is implemented.
                 e.preventDefault();
                 try {
-                    await launchWholeForumGrading(rootNode, {
+                    await launchSubmissionGrading(rootNode, {
                         focusOnClose: e.target,
                     });
                 } catch (error) {

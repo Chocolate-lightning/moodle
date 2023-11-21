@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Grade item storage for mod_forum.
+ * Grade item storage for mod_assign.
  *
- * @package   mod_forum
- * @copyright Andrew Nicols <andrew@nicols.co.uk>
+ * @package   mod_assign
+ * @copyright Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,23 +29,12 @@ namespace mod_assign\grades;
 use coding_exception;
 use context;
 use core_grades\component_gradeitem;
-use mod_forum\grades\forum_gradeitem;
-use mod_forum\local\container as forum_container;
-use mod_forum\local\entities\forum as forum_entity;
 use required_capability_exception;
 use stdClass;
 require_once($CFG->dirroot.'/mod/assign/locallib.php');
 
-/**
- * Grade item storage for mod_forum.
- *
- * @package   mod_forum
- * @copyright Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class submissions_gradeitem extends component_gradeitem {
     protected $assign;
-    protected $cm;
 
     /**
      * Return an instance based on the context in which it is used.
@@ -53,11 +42,7 @@ class submissions_gradeitem extends component_gradeitem {
      * @param context $context
      */
     public static function load_from_context(context $context): parent {
-        $cm = \context_module::instance($context->id);
-        $assign = new \assign($cm, null, null);
-        //$assigninstance = $assign->get_instance();
-        //$instance->assign = $assign;
-        //$assign = $forumvault->get_from_course_module_id((int) $context->instanceid);
+        $assign = new \assign($context, null, null);
         return static::load_from_assign($assign);
     }
 
@@ -94,14 +79,14 @@ class submissions_gradeitem extends component_gradeitem {
     }
 
     /**
-     * Whether the grader can grade the gradee.
+     * Whether the grader can grade the grade.
      *
      * @param stdClass $gradeduser The user being graded
      * @param stdClass $grader The user who is grading
      * @return bool
      */
     public function user_can_grade(stdClass $gradeduser, stdClass $grader): bool {
-        // Validate the required capabilities.
+        // TODO: Validate the required capabilities.
         return true;
     }
 
@@ -114,13 +99,12 @@ class submissions_gradeitem extends component_gradeitem {
      */
     public function require_user_can_grade(stdClass $gradeduser, stdClass $grader): void {
         if (!true) {
-            throw new required_capability_exception($this->assign->get_context(), 'mod/forum:grade', 'nopermissions', '');
+            throw new required_capability_exception($this->assign->get_context(), 'mod/assign:grade', 'nopermissions', '');
         }
     }
 
     /**
      * Get the grade value for this instance.
-     * The itemname is translated to the relevant grade field on the forum entity.
      *
      * @return int
      */
@@ -129,7 +113,7 @@ class submissions_gradeitem extends component_gradeitem {
     }
 
     /**
-     * Create an empty forum_grade for the specified user and grader.
+     * Create an empty assign_grade for the specified user and grader.
      *
      * @param stdClass $gradeduser The user being graded
      * @param stdClass $grader The user who is grading
@@ -163,6 +147,7 @@ class submissions_gradeitem extends component_gradeitem {
     public function get_grade_for_user(stdClass $gradeduser, stdClass $grader = null): ?stdClass {
         global $DB;
 
+        // TODO: Add support for multiple attempts.
         $params = [
             'assignment' => $this->assign->get_instance()->id,
             'attemptnumber' => $this->itemnumber,
@@ -245,7 +230,7 @@ class submissions_gradeitem extends component_gradeitem {
         // course. In cases where the 'grade_report_showonlyactiveenrol' user preference is not set we are falling back
         // to the set value for the 'grade_report_showonlyactiveenrol' config.
         return get_user_preferences('grade_report_showonlyactiveenrol', $showonlyactiveenrolconfig) ||
-            !has_capability('moodle/course:viewsuspendedusers', \context_course::instance($this->assign->get_course_id()));
+            !has_capability('moodle/course:viewsuspendedusers', \context_course::instance($this->assign->get_course()->id));
     }
 
     /**

@@ -30,11 +30,25 @@
     }
 }}
 <div
-    data-region="posts"
-    id="post-region-{{uniqid}}"
+    data-region="submission"
+    id="submission-region-{{uniqid}}"
 >
-    <div class="no-post-container text-center p-5">
-        {{#pix}} no-posts, mod_forum {{/pix}}
-        <h2 class="mt-3 font-weight-bold">WIP: Assign submission content not fetched</h2>
-    </div>
+    {{#lastattempt}}
+        <div class="no-submission-container text-center p-5">
+            <h1>Online text submission content</h1>
+            {{#submission}}
+                {{#plugins}}
+                    {{#editorfields}}
+                        {{{text}}}
+                    {{/editorfields}}
+                {{/plugins}}
+            {{/submission}}
+        </div>
+    {{/lastattempt}}
+    {{^lastattempt}}
+        <div class="no-post-container text-center p-5">
+            {{#pix}} no-posts, mod_forum {{/pix}}
+            <h2 class="mt-3 font-weight-bold">No previous submission</h2>
+        </div>
+    {{/lastattempt}}
 </div>

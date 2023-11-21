@@ -75,6 +75,7 @@ class actionmenu implements templatable, renderable {
             'groupid' => $groupid,
             'gradingcomponent' => 'core_grades',
             'gradingcomponentsubtype' => 'point',
+            'moduleid' => $assign->get_instance()->id,
             'sendstudentnotifications' => false,
             'gradeonlyactiveusers' => true,
         ];
