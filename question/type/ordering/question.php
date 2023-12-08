@@ -484,39 +484,6 @@ class qtype_ordering_question extends question_graded_automatically {
      *
      * @param question_attempt $qa the question attempt being displayed.
      * @param question_display_options $options the options that control display of the question.
-     * @param string $component the name of the component we are serving files for.
-     * @param string $filearea the name of the file area.
-     * @param array $args the remaining bits of the file path.
-     * @param bool $forcedownload whether the user must be forced to download the file.
-     * @return bool true if the user can access this file.
-     */
-    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        if ($component == 'question') {
-            if ($filearea == 'answer') {
-                $answerid = reset($args); // Value of "itemid" is answer id.
-                return array_key_exists($answerid, $this->answers);
-            }
-            if (in_array($filearea, $this->qtype->feedbackfields)) {
-                return $this->check_combined_feedback_file_access($qa, $options, $filearea, $args);
-            }
-            if ($filearea == 'hint') {
-                return $this->check_hint_file_access($qa, $options, $args);
-            }
-        }
-        return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
-    }
-
-    // Methods from "question_graded_automatically" class.
-    // See "question/type/questionbase.php".
-
-    /**
-     * Check a request for access to a file belonging to a combined feedback field.
-     *
-     * Fix a bug in Moodle 2.9 & 3.0, in which this method does not declare $args,
-     * so trying to use $args[0] always fails and images in feedback are not shown.
-     *
-     * @param question_attempt $qa the question attempt being displayed.
-     * @param question_display_options $options the options that control display of the question.
      * @param string $filearea the name of the file area.
      * @param array $args the remaining bits of the file path.
      * @return bool whether access to the file should be allowed.
