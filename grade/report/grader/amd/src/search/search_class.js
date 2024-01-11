@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery';
-import CustomEvents from "core/custom_interaction_events";
+import Pending from 'core/pending';
 import {debounce} from 'core/utils';
 
 /**
@@ -24,25 +24,19 @@ import {debounce} from 'core/utils';
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// Reused variables for the class.
-const events = [
-    'keydown',
-    CustomEvents.events.activate,
-    CustomEvents.events.keyboardActivate
-];
-const UP = -1;
-const DOWN = 1;
 
 export default class {
     // Define our standard lookups.
     selectors = {
-        component: this.setComponentSelector(),
-        trigger: this.setTriggerSelector(),
+        component: this.componentSelector(),
+        toggle: '[data-toggle="dropdown"]',
+        instance: '[data-region="instance"]',
         input: '[data-action="search"]',
         clearSearch: '[data-action="clearsearch"]',
         dropdown: this.setDropdownSelector(),
         resultitems: '[role="option"]',
         viewall: '#select-all',
+        combobox: '[role="combobox"]',
     };
 
     // The results from the called filter function.
@@ -69,10 +63,13 @@ export default class {
 
     // DOM nodes that persist.
     component = document.querySelector(this.selectors.component);
+    instance = this.component.dataset.instance;
+    toggle = this.component.querySelector(this.selectors.toggle);
     searchInput = this.component.querySelector(this.selectors.input);
     searchDropdown = this.component.querySelector(this.selectors.dropdown);
     $searchButton = $(this.selectors.trigger);
     clearSearchButton = this.component.querySelector(this.selectors.clearSearch);
+    combobox = this.component.querySelector(this.selectors.combobox);
     $component = $(this.component);
 
     constructor() {
@@ -80,10 +77,18 @@ export default class {
         this.setSearchTerms(this.searchInput?.value ?? '');
         // Begin handling the base search component.
         this.registerClickHandlers();
-        this.registerKeyHandlers();
+
         // Conditionally set up the input handler since we don't know exactly how we were called.
+        // If the combobox is rendered later, then you'll need to call this.registerInputHandlers() manually.
+        // An example of this is the collapse columns in the gradebook.
         if (this.searchInput !== null) {
             this.registerInputHandlers();
+            this.registerChangeHandlers();
+        }
+
+        // If we have a search term, show the clear button.
+        if (this.getSearchTerm() !== '') {
+            this.clearSearchButton.classList.remove('d-none');
         }
     }
 
@@ -132,9 +137,10 @@ export default class {
 
     /**
      * Stub out a required function.
+     * @deprecated since Moodle 4.4
      */
-    setTriggerSelector() {
-        throw new Error(`setTriggerSelector() must be implemented in ${this.constructor.name}`);
+    triggerSelector() {
+        window.console.warning('triggerSelector() is deprecated. Consider using this.selectors.toggle');
     }
 
     /**
@@ -227,9 +233,9 @@ export default class {
      */
     closeSearch(clear = false) {
         this.toggleDropdown();
-        // Hide the "clear" search button search bar.
-        this.clearSearchButton.classList.add('d-none');
         if (clear) {
+            // Hide the "clear" search button search bar.
+            this.clearSearchButton.classList.add('d-none');
             // Clear the entered search query in the search bar and hide the search results container.
             this.setSearchTerms('');
             this.searchInput.value = "";
@@ -242,14 +248,10 @@ export default class {
      * @param {Boolean} on Flag to toggle hiding or showing values.
      */
     toggleDropdown(on = false) {
-        this.$component.dropdown('toggle');
-        this.$searchButton.attr('aria-expanded', on);
         if (on) {
-            this.searchDropdown.classList.add('show');
-            $(this.searchDropdown).show();
+            $(this.toggle).dropdown('show');
         } else {
-            this.searchDropdown.classList.remove('show');
-            $(this.searchDropdown).hide();
+            $(this.toggle).dropdown('hide');
         }
     }
 
@@ -287,15 +289,11 @@ export default class {
     }
 
     /**
-     * Register key event listeners.
+     * Register change event listeners.
      */
-    registerKeyHandlers() {
-        CustomEvents.define(document, events);
-
-        // Register click events.
-        events.forEach((event) => {
-            this.component.addEventListener(event, this.keyHandler.bind(this));
-        });
+    registerChangeHandlers() {
+        const valueElement = this.component.querySelector(`#${this.combobox.dataset.inputElement}`);
+        valueElement.addEventListener('change', this.changeHandler.bind(this));
     }
 
     /**
@@ -305,17 +303,30 @@ export default class {
         // Register & handle the text input.
         this.searchInput.addEventListener('input', debounce(async() => {
             this.setSearchTerms(this.searchInput.value);
-            // We can also require a set amount of input before search.
+
+            const pendingPromise = new Pending();
             if (this.getSearchTerm() === '') {
                 this.toggleDropdown();
-                // Hide the "clear" search button in the search bar.
                 this.clearSearchButton.classList.add('d-none');
+                await this.filterrenderpipe();
             } else {
-                // Display the "clear" search button in the search bar.
                 this.clearSearchButton.classList.remove('d-none');
                 await this.renderAndShow();
             }
-        }, 300));
+            pendingPromise.resolve();
+        }, 300, {pending: true}));
+    }
+
+    /**
+     * Update any changeable nodes, filter and then render the result.
+     *
+     * @returns {Promise<void>}
+     */
+    async filterrenderpipe() {
+        this.updateNodes();
+        this.setMatchedResults(await this.filterDataset(await this.getDataset()));
+        this.filterMatchDataset();
+        await this.renderDropdown();
     }
 
     /**
@@ -334,138 +345,36 @@ export default class {
     }
 
     /**
-     * Set the current focus either on the preceding or next result item.
-     *
-     * @param {Number} direction Is the user moving up or down the resultset?
-     * @param {KeyboardEvent} e The JS event from the event handler.
-     */
-    keyUpDown(direction, e) {
-        e.preventDefault();
-        // Stop Bootstrap from being clever.
-        e.stopPropagation();
-        // Current focus is on the input box so depending on direction, go to the top or the bottom of the displayed results.
-        if (document.activeElement === this.searchInput && this.resultNodes.length > 0) {
-            if (direction === UP) {
-                this.moveToLastNode();
-            } else {
-                this.moveToFirstNode();
-            }
-        }
-        const index = this.resultNodes.indexOf(this.currentNode);
-        if (this.currentNode) {
-            if (direction === UP) {
-                if (index === 0) {
-                    this.moveToLastNode();
-                } else {
-                    this.moveToNode(index - 1);
-                }
-            } else {
-                if (index + 1 >= this.resultNodes.length) {
-                    this.moveToFirstNode();
-                } else {
-                    this.moveToNode(index + 1);
-                }
-            }
-        } else {
-            if (direction === UP) {
-                this.moveToLastNode();
-            } else {
-                this.moveToFirstNode();
-            }
-        }
-    }
-
-    /**
      * The handler for when a user interacts with the component.
      *
      * @param {MouseEvent} e The triggering event that we are working with.
      */
     async clickHandler(e) {
         this.updateNodes();
-
-        // Prevent normal key presses activating this.
-        if (e.target.closest('.dropdown-item') && e.button === 0) {
-            window.location = e.target.closest('.dropdown-item').href;
-        }
         // The "clear search" button is triggered.
-        if (e.target.closest(this.selectors.clearSearch) && e.button === 0) {
+        if (e.target.closest(this.selectors.clearSearch)) {
             this.closeSearch(true);
-            this.searchInput.focus({preventScroll: true});
+            this.searchInput.focus();
+            // Remove aria-activedescendant when the available options change.
+            this.searchInput.removeAttribute('aria-activedescendant');
         }
         // User may have accidentally clicked off the dropdown and wants to reopen it.
-        if (e.target.closest(this.selectors.input) && this.getSearchTerm() !== '' && e.button === 0) {
+        if (
+            this.getSearchTerm() !== ''
+            && !this.getHTMLElements().searchDropdown.classList.contains('show')
+            && e.target.closest(this.selectors.input)
+        ) {
             await this.renderAndShow();
         }
     }
 
     /**
-     * The handler for when a user presses a key within the component.
+     * The handler for when a user changes the value of the component (selects an option from the dropdown).
      *
-     * @param {KeyboardEvent} e The triggering event that we are working with.
+     * @param {Event} e The change event.
      */
-    keyHandler(e) {
-        this.updateNodes();
-        // Switch the key presses to handle keyboard nav.
-        switch (e.key) {
-            case 'ArrowUp':
-                this.keyUpDown(UP, e);
-                break;
-            case 'ArrowDown':
-                this.keyUpDown(DOWN, e);
-                break;
-            case 'Home':
-                e.preventDefault();
-                this.moveToFirstNode();
-                break;
-            case 'End':
-                e.preventDefault();
-                this.moveToLastNode();
-                break;
-            case 'Tab':
-                // If the current focus is on the view all link, then close the widget then set focus on the next tertiary nav item.
-                if (e.target.closest(this.selectors.viewall)) {
-                    this.closeSearch();
-                }
-                break;
-        }
+    // eslint-disable-next-line no-unused-vars
+    changeHandler(e) {
+        // Components may override this method to do something.
     }
-
-    /**
-     * Set focus on a given node after parsed through the calling functions.
-     *
-     * @param {HTMLElement} node The node to set focus upon.
-     */
-    selectNode = (node) => {
-        node.focus({preventScroll: true});
-        this.searchDropdown.scrollTop = node.offsetTop - (node.clientHeight / 2);
-    };
-
-    /**
-     * Set the focus on the first node within the array.
-     */
-    moveToFirstNode = () => {
-        if (this.resultNodes.length > 0) {
-            this.selectNode(this.resultNodes[0]);
-        }
-    };
-
-    /**
-     * Set the focus to the final node within the array.
-     */
-    moveToLastNode = () => {
-        if (this.resultNodes.length > 0) {
-            this.selectNode(this.resultNodes[this.resultNodes.length - 1]);
-        }
-    };
-
-    /**
-     * Set focus on any given specified node within the node array.
-     *
-     * @param {Number} index Which item within the array to set focus upon.
-     */
-    moveToNode = (index) => {
-        if (this.resultNodes.length > 0) {
-            this.selectNode(this.resultNodes[index]);
-        }
-    };
 }

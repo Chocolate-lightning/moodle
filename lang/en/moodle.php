@@ -2442,3 +2442,4 @@ $string['registrationno'] = 'No, I do not wish to receive any emails';
 $string['createuserandpass'] = 'Choose your username and password';
 $string['descriptiona'] = 'Description: {$a}';
 $string['supplyinfo'] = 'More details';
+$string['showallusers'] = 'Show all users';

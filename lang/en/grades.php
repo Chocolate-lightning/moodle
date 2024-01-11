@@ -892,8 +892,6 @@ $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
 
-$string['aria-toggledropdown'] = 'Toggle the following dropdown';
-
 // Deprecated since Moodle 4.0.
 $string['navmethod'] = 'Navigation method';
 $string['dropdown'] = 'Drop-down menu';
@@ -921,3 +919,4 @@ $string['showcalculations'] = 'Show calculations';
 $string['showcalculations_help'] = 'If enabled, when editing, a calculator icon is shown for each grade item and category with a visual indicator that a grade item is calculated.';
 $string['studentsperpage'] = 'Students per page';
 $string['studentsperpage_help'] = 'This setting determines the number of students displayed per page in the grader report.';
+$string['aria-toggledropdown'] = 'Toggle the following dropdown';

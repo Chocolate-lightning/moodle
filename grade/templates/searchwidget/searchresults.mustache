@@ -33,13 +33,23 @@
         ]
     }
 }}
-<div class="searchresultitemscontainer-wrapper dropdown">
-    <ul class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group rounded-0" role="none" data-region="search-result-items-container">
-        {{#searchresults}}
-            {{>core_grades/searchwidget/searchitem}}
-        {{/searchresults}}
-        {{^searchresults}}
-            <p>{{#str}} resultsfound, core, 0 {{/str}}</p>
-        {{/searchresults}}
+<div class="d-flex flex-column mh-100 h-100">
+    <ul
+            id="{{$listid}}list{{/listid}}-{{instance}}-result-listbox"
+            class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mx-0 {{$listclasses}}{{/listclasses}}"
+            role="listbox"
+            data-region="search-result-items-container"
+    >
+        {{#hasresults}}
+            {{$results}}
+                {{#results}}
+                    {{>core/local/comboboxsearch/resultitem}}
+                {{/results}}
+            {{/results}}
+            {{$selectall}}{{/selectall}}
+        {{/hasresults}}
+        {{^hasresults}}
+            <span class="small d-block px-4 my-4">{{#str}} noresultsfor, core, {{searchterm}}{{/str}}</span>
+        {{/hasresults}}
     </ul>
 </div>

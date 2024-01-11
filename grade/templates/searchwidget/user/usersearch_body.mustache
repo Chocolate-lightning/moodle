@@ -21,23 +21,24 @@
         "displayunsearchablecontent": true
     }
 }}
-{{< core/search_input_auto }}
-    {{$label}}{{#str}}
-        searchusers, core_grades
-    {{/str}}{{/label}}
-    {{$placeholder}}{{#str}}
-        searchusers, core_grades
-    {{/str}}{{/placeholder}}
-    {{$additionalattributes}}
-        role="combobox"
-        aria-expanded="true"
-        aria-controls="listbox-{{uniqid}}"
-        aria-autocomplete="list"
-        data-input-element="input-{{uniqid}}"
-    {{/additionalattributes}}
-{{/ core/search_input_auto }}
-<input type="hidden" name="search" id="input-{{uniqid}}"/>
-<div role="listbox" id="listbox-{{uniqid}}" class="searchresultscontainer" data-region="search-results-container-widget"></div>
-{{#displayunsearchablecontent}}
-    <div class="unsearchablecontentcontainer" data-region="unsearchable-content-container-widget"></div>
-{{/displayunsearchablecontent}}
+<div class="flex-column h-100 w-100">
+    <span class="d-none" data-region="courseid" data-courseid="{{courseid}}" aria-hidden="true"></span>
+    {{< core/search_input_auto }}
+        {{$label}}{{#str}}
+            searchitems, core
+        {{/str}}{{/label}}
+        {{$placeholder}}{{#str}}
+            searchitems, core
+        {{/str}}{{/placeholder}}
+        {{$value}}{{currentvalue}}{{/value}}
+        {{$additionalattributes}}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="list-{{instance}}-result-listbox"
+            aria-autocomplete="list"
+            data-input-element="result-input-{{uniqid}}-{{instance}}"
+        {{/additionalattributes}}
+    {{/ core/search_input_auto }}
+    <input type="hidden" name="search" id="result-input-{{uniqid}}-{{instance}}"/>
+    <div data-region="searchplaceholder"></div>
+</div>

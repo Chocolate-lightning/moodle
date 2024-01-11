@@ -21,39 +21,22 @@
 
     Example context (json):
     {
-        "id": "1",
-        "name": "Quiz 1",
-        "fullname": "Cameron Greeve"
+        "id": 2,
+        "instance": 25,
+        "name": "Foo bar"
     }
 }}
 <li
-    role="option"
-    class="dropdown-item d-flex px-2 py-1 {{^name}}align-items-center{{/name}}"
-    {{#name}}id="item-{{id}}"{{/name}}
-    {{^name}}id="user-{{id}}"{{/name}}
-    data-value="{{id}}"
+        id="result-{{instance}}-{{id}}"
+        class="w-100 dropdown-item d-flex px-0 align-items-center"
+        role="option"
+        data-short-text="{{$shorttext}}{{/shorttext}}"
+        data-value="{{id}}"
+        aria-label="{{$arialabel}}{{name}}{{/arialabel}}"
 >
-    {{#name}}
-        <span class="pull-left result-cell text-truncate mr-2">
+    {{$content}}
+        <span class="d-block w-100 px-2 text-truncate">
             {{name}}
         </span>
-    {{/name}}
-    {{^name}}
-        <div class="d-block pr-2 w-25">
-            {{#profileimage}}
-                <img class="userpicture w-75 mx-auto d-block" src="{{profileimage}}" alt="" />
-            {{/profileimage}}
-            {{^profileimage}}
-                <span class="userinitials"></span>
-            {{/profileimage}}
-        </div>
-        <div class="d-block pr-3 w-75">
-            <span class="w-100 p-0 font-weight-bold">
-                {{fullname}}
-            </span>
-            <span class="w-100 pull-left text-truncate small">
-                {{email}}
-            </span>
-        </div>
-    {{/name}}
+    {{/content}}
 </li>
