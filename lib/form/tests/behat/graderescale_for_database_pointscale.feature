@@ -20,7 +20,7 @@ Feature: Using the database activities which support point scale
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
 
-  @javascript
+  @javascript @test
   Scenario: Database rescale grade should not be possible when users are graded
     Given I am on the "Course 1" course page logged in as teacher1
     And I add a "Short text" field to "Test database name" database and I fill the form with:

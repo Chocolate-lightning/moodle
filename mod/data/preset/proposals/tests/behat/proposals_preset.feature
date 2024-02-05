@@ -95,7 +95,7 @@ Feature: Users can use the Proposals preset
     And I should see "This is the summary for the new entry."
     And I should see "This is the content for the new entry."
 
-  @javascript
+  @javascript @test
   Scenario: Proposals. Renaming a field should affect the template
     Given I am on the "Student projects" "data activity" page logged in as teacher1
     And I navigate to "Fields" in current page administration

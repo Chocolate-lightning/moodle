@@ -1,4 +1,4 @@
-@mod @mod_data @core_completion @javascript
+@mod @mod_data @core_completion @javascript @test
 Feature: View activity completion in the database activity
   In order to have visibility of database completion requirements
   As a student

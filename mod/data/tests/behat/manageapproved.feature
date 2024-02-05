@@ -17,7 +17,7 @@ Feature: Users can edit approved entries in database activities
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
 
-  @javascript
+  @javascript @test
   Scenario: Students can manage their approved entries to a database
     Given the following "activity" exists:
       | activity       | data               |
@@ -47,7 +47,7 @@ Feature: Users can edit approved entries in database activities
     Then I should see "Student entry"
     And "Edit" "link" should exist
 
-  @javascript
+  @javascript @test
   Scenario: Students can not manage their approved entries to a database
     # Create database activity and don't allow editing of approved entries.
     Given the following "activity" exists:

@@ -77,7 +77,7 @@ Feature: Users can use the Journal preset
     Then I should see "This is the title"
     And I should see "This is the content for the new entry."
 
-  @javascript
+  @javascript @test
   Scenario: Journal. Renaming a field should affect the template
     Given I am on the "Student reflections" "data activity" page logged in as teacher1
     And I navigate to "Fields" in current page administration

@@ -91,7 +91,7 @@ Feature: Users can use the Image gallery preset
     Then I should see "New image"
     And I should see "This is the description for the new image."
 
-  @javascript
+  @javascript @test
   Scenario: Image gallery. Renaming a field should affect the template
     Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I navigate to "Fields" in current page administration

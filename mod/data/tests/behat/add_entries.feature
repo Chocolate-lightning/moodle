@@ -64,7 +64,7 @@ Feature: Users can add entries to database activities
     And I should see "Student second entry"
     And I should see "Student third entry"
 
-  @javascript @editor @editor_atto @atto @atto_h5p
+  @javascript @editor @editor_atto @atto @atto_h5p @test
   Scenario: If a new text area entry is added, the filepicker is displayed in the H5P Atto button
     Given I am on the "Course 1" course page logged in as teacher1
     And I add a "Text area" field to "Test database name" database and I fill the form with:
@@ -75,7 +75,7 @@ Feature: Users can add entries to database activities
     And I click on "Insert H5P" "button"
     Then I should see "Browse repositories..."
 
-  @javascript
+  @javascript @test
   Scenario: If maximum number of entries is set other than None then add entries should be seen only if number of entries is less than it
     Given I am on the "Test database name" "data activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
@@ -105,7 +105,7 @@ Feature: Users can add entries to database activities
     And I am on the "Test database name" "data activity" page logged in as student1
     And I should see "Add entry"
 
-  @javascript
+  @javascript @test
   Scenario: Guest user cannot add entries to a database
     Given I am on the "Course 1" "enrolment methods" page logged in as teacher1
     And I click on "Enable" "link" in the "Guest access" "table_row"

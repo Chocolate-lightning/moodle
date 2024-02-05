@@ -100,7 +100,7 @@ Feature: Users can use the Resources preset
     And I should see "https://thisisthelink.cat"
     And I should see "Type2"
 
-  @javascript
+  @javascript @test
   Scenario: Resources. Renaming a field should affect the template
     Given I am on the "Student resources" "data activity" page logged in as teacher1
     And I navigate to "Fields" in current page administration

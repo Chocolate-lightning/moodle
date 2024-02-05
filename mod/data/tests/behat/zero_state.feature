@@ -15,6 +15,7 @@ Feature: Zero state page (no fields created)
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
 
+  @test
   Scenario: Teachers see buttons to manage database when there is no field created on view page
     Given I am on the "Test database name" "data activity" page logged in as "teacher1"
     And "Import a preset" "button" should exist
@@ -28,7 +29,7 @@ Feature: Zero state page (no fields created)
     And I click on "Use a preset" "button"
     And I should see "Presets"
 
-  @javascript
+  @javascript @test
   Scenario: Teachers see buttons to manage database when there is no field created on templates page
     Given I am on the "Test database name" "data activity" page logged in as "teacher1"
     And "Import a preset" "button" should exist
