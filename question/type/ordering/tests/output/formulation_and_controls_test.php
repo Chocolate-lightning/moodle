@@ -122,37 +122,37 @@ class formulation_and_controls_test extends advanced_testcase {
                             'scoreclass' => 'correct',
                             'id' => 'ordering_item_' . md5('Modular'),
                             'answertext' => "Modular",
-                            'feedbackimage' => $correct
+                            'feedbackimage' => $correct,
                         ],
                         [
                             'scoreclass' => 'correct',
                             'id' => 'ordering_item_' . md5('Object'),
                             'answertext' => "Object",
-                            'feedbackimage' => $correct
+                            'feedbackimage' => $correct,
                         ],
                         [
                             'scoreclass' => 'correct',
                             'id' => 'ordering_item_' . md5('Oriented'),
                             'answertext' => "Oriented",
-                            'feedbackimage' => $correct
+                            'feedbackimage' => $correct,
                         ],
                         [
                             'scoreclass' => 'partial66',
                             'id' => 'ordering_item_' . md5('Learning'),
                             'answertext' => "Learning",
-                            'feedbackimage' => $partiallycorrect
+                            'feedbackimage' => $partiallycorrect,
                         ],
                         [
                             'scoreclass' => 'partial66',
                             'id' => 'ordering_item_' . md5('Dynamic'),
                             'answertext' => "Dynamic",
-                            'feedbackimage' => $partiallycorrect
+                            'feedbackimage' => $partiallycorrect,
                         ],
                         [
                             'scoreclass' => 'correct',
                             'id' => 'ordering_item_' . md5('Environment'),
                             'answertext' => "Environment",
-                            'feedbackimage' => $correct
+                            'feedbackimage' => $correct,
                         ],
                     ],
                 ],
@@ -182,37 +182,37 @@ class formulation_and_controls_test extends advanced_testcase {
                             'scoreclass' => 'incorrect',
                             'id' => 'ordering_item_' . md5('Object'),
                             'answertext' => "Object",
-                            'feedbackimage' => $incorrect
+                            'feedbackimage' => $incorrect,
                         ],
                         [
                             'scoreclass' => 'incorrect',
                             'id' => 'ordering_item_' . md5('Dynamic'),
                             'answertext' => "Dynamic",
-                            'feedbackimage' => $incorrect
+                            'feedbackimage' => $incorrect,
                         ],
                         [
                             'scoreclass' => 'incorrect',
                             'id' => 'ordering_item_' . md5('Modular'),
                             'answertext' => "Modular",
-                            'feedbackimage' => $incorrect
+                            'feedbackimage' => $incorrect,
                         ],
                         [
                             'scoreclass' => 'incorrect',
                             'id' => 'ordering_item_' . md5('Learning'),
                             'answertext' => "Learning",
-                            'feedbackimage' => $incorrect
+                            'feedbackimage' => $incorrect,
                         ],
                         [
                             'scoreclass' => 'incorrect',
                             'id' => 'ordering_item_' . md5('Environment'),
                             'answertext' => "Environment",
-                            'feedbackimage' => $incorrect
+                            'feedbackimage' => $incorrect,
                         ],
                         [
                             'scoreclass' => 'incorrect',
                             'id' => 'ordering_item_' . md5('Oriented'),
                             'answertext' => "Oriented",
-                            'feedbackimage' => $incorrect
+                            'feedbackimage' => $incorrect,
                         ],
                     ],
                 ],
