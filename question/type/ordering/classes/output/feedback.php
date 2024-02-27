@@ -44,12 +44,6 @@ class feedback extends renderable_base {
         $this->options = $options;
     }
 
-    /**
-     * Build the feedback array which is used to render the feedback.
-     *
-     * @param renderer_base $output renderer to be used to render the feedback elements.
-     * @return array
-     */
     public function export_for_template(renderer_base $output): array {
         global $PAGE;
 
