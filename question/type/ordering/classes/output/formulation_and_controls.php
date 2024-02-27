@@ -42,12 +42,6 @@ class formulation_and_controls extends renderable_base {
         parent::__construct($qa);
     }
 
-    /**
-     * Export the question based on the question attempt and the question display options.
-     *
-     * @param \renderer_base $output renderer to be used to render the action bar elements.
-     * @return array
-     */
     public function export_for_template(\renderer_base $output): array {
         global $PAGE;
 
