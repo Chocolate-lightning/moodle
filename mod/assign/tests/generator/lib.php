@@ -53,8 +53,11 @@ class mod_assign_generator extends testing_module_generator {
             'teamsubmissiongroupingid'          => 0,
             'blindmarking'                      => 0,
             'attemptreopenmethod'               => 'none',
-            'maxattempts'                       => -1,
-            'markingworkflow'                   => 0,
+            'allowedattempts'                   => [
+                'maxattemptsunl' => true,
+                'maxattemptsnum' => 1,
+            ],
+            'markingworkflow'                    => 0,
             'markingallocation'                 => 0,
             'markinganonymous'                  => 0,
             'activityformat'                    => 0,

@@ -2510,7 +2510,10 @@ class locallib_test extends \advanced_testcase {
 
         $assign = $this->create_instance($course, [
             'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL,
-            'maxattempts' => 3,
+            'allowedattempts' => [
+                'maxattemptsunl' => false,
+                'maxattemptsnum' => 3,
+            ],
             'submissiondrafts' => 1,
             'assignsubmission_onlinetext_enabled' => 1,
         ]);
@@ -2574,7 +2577,9 @@ class locallib_test extends \advanced_testcase {
 
         // Change max attempts to unlimited.
         $formdata = clone($assign->get_instance());
-        $formdata->maxattempts = ASSIGN_UNLIMITED_ATTEMPTS;
+        $formdata->allowedattempts = [
+            'maxattemptsunl' => true,
+        ];
         $formdata->instance = $formdata->id;
         $assign->update_instance($formdata);
 
@@ -2608,7 +2613,10 @@ class locallib_test extends \advanced_testcase {
 
         $assign = $this->create_instance($course, [
             'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS,
-            'maxattempts' => 3,
+            'allowedattempts' => [
+                'maxattemptsunl' => false,
+                'maxattemptsnum' => 3,
+            ],
             'submissiondrafts' => 1,
             'assignsubmission_onlinetext_enabled' => 1,
         ]);
@@ -2682,7 +2690,10 @@ class locallib_test extends \advanced_testcase {
 
         $assign = $this->create_instance($course, [
             'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS,
-            'maxattempts' => 3,
+            'allowedattempts' => [
+                'maxattemptsunl' => false,
+                'maxattemptsnum' => 3,
+            ],
             'submissiondrafts' => 1,
             'assignsubmission_onlinetext_enabled' => 1,
         ]);
@@ -2725,7 +2736,10 @@ class locallib_test extends \advanced_testcase {
 
         $assign = $this->create_instance($course, [
             'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS,
-            'maxattempts' => 3,
+            'allowedattempts' => [
+                'maxattemptsunl' => false,
+                'maxattemptsnum' => 3,
+            ],
             'submissiondrafts' => 1,
             'assignsubmission_onlinetext_enabled' => 1,
         ]);

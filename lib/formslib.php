@@ -1640,6 +1640,11 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     protected $_hideifs = array();
 
+    /**
+     * @var array elements that will become shown based on another element
+     */
+    protected $_showifs = array();
+
     /** @var array Array of buttons that if pressed do not result in the processing of the form. */
     var $_noSubmitButtons=array();
 
@@ -1724,6 +1729,11 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * Is this a 'hideIf' dependency?
      */
     const DEP_HIDE = 1;
+
+    /**
+     * Is this a 'showIf' dependency?
+     */
+    const DEP_SHOW = 2;
 
     /** @var string request class HTML. */
     protected $_reqHTML;
@@ -2894,6 +2904,32 @@ require([
                 }
             }
         }
+        foreach ($this->_showifs as $dependenton => $conditions) {
+            if (!isset($result[$dependenton])) {
+                $result[$dependenton] = array();
+            }
+            foreach ($conditions as $condition => $values) {
+                if (!isset($result[$dependenton][$condition])) {
+                    $result[$dependenton][$condition] = array();
+                }
+                foreach ($values as $value => $dependents) {
+                    $result[$dependenton][$condition][$value][self::DEP_SHOW] = array();
+                    foreach ($dependents as $dependent) {
+                        $elements = $this->_getElNamesRecursive($dependent);
+                        if (!in_array($dependent, $elements)) {
+                            // Always want to hide the main element, even if it contains sub-elements as well.
+                            $elements[] = $dependent;
+                        }
+                        foreach ($elements as $element) {
+                            if ($element == $dependenton) {
+                                continue;
+                            }
+                            $result[$dependenton][$condition][$value][self::DEP_SHOW][] = $element;
+                        }
+                    }
+                }
+            }
+        }
         return array($this->getAttribute('id'), $result);
     }
 
@@ -3015,6 +3051,34 @@ require([
             $this->_hideifs[$dependenton][$condition][$value] = array();
         }
         $this->_hideifs[$dependenton][$condition][$value][] = $elementname;
+    }
+
+    /**
+     * Adds a dependency for $elementName which will be shown if $condition is met.
+     *
+     * This is effectively the opposite to hideIf()
+     *
+     * @param string $elementname the name of the element which will be shown
+     * @param string $dependenton the name of the element whose state will be checked for condition
+     * @param string $condition the condition to check
+     * @param mixed $value used in conjunction with condition.
+     */
+    public function showIf($elementname, $dependenton, $condition = 'notchecked', $value = '1') {
+        // Multiple selects allow for a multiple selection, we transform the array to string here as
+        // an array cannot be used as a key in an associative array.
+        if (is_array($value)) {
+            $value = implode('|', $value);
+        }
+        if (!array_key_exists($dependenton, $this->_showifs)) {
+            $this->_showifs[$dependenton] = array();
+        }
+        if (!array_key_exists($condition, $this->_showifs[$dependenton])) {
+            $this->_showifs[$dependenton][$condition] = array();
+        }
+        if (!array_key_exists($value, $this->_showifs[$dependenton][$condition])) {
+            $this->_showifs[$dependenton][$condition][$value] = array();
+        }
+        $this->_showifs[$dependenton][$condition][$value][] = $elementname;
     }
 
     /**

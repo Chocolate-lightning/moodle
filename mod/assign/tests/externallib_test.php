@@ -1638,7 +1638,10 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $params['assignsubmission_file_enabled'] = 0;
         $params['assignfeedback_file_enabled'] = 0;
         $params['attemptreopenmethod'] = 'manual';
-        $params['maxattempts'] = 5;
+        $params['allowedattempts'] = [
+            'maxattemptsunl' => false,
+            'maxattemptsnum' => 5,
+        ];
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
         $context = \context_module::instance($cm->id);

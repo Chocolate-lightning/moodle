@@ -40,6 +40,7 @@ $string['addsubmission'] = 'Add submission';
 $string['addsubmission_help'] = 'You have not made a submission yet.';
 $string['allocatedmarker'] = 'Allocated Marker';
 $string['allocatedmarker_help'] = 'Marker allocated to this submission.';
+$string['allowedattempts'] = 'Allowed attempts';
 $string['allowsubmissions'] = 'Allow the user to continue making submissions to this assignment.';
 $string['allowsubmissionsshort'] = 'Allow submission changes';
 $string['allowsubmissionsfromdate'] = 'Allow submissions from';

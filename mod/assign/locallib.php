@@ -757,7 +757,12 @@ class assign {
         if (!empty($formdata->attemptreopenmethod)) {
             $update->attemptreopenmethod = $formdata->attemptreopenmethod;
         }
-        if (!empty($formdata->maxattempts)) {
+        // Check the allowedattempts form group for the unlimited flag otherwise fall back to the count.
+        if (!empty($formdata->allowedattempts['maxattemptsunl'])) {
+            $update->maxattempts = ASSIGN_UNLIMITED_ATTEMPTS;
+        } else if (isset($formdata->allowedattempts['maxattemptsnum'])) {
+            $update->maxattempts = $formdata->allowedattempts['maxattemptsnum'];
+        } else {
             $update->maxattempts = $formdata->maxattempts;
         }
         if (isset($formdata->preventsubmissionnotingroup)) {
@@ -1532,7 +1537,12 @@ class assign {
         if (!empty($formdata->attemptreopenmethod)) {
             $update->attemptreopenmethod = $formdata->attemptreopenmethod;
         }
-        if (!empty($formdata->maxattempts)) {
+        // Check the allowedattempts form group for the unlimited flag otherwise fall back to the count.
+        if (!empty($formdata->allowedattempts['maxattemptsunl'])) {
+            $update->maxattempts = ASSIGN_UNLIMITED_ATTEMPTS;
+        } else if (isset($formdata->allowedattempts['maxattemptsnum'])) {
+            $update->maxattempts = $formdata->allowedattempts['maxattemptsnum'];
+        } else {
             $update->maxattempts = $formdata->maxattempts;
         }
         if (isset($formdata->preventsubmissionnotingroup)) {

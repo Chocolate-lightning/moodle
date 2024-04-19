@@ -115,7 +115,10 @@ class restore_date_test extends \restore_date_testcase {
             'hidegrader' => 1,
             'revealidentities' => 1,
             'attemptreopenmethod' => 'manual',
-            'maxattempts' => 2,
+            'allowedattempts' => [
+                'maxattemptsunl' => false,
+                'maxattemptsnum' => 2,
+            ],
             'markingworkflow' => 1,
             'markingallocation' => 1,
             'markinganonymous' => 1,
@@ -156,6 +159,10 @@ class restore_date_test extends \restore_date_testcase {
                     break;
                 case 'timemodified':
                     $this->assertFieldsNotRolledForward($assign, $newassign, ['timemodified']);
+                    break;
+                case 'allowedattempts':
+                    // The allowedattempts field is an array, so we need to check the correct attempt field.
+                    $this->assertEquals($value['maxattemptsnum'], $newassign->maxattempts);
                     break;
                 default:
                     // All other settings should match the original assignment.
