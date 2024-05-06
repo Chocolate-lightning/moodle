@@ -90,7 +90,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
 
             if (userid < 0) {
                 // Render the template.
-                templates.render('mod_assign/grading_navigation_no_users', {}).done(function(html, js) {
+                templates.render('mod_assign/gradingapp/navigation_no_users', {}).done(function(html, js) {
                     if (userid == this._lastUserId) {
                         // Update the page.
                         this._region.fadeOut("fast", function() {
@@ -148,7 +148,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
                     }
                 }
 
-                templates.render('mod_assign/grading_navigation_user_summary', context).done(function(html, js) {
+                templates.render('mod_assign/gradingapp/navigation_user_summary', context).done(function(html, js) {
                     // Update the page.
                     if (userid == this._lastUserId) {
                         this._region.fadeOut("fast", function() {
@@ -159,7 +159,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
                 }.bind(this)).fail(notification.exception);
             }.bind(this)).fail(function() {
                 // Render the template.
-                templates.render('mod_assign/grading_navigation_no_users', {}).done(function(html, js) {
+                templates.render('mod_assign/gradingapp/navigation_no_users', {}).done(function(html, js) {
                     // Update the page.
                     this._region.fadeOut("fast", function() {
                         templates.replaceNodeContents(this._region, html, js);

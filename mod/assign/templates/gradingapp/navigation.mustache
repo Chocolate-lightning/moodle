@@ -83,7 +83,7 @@
     B) Current user name and info.
 }}
 <div data-region="user-info" class="col-md-4" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
-    {{> mod_assign/grading_navigation_user_info }}
+    {{> mod_assign/gradingapp/navigation_user_info }}
 </div>
 
 {{!
@@ -91,13 +91,13 @@
 }}
 <div data-region="user-selector" class="col-md-4">
     <div class="alignment">
-        {{> mod_assign/grading_navigation_user_selector }}
+        {{> mod_assign/gradingapp/navigation_user_selector }}
     </div>
 </div>
 </div>
 </div>
 {{#js}}
-require(['mod_assign/grading_navigation', 'core/tooltip'], function(GradingNavigation, ToolTip) {
+require(['mod_assign/gradingapp/navigation', 'core/tooltip'], function(GradingNavigation, ToolTip) {
     new GradingNavigation('[data-region="user-selector"]');
     new ToolTip('[data-region="assignment-tooltip"]');
 });

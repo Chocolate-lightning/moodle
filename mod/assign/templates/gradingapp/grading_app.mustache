@@ -31,7 +31,7 @@
     This template includes ajax functionality, so it cannot be shown in the template library.
 }}
 <div data-region="grading-navigation-panel" data-first-userid="{{userid}}" data-courseid="{{courseid}}" data-showuseridentity="{{showuseridentity}}">
-{{> mod_assign/grading_navigation }}
+{{> mod_assign/gradingapp/navigation }}
 </div>
 {{#showreview}}
 <div data-region="review-panel">
@@ -45,22 +45,22 @@
     </a>
     <div data-region="review-panel-content">
         <div data-region="review">
-            {{> mod_assign/review_panel }}
+            {{> mod_assign/gradingapp/review_panel }}
         </div>
     </div>
 </div>
 {{/showreview}}
 <div data-region="grade-panel" {{^showreview}}class="fullwidth"{{/showreview}}>
 <div data-region="grade" data-contextid="{{contextid}}" data-assignmentid="{{assignmentid}}">
-{{> mod_assign/grading_panel }}
+{{> mod_assign/gradingapp/panel }}
 </div>
 </div>
 <div data-region="grade-actions-panel">
 <div data-region="grade-actions">
 <div class="tool_usertours-resettourcontainer float-left"></div>
-{{> mod_assign/grading_actions }}
+{{> mod_assign/gradingapp/actions }}
 </div>
 </div>
 <div data-region="overlay" class="moodle-has-zindex">
-{{> mod_assign/grading_save_in_progress }}
+{{> mod_assign/gradingapp/save_in_progress }}
 </div>

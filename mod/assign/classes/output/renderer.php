@@ -1494,7 +1494,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function render_grading_app(grading_app $app) {
         $context = $app->export_for_template($this);
-        return $this->render_from_template('mod_assign/grading_app', $context);
+        return $this->render_from_template('mod_assign/gradingapp/grading_app', $context);
     }
 
     /**
@@ -1538,7 +1538,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function render_grading_actionmenu(\mod_assign\output\grading_actionmenu $actionmenu): string {
         $context = $actionmenu->export_for_template($this);
-        return $this->render_from_template('mod_assign/grading_actionmenu', $context);
+        return $this->render_from_template('mod_assign/gradingapp/actionmenu', $context);
     }
 
     /**

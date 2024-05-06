@@ -15,10 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_assign/grading_navigation_user_info
+    @template mod_assign/grading_panel
 
-    Initial template for the user info panel - until a user is selected
-    a loading spinner will be displayed.
+    Shown a place holder until the real content is fetched via ajax.
 
     Classes required for JS:
     * none
@@ -29,12 +28,11 @@
     Context variables required for this template:
     * None
 
-    Example context (json):
-    { }
+    This template loads it's content via ajax, so it cannot be shown in the template library.
 }}
 {{> mod_assign/loading }}
 {{#js}}
-require(['mod_assign/grading_navigation_user_info'], function(UserInfo) {
-    new UserInfo('[data-region="user-info"]');
+require(['mod_assign/gradingapp/panel'], function(GradingPanel) {
+    new GradingPanel('[data-region="grade"]');
 });
 {{/js}}

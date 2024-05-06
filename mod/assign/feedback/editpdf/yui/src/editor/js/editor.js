@@ -245,7 +245,7 @@ EDITOR.prototype = {
             link.on('key', this.link_handler, 'down:13', this);
 
             // We call the amd module to see if we can take control of the review panel.
-            require(['mod_assign/grading_review_panel'], function(ReviewPanelManager) {
+            require(['mod_assign/gradingapp/review_panel'], function(ReviewPanelManager) {
                 var panelManager = new ReviewPanelManager();
 
                 var panel = panelManager.getReviewPanel('assignfeedback_editpdf');
