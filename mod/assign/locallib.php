@@ -3962,8 +3962,6 @@ class assign {
 
         $o = '';
 
-        require_once($CFG->dirroot . '/mod/assign/gradeform.php');
-
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:grade', $this->context);
 
@@ -4086,7 +4084,7 @@ class assign {
             $data = (object) array_merge($data, $args['formdata']);
         }
         $formparams = array($this, $data, $pagination);
-        $mform = new mod_assign_grade_form(null,
+        $mform = new mod_assign\gradingapp\form(null,
                                            $formparams,
                                            'post',
                                            '',
@@ -4126,8 +4124,6 @@ class assign {
 
         $o = '';
         $instance = $this->get_instance();
-
-        require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:grade', $this->context);
@@ -4277,7 +4273,7 @@ class assign {
                                 'userid' => $userid,
                                 'attemptnumber' => $attemptnumber);
             $formparams = array($this, $data, $pagination);
-            $mform = new mod_assign_grade_form(null,
+            $mform = new mod_assign\gradingapp\form(null,
                                                $formparams,
                                                'post',
                                                '',
@@ -4676,7 +4672,6 @@ class assign {
         $o = '';
         // Need submit permission to submit an assignment.
         $this->require_view_grades();
-        require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
         $this->add_grade_notices();
 
@@ -8751,8 +8746,6 @@ class assign {
      */
     protected function process_save_grade(&$mform) {
         global $CFG, $SESSION;
-        // Include grade form.
-        require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
         require_sesskey();
 
@@ -8787,7 +8780,7 @@ class assign {
                                  'last' => $last,
                                  'attemptnumber' => $attemptnumber,
                                  'userid' => $userid);
-        $mform = new mod_assign_grade_form(null,
+        $mform = new mod_assign\gradingapp\form(null,
                                            array($this, $data, $gradeformparams),
                                            'post',
                                            '',

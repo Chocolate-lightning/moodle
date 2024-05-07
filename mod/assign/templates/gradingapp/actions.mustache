@@ -25,8 +25,12 @@
     Data attributes required for JS:
     * data-region
 
-    Context variables required for this template:
-    * see mod/assign/classes/output/grading_app.php
+    Example context (json):
+    {
+        "defaultsendnotifications": true,
+        "showreview": true,
+        "helpicon": true
+    }
 
     This template is initially hidden, and is only displayed after the current user info has been loaded.
 }}
@@ -60,7 +64,7 @@
     {{/showreview}}
 </div>
 {{#js}}
-require(['mod_assign/gradingapp/actions'], function(GradingActions) {
-    new GradingActions('[data-region="grade-actions"]');
-});
+    require(['mod_assign/gradingapp/actions'], function(GradingActions) {
+        new GradingActions('[data-region="grade-actions"]');
+    });
 {{/js}}

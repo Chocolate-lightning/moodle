@@ -31,7 +31,49 @@
     This template uses ajax functionality, so it cannot be shown in the template library.
 
     Example context (json):
-    { }
+    {
+        "currentuserid": 2,
+        "assignmentid": 3,
+        "groupid": 4,
+        "index": 5,
+        "count": 6,
+        "filters": [
+            {
+                "filtername": "Filter 1"
+            },
+            {
+                "filtername": "Filter 2"
+            }
+        ],
+        "hasmarkingallocation": true,
+        "markingallocationfilters": [
+            {
+                "key": "filter1",
+                "name": "Filter 1",
+                "active": true
+            },
+            {
+                "key": "filter2",
+                "name": "Filter 2",
+                "active": false
+            }
+        ],
+        "hasmarkingworkflow": true,
+        "markingworkflowfilters": [
+            {
+                "key": "filter1",
+                "name": "Filter 1",
+                "active": true
+            },
+            {
+                "key": "filter2",
+                "name": "Filter 2",
+                "active": false
+            }
+        ],
+        "larrow": "&larr;",
+        "rarrow": "&rarr;"
+    }
 }}
 <a href="#previous" data-action="previous-user" aria-label="{{#str}} previoususer, mod_assign {{/str}}" title="{{#str}} previoususer, mod_assign {{/str}}">{{{larrow}}}</a>
 <span data-region="input-field">
@@ -68,34 +110,34 @@
                 {{#str}}filter, mod_assign{{/str}}
             </label>
             <select name="filter" class="custom-select w-50" id="filter-general-{{uniqid}}">
-            {{#filters}}
-                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
-            {{/filters}}
+                {{#filters}}
+                    <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+                {{/filters}}
             </select>
         </span>
         {{#hasmarkingallocation}}
-        <span class="row px-3 py-1">
-            <label class="text-right w-25 p-2 m-0" for="filter-marker-{{uniqid}}">
-                {{#str}}markerfilter, mod_assign{{/str}}
-            </label>
-            <select name="markerfilter" class="custom-select w-50" id="filter-marker-{{uniqid}}">
-            {{#markingallocationfilters}}
-                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
-            {{/markingallocationfilters}}
-            </select>
-        </span>
+            <span class="row px-3 py-1">
+                <label class="text-right w-25 p-2 m-0" for="filter-marker-{{uniqid}}">
+                    {{#str}}markerfilter, mod_assign{{/str}}
+                </label>
+                <select name="markerfilter" class="custom-select w-50" id="filter-marker-{{uniqid}}">
+                {{#markingallocationfilters}}
+                    <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+                {{/markingallocationfilters}}
+                </select>
+            </span>
         {{/hasmarkingallocation}}
         {{#hasmarkingworkflow}}
-        <span class="row px-3 py-1">
-            <label class="text-right w-25 p-2 m-0" for="filter-workflow-{{uniqid}}">
-                {{#str}}workflowfilter, mod_assign{{/str}}
-            </label>
-            <select name="workflowfilter" class="custom-select w-50" id="filter-workflow-{{uniqid}}">
-            {{#markingworkflowfilters}}
-                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
-            {{/markingworkflowfilters}}
-            </select>
-        </span>
+            <span class="row px-3 py-1">
+                <label class="text-right w-25 p-2 m-0" for="filter-workflow-{{uniqid}}">
+                    {{#str}}workflowfilter, mod_assign{{/str}}
+                </label>
+                <select name="workflowfilter" class="custom-select w-50" id="filter-workflow-{{uniqid}}">
+                {{#markingworkflowfilters}}
+                    <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+                {{/markingworkflowfilters}}
+                </select>
+            </span>
         {{/hasmarkingworkflow}}
     </form>
 </div>

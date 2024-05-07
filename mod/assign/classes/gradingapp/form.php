@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_assign\gradingapp;
+
 /**
  * This file contains the forms to create and edit an instance of this module
  *
@@ -36,7 +38,7 @@ require_once('HTML/QuickForm/input.php');
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_grade_form extends moodleform {
+class form extends \moodleform {
     /** @var assignment $assignment */
     private $assignment;
 

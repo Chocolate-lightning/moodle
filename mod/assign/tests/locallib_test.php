@@ -3151,7 +3151,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->setUser($teacher);
 
         $data = new \stdClass();
-        require_once($CFG->dirroot . '/mod/assign/gradeform.php');
         $pagination = [
             'userid' => $student->id,
             'rownum' => 0,
@@ -3160,7 +3159,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             'attemptnumber' => 0,
         ];
         $formparams = array($assign, $data, $pagination);
-        $mform = new mod_assign_grade_form(null, [$assign, $data, $pagination]);
+        $mform = new mod_assign\gradingapp\form(null, [$assign, $data, $pagination]);
 
         // We need to get the URL these will be transformed to.
         $context = \context_user::instance($USER->id);

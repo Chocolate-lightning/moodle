@@ -27,16 +27,15 @@
 
     Example context (json):
     {
-        "downloadall": "https://moodle.org"
+        "downloadall": "http://example.com/downloadall"
     }
-
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row">
         {{#downloadall}}
-        <div class="navitem ml-sm-auto">
-            <a class="btn btn-secondary" href="{{downloadall}}">{{#str}}downloadall, mod_assign{{/str}}</a>
-        </div>
+            <div class="navitem ml-sm-auto">
+                <a class="btn btn-secondary" href="{{downloadall}}">{{#str}}downloadall, mod_assign{{/str}}</a>
+            </div>
         {{/downloadall}}
     </div>
 </div>

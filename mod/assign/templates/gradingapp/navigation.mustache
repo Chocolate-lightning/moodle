@@ -25,80 +25,74 @@
     Data attributes required for JS:
     * data-region, data-assignmentid, data-groupid
 
-    Context variables required for this template:
-    * see mod/assign/classes/output/grading_app.php
+    Example context (json):
+    {
+        "id": "5",
+        "fullname": "Mr T",
+        "hasidentity": true,
+        "identity": "t@example.org, T",
+        "profileimageurl": "https://moodle.org/pix/u/f3.png"
+    }
 
     This template includes ajax functionality, so it cannot be shown in the template library.
 }}
 <div class="container-fluid">
-<div data-region="grading-navigation" class="row">
+    <div data-region="grading-navigation" class="row">
+        {{!
+            There are three chunks, which appear side-by-side at large screen sizes.
+            A) Assignment info, which has 3 rows:
+        }}
+        <div data-region="assignment-info" class="col-md-4">
+            {{!
+                Row 1) course name & link.
+            }}
+            <a href="{{config.wwwroot}}/course/view.php?id={{courseid}}" title="{{coursename}}">{{coursename}}</a><br/>
+            {{!
+                Row 2) Assignment name & link, & edit settings.
+            }}
+            <a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}" title="{{name}}">{{name}}</a>
 
-{{!
-    There are three chunks, which appear side-by-side at large screen sizes.
-    A) Assignment info, which has 3 rows:
-}}
-
-<div data-region="assignment-info" class="col-md-4">
-
-{{!
-    Row 1) course name & link.
-}}
-<a href="{{config.wwwroot}}/course/view.php?id={{courseid}}" title="{{coursename}}">{{coursename}}</a><br/>
-
-{{!
-    Row 2) Assignment name & link, & edit settings.
-}}
-<a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}" title="{{name}}">{{name}}</a>
-
-{{#caneditsettings}}
-<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1" aria-label="{{#str}}editsettings{{/str}}" title="{{#str}}editsettings{{/str}}">
-    {{#pix}}t/edit, core{{/pix}}
-</a>
-{{/caneditsettings}}
-
-<br/>
-
-{{!
-    Row 3) Assignment grading & link, due date, with tool-tip thing.
-}}
-<a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}&action={{actiongrading}}">{{viewgrading}}</a>
-
-<div role="tooltip" id="tooltip-{{uniqid}}" class="accesshide">
-{{#duedate}}
-{{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}
-{{/duedate}}
-
-{{#cutoffdate}}
-<br>{{cutoffdatestr}}
-{{/cutoffdate}}
-
-{{#duedate}}
-<br>{{timeremainingstr}}
-{{/duedate}}
-</div>
-
-</div>
-
-{{!
-    B) Current user name and info.
-}}
-<div data-region="user-info" class="col-md-4" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
-    {{> mod_assign/gradingapp/navigation_user_info }}
-</div>
-
-{{!
-    C) User selector widget.
-}}
-<div data-region="user-selector" class="col-md-4">
-    <div class="alignment">
-        {{> mod_assign/gradingapp/navigation_user_selector }}
+            {{#caneditsettings}}
+                <a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1" aria-label="{{#str}}editsettings{{/str}}" title="{{#str}}editsettings{{/str}}">
+                    {{#pix}}t/edit, core{{/pix}}
+                </a>
+            {{/caneditsettings}}
+            <br/>
+            {{!
+                Row 3) Assignment grading & link, due date, with tool-tip thing.
+            }}
+            <a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}&action={{actiongrading}}">{{viewgrading}}</a>
+            <div role="tooltip" id="tooltip-{{uniqid}}" class="accesshide">
+                {{#duedate}}
+                    {{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}
+                {{/duedate}}
+                {{#cutoffdate}}
+                    <br>{{cutoffdatestr}}
+                {{/cutoffdate}}
+                {{#duedate}}
+                    <br>{{timeremainingstr}}
+                {{/duedate}}
+            </div>
+        </div>
+        {{!
+            B) Current user name and info.
+        }}
+        <div data-region="user-info" class="col-md-4" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
+            {{> mod_assign/gradingapp/navigation_user_info }}
+        </div>
+        {{!
+            C) User selector widget.
+        }}
+        <div data-region="user-selector" class="col-md-4">
+            <div class="alignment">
+                {{> mod_assign/gradingapp/navigation_user_selector }}
+            </div>
+        </div>
     </div>
 </div>
-</div>
-</div>
 {{#js}}
-require(['mod_assign/gradingapp/navigation', 'core/tooltip'], function(GradingNavigation, ToolTip) {
-    new GradingNavigation('[data-region="user-selector"]');
-    new ToolTip('[data-region="assignment-tooltip"]');
-});
+    require(['mod_assign/gradingapp/navigation', 'core/tooltip'], function(GradingNavigation, ToolTip) {
+        new GradingNavigation('[data-region="user-selector"]');
+        new ToolTip('[data-region="assignment-tooltip"]');
+    });
 {{/js}}

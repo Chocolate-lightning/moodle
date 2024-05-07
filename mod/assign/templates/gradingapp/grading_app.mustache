@@ -25,42 +25,49 @@
     Data attributes required for JS:
     * data-region, data-first-userid, data-courseid, data-contextid, data-assignmentid
 
-    Context variables required for this template:
-    * see mod/assign/classes/output/grading_app.php
+    Example context (json):
+    {
+        "userid": 2,
+        "courseid": 3,
+        "contextid": 4,
+        "assignmentid": 5,
+        "showreview": true,
+        "showuseridentity": true
+    }
 
     This template includes ajax functionality, so it cannot be shown in the template library.
 }}
 <div data-region="grading-navigation-panel" data-first-userid="{{userid}}" data-courseid="{{courseid}}" data-showuseridentity="{{showuseridentity}}">
-{{> mod_assign/gradingapp/navigation }}
+    {{> mod_assign/gradingapp/navigation }}
 </div>
 {{#showreview}}
-<div data-region="review-panel">
-    <a href="#" data-region="review-panel-toggle">
-        <div class="collapse-icon">{{#pix}} t/expanded, core, {{#str}} collapsereviewpanel, mod_assign {{/str}} {{/pix}}</div>
-        <div class="expand-icon">
-            <div class="ltr-icon">{{#pix}} t/collapsed, core, {{#str}} expandreviewpanel, mod_assign {{/str}} {{/pix}}</div>
-            <div class="rtl-icon">{{#pix}} t/collapsed_rtl, core, {{#str}} expandreviewpanel, mod_assign {{/str}} {{/pix}}</div>
-            <div class="toggle-text">{{#str}} clickexpandreviewpanel, mod_assign {{/str}}</div>
-        </div>
-    </a>
-    <div data-region="review-panel-content">
-        <div data-region="review">
-            {{> mod_assign/gradingapp/review_panel }}
+    <div data-region="review-panel">
+        <a href="#" data-region="review-panel-toggle">
+            <div class="collapse-icon">{{#pix}} t/expanded, core, {{#str}} collapsereviewpanel, mod_assign {{/str}} {{/pix}}</div>
+            <div class="expand-icon">
+                <div class="ltr-icon">{{#pix}} t/collapsed, core, {{#str}} expandreviewpanel, mod_assign {{/str}} {{/pix}}</div>
+                <div class="rtl-icon">{{#pix}} t/collapsed_rtl, core, {{#str}} expandreviewpanel, mod_assign {{/str}} {{/pix}}</div>
+                <div class="toggle-text">{{#str}} clickexpandreviewpanel, mod_assign {{/str}}</div>
+            </div>
+        </a>
+        <div data-region="review-panel-content">
+            <div data-region="review">
+                {{> mod_assign/loading }}
+            </div>
         </div>
     </div>
-</div>
 {{/showreview}}
 <div data-region="grade-panel" {{^showreview}}class="fullwidth"{{/showreview}}>
-<div data-region="grade" data-contextid="{{contextid}}" data-assignmentid="{{assignmentid}}">
-{{> mod_assign/gradingapp/panel }}
-</div>
+    <div data-region="grade" data-contextid="{{contextid}}" data-assignmentid="{{assignmentid}}">
+        {{> mod_assign/gradingapp/panel }}
+    </div>
 </div>
 <div data-region="grade-actions-panel">
-<div data-region="grade-actions">
-<div class="tool_usertours-resettourcontainer float-left"></div>
-{{> mod_assign/gradingapp/actions }}
-</div>
+    <div data-region="grade-actions">
+        <div class="tool_usertours-resettourcontainer float-left"></div>
+        {{> mod_assign/gradingapp/actions }}
+    </div>
 </div>
 <div data-region="overlay" class="moodle-has-zindex">
-{{> mod_assign/gradingapp/save_in_progress }}
+    {{> mod_assign/gradingapp/save_in_progress }}
 </div>

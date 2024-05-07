@@ -29,12 +29,11 @@
     Context variables required for this template:
     * None
 
-    Example context (json):
-    { }
+    Example context (json): {}
 }}
 {{> mod_assign/loading }}
 {{#js}}
-require(['mod_assign/gradingapp/navigation_user_info'], function(UserInfo) {
-    new UserInfo('[data-region="user-info"]');
-});
+    require(['mod_assign/gradingapp/navigation_user_info'], function(UserInfo) {
+        new UserInfo('[data-region="user-info"]');
+    });
 {{/js}}

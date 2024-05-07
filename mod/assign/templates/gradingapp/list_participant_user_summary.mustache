@@ -32,10 +32,15 @@
     * list of fields from mod_assign_list_participants webservice
 
     Example context (json):
-    { "id": "4",
-      "fullname": "Mr T",
-      "requiregrading": "true",
-      "identity": "email, phone, etc"
+    {
+        "fullname": "Mr T",
+        "identity": "t@example.org, T"
     }
 }}
-<span>{{fullname}} <small>{{identity}}</small> {{#requiregrading}}<abbr title="{{#str}}filterrequiregrading, mod_assign{{/str}}">*</abbr>{{/requiregrading}}</span>
+<span>
+    {{fullname}}
+    <small>{{identity}}</small>
+    {{#requiregrading}}
+        <abbr title="{{#str}}filterrequiregrading, mod_assign{{/str}}">*</abbr>
+    {{/requiregrading}}
+</span>
