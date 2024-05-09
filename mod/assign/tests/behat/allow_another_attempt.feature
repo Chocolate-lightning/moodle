@@ -16,6 +16,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | intro                               | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1                       |
       | assignsubmission_file_enabled       | 0                       |
+      | allowedattempts[maxattemptsunl]                        | 1                    |
       | attemptreopenmethod                 | manual                  |
       | hidegrader                          | 1                       |
       | submissiondrafts                    | 0                       |
@@ -87,12 +88,13 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | name                                 | Test assignment name  |
       | assignsubmission_onlinetext_enabled  | 1                     |
       | assignsubmission_file_enabled        | 0                     |
+      | allowedattempts[maxattemptsunl]                        | 1                    |
       | attemptreopenmethod                  | manual                |
       | submissiondrafts                     | 0                     |
       | groupmode                            | 1                     |
       | teamsubmission                       | 1                     |
       | hidegrader                           | 1                     |
-      | maxattempts                          | 3                     |
+      | allowedattempts[maxattemptsnum]      | 3                     |
     And the following "mod_assign > submissions" exist:
       | assign                | user      | onlinetext                        |
       | Test assignment name  | student1  | I'm the student first submission  |

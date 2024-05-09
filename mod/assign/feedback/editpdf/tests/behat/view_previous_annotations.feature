@@ -4,7 +4,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
   As a teacher
   I need to see the previous annotations.
 
-  @javascript
+  @javascript @MDL-81410-2
   Scenario: Submit a PDF file as a student and annotate the PDF as a teacher, allowing another attempt
     Given ghostscript is installed
     And the following "courses" exist:
@@ -22,7 +22,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
       | activity                           | assign               |
       | course                             | C1                   |
       | name                               | Test assignment name |
-      | maxattempts                        | 0                    |
+      | allowedattempts[maxattemptsnum]                        | 3                    |
       | assignsubmission_file_enabled      | 1                    |
       | assignsubmission_file_maxfiles     | 2                    |
       | assignsubmission_file_maxsizebytes | 102400               |

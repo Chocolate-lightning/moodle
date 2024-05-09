@@ -115,7 +115,7 @@ Feature: Remove a submission
     And I should not see "I'm the student submission"
     And I should see "No submissions have been made yet" in the "Submission status" "table_row"
 
-  @javascript @skip_chrome_zerosize @_file_upload
+  @javascript @skip_chrome_zerosize @_file_upload @MDL-81410
   Scenario: Submission removal with time limit setting
     Given the following "activity" exists:
       | activity                            | assign                          |

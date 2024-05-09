@@ -44,6 +44,7 @@ Feature: Set availability dates for an assignment
       | cutoffdate_enabled                  | 0                                    |
       | gradingduedate_enabled              | 0                                    |
 
+  @MDL-81410
   Scenario: Student cannot submit an assignment prior to the 'allow submissions from' date
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
@@ -75,7 +76,7 @@ Feature: Set availability dates for an assignment
     And I hover over day "2" of this month in the mini-calendar block
     Then I should see "Assignment name is due"
 
-  @_file_upload
+  @_file_upload @MDL-81410
   Scenario: Student can submit an assignment before the due date
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
@@ -103,7 +104,7 @@ Feature: Set availability dates for an assignment
     And I follow "View all submissions"
     And I should see "Submitted for grading" in the "Student 1" "table_row"
 
-  @_file_upload
+  @_file_upload @MDL-81410
   Scenario: Student can submit an assignment after the due date and the submission is marked as late
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
@@ -135,7 +136,7 @@ Feature: Set availability dates for an assignment
     And I should see "Submitted for grading" in the "Student 1" "table_row"
     And I should see "2 days 5 hours late" in the "Student 1" "table_row"
 
-  @_file_upload
+  @_file_upload @MDL-81410
   Scenario: Student can submit an assignment before the time limit runs out
     Given I log in as "admin"
     And I change the window size to "large"
@@ -164,7 +165,7 @@ Feature: Set availability dates for an assignment
     Then I should see "Submitted for grading" in the "Submission status" "table_row"
     And I should see "secs under the time limit" in the "Time remaining" "table_row"
 
-  @_file_upload
+  @_file_upload @MDL-81410
   Scenario: Assignment with time limit and due date shows how late assignment is submitted relative to due date
     Given I log in as "admin"
     And I change the window size to "large"
@@ -195,6 +196,7 @@ Feature: Set availability dates for an assignment
     When I press "Save changes"
     Then I should see "Assignment was submitted 2 days 5 hours late" in the "Time remaining" "table_row"
 
+  @MDL-81410
   Scenario: Student cannot submit an assignment after the cut-off date
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
@@ -218,7 +220,7 @@ Feature: Set availability dates for an assignment
     And I should see "No submission" in the "Student 1" "table_row"
     And I should see "Assignment is overdue by: 2 days 5 hours" in the "Student 1" "table_row"
 
-  @_file_upload
+  @_file_upload @MDL-81410
   Scenario: Late submission will be calculated only when the student starts the assignment
     Given I am on the "Test late assignment with time limit" Activity page logged in as admin
     And I navigate to "Settings" in current page administration

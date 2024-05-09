@@ -55,7 +55,7 @@ Feature: Assign reset
     And I follow "View all submissions"
     Then I should not see "Submitted for grading"
 
-  @javascript
+  @javascript @MDL-81410
   Scenario: Use course reset to remove user overrides.
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Overrides" in current page administration

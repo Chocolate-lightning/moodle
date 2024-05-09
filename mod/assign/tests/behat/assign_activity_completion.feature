@@ -32,8 +32,8 @@ Feature: View activity completion in the assignment activity
       | name                                | Music history 2 |
       | section                             | 1               |
       | assignsubmission_onlinetext_enabled | 1               |
+      | allowedattempts[maxattemptsunl]     | 1               |
       | attemptreopenmethod                 | manual          |
-      | maxattempts                         | -1              |
       | completion                          | 2               |
       | completionsubmit                    | 1               |
       | grade[modgrade_type]                | point           |
@@ -94,7 +94,7 @@ Feature: View activity completion in the assignment activity
     And "Music history" should have the "Make a submission" completion condition
     And "Music history" should have the "Receive a grade" completion condition
 
-  @javascript
+  @javascript @MDL-81410
   Scenario: View automatic completion items as a student
     Given I am on the "Music history" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets

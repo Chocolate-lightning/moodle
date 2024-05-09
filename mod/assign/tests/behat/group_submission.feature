@@ -154,6 +154,7 @@ Feature: Group assignment submissions
       | assignsubmission_onlinetext_enabled | 1                           |
       | assignsubmission_file_enabled       | 0                           |
       | teamsubmission                      | 1                           |
+      | allowedattempts[maxattemptsunl]                        | 1                    |
       | attemptreopenmethod                 | manual                      |
       | requireallteammemberssubmit         | 0                           |
     And the following "mod_assign > submissions" exist:
@@ -200,6 +201,7 @@ Feature: Group assignment submissions
       | assignsubmission_onlinetext_enabled  | 1                            |
       | assignsubmission_file_enabled        | 0                            |
       | teamsubmission                       | 1                            |
+      | allowedattempts[maxattemptsunl]                        | 1                    |
       | attemptreopenmethod                  | manual                       |
       | requireallteammemberssubmit          | 0                            |
       | groupmode                            | 1                            |
@@ -236,6 +238,7 @@ Feature: Group assignment submissions
       | assignsubmission_onlinetext_enabled  | 1                            |
       | assignsubmission_file_enabled        | 0                            |
       | teamsubmission                       | 1                            |
+      | allowedattempts[maxattemptsunl]                        | 1                    |
       | attemptreopenmethod                  | manual                       |
       | requireallteammemberssubmit          | 0                            |
       # Groupmode 0 = No Groups

@@ -4,7 +4,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
   As a teacher
   I need to use the PDF editor
 
-  @javascript
+  @javascript @MDL-81410-2
   Scenario: Submit a PDF file as a student and annotate the PDF as a teacher then overwrite the submission as a student
     Given ghostscript is installed
     And the following "courses" exist:
@@ -65,7 +65,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I follow "View annotated PDF..."
     Then I should see "Page 1 of 3"
 
-  @javascript
+  @javascript @MDL-81410-2
   Scenario: Submit a PDF file as a student and annotate the PDF as a teacher
     Given ghostscript is installed
     And the following "courses" exist:

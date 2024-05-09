@@ -148,8 +148,7 @@ class mod_assign_mod_form extends moodleform_mod {
             ]
         ]);
         $mform->setType('allowedattempts[maxattemptsnum]', PARAM_INT);
-        // TODO: Matt dirty hack.
-        //$mform->disabledIf('allowedattempts[maxattemptsnum]', 'allowedattempts[maxattemptsunl]', 'checked');
+        $mform->disabledIf('allowedattempts[maxattemptsnum]', 'allowedattempts[maxattemptsunl]', 'checked');
 
         $mform->addElement('select', 'attemptreopenmethod', get_string('attemptreopenmethod', 'mod_assign'), [
             ASSIGN_ATTEMPT_REOPEN_METHOD_NONE => get_string('attemptreopenmethod_none', 'mod_assign'),
@@ -326,7 +325,7 @@ class mod_assign_mod_form extends moodleform_mod {
         }
 
         // Set the value for the allowedattempts form group based on the saved value of maxattempts for compatability reasons.
-        if ($this->current && $this->current->maxattempts) {
+        if ($this->current && isset($this->current->maxattempts)) {
             if ($this->current->maxattempts == -1) {
                 $defaultvalues['allowedattempts[maxattemptsunl]'] = 1;
             } else {

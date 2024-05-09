@@ -83,7 +83,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     Then I should see "50"
     And I should see "Great job! Lol, not really."
 
-  @javascript
+  @javascript @MDL-81410
   Scenario: Submissions table visible with overrides and blind marking
     When I am on the "Test assignment name" "assign activity" page
     And I navigate to "Overrides" in current page administration

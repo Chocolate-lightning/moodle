@@ -1,4 +1,4 @@
-@mod @mod_assign
+@mod @mod_assign @MDL-81410
 Feature: Assign user override
   In order to grant a student special access to an assignment
   As a teacher
@@ -19,8 +19,8 @@ Feature: Assign user override
       | student1 | C1 | student |
       | student2 | C1 | student |
     And the following "activities" exist:
-      | activity | name                 | intro                   | course | assignsubmission_onlinetext_enabled |
-      | assign   | Test assignment name | Submit your online text | C1     | 1                                   |
+      | activity | name                 | intro                   | course | assignsubmission_onlinetext_enabled | allowedattempts[maxattemptsunl] |
+      | assign   | Test assignment name | Submit your online text | C1     | 1                                   | 1                               |
 
   @javascript
   Scenario: Add, modify then delete a user override
