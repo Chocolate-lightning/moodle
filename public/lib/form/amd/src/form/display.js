@@ -1,0 +1,146 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file contains some helper functions to change the visual state of the form elements.
+ *
+ * @module     core_form/form/display
+ * @copyright  2024 Mathew May <mathew.solutions>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+"use strict";
+
+/**
+ * A small object that defines the behaviour of the dependency rules for readability.
+ *
+ * @type {{hide: number, disable: number}}
+ */
+const dependencyBehaviour = {
+    disable: 0,
+    hide: 1,
+};
+
+/**
+ * The archetypal display map that we'll be using to figure out what has to change and how.
+ *
+ * @returns {Map<String, Array>}
+ */
+export const mapTemplate = () => {
+    return new Map([
+        ['hide', []],
+        ['show', []],
+        ['lock', []],
+        ['unlock', []],
+    ]);
+};
+
+/**
+ * Considering the dependant object and if we need to lock it, assign the elements to the correct displayMap key.
+ *
+ * @param {Object<Number, Array>} dependant The dependant object that contains the rules for hiding and locking.
+ * @param {Map<String, Array>} displayMap The aggregation of elements that should be shown, hidden, locked, or unlocked.
+ * @param {Boolean} lock According to the rules, should the element be locked or unlocked.
+ */
+export const determineDisplayMap = (dependant, displayMap, lock) => {
+    // Determine via a combination of the lock state & whether the rule is a disable or hide rule, what to do.
+    const hide = dependant.hasOwnProperty(dependencyBehaviour.hide) ? lock : false;
+    // This is a disable rule, so we want to always show it and optionally disable it.
+    if (dependant.hasOwnProperty(dependencyBehaviour.disable)) {
+        displayMap.get('show').push(dependant[dependencyBehaviour.disable]);
+        if (lock) {
+            displayMap.get('lock').push(dependant[dependencyBehaviour.disable]);
+        } else {
+            displayMap.get('unlock').push(dependant[dependencyBehaviour.disable]);
+        }
+    }
+    // Conditionally hide the element based on the lock status.
+    if (dependant.hasOwnProperty(dependencyBehaviour.hide)) {
+        // Prevent showing an element if it has already been defined hidden.
+        if (!hide && !displayMap.get('hide').toString().includes(dependant[dependencyBehaviour.hide].toString())) {
+            displayMap.get('show').push(dependant[dependencyBehaviour.hide]);
+        } else {
+            displayMap.get('hide').push(dependant[dependencyBehaviour.hide]);
+        }
+    }
+};
+
+/**
+ * Disable an element.
+ *
+ * @param {HTMLElement} element The element to be disabled.
+ */
+export const lock = (element) => {
+    element.setAttribute('disabled', 'disabled');
+    element.classList.add('text-muted');
+    if (element.dataset.fieldtype === 'editor' || element.closest('[data-fieldtype="editor"]')) {
+        element.setAttribute('readonly', 'readonly');
+        element.dispatchEvent(new Event('form:editorUpdated'));
+    }
+};
+
+/**
+ * Enable an element.
+ *
+ * @param {HTMLElement} element The element to be enabled.
+ */
+export const unlock = (element) => {
+    element.removeAttribute('disabled');
+    element.classList.remove('text-muted');
+    if (element.dataset.fieldtype === 'editor' || element.closest('[data-fieldtype="editor"]')) {
+        element.removeAttribute('readonly');
+        element.dispatchEvent(new Event('form:editorUpdated'));
+    }
+};
+
+/**
+ * Hide an element.
+ *
+ * @param {HTMLElement} element The element to be hidden.
+ */
+export const hide = (element) => {
+    element.setAttribute('disabled', 'disabled');
+    const parent = element.closest('.fitem');
+    if (parent) {
+        parent.setAttribute('hidden', 'hidden');
+        parent.classList.add('d-none');
+        // Hide the label as well.
+        const label = document.querySelector('label[for="' + element.id + '"]');
+        if (label) {
+            label.setAttribute('hidden', 'hidden');
+            label.classList.add('d-none');
+        }
+    }
+};
+
+/**
+ * Show an element.
+ *
+ * @param {HTMLElement} element The elements to be shown.
+ */
+export const show = (element) => {
+    element.removeAttribute('disabled');
+    const parent = element.closest('.fitem');
+    if (parent) {
+        parent.removeAttribute('hidden');
+        parent.classList.remove('d-none');
+        // Show the label as well.
+        const label = document.querySelector('label[for="' + element.id + '"]');
+        if (label) {
+            label.removeAttribute('hidden');
+            label.classList.remove('d-none');
+        }
+    }
+};
