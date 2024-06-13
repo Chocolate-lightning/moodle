@@ -63,7 +63,7 @@ Feature: Schema form selectors
     And the "Include Test data 2 user data" "checkbox" should be enabled
 
   @javascript
-  Scenario: The type options panell allow to select all and none of one activity type
+  Scenario: The type options panel allow to select all and none of one activity type
     Given the field "Section 1" matches value "1"
     And the field "Test assign 1" matches value "1"
     And the field "Test data 1" matches value "1"
