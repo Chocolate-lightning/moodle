@@ -1,4 +1,4 @@
-@core @core_grades @javascript @testtt
+@core @core_grades @javascript
 Feature: We carry over data from modal to advanced grade item settings
   In order to setup grade items quickly
   As an teacher

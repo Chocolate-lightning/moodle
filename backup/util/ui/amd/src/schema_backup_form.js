@@ -27,6 +27,7 @@
 
 import Notification from 'core/notification';
 import * as Templates from 'core/templates';
+import Form from 'core_form/form';
 
 const Selectors = {
     action: '[data-mdl-action]',
@@ -142,10 +143,9 @@ export default class BackupFormController {
         }
 
         // At this point, we really need to persuade the form we are part of to
-        // update all of its disabledIf rules. However, as far as I can see,
-        // given the way that lib/form/form.js is written, that is impossible.
-        if (formId && M.form) {
-            M.form.updateFormState(formId);
+        // update all of its disabledIf rules.
+        if (formId) {
+            Form.getInstance(formId)?.formUpdatedExternally();
         }
     }
 
