@@ -46,87 +46,112 @@ class test_form_rules extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
+        // Radio rule test.
         $mform->addElement('header', 'radioheader', 'Radio: eq/neq');
         $radiogroup = [
-            $mform->createElement('radio', 'radio_group_test', '', 'Enable', '1'),
-            $mform->createElement('radio', 'radio_group_test', '', 'Disable', '2'),
-            $mform->createElement('radio', 'radio_group_test', '', 'Hide', '3'),
+            $mform->createElement('radio', 'rgt', '', 'Enable', '1'),
+            $mform->createElement('radio', 'rgt', '', 'Disable', '2'),
+            $mform->createElement('radio', 'rgt', '', 'Hide', '3'),
         ];
-        $mform->addGroup($radiogroup, 'radio_group_test_group', 'Enable/Disable/Hide', ' ', false);
-        $mform->setDefault('radio_group_test', 1);
+        $mform->addGroup($radiogroup, 'rgt_group', 'Enable/Disable/Hide', ' ', false);
+        $mform->setDefault('rgt', 1);
 
-        $mform->addElement('button', 'some_eq_text', 'Radio EQ');
-        $mform->disabledIf('some_eq_text', 'radio_group_test', 'eq', '2');
-        $mform->hideIf('some_eq_text', 'radio_group_test', 'eq', '3');
+        $mform->addElement('button', 'r_eq_btn', 'Radio EQ');
+        $mform->disabledIf('r_eq_btn', 'rgt', 'eq', '2');
+        $mform->hideIf('r_eq_btn', 'rgt', 'eq', '3');
 
-        $mform->addElement('button', 'some_neq_text', 'Radio NEQ');
-        $mform->disabledIf('some_neq_text', 'radio_group_test', 'neq', '2');
-        $mform->hideIf('some_neq_text', 'radio_group_test', 'neq', '3');
+        $mform->addElement('button', 'r_neq_btn', 'Radio NEQ');
+        $mform->disabledIf('r_neq_btn', 'rgt', 'neq', '2');
+        $mform->hideIf('r_neq_btn', 'rgt', 'neq', '3');
 
+        // Checkboxes checked/notchecked rule test.
         $mform->addElement('header', 'checkboxheader', 'Checkboxes: checked/notchecked');
         $mform->setExpanded('checkboxheader');
         $ckb = [
-            $mform->createElement('advcheckbox', 'some_hidden_checkbox', 'Checked hide', ''),
-            $mform->createElement('advcheckbox', 'some_disabled_checkbox', 'Checked disable', ''),
-            $mform->createElement('advcheckbox', 'some_hidden_uncheck_checkbox', 'Not checked hide', ''),
-            $mform->createElement('advcheckbox', 'some_disabled_uncheck_checkbox', 'Not checked disable', ''),
+            $mform->createElement('advcheckbox', 'hidden_ckb', 'Checked hide', ''),
+            $mform->createElement('advcheckbox', 'disabled_ckb', 'Checked disable', ''),
+            $mform->createElement('advcheckbox', 'hidden_uncheck_ckb', 'Not checked hide', ''),
+            $mform->createElement('advcheckbox', 'disabled_uncheck_ckb', 'Not checked disable', ''),
         ];
         $mform->addGroup($ckb, 'checkbox_test_group', 'Checked/Not checked', ' ', false);
 
-        $mform->addElement('button', 'some_checked_hidden_text', 'Checked hidden');
-        $mform->hideIf('some_checked_hidden_text', 'some_hidden_checkbox', 'checked');
+        $mform->addElement('button', 'checked_hidden_btn', 'Checked hidden');
+        $mform->hideIf('checked_hidden_btn', 'hidden_ckb', 'checked');
 
-        $mform->addElement('button', 'some_checked_disabled_text', 'Checked disabled');
-        $mform->disabledIf('some_checked_disabled_text', 'some_disabled_checkbox', 'checked');
+        $mform->addElement('button', 'checked_disabled_btn', 'Checked disabled');
+        $mform->disabledIf('checked_disabled_btn', 'disabled_ckb', 'checked');
 
-        $mform->addElement('button', 'some_unchecked_hidden_text', 'Not checked hidden');
-        $mform->hideIf('some_unchecked_hidden_text', 'some_hidden_uncheck_checkbox', 'notchecked');
+        $mform->addElement('button', 'unchecked_hidden_btn', 'Not checked hidden');
+        $mform->hideIf('unchecked_hidden_btn', 'hidden_uncheck_ckb', 'notchecked');
 
-        $mform->addElement('button', 'some_unchecked_disabled_text', 'Not checked disabled');
-        $mform->disabledIf('some_unchecked_disabled_text', 'some_disabled_uncheck_checkbox', 'notchecked');
+        $mform->addElement('button', 'unchecked_disabled_btn', 'Not checked disabled');
+        $mform->disabledIf('unchecked_disabled_btn', 'disabled_uncheck_ckb', 'notchecked');
 
+        // Text alpha input rule test.
         $mform->addElement('header', 'textalphaheader', 'Text alpha: eq/neq/in');
         $mform->setExpanded('textalphaheader');
-        $mform->addElement('text', 'some_alpha_text', 'Text input');
-        $mform->setType('some_alpha_text', PARAM_TEXT);
+        $mform->addElement('text', 'alpha_btn', 'Text input');
+        $mform->setType('alpha_btn', PARAM_TEXT);
 
-        $mform->addElement('button', 'text_eq_text', 'Alpha EQ');
-        $mform->disabledIf('text_eq_text', 'some_alpha_text', 'eq', 'Disable eq');
-        $mform->hideIf('text_eq_text', 'some_alpha_text', 'eq', 'Hidden eq');
+        $mform->addElement('button', 'tia_eq_btn', 'Alpha EQ');
+        $mform->disabledIf('tia_eq_btn', 'alpha_btn', 'eq', 'Disable eq');
+        $mform->hideIf('tia_eq_btn', 'alpha_btn', 'eq', 'Hidden eq');
 
-        $mform->addElement('button', 'text_neq_text', 'Alpha NEQ');
-        $mform->disabledIf('text_neq_text', 'some_alpha_text', 'neq', 'Disable neq');
-        $mform->hideIf('text_neq_text', 'some_alpha_text', 'neq', 'Hidden neq');
+        $mform->addElement('button', 'tia_neq_btn', 'Alpha NEQ');
+        $mform->disabledIf('tia_neq_btn', 'alpha_btn', 'neq', 'Disable neq');
+        $mform->hideIf('tia_neq_btn', 'alpha_btn', 'neq', 'Hidden neq');
 
-        $mform->addElement('button', 'text_in_text', 'Alpha IN');
-        $mform->disabledIf('text_in_text', 'some_alpha_text', 'in', ['Tool', 'Rage Against The Machine']);
-        $mform->hideIf('text_in_text', 'some_alpha_text', 'in', ['$uicideboy$', 'MF Doom', 'USAO / Camellia / No Mana']);
+        $mform->addElement('button', 'tia_in_btn', 'Alpha IN');
+        $mform->disabledIf('tia_in_btn', 'alpha_btn', 'in', ['Tool', 'Rage Against The Machine']);
+        $mform->hideIf('tia_in_btn', 'alpha_btn', 'in', ['MF Doom', 'USAO / Camellia / No Mana']);
 
+        // Text int input rule test.
         $mform->addElement('header', 'textintheader', 'Text int: eq/neq/in');
         $mform->setExpanded('textintheader');
-        $mform->addElement('text', 'some_int_text', 'Number input');
-        $mform->setType('some_int_text', PARAM_INT);
+        $mform->addElement('text', 'tii_btn', 'Number input');
+        $mform->setType('tii_btn', PARAM_INT);
 
-        $mform->addElement('button', 'int_eq_text', 'Int EQ');
-        $mform->disabledIf('int_eq_text', 'some_int_text', 'eq', 1);
-        $mform->hideIf('int_eq_text', 'some_int_text', 'eq', 2);
+        $mform->addElement('button', 'tii_eq_btn', 'Int EQ');
+        $mform->disabledIf('tii_eq_btn', 'tii_btn', 'eq', 1);
+        $mform->hideIf('tii_eq_btn', 'tii_btn', 'eq', 2);
 
-        $mform->addElement('button', 'int_neq_text', 'Int NEQ');
-        $mform->disabledIf('int_neq_text', 'some_int_text', 'neq', 3);
-        $mform->hideIf('int_neq_text', 'some_int_text', 'neq', 4);
+        $mform->addElement('button', 'tii_neq_btn', 'Int NEQ');
+        $mform->disabledIf('tii_neq_btn', 'tii_btn', 'neq', 3);
+        $mform->hideIf('tii_neq_btn', 'tii_btn', 'neq', 4);
 
-        $mform->addElement('button', 'int_in_text', 'Int IN');
-        $mform->disabledIf('int_in_text', 'some_int_text', 'in', [9, 10]);
-        $mform->hideIf('int_in_text', 'some_int_text', 'in', [11, 12]);
+        $mform->addElement('button', 'tii_in_btn', 'Int IN');
+        $mform->disabledIf('tii_in_btn', 'tii_btn', 'in', [9, 10]);
+        $mform->hideIf('tii_in_btn', 'tii_btn', 'in', [11, 12]);
 
-        // $mform->addElement('header', 'dateselectorheader', 'Date selector: eq/ne/neq/noteq');
-        // $mform->setExpanded('dateselectorheader');
+        /**
+         * TODO: Confirm if hide/disable rules work for the following input types.
+         * May be of use to reference: $mform->addRule('edt', get_string('required'), 'required');
+         */
 
-        // TODO: Can rules reference the value inside of these or is it just one way?
-        // $mform->addElement('header', 'editorheader', 'Editor: eq/ne/neq/noteq');
-        // $mform->setExpanded('editorheader');
-        // $mform->addElement('header', 'filepickerheader', 'Filepicker: eq/ne/neq/noteq');
-        // $mform->setExpanded('filepickerheader');
+        // Date selector rule test.
+        $mform->addElement('header', 'dateselectorheader', 'Date selector: ~');
+        //$mform->setExpanded('dateselectorheader');
+        $mform->addElement('date_selector', 'ds', 'Date selector');
+
+        // Editor rule test.
+        $mform->addElement('header', 'editorheader', 'Editor: ~');
+        //$mform->setExpanded('editorheader');
+        $editoroptions = [
+            'subdirs' => 0,
+            'maxbytes' => 0,
+            'maxfiles' => 0,
+            'changeformat' => 0,
+            'context' => context_system::instance(),
+            'noclean' => 0,
+            'trusttext' => 0
+        ];
+        $mform->addElement('editor', 'edt', 'Editor for testing', $editoroptions);
+        $mform->setDefault('edt', ['text' => 'Hello world!', 'format' => FORMAT_HTML]);
+
+        // Filepicker rule test.
+        $mform->addElement('header', 'filepickerheader', 'Filepicker: ~');
+        //$mform->setExpanded('filepickerheader');
+        $mform->addElement('filepicker', 'modelfile', get_string('file'), null, ['accepted_types' => '.zip']);
 
         $this->add_action_buttons(false, 'Send form');
     }

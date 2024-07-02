@@ -34,11 +34,11 @@ Feature: Test the form rules
     And I should <opppostvis> "<opplabel>"
     And the "<opplabel>" "button" should be <opppoststat>
 
-  Examples:
-    | radio   | label     | previs  | prestat  | postvis | poststat | opplabel  | oppprevis | oppprestat | opppostvis | opppoststat |
-    | Enable  | Radio EQ  | see     | enabled  | see     | enabled  | Radio NEQ | not see   | disabled   | not see    | disabled    |
-    | Disable | Radio EQ  | see     | enabled  | see     | disabled | Radio NEQ | not see   | disabled   | not see    | disabled    |
-    | Hide    | Radio NEQ | not see | disabled | see     | disabled | Radio EQ  | see       | enabled    | not see    | disabled    |
+    Examples:
+      | radio   | label     | previs  | prestat  | postvis | poststat | opplabel  | oppprevis | oppprestat | opppostvis | opppoststat |
+      | Enable  | Radio EQ  | see     | enabled  | see     | enabled  | Radio NEQ | not see   | disabled   | not see    | disabled    |
+      | Disable | Radio EQ  | see     | enabled  | see     | disabled | Radio NEQ | not see   | disabled   | not see    | disabled    |
+      | Hide    | Radio NEQ | not see | disabled | see     | disabled | Radio EQ  | see       | enabled    | not see    | disabled    |
 
   @javascript
   Scenario Outline: AlphaNum text rules
@@ -53,14 +53,12 @@ Feature: Test the form rules
     And I should <postvis> "<intlabel>"
     And the "<intlabel>" "button" should be <poststat>
 
-  # NEQ / NE & NOTEQ are the same rule so don't need to run tests for aliased rules.
-  Examples:
-    | textinp                   | alphalabel  | intlabel  | intinp | previs  | postvis | prestat  | poststat |
-    | Disable eq                | Alpha EQ    | Int EQ    | 1      | see     | see     | enabled  | disabled |
-    | Hidden eq                 | Alpha EQ    | Int EQ    | 2      | see     | not see | enabled  | disabled |
-    | Disable neq               | Alpha NEQ   | Int NEQ   | 3      | not see | not see | disabled | disabled |
-    | Hidden neq                | Alpha NEQ   | Int NEQ   | 4      | not see | see     | disabled | disabled |
-    | Tool                      | Alpha IN    | Int IN    | 9      | see     | see     | enabled  | disabled |
-    | Rage Against The Machine  | Alpha IN    | Int IN    | 10     | see     | see     | enabled  | disabled |
-    | $uicideboy$               | Alpha IN    | Int IN    | 11     | see     | not see | enabled  | disabled |
-    | USAO / Camellia / No Mana | Alpha IN    | Int IN    | 12     | see     | not see | enabled  | disabled |
+    # NEQ / NE & NOTEQ are the same rule so don't need to run tests for aliased rules.
+    Examples:
+      | textinp                   | alphalabel  | intlabel  | intinp | previs  | postvis | prestat  | poststat |
+      | Disable eq                | Alpha EQ    | Int EQ    | 1      | see     | see     | enabled  | disabled |
+      | Hidden eq                 | Alpha EQ    | Int EQ    | 2      | see     | not see | enabled  | disabled |
+      | Disable neq               | Alpha NEQ   | Int NEQ   | 3      | not see | not see | disabled | disabled |
+      | Hidden neq                | Alpha NEQ   | Int NEQ   | 4      | not see | see     | disabled | disabled |
+      | Tool                      | Alpha IN    | Int IN    | 9      | see     | see     | enabled  | disabled |
+      | USAO / Camellia / No Mana | Alpha IN    | Int IN    | 12     | see     | not see | enabled  | disabled |
