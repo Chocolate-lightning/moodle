@@ -65,18 +65,23 @@ class test_form_rules extends moodleform {
         $mform->hideIf('r_neq_btn', 'rgt', 'neq', '3');
 
         // Checkboxes checked/notchecked rule test.
-        $mform->addElement('header', 'checkboxheader', 'Checkboxes: checked/notchecked');
+        $mform->addElement('header', 'checkboxheader', 'Checkboxes: checked/notchecked/eq/neq');
         $mform->setExpanded('checkboxheader');
         $ckb = [
             $mform->createElement('advcheckbox', 'hidden_ckb', 'Checked hide', ''),
             $mform->createElement('advcheckbox', 'disabled_ckb', 'Checked disable', ''),
             $mform->createElement('advcheckbox', 'hidden_uncheck_ckb', 'Not checked hide', ''),
             $mform->createElement('advcheckbox', 'disabled_uncheck_ckb', 'Not checked disable', ''),
+            $mform->createElement('advcheckbox', 'eq_ckb', 'EQ Checked', ''),
+            $mform->createElement('advcheckbox', 'neq_ckb', 'NEQ Checked', ''),
         ];
-        $mform->addGroup($ckb, 'checkbox_test_group', 'Checked/Not checked', ' ', false);
+        $mform->addGroup($ckb, 'checkbox_test_group', 'Checked/Not checked/EQ/NEQ', ' ', false);
 
         $mform->addElement('button', 'checked_hidden_btn', 'Checked hidden');
         $mform->hideIf('checked_hidden_btn', 'hidden_ckb', 'checked');
+        $mform->addElement('text', 'checked_hidden_txt', 'Text input');
+        $mform->setType('checked_hidden_txt', PARAM_TEXT);
+        $mform->hideIf('checked_hidden_txt', 'hidden_ckb', 'checked');
 
         $mform->addElement('button', 'checked_disabled_btn', 'Checked disabled');
         $mform->disabledIf('checked_disabled_btn', 'disabled_ckb', 'checked');
@@ -86,6 +91,28 @@ class test_form_rules extends moodleform {
 
         $mform->addElement('button', 'unchecked_disabled_btn', 'Not checked disabled');
         $mform->disabledIf('unchecked_disabled_btn', 'disabled_uncheck_ckb', 'notchecked');
+
+        $mform->addElement('button', 'eq_ckb_btn', 'EQ ckb 1 disabled');
+        $mform->disabledIf('eq_ckb_btn', 'eq_ckb', 'eq' , '1');
+
+        $mform->addElement('button', 'neq_ckb_btn', 'NEQ ckb 0 hidden');
+        $mform->hideIf('neq_ckb_btn', 'neq_ckb', 'neq' , '0');
+
+        // Select test.
+        $mform->addElement('header', 'selectheader', 'Select: eq/neq');
+        $mform->setExpanded('selectheader');
+        $mform->addElement('select', 'sct_int', 'Select',
+            [0 => 'Enable', 1 => 'Disable', 2 => 'Hide'],
+            /*['multiple' => true]*/
+        );
+
+        $mform->addElement('button', 'sct_eq_btn', 'Select EQ');
+        $mform->disabledIf('sct_eq_btn', 'sct_int', 'eq', 1);
+        $mform->hideIf('sct_eq_btn', 'sct_int', 'eq', 2);
+
+        $mform->addElement('button', 'sct_neq_btn', 'Select NEQ');
+        $mform->disabledIf('sct_neq_btn', 'sct_int', 'neq', 1);
+        $mform->hideIf('sct_neq_btn', 'sct_int', 'neq', 0);
 
         // Text alpha input rule test.
         $mform->addElement('header', 'textalphaheader', 'Text alpha: eq/neq/in');
@@ -130,8 +157,10 @@ class test_form_rules extends moodleform {
 
         // Date selector rule test.
         $mform->addElement('header', 'dateselectorheader', 'Date selector: ~');
-        //$mform->setExpanded('dateselectorheader');
+        $mform->setExpanded('dateselectorheader');
+        $mform->addElement('checkbox', 'ds_enb', get_string('enable'));
         $mform->addElement('date_selector', 'ds', 'Date selector');
+        $mform->hideIf("ds", 'ds_enb');
 
         // Editor rule test.
         $mform->addElement('header', 'editorheader', 'Editor: ~');
@@ -151,7 +180,7 @@ class test_form_rules extends moodleform {
         // Filepicker rule test.
         $mform->addElement('header', 'filepickerheader', 'Filepicker: ~');
         //$mform->setExpanded('filepickerheader');
-        $mform->addElement('filepicker', 'modelfile', get_string('file'), null, ['accepted_types' => '.zip']);
+        $mform->addElement('filepicker', 'modelfile', get_string('file'), null, ['accepted_types' => '*']);
 
         $this->add_action_buttons(false, 'Send form');
     }

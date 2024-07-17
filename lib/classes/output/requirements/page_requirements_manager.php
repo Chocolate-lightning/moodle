@@ -1099,7 +1099,7 @@ class page_requirements_manager {
                 $jsonparams[] = json_encode($param);
             }
             $strparams = implode(', ', $jsonparams);
-            if ($CFG->debugdeveloper) {
+            if ($CFG->debugdeveloper && $fullmodule !== 'core_form/form') {
                 $toomanyparamslimit = 1024;
                 if (strlen($strparams) > $toomanyparamslimit) {
                     debugging('Too much data passed as arguments to js_call_amd("' . $fullmodule . '", "' . $func .
