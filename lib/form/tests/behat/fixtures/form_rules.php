@@ -79,7 +79,7 @@ class test_form_rules extends moodleform {
 
         $mform->addElement('button', 'checked_hidden_btn', 'Checked hidden');
         $mform->hideIf('checked_hidden_btn', 'hidden_ckb', 'checked');
-        $mform->addElement('text', 'checked_hidden_txt', 'Text input');
+        $mform->addElement('text', 'checked_hidden_txt', 'Label test');
         $mform->setType('checked_hidden_txt', PARAM_TEXT);
         $mform->hideIf('checked_hidden_txt', 'hidden_ckb', 'checked');
 
@@ -164,7 +164,9 @@ class test_form_rules extends moodleform {
 
         // Editor rule test.
         $mform->addElement('header', 'editorheader', 'Editor: ~');
-        //$mform->setExpanded('editorheader');
+        $mform->setExpanded('editorheader');
+        $mform->addElement('checkbox', 'edt_enb', get_string('enable'));
+        $mform->addElement('checkbox', 'edt_dis', get_string('hide'));
         $editoroptions = [
             'subdirs' => 0,
             'maxbytes' => 0,
@@ -176,6 +178,8 @@ class test_form_rules extends moodleform {
         ];
         $mform->addElement('editor', 'edt', 'Editor for testing', $editoroptions);
         $mform->setDefault('edt', ['text' => 'Hello world!', 'format' => FORMAT_HTML]);
+        $mform->disabledIf("edt", 'edt_enb');
+        $mform->hideIf("edt", 'edt_dis');
 
         // Filepicker rule test.
         $mform->addElement('header', 'filepickerheader', 'Filepicker: ~');

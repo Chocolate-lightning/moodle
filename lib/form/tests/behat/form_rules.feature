@@ -7,6 +7,7 @@ Feature: Test the form rules
   Background:
     Given I log in as "admin"
     And I am on fixture page "/lib/form/tests/behat/fixtures/form_rules.php"
+    And I wait until the page is ready
 
   @javascript
   Scenario Outline: Checkbox checked & notchecked rules
