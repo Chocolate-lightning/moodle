@@ -20,7 +20,7 @@ Feature: Using the database activities which support point scale
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
 
-  @javascript
+  @javascript @MDL-XXXXX
   Scenario: Database rescale grade should not be possible when users are graded
     Given the following "mod_data > fields" exist:
       | database | type | name            | description            |
