@@ -150,23 +150,24 @@ class test_form_rules extends moodleform {
         $mform->disabledIf('tii_in_btn', 'tii_btn', 'in', [9, 10]);
         $mform->hideIf('tii_in_btn', 'tii_btn', 'in', [11, 12]);
 
-        /**
-         * TODO: Confirm if hide/disable rules work for the following input types.
-         * May be of use to reference: $mform->addRule('edt', get_string('required'), 'required');
-         */
-
         // Date selector rule test.
         $mform->addElement('header', 'dateselectorheader', 'Date selector: ~');
         $mform->setExpanded('dateselectorheader');
         $mform->addElement('checkbox', 'ds_enb', get_string('enable'));
-        $mform->addElement('date_selector', 'ds', 'Date selector');
-        $mform->hideIf("ds", 'ds_enb');
+        $mform->setDefault('ds_enb', 1);
+        $mform->addElement('checkbox', 'ds_dis', get_string('show'));
+        $mform->setDefault('ds_dis', 1);
+        $mform->addElement('date_selector', 'ds', 'Date selector for testing');
+        $mform->disabledIf("ds", 'ds_enb');
+        $mform->hideIf("ds", 'ds_dis');
 
         // Editor rule test.
         $mform->addElement('header', 'editorheader', 'Editor: ~');
         $mform->setExpanded('editorheader');
         $mform->addElement('checkbox', 'edt_enb', get_string('enable'));
-        $mform->addElement('checkbox', 'edt_dis', get_string('hide'));
+        $mform->setDefault('edt_enb', 1);
+        $mform->addElement('checkbox', 'edt_dis', get_string('show'));
+        $mform->setDefault('edt_dis', 1);
         $editoroptions = [
             'subdirs' => 0,
             'maxbytes' => 0,
@@ -183,8 +184,11 @@ class test_form_rules extends moodleform {
 
         // Filepicker rule test.
         $mform->addElement('header', 'filepickerheader', 'Filepicker: ~');
-        //$mform->setExpanded('filepickerheader');
-        $mform->addElement('filepicker', 'modelfile', get_string('file'), null, ['accepted_types' => '*']);
+        $mform->setExpanded('filepickerheader');
+        $mform->addElement('checkbox', 'fp_dis', get_string('show'));
+        $mform->setDefault('fp_dis', 1);
+        $mform->addElement('filepicker', 'fp', 'Filepicker for testing', null, ['accepted_types' => '*']);
+        $mform->hideIf("fp", 'fp_dis');
 
         $this->add_action_buttons(false, 'Send form');
     }
