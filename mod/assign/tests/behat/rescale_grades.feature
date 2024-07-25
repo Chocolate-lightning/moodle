@@ -36,6 +36,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
     And I am on the "Test assignment name" "assign activity" page
 
+  @MDL-82294
   Scenario: Update the max grade for an assignment without rescaling existing grades
     Given I navigate to "Settings" in current page administration
     And I expand all fieldsets
@@ -45,6 +46,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I follow "View all submissions"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
 
+  @MDL-82294
   Scenario: Update an assignment without touching the max grades
     Given I navigate to "Settings" in current page administration
     And I expand all fieldsets
@@ -61,6 +63,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I follow "View all submissions"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
 
+  @MDL-82294
   Scenario: Update the max grade for an assignment rescaling existing grades
     Given I navigate to "Settings" in current page administration
     And I expand all fieldsets
@@ -70,6 +73,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I follow "View all submissions"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "20.00"
 
+  @MDL-82294
   Scenario: Rescaling should not produce negative grades
     Given I follow "View all submissions"
     And I change window size to "large"

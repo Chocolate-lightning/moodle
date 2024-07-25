@@ -138,7 +138,7 @@ Feature: Backpack badges
     And "Move up" "icon" should exist in the "https://dc.imsglobal.org" "table_row"
     And "Move down" "icon" should not exist in the "https://dc.imsglobal.org" "table_row"
 
-  @javascript
+  @javascript @MDL-82294
   Scenario: Add a new site backpack with authentication details checkbox
     Given I am on homepage
     And I log in as "admin"
@@ -172,7 +172,7 @@ Feature: Backpack badges
     And I click on "includeauthdetails" "checkbox"
     And I should not see "test@test.com"
 
-  @javascript
+  @javascript @MDL-82294
   Scenario: View backpack form as a student
     Given I log in as "student1"
     And I follow "Preferences" in the user menu

@@ -4,7 +4,7 @@ Feature: Edit a users password
   As an admin
   I need to be able to edit their profile and change their password
 
-  @javascript
+  @javascript @MDL-82294
   Scenario: Verify the password field is enabled/disabled based on authentication selected, in user edit advanced page.
     Given I log in as "admin"
     When I navigate to "Users > Accounts > Add a new user" in site administration

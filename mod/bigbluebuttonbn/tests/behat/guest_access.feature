@@ -24,7 +24,7 @@ Feature: Guest access allows external users to connect to a meeting
       | 1           | should see     |
       | 0           | should not see |
 
-  @javascript
+  @javascript @MDL-82294
   Scenario Outline: I should see Guest settings on the module form
     Given the following config values are set as admin:
       | bigbluebuttonbn_guestaccess_enabled | 1 |

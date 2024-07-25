@@ -1,4 +1,4 @@
-@core @core_form @test
+@core @core_form
 Feature: Test the form rules
   For forms that make use of different rules
   So that users can use form elements
