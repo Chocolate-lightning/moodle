@@ -193,7 +193,7 @@ Feature: Schema form selectors
     And the field "Include Test assign 2 user data" matches value "1"
     And the field "Include Test data 2 user data" matches value "1"
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Select or unselect a section schema disable the activities checkboxes
     Given the field "Section 1" matches value "1"
     And the field "Test assign 1" matches value "1"
@@ -236,7 +236,7 @@ Feature: Schema form selectors
     And the "Include Test assign 2 user data" "checkbox" should be enabled
     And the "Include Test data 2 user data" "checkbox" should be enabled
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Select or unselect a section user data disable the activities checkboxes
     Given the "Section 1" "checkbox" should be enabled
     And the "Test assign 1" "checkbox" should be enabled

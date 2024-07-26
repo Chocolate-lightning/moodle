@@ -102,7 +102,7 @@ Feature: Change grading options in an H5P activity
       | Grade item          | Grade | Percentage |
       | Awesome H5P package | -     | -          |
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Reescale existing grades changing the maximum grade
     # First we set to average and recalculate grades.
     Given I am on the "Awesome H5P package" "h5pactivity activity editing" page logged in as teacher1
@@ -127,7 +127,7 @@ Feature: Change grading options in an H5P activity
       | Grade item          | Grade | Range | Percentage  |
       | Awesome H5P package | 16.67 | 0–50  | 33.33 %     |
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Change maximum grade without rescaling grade
     # First we set to average and recalculate grades.
     Given I am on the "Awesome H5P package" "h5pactivity activity editing" page logged in as teacher1

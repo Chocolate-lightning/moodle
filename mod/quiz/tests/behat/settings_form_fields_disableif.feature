@@ -22,7 +22,7 @@ Feature: Settings form fields disabled if not required
       | activity | course | section | name        |
       | quiz     | C1     | 1       | Test quiz 1 |
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Depending on the number of attempts, different form fields are disabled.
     When I am on the "Test quiz 1" "quiz activity editing" page logged in as teacher
     And I expand all fieldsets
@@ -93,7 +93,7 @@ Feature: Settings form fields disabled if not required
     And the "id_delay1_enabled" "field" should be enabled
     And the "id_delay2_enabled" "field" should be enabled
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Depending on whether there is a close date, some review options are disabled.
     When I log in as "teacher"
     And I add a quiz activity to course "Course 1" section "1"

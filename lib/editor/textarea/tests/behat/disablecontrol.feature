@@ -20,7 +20,7 @@ Feature: Text area with enable/disable function.
     And I am on "Course 1" course homepage
     And I click on "Control Enable/Disable Text area" "link" in the "region-main" "region"
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Check disable Text area editor.
     When I set the field "mycontrol" to "Disable"
     Then the "readonly" attribute of "textarea#id_myeditor" "css_element" should be set

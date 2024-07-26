@@ -30,7 +30,7 @@ Feature: Choice dropdown form behat test
     When I click on "Check to hide the first choice dropdown field." "checkbox"
     Then I should not see "Hide if example"
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Use a choice dropdown to disable and hide other fields
     Given I should not see "Hide if element"
     And the "Disabled if element" "field" should be disabled

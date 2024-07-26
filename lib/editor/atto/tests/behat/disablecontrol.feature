@@ -16,7 +16,7 @@ Feature: Atto with enable/disable function.
     And I am on "Course 1" course homepage
     And I click on "Control Enable/Disable Atto" "link" in the "region-main" "region"
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Check disable Atto editor.
     When I set the field "mycontrol" to "Disable"
     Then the "disabled" attribute of "button.atto_collapse_button" "css_element" should be set

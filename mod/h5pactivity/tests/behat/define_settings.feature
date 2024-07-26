@@ -25,14 +25,12 @@ Feature: Set up attempt grading options into H5P activity
     When the field "Type" matches value "Point"
     Then the "Grading method" "select" should be enabled
 
-  @MDL-82294
   Scenario: Scale grading should not have a grading method.
     When I set the following fields to these values:
           | Name        | Awesome H5P package |
           | Type        | Scale               |
     Then the "Grading method" "select" should be disabled
 
-  @MDL-82294
   Scenario: None grading should not have a grading method.
     When I set the following fields to these values:
           | Name        | Awesome H5P package |

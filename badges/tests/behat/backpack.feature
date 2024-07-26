@@ -172,7 +172,7 @@ Feature: Backpack badges
     And I click on "includeauthdetails" "checkbox"
     And I should not see "test@test.com"
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: View backpack form as a student
     Given I log in as "student1"
     And I follow "Preferences" in the user menu

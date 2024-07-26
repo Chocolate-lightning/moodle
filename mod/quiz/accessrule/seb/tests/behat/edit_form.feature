@@ -56,7 +56,6 @@ Feature: Safe Exam Browser settings in quiz edit form
     And I press "Save and return to course"
     And I should not see "Edit settings"
 
-  @MDL-82294
   Scenario: SEB settings if using No SEB
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
@@ -89,7 +88,6 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Expressions blocked"
     Then I should not see "Regex blocked"
 
-  @MDL-82294
   Scenario: SEB settings if using Use SEB client config
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
@@ -122,7 +120,6 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Expressions blocked"
     Then I should not see "Regex blocked"
 
-  @MDL-82294
   Scenario: SEB settings if using Upload my own config
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
@@ -155,7 +152,6 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Safe Exam Browser config template"
     Then I should not see "Template 1"
 
-  @MDL-82294
   Scenario: SEB settings if using Use an existing template
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
@@ -190,7 +186,6 @@ Feature: Safe Exam Browser settings in quiz edit form
     And I set the field "Enable quitting of SEB" to "No"
     Then I should not see "Quit password"
 
-  @MDL-82294
   Scenario: SEB settings if using Configure manually
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
