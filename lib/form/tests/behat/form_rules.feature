@@ -24,10 +24,10 @@ Feature: Test the form rules
       | Not checked hide    | not see   | disabled      | Not checked hidden        | see          | enabled       | button      | Not checked hidden   |
       | Not checked disable | see       | disabled      | Not checked disabled      | see          | enabled       | button      | Not checked disabled |
       | EQ Checked          | see       | enabled       | EQ ckb 1 disabled         | see          | disabled      | button      | EQ ckb 1 disabled    |
-      | NEQ Checked         | see       | enabled       | NEQ ckb 0 hidden          | not see      | disabled      | button      | NEQ ckb 0 hidden     |
-#      | ds_enb              | see       | enabled       | Date selector for testing | see          | disabled      | css_element | #id_ds_day           |
+      | NEQ Checked         | not see   | disabled      | NEQ ckb 0 hidden          | see          | enabled       | button      | NEQ ckb 0 hidden     |
+      | ds_enb              | see       | enabled       | Date selector for testing | see          | disabled      | css_element | #id_ds_day           |
       | ds_dis              | see       | enabled       | Date selector for testing | not see      | disabled      | css_element | #id_ds_day           |
-      | edt_enb             | see       | enabled       | Editor for testing        | see          | enabled       | css_element | #id_edt              |
+      | edt_enb             | see       | enabled       | Editor for testing        | see          | disabled      | css_element | #id_edt              |
       | edt_dis             | see       | enabled       | Editor for testing        | not see      | disabled      | css_element | #id_edt              |
       | fp_dis              | see       | enabled       | Filepicker for testing    | not see      | disabled      | css_element | #id_fp               |
 

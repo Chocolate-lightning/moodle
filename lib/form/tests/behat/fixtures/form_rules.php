@@ -96,6 +96,7 @@ class test_form_rules extends moodleform {
         $mform->disabledIf('eq_ckb_btn', 'eq_ckb', 'eq' , '1');
 
         $mform->addElement('button', 'neq_ckb_btn', 'NEQ ckb 0 hidden');
+        $mform->setDefault('neq_ckb', 1);
         $mform->hideIf('neq_ckb_btn', 'neq_ckb', 'neq' , '0');
 
         // Select test.
