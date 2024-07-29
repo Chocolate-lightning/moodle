@@ -19,7 +19,7 @@ Feature: Schema form selectors
     And I follow "Backup"
     And I click on "Next" "button" in the "page-content" "region"
 
-  @javascript @MDL-82294
+  @javascript
   Scenario: Select all and none should toggle backup schema checkboxes
     Given the field "Section 1" matches value "1"
     And the field "Test assign 1" matches value "1"
@@ -62,8 +62,8 @@ Feature: Schema form selectors
     And the "Include Test assign 2 user data" "checkbox" should be enabled
     And the "Include Test data 2 user data" "checkbox" should be enabled
 
-  @javascript @MDL-82294
-  Scenario: The type options panell allow to select all and none of one activity type
+  @javascript
+  Scenario: The type options panel allow to select all and none of one activity type
     Given the field "Section 1" matches value "1"
     And the field "Test assign 1" matches value "1"
     And the field "Test data 1" matches value "1"
