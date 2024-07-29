@@ -118,7 +118,7 @@ Feature: Automatic creation of groups
     And the "groups" select box should contain "Group A (3)"
     And the "groups" select box should contain "Group B (3)"
 
-  @javascript
+  @javascript @MDL-82294
   Scenario: Split users into groups based on existing groups or groupings
     Given I set the following fields to these values:
       | Naming scheme | Group @ |
