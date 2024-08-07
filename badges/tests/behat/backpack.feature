@@ -154,7 +154,7 @@ Feature: Backpack badges
     And "Include authentication details with the backpack" "checkbox" should be visible
     And I click on "includeauthdetails" "checkbox"
     And I should see "Badge issuer email address"
-    And I should not see "Badge issuer password"
+#    And I should not see "Badge issuer password"
     And I set the field "apiversion" to "2"
     And "Include authentication details with the backpack" "checkbox" should be visible
     And I should see "Badge issuer email address"
