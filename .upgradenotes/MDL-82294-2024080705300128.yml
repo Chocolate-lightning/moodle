@@ -1,0 +1,7 @@
+issueNumber: MDL-82294
+notes:
+  core_form:
+    - message: >-
+        Begin the migration of forum YUI to ECMAScript, this is currently in
+        alpha and needs further testing
+      type: improved
