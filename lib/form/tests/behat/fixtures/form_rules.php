@@ -24,7 +24,7 @@
 
 require_once(__DIR__ . '/../../../../../config.php');
 
-// defined('BEHAT_SITE_RUNNING') || die();
+defined('BEHAT_SITE_RUNNING') || die();
 
 global $CFG, $PAGE, $OUTPUT;
 require_once($CFG->libdir . '/formslib.php');
@@ -104,7 +104,6 @@ class test_form_rules extends moodleform {
         $mform->setExpanded('selectheader');
         $mform->addElement('select', 'sct_int', 'Select',
             [0 => 'Enable', 1 => 'Disable', 2 => 'Hide'],
-            /*['multiple' => true]*/
         );
 
         $mform->addElement('button', 'sct_eq_btn', 'Select EQ');
@@ -176,7 +175,7 @@ class test_form_rules extends moodleform {
             'changeformat' => 0,
             'context' => context_system::instance(),
             'noclean' => 0,
-            'trusttext' => 0
+            'trusttext' => 0,
         ];
         $mform->addElement('editor', 'edt', 'Editor for testing', $editoroptions);
         $mform->setDefault('edt', ['text' => 'Hello world!', 'format' => FORMAT_HTML]);
