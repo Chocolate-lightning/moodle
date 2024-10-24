@@ -69,7 +69,7 @@ Feature: I can grade a students interaction across a rubric forum
     # Confirm the grade is now in the grading report.
     And I am on "Course 1" course homepage
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And the following should exist in the "user-grade" table:
       | Grade item               | Calculated weight | Grade | Range | Percentage | Contribution to course total |
       | Rubric Forum whole forum | 100.00 %          | 65.00 | 0–100 | 65.00 %    | 65.00 %                      |

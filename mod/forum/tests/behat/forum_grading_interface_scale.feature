@@ -53,7 +53,7 @@ Feature: I can grade a students interaction across a scale forum
     # Confirm the grade is now in the grading report.
     And I am on "Course 1" course homepage
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade     | Range                   | Percentage | Contribution to course total |
       | Scale Forum whole forum | 100.00 %          | Very good | Disappointing–Excellent | 66.67 %    | 75.00 %                      |

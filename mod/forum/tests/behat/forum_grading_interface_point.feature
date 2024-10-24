@@ -50,7 +50,7 @@ Feature: I can grade a students interaction across a basic point based forum
     # Confirm the grade is now in the grading report.
     And I am on "Course 1" course homepage
     And I navigate to "View > User report" in the course gradebook
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade | Range | Percentage | Contribution to course total |
       | Point Forum whole forum | 100.00 %          | 6.00  | 0–10  | 60.00 %    | 60.00 %                      |
