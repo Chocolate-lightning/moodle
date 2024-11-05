@@ -105,6 +105,10 @@ class UserPicker {
      * @returns {Promise}
      */
     renderUserChange(context) {
+        // Some WS may give us a different key for the profile image, we'll convert it for the one our template wants.
+        if (!context?.profileimageurl && context?.profileimage) {
+            context.profileimageurl = context.profileimage;
+        }
         return Templates.renderForPromise(`${templatePath}/user_picker/user`, context);
     }
 

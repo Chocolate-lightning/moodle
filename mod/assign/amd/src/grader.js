@@ -17,7 +17,7 @@
  * This module will tie together all the different calls the gradable module will make.
  *
  * @module     mod_assign/grades/grader
- * @copyright  2023 Mathew May <mathew.solutions>
+ * @copyright  2024 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import Ajax from 'core/ajax';
@@ -55,6 +55,7 @@ const getSubmissionByUserID = (userid, moduleid) => {
 const getContentForUserIdFunction = (moduleid) => (userid) => {
     return getSubmissionByUserID(userid, moduleid)
         .then(context => {
+            window.console.log(context);
             return Templates.render('mod_assign/grades/grader/submission', context);
         })
         .catch(Notification.exception);
@@ -74,7 +75,6 @@ const getUsersForCmidFunction = (cmid, groupID, onlyActive) => async() => {
 
     return context.users;
 };
-
 
 const findGradableNode = node => node.closest(Selectors.gradableItem);
 
