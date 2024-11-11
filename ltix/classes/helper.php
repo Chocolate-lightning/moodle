@@ -406,7 +406,7 @@ class helper {
      *
      * @return stdClass Form config for the item
      */
-    public static function content_item_to_form(object $tool, object $typeconfig, object $item) : stdClass {
+    public static function content_item_to_form(object $tool, object $typeconfig, object $item): stdClass {
         global $OUTPUT;
 
         $config = new stdClass();
@@ -1598,7 +1598,7 @@ class helper {
      * @param string $lticoursecategories Comma separated list of course categories.
      * @return void
      */
-    public static function type_add_categories(int $typeid, string $lticoursecategories = '') : void {
+    public static function type_add_categories(int $typeid, string $lticoursecategories = ''): void {
         global $DB;
         $coursecategories = explode(',', $lticoursecategories);
         foreach ($coursecategories as $coursecategory) {
@@ -2087,7 +2087,7 @@ class helper {
      * @param  object $instance the external tool activity settings
      * @return object|null
      */
-    public static function get_instance_type(object $instance) : ?object {
+    public static function get_instance_type(object $instance): ?object {
         if (empty($instance->typeid)) {
             if (!$tool = self::get_tool_by_url_match($instance->toolurl, $instance->course)) {
                 $tool = self::get_tool_by_url_match($instance->securetoolurl,  $instance->course);

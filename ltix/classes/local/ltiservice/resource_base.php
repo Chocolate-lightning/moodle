@@ -201,7 +201,7 @@ abstract class resource_base {
      *
      * @param response $response  Response object for this request.
      */
-    public abstract function execute($response);
+    abstract public function execute($response);
 
     /**
      * Check to make sure the request is valid.
