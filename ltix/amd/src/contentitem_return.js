@@ -21,23 +21,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define(['jquery'], function($) {
-    return {
-        /**
-         * Init function.
-         *
-         * @param {string} returnData The returned data.
-         */
-        init: function(returnData) {
-            // Make sure the window has loaded before we perform processing.
-            $(window).ready(function() {
-                if (window != top) {
-                    // Send return data to be processed by the parent window.
-                    parent.processContentItemReturnData(returnData);
-                } else {
-                    window.processContentItemReturnData(returnData);
-                }
-            });
+
+import $ from 'jquery';
+
+/**
+ * Initialize the module.
+ *
+ * @param {string} returnData The returned data.
+ */
+export const init = (returnData) => {
+    // Make sure the window has loaded before we perform processing.
+    $(window).ready(function() {
+        if (window != top) {
+            // Send return data to be processed by the parent window.
+            parent.contentItem.contentItemReturnAction(returnData);
+        } else {
+            window.contentItem.contentItemReturnAction(returnData);
         }
-    };
-});
+    });
+};

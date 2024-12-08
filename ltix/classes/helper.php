@@ -3939,7 +3939,7 @@ class helper {
                 require_capability('moodle/ltix:addcoursetool', $context);
                 // Set the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
                 $returnurlparams = [
-                    'course' => $courseid,
+                    'contextid' => $context->id,
                     'id' => $typeid,
                     'sesskey' => sesskey()
                 ];

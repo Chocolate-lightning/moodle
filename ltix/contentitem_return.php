@@ -17,7 +17,7 @@
 /**
  * Handle the return from the Tool Provider after selecting a content item.
  *
- * @package core_ltix
+ * @package    core_ltix
  * @copyright  2015 Vital Source Technologies http://vitalsource.com
  * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,11 +26,11 @@
 require_once('../config.php');
 
 $id = required_param('id', PARAM_INT);
-$courseid = required_param('course', PARAM_INT);
+$contextid = required_param('contextid', PARAM_INT);
 
 $jwt = optional_param('JWT', '', PARAM_RAW);
 
-$context = context_course::instance($courseid);
+$context = \context_helper::instance_by_id($contextid);
 
 $pageurl = new moodle_url('/ltix/contentitem_return.php');
 $PAGE->set_url($pageurl);
@@ -70,11 +70,20 @@ if (!empty($jwt)) {
     \core_ltix\oauth_helper::verify_oauth_signature($id, $consumerkey);
 }
 
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-require_login($course);
+// Check access and capabilities.
+if ($context instanceof context_course) {
+    $course = $DB->get_record('course', ['id' => $context->instanceid], '*', MUST_EXIST);
+    require_login($course);
+} else if ($context instanceof context_module) {
+    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+    require_login(null, true, $cm, true, true);
+} else {
+    require_login();
+}
+
 require_sesskey();
-require_capability('moodle/course:manageactivities', $context);
-require_capability('moodle/ltix:addcoursetool', $context);
+
+// TODO: Assess capability checks.
 
 $redirecturl = null;
 $returndata = null;

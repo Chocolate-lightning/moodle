@@ -31,12 +31,12 @@
 
     Example context (json):
     {
-        "url": "/",
+        "url": "contentitem.php",
         "postData": {
-            "id": "1",
-            "course": "1",
-            "title": "Sample title",
-            "text": "This is a description"
+            "toolid": "1",
+            "contextid": "1",
+            "toolinstancetitle": "Sample title",
+            "toolinstancetext": "This is a description"
         }
     }
 
@@ -51,36 +51,10 @@
         <iframe id="contentitem-page-iframe" name="contentitem-page-iframe" class="hidden" tabindex="0">
         </iframe>
         <form target="contentitem-page-iframe" action="{{url}}" id="contentitem-request-form" method="post">
-            <input type="hidden" name="id" value="{{postData.id}}" />
-            <input type="hidden" name="course" value="{{postData.course}}" />
-            <input type="hidden" name="title" value="{{postData.title}}" />
-            <input type="hidden" name="text" value="{{postData.text}}" />
+            <input type="hidden" name="id" value="{{postData.toolid}}" />
+            <input type="hidden" name="contextid" value="{{postData.contextid}}" />
+            <input type="hidden" name="title" value="{{postData.toolinstancetitle}}" />
+            <input type="hidden" name="text" value="{{postData.toolinstancetext}}" />
         </form>
     </div>
 </div>
-{{#js}}
-    require(['jquery'], function($) {
-        var loadingContainer = $('.contentitem-loading-container');
-        var iframe = $('#contentitem-page-iframe');
-        var timeout = setTimeout(function () {
-            var failedContainer = $('#tool-loading-failed');
-            failedContainer.removeClass('hidden');
-        }, 20000);
-
-        // Submit form.
-        $('#contentitem-request-form').submit();
-
-        iframe.on('load', function() {
-            loadingContainer.addClass('hidden');
-            iframe.removeClass('hidden');
-
-            // Adjust iframe's width to the fit the container's width.
-            var containerWidth = $('div.contentitem-container').width();
-            $('#contentitem-page-iframe').width(containerWidth + 'px');
-
-            // Adjust iframe's height to 75% of the width.
-            var containerHeight = containerWidth * 0.75;
-            $('#contentitem-page-iframe').height(containerHeight + 'px');
-        });
-    });
-{{/js}}
