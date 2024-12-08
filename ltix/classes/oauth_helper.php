@@ -20,6 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/ltix/OAuth.php');
 require_once($CFG->dirroot . '/ltix/TrivialStore.php');
+require_once($CFG->libdir . '/filelib.php');
 
 use cache;
 use core_ltix\local\ltiopenid\jwks_helper;
