@@ -50,17 +50,9 @@ if ($config->lti_ltiversion === LTI_VERSION_1P3) {
 
 $course = $DB->get_record('course', ['id' => $context->get_course_context()->instanceid], '*', MUST_EXIST);
 
-// Check access and capabilities.
-if ($context instanceof context_course) {
-    require_login($course);
-} else if ($context instanceof context_module) {
-    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-    require_login(null, true, $cm, true, true);
-} else {
-    require_login();
-}
-
-// TODO: Assess capability checks.
+// Standard checks plus hooking point for placements.
+$accesshook = new \core_ltix\hook\access_control($context);
+\core\di::get(\core\hook\manager::class)->dispatch($accesshook);
 
 // Set the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
 $returnurlparams = [

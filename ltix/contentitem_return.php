@@ -70,20 +70,10 @@ if (!empty($jwt)) {
     \core_ltix\oauth_helper::verify_oauth_signature($id, $consumerkey);
 }
 
-// Check access and capabilities.
-if ($context instanceof context_course) {
-    $course = $DB->get_record('course', ['id' => $context->instanceid], '*', MUST_EXIST);
-    require_login($course);
-} else if ($context instanceof context_module) {
-    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-    require_login(null, true, $cm, true, true);
-} else {
-    require_login();
-}
-
+// Standard checks plus hooking point for placements.
 require_sesskey();
-
-// TODO: Assess capability checks.
+$accesshook = new \core_ltix\hook\access_control($context);
+\core\di::get(\core\hook\manager::class)->dispatch($accesshook);
 
 $redirecturl = null;
 $returndata = null;
