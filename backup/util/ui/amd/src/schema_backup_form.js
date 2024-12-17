@@ -27,6 +27,7 @@
 
 import Notification from 'core/notification';
 import * as Templates from 'core/templates';
+import Form from 'core_form/form';
 
 const Selectors = {
     action: '[data-mdl-action]',
@@ -143,8 +144,8 @@ export default class BackupFormController {
 
         // At this point, we really need to persuade the form we are part of to
         // update all of its disabledIf rules.
-        if (formId && M.form2) {
-            M.form2.get(formId).formUpdatedExternally();
+        if (formId) {
+            Form.getInstance(formId)?.formUpdatedExternally();
         }
     }
 
