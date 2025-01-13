@@ -1636,6 +1636,7 @@ class helper {
         // for communication with services not related to a specific LTI instance.
         $config->lti_servicesalt = uniqid('', true);
 
+        // TODO: Maybe add it as a type config?
         $id = $DB->insert_record('lti_types', $type);
 
         if ($id) {

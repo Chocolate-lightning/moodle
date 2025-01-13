@@ -49,6 +49,26 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
+ * TODO: Dummy callback.
+ *
+ * @param context $context
+ * @return void
+ */
+function mod_lti_cap_checks(context $context): void {
+    global $DB;
+    // Check access and capabilities.
+    if ($context instanceof context_course) {
+        $course = $DB->get_record('course', ['id' => $context->instanceid], 'id', MUST_EXIST);
+        require_login($course);
+    } else if ($context instanceof context_module) {
+        $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+        require_login(null, true, $cm, true, true);
+    } else {
+        require_login();
+    }
+}
+
+/**
  * List of features supported in URL module
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.

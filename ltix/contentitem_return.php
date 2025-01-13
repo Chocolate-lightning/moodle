@@ -23,12 +23,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// TODO: skip all the return shit....
+
 require_once('../config.php');
 
 $id = required_param('id', PARAM_INT);
 $contextid = required_param('contextid', PARAM_INT);
 
 $jwt = optional_param('JWT', '', PARAM_RAW);
+$placement = optional_param('placement', '', PARAM_ALPHANUMEXT);
+// TODO: Add a dummy return item in the triage site to see if it comes through. Otherwise, look at putting in the placement into the claim.
 
 $context = \context_helper::instance_by_id($contextid);
 
@@ -70,16 +74,11 @@ if (!empty($jwt)) {
     \core_ltix\oauth_helper::verify_oauth_signature($id, $consumerkey);
 }
 
-// Check access and capabilities.
-if ($context instanceof context_course) {
-    $course = $DB->get_record('course', ['id' => $context->instanceid], '*', MUST_EXIST);
-    require_login($course);
-} else if ($context instanceof context_module) {
-    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-    require_login(null, true, $cm, true, true);
-} else {
-    require_login();
-}
+// Check if the user has access to the placement location.
+$access = new \mod_lti\placement\access();
+$access->cap_checks($context);
+// $placement
+component_callback("mod_lti", 'cap_checks', [$context]);
 
 require_sesskey();
 

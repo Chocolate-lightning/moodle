@@ -30,6 +30,7 @@ $id = required_param('id', PARAM_INT);
 $contextid = required_param('contextid', PARAM_INT);
 $title = optional_param('title', '', PARAM_TEXT);
 $text = optional_param('text', '', PARAM_RAW);
+$placement = optional_param('placement', '', PARAM_ALPHANUMEXT);
 
 $context = \context_helper::instance_by_id($contextid);
 
@@ -50,17 +51,23 @@ if ($config->lti_ltiversion === LTI_VERSION_1P3) {
 
 $course = $DB->get_record('course', ['id' => $context->get_course_context()->instanceid], '*', MUST_EXIST);
 
-// Check access and capabilities.
-if ($context instanceof context_course) {
-    require_login($course);
-} else if ($context instanceof context_module) {
-    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-    require_login(null, true, $cm, true, true);
-} else {
-    require_login();
-}
+// TODO: Given the passed placement info from somewhere, try to instantiate the placement object.
 
-// TODO: Assess capability checks.
+// TODO: Maybe make a register of placements to components, think about how to map it.
+
+// TODO: Get the component from the placement string object.
+
+// TODO: Component class cb instead.
+component_callback("component", 'make a function that calls off to the access class', ); // TODO: Get the returned thingo then we can operate against it.
+// Check if the user has access to the placement location.
+// TODO: This would be removed.
+$access = new \<<placementstring>>\placement\access();
+
+// TODO: This would be then use the com class cb.
+$placement->checkassestprocessorcapability($context);
+//if ($this->placement) {
+//    component_callback("mod_lti", 'cap_checks');
+//}
 
 // Set the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
 $returnurlparams = [
@@ -72,6 +79,8 @@ $returnurl = new \moodle_url('/ltix/contentitem_return.php', $returnurlparams);
 
 // Prepare the request.
 $request = \core_ltix\helper::build_content_item_selection_request($id, $course, $returnurl, $title, $text, [], []);
+
+// checklaunchcapchecks
 
 // Get the launch HTML.
 $content = \core_ltix\helper::post_launch_html($request->params, $request->url, false);

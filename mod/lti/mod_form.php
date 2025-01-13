@@ -519,7 +519,7 @@ class mod_lti_mod_form extends moodleform_mod {
 
         if ($supportscontentitemselection) {
             $PAGE->requires->js_call_amd('mod_lti/activitycontentitem', 'init',
-                [$tooltypeid, $this->context->id]);
+                [$tooltypeid, $this->context->id, null, null, 'placement_x_mod_lti']);
         }
     }
 
