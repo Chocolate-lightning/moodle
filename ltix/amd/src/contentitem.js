@@ -52,6 +52,9 @@ export default class ContentItem {
     /** @property {string|null} toolInstanceText The tool instance text. */
     toolInstanceText = null;
 
+    /** @property {string|null} placement The placement. */
+    placement = null;
+
     /** @property {Object|null} modal The modal object. */
     modal = null;
 
@@ -62,10 +65,11 @@ export default class ContentItem {
      * @param {int} contextID The context ID.
      * @param {string|null} toolInstanceTitle The tool instance title.
      * @param {string|null} toolInstanceText The tool instance text.
+     * @param {string|null} placement The placement.
      * @returns {void}
      */
-    static async init(toolID, contextID, toolInstanceTitle = null, toolInstanceText = null) {
-        const contentItem = new this(toolID, contextID, toolInstanceTitle, toolInstanceText);
+    static async init(toolID, contextID, toolInstanceTitle = null, toolInstanceText = null, placement = null) {
+        const contentItem = new this(toolID, contextID, toolInstanceTitle, toolInstanceText, placement);
         contentItem.registerEventListeners();
     }
 
@@ -76,13 +80,15 @@ export default class ContentItem {
      * @param {int} contextID The context ID.
      * @param {string|null} toolInstanceTitle The tool instance title.
      * @param {string|null} toolInstanceText The tool instance text.
+     * @param {string|null} placement The placement.
      * @returns {void}
      */
-    constructor(toolID, contextID, toolInstanceTitle = null, toolInstanceText = null) {
+    constructor(toolID, contextID, toolInstanceTitle = null, toolInstanceText = null, placement = null) {
         this.toolID = toolID;
         this.contextID = contextID;
         this.toolInstanceTitle = toolInstanceTitle;
         this.toolInstanceText = toolInstanceText;
+        this.placement = placement;
     }
 
     /**
@@ -144,7 +150,8 @@ export default class ContentItem {
                 toolid: this.toolID,
                 contextid: this.contextID,
                 toolinstancetitle: this.toolInstanceTitle,
-                toolinstancetext: this.toolInstanceText
+                toolinstancetext: this.toolInstanceText,
+                placementstring: this.placement
             }
         };
 

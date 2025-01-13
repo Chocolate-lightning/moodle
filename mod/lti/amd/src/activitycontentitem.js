@@ -49,10 +49,11 @@ export default class ActivityContentItem extends ContentItem {
      * @param {int} contextID The context ID.
      * @param {string|null} toolInstanceTitle The tool instance title.
      * @param {string|null} toolInstanceText The tool instance text.
+     * @param {string|null} placement The placement.
      * @returns {void}
      */
-    constructor(toolID, contextID, toolInstanceTitle = null, toolInstanceText = null) {
-        super(toolID, contextID, toolInstanceTitle, toolInstanceText);
+    constructor(toolID, contextID, toolInstanceTitle = null, toolInstanceText = null, placement = null) {
+        super(toolID, contextID, toolInstanceTitle, toolInstanceText, placement);
     }
 
     /**

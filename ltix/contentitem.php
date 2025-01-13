@@ -30,6 +30,7 @@ $id = required_param('id', PARAM_INT);
 $contextid = required_param('contextid', PARAM_INT);
 $title = optional_param('title', '', PARAM_TEXT);
 $text = optional_param('text', '', PARAM_RAW);
+$placementstring = optional_param('placementstring', 'ltix', PARAM_ALPHANUMEXT);
 
 $context = \context_helper::instance_by_id($contextid);
 
@@ -50,17 +51,13 @@ if ($config->lti_ltiversion === LTI_VERSION_1P3) {
 
 $course = $DB->get_record('course', ['id' => $context->get_course_context()->instanceid], '*', MUST_EXIST);
 
-// Check access and capabilities.
-if ($context instanceof context_course) {
-    require_login($course);
-} else if ($context instanceof context_module) {
-    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-    require_login(null, true, $cm, true, true);
-} else {
-    require_login();
+// TODO: Maybe look at using plugin_supports().
+$classname = $placementstring . '_access';
+$class = "$placementstring\local\ltix\placement\\$classname";
+if (class_exists($class) && is_subclass_of($class, core_ltix\placement\access::class)) {
+    $placement_access = new $class();
+    $placement_access->resource_link_setup_capabilities($context);
 }
-
-// TODO: Assess capability checks.
 
 // Set the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
 $returnurlparams = [
