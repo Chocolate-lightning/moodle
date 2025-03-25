@@ -71,6 +71,9 @@ class mod_lti_generator extends core_ltix_generator {
         if (!isset($record->typeid)) {
             $record->typeid = 0;
         }
+        if (!isset($record->launchcontainer)) {
+            $record->launchcontainer = 1;
+        }
         return parent::create_instance($record, (array)$options);
     }
 }
