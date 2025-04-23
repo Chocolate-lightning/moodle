@@ -130,8 +130,6 @@ function lti_add_instance($lti, $mform) {
     $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
     \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
 
-    $rl = new resource_link();
-
     $ltiresourcelink = [
         'typeid' => $lti->typeid,
         'component' => 'mod_lti',
@@ -144,10 +142,15 @@ function lti_add_instance($lti, $mform) {
         'textformat' => $lti->introformat,
         'gradable' => $lti->instructorchoiceacceptgrades,
         'launchcontainer' => $lti->launchcontainer,
-        'customparams' => $lti->instructorcustomparameters,
-        'icon' => $lti->icon,
         'servicesalt' => $lti->servicesalt,
     ];
+
+    if (isset($lti->icon) && $lti->icon !== '') {
+        $ltiresourcelink['icon'] = $lti->icon;
+    }
+    if (isset($lti->instructorcustomparameters) && $lti->instructorcustomparameters !== '') {
+        $ltiresourcelink['customparams'] = $lti->instructorcustomparameters;
+    }
 
     $rl = new resource_link(0, (object) $ltiresourcelink);
     $rl->save();
@@ -219,10 +222,15 @@ function lti_update_instance($lti, $mform) {
         'textformat' => $lti->introformat,
         'gradable' => $lti->instructorchoiceacceptgrades,
         'launchcontainer' => $lti->launchcontainer,
-        'customparams' => $lti->instructorcustomparameters,
-        'icon' => $lti->icon,
         'servicesalt' => $lti->servicesalt,
     ];
+
+    if (isset($lti->icon) && $lti->icon !== '') {
+        $ltiresourcelink['icon'] = $lti->icon;
+    }
+    if (isset($lti->instructorcustomparameters) && $lti->instructorcustomparameters !== '') {
+        $ltiresourcelink['customparams'] = $lti->instructorcustomparameters;
+    }
 
     foreach ($ltiresourcelinkformvalues as $name => $value) {
         $ltiresourcelink->set($name, $value);
