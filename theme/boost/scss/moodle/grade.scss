@@ -758,3 +758,1327 @@
 .gradestatus .icon {
     margin-right: 1rem;
 }
+
+
+
+
+
+
+
+
+
+/*
+.gradingform_rubric.editor[.frozen|.editable]
+  .criteria
+    .criterion[.first][.last][.odd|.even]
+        .controls
+            .moveup
+                [input type=submit]
+            .delete
+                [input type=submit]
+            .movedown
+                [input type=submit]
+        .description
+        .levels
+            td.level[.first][.last][.odd|.even]
+                div.level-wrapper
+                    .definition
+                        [textarea]
+                    .score
+                        span
+                            [input type=text]
+                    .delete
+                        [input type=submit]
+        .addlevel
+            [input type=submit]
+        .remark
+            textarea
+    .addcriterion
+        [input type=submit]
+  .options
+    .optionsheading
+    .option.OPTIONNAME
+
+.gradingform_rubric[.review][.evaluate[.editable|.frozen]]
+  .criteria
+    .criterion[.first][.last][.odd|.even]
+        .description
+        .levels
+            td.level[.first][.last][.odd|.even]
+                div.level-wrapper
+                    div.radio
+                        input
+                    .definition
+                    .score
+                        span
+
+*/
+
+.gradingform_rubric_editform .status {
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 60%;
+    padding: 0.25em;
+    border: 1px solid #eee;
+}
+
+.gradingform_rubric_editform .status.ready {
+    background-color: #e7f1c3;
+    border-color: #aea;
+}
+
+.gradingform_rubric_editform .status.draft {
+    background-color: #f3f2aa;
+    border-color: #ee2;
+}
+
+.gradingform_rubric {
+    padding-bottom: 1.5em;
+}
+
+.gradingform_rubric.editor .criterion .controls,
+.gradingform_rubric .criterion .description,
+.gradingform_rubric .criterion .levels,
+.gradingform_rubric.editor .criterion .addlevel,
+.gradingform_rubric .criterion .remark,
+.gradingform_rubric .criterion .levels .level {
+    vertical-align: top;
+}
+
+.gradingform_rubric.editor .criterion .controls,
+.gradingform_rubric .criterion .description,
+.gradingform_rubric.editor .criterion .addlevel,
+.gradingform_rubric .criterion .remark,
+.gradingform_rubric .criterion .levels .level {
+    padding: 3px;
+}
+
+.gradingform_rubric .criteria {
+    height: 100%;
+    display: flex;
+    width: 100%;
+    overflow: auto;
+}
+
+.gradingform_rubric .criterion {
+    border: 1px solid #ddd;
+    overflow: hidden;
+}
+
+.gradingform_rubric .criterion.even td {
+    background: #f0f0f0;
+}
+
+.gradingform_rubric .criterion.odd td {
+    background: white;
+}
+
+.gradingform_rubric .criterion .description {
+    min-width: 150px;
+    font-weight: bold;
+}
+
+.gradingform_rubric .criterion .levels table {
+    width: 100%;
+    height: 100%;
+}
+
+.gradingform_rubric .criterion .levels,
+.gradingform_rubric .criterion .levels table,
+.gradingform_rubric .criterion .levels table tbody {
+    padding: 0;
+    margin: 0;
+}
+
+.gradingform_rubric .criterion .levels .level {
+    border-left: 1px solid #ddd;
+    max-width: 150px;
+}
+
+.gradingform_rubric .criterion .levels .level .level-wrapper {
+    position: relative;
+}
+
+.gradingform_rubric .criterion .levels .level.last {
+    border-right: 1px solid #ddd;
+}
+
+.gradingform_rubric .plainvalue.empty {
+    font-style: italic;
+    color: #aaa;
+}
+
+/* Make invisible the buttons 'Move up' for the first criterion and
+   'Move down' for the last, because those buttons will make no change */
+.gradingform_rubric.editor .criterion.first .controls .moveup input,
+.gradingform_rubric.editor .criterion.last .controls .movedown input {
+    display: none;
+}
+
+/* replace buttons with images */
+.gradingform_rubric.editor .delete input,
+.gradingform_rubric.editor .duplicate input,
+.gradingform_rubric.editor .moveup input,
+.gradingform_rubric.editor .movedown input {
+    text-indent: -1000em;
+    cursor: pointer;
+    border: none;
+}
+
+.gradingform_rubric.editor .criterion .controls .delete input {
+    width: 24px;
+    height: 24px;
+    background: transparent url([[pix:t/delete]]) no-repeat center;
+    margin: .3em .3em 0 .3em;
+}
+
+.gradingform_rubric.editor .criterion .controls .duplicate input {
+    width: 24px;
+    height: 24px;
+    background: transparent url([[pix:t/copy]]) no-repeat center;
+    margin: .3em .3em 0 .3em;
+}
+
+.gradingform_rubric.editor .levels .level .delete input {
+    width: 24px;
+    height: 24px;
+    background: transparent url([[pix:t/delete]]) no-repeat center;
+}
+
+.gradingform_rubric.editor .moveup input {
+    width: 24px;
+    height: 24px;
+    background: transparent url([[pix:t/up]]) no-repeat center;
+    margin: .3em .3em 0 .3em;
+}
+
+.gradingform_rubric.editor .movedown input {
+    width: 24px;
+    height: 24px;
+    background: transparent url([[pix:t/down]]) no-repeat center;
+    margin: .3em .3em 0 .3em;
+}
+
+.gradingform_rubric.editor .addcriterion input,
+.gradingform_rubric.editor .addlevel input {
+    background: #fff url([[pix:t/add]]) no-repeat 7px 8px;
+    display: block;
+    color: #555;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.gradingform_rubric.editor .addcriterion input {
+    height: 30px;
+    line-height: 29px;
+    margin-bottom: 14px;
+    padding-left: 20px;
+    padding-right: 10px;
+}
+
+.gradingform_rubric.editor .addlevel input {
+    padding-left: 24px;
+    padding-right: 8px;
+}
+
+.gradingform_rubric .options .optionsheading {
+    font-weight: bold;
+    font-size: 1.1em;
+    padding-bottom: 5px;
+}
+
+.gradingform_rubric .options .option {
+    padding-bottom: 2px;
+}
+
+.gradingform_rubric .options .option label {
+    margin-left: 5px;
+}
+
+.gradingform_rubric .options .option .value {
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.gradingform_rubric .criterion .levels.error {
+    border: 1px solid red;
+}
+
+.gradingform_rubric .criterion .description.error,
+.gradingform_rubric .criterion .levels .level .definition.error,
+.gradingform_rubric .criterion .levels .level .score.error {
+    background: #fdd;
+}
+
+.gradingform_rubric-regrade {
+    padding: 10px;
+    background: #fdd;
+    border: 1px solid #f00;
+    margin-bottom: 10px;
+}
+
+.gradingform_rubric-restored {
+    padding: 10px;
+    background: #ffd;
+    border: 1px solid #ff0;
+    margin-bottom: 10px;
+}
+
+.gradingform_rubric-error {
+    color: red;
+    font-weight: bold;
+}
+
+/* special classes for elements created by rubriceditor.js */
+.gradingform_rubric.editor .hiddenelement {
+    display: none;
+}
+
+.gradingform_rubric.editor .pseudotablink {
+    background-color: transparent;
+    border: 0 solid;
+    height: 1px;
+    width: 1px;
+    color: transparent;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    float: right;
+}
+
+.gradingpanel-gradingform_rubric [aria-checked="true"] {
+    border: 1px solid black;
+}
+
+
+
+
+
+
+
+
+
+
+
+.gradingform_guide-fac {
+    position: absolute;
+    right: -5px;
+    top: 5px;
+}
+
+.gradingform_guide-regrade {
+    padding: 10px;
+    background: #fdd;
+    border: 1px solid #f00;
+    margin-bottom: 10px;
+}
+
+.gradingform_guide-restored {
+    padding: 10px;
+    background: #ffd;
+    border: 1px solid #ff0;
+    margin-bottom: 10px;
+}
+
+.gradingform_guide-error {
+    color: red;
+    font-weight: bold;
+}
+
+.gradingform_guide_editform .status {
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 60%;
+    padding: 0.25em;
+    border: 1px solid #eee;
+}
+
+.gradingform_guide_editform .status.ready {
+    background-color: #e7f1c3;
+    border-color: #aea;
+}
+
+.gradingform_guide_editform .status.draft {
+    background-color: #f3f2aa;
+    border-color: #ee2;
+}
+
+.gradingform_guide.editor .criterion .controls,
+.gradingform_guide .criterion .description,
+.gradingform_guide .criterion .remark {
+    vertical-align: top;
+}
+
+.gradingform_guide.editor .criterion .controls,
+.gradingform_guide.editor .criterion .description,
+.gradingform_guide.editor .criterion .remark {
+    padding: 3px;
+}
+
+.gradingform_guide .criteria {
+    height: 100%;
+}
+
+.gradingform_guide .criterion {
+    border: 1px solid #ddd;
+    overflow: hidden;
+}
+
+.gradingform_guide .criterion.even {
+    background: #f0f0f0;
+}
+
+.gradingform_guide .criterion .description {
+    width: 100%;
+}
+
+.gradingform_guide .criterion .description .criterionmaxscore input {
+    width: 20px;
+}
+
+.gradingform_guide .criterion .description .criterionname {
+    font-weight: bold;
+}
+
+.gradingform_guide .criterion label {
+    font-weight: bold;
+    padding-right: 5px;
+}
+
+.gradingform_guide .plainvalue.empty {
+    font-style: italic;
+    color: #aaa;
+}
+
+.gradingform_guide .plainvalue.editname {
+    font-weight: bold;
+}
+
+/* Make invisible the buttons 'Move up' for the first criterion and 'Move down' for
+   the last, because those buttons will make no change */
+.gradingform_guide.editor .criterion.first.last .controls .delete input,
+.gradingform_guide.editor .criterion.first .controls .moveup input,
+.gradingform_guide.editor .criterion.last .controls .movedown input {
+    display: none;
+}
+
+/* replace buttons with images */
+.gradingform_guide.editor .delete input,
+.gradingform_guide.editor .moveup input,
+.gradingform_guide.editor .movedown input {
+    text-indent: -1000em;
+    cursor: pointer;
+    border: none;
+}
+
+.gradingform_guide.editor .criterion .controls .delete input {
+    width: 20px;
+    height: 16px;
+    background: transparent url([[pix:t/delete]]) no-repeat center top;
+    margin-top: 4px;
+}
+
+.gradingform_guide.editor .moveup input {
+    width: 20px;
+    height: 15px;
+    background: transparent url([[pix:t/up]]) no-repeat center top;
+    margin-top: 4px;
+}
+
+.gradingform_guide.editor .movedown input {
+    width: 20px;
+    height: 15px;
+    background: transparent url([[pix:t/down]]) no-repeat center top;
+    margin-top: 4px;
+}
+
+.gradingform_guide.editor .addcriterion input,
+.gradingform_guide.editor .addcomment input {
+    background: transparent url([[pix:t/add]]) no-repeat;
+    background-size: 0.75rem;
+    display: block;
+    color: #555;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.gradingform_guide.editor .addcriterion input,
+.gradingform_guide.editor .addcomment input {
+    background-position: left 5px top 8px;
+    height: 30px;
+    line-height: 29px;
+    margin-bottom: 14px;
+    padding-left: 20px;
+    padding-right: 10px;
+}
+
+.gradingform_guide .options .optionsheading {
+    font-weight: bold;
+    font-size: 1.1em;
+    padding-bottom: 5px;
+}
+
+.gradingform_guide .options .option {
+    padding-bottom: 2px;
+}
+
+.gradingform_guide .options .option label {
+    margin-left: 5px;
+}
+
+.gradingform_guide .options .option .value {
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.gradingform_guide .criterion .description.error {
+    background: #fdd;
+}
+
+/* special classes for elements created by guideeditor.js */
+.gradingform_guide.editor .hiddenelement {
+    display: none;
+}
+
+.gradingform_guide.editor .pseudotablink {
+    background-color: transparent;
+    border: 0 solid;
+    height: 1px;
+    width: 1px;
+    color: transparent;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    float: right;
+}
+
+.jsenabled .gradingform_guide .markingguidecomment {
+    cursor: pointer;
+}
+
+.jsenabled .gradingform_guide .markingguidecomment:before {
+    content: url([[pix:t/add]]);
+    padding-right: 2px;
+}
+
+.gradingform_guide .commentheader {
+    font-weight: bold;
+    font-size: 1.1em;
+    padding-bottom: 5px;
+}
+
+.jsenabled .gradingform_guide .criterionnamelabel {
+    display: none;
+}
+
+.jsenabled .gradingform_guide .criterionshortname {
+    font-weight: bold;
+}
+
+.gradingform_guide table {
+    width: 100%;
+}
+
+.gradingform_guide .descriptionreadonly {
+    vertical-align: top;
+}
+
+.gradingform_guide .criteriondescriptionmarkers {
+    width: 300px;
+}
+
+.gradingform_guide .markingguideremark {
+    margin: 0;
+    width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.gradingform_guide .criteriondescriptionscore {
+    display: inline;
+}
+
+.gradingform_guide .score label {
+    display: block;
+}
+
+.gradingform_guide .score input {
+    margin: 0;
+    width: auto;
+}
+.gradingform_guide_comment_chooser {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.gradingform_guide-frequent-comments {
+    position: absolute;
+    top: 7px;
+    right: 0;
+}
+
+
+
+
+
+
+/**
+ * Container.
+ */
+.path-grade-report-grader .gradeparent {
+    position: relative;
+}
+
+/**
+ * The table.
+ */
+.path-grade-report-grader .gradeparent table {
+    border: 1px solid #ccc;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-bottom-width: 0;
+    border-right-width: 0;
+    margin-bottom: 2em;
+    height: 100%;
+}
+
+/**
+ * All the cells.
+ */
+.path-grade-report-grader .gradeparent .cell {
+    border: 1px solid #ccc;
+    border-top-width: 0;
+    border-left-width: 0;
+    padding: 0.5rem 1rem;
+    vertical-align: top;
+    height: 100%;
+}
+
+.path-grade-report-grader .overriddengrade {
+    color: #495057;
+    border: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
+.path-grade-report-grader .gradepass {
+    color: #357a32;
+}
+
+.path-grade-report-grader .gradefail {
+    color: #ca3120;
+}
+
+.path-grade-report-grader .grade_icons,
+.path-grade-report-grader .category_grade_icons {
+    white-space: nowrap;
+    margin-top: 0.5rem;
+}
+
+.path-grade-report-grader .grade_type_value .grade_icons {
+    margin-left: auto;
+}
+
+.path-grade-report-grader .grade_icons .icon {
+    margin-right: 1rem;
+    font-size: 14px;
+    width: 24px;
+}
+
+.path-grade-report-grader .grade_icons .icon:last-child {
+    margin-right: 0;
+}
+
+/**
+ * All the floating divs.
+ */
+.path-grade-report-grader .gradeparent .floater {
+    display: none;
+}
+
+.path-grade-report-grader .gradeparent .floating {
+    display: block;
+}
+
+/**
+ * All the headers + floating cells.
+ */
+.path-grade-report-grader .gradeparent .heading .cell,
+.path-grade-report-grader .gradeparent .avg .cell,
+.path-grade-report-grader .gradeparent .user.cell {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.path-grade-report-grader .gradeparent .heading .header,
+.path-grade-report-grader .gradeparent .heading .userfield {
+    white-space: nowrap;
+}
+
+.path-grade-report-grader .heading .gradeitemheader {
+    text-indent: -2rem;
+    padding-left: 2rem;
+    padding-top: 6px;
+}
+
+.path-grade-report-grader .dropdown-item {
+    text-align: left;
+}
+
+.path-grade-report-grader .heading .gradeitemheader .itemicon {
+    text-align: right;
+}
+
+/**
+ * The user cells.
+ */
+.path-grade-report-grader .gradeparent .user.cell {
+    white-space: nowrap;
+}
+
+.path-grade-report-grader .gradeparent .highlightable.cell {
+    min-width: 200px;
+}
+
+.path-grade-report-grader .gradeparent .highlightable.cell.collapsed {
+    min-width: unset;
+}
+
+.path-grade-report-grader .gradeparent .user.cell .userpicture {
+    border: none;
+    vertical-align: middle;
+}
+
+.path-grade-report-grader .gradeitemheader {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    vertical-align: middle;
+}
+
+/**
+ * The footer's header.
+ */
+.path-grade-report-grader .gradeparent .range .header,
+.path-grade-report-grader .gradeparent .avg .header,
+.path-grade-report-grader .gradeparent .groupavg .header {
+    font-weight: bold;
+    text-align: right;
+}
+
+/**
+ * The footer's floating cells.
+ */
+.path-grade-report-grader .gradeparent .avg.floating .cell {
+    border-top-width: 1px;
+}
+
+/**
+ * Content styling.
+ */
+.path-grade-report-grader .gradeparent .heading .cell .iconsmall {
+    /* Fixes inconsistencies in cell height on IE. */
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.path-grade-report-grader .gradeparent .sorticon {
+    vertical-align: middle;
+    margin: 0;
+}
+
+.path-grade-report-grader .gradeparent td.grade_type_value,
+.path-grade-report-grader .gradeparent td.grade_type_value input,
+.path-grade-report-grader .gradeparent td.grade_type_value div {
+    text-align: right;
+    margin-left: auto;
+}
+
+.path-grade-report-grader .gradeparent .gradevalue {
+    display: inline-block;
+}
+
+.path-grade-report-grader .header,
+.path-grade-report-grader td.userfield div {
+    padding-top: 6px;
+}
+
+.path-grade-report-grader .gradeparent tr:nth-child(n) td.ajaxoverridden:nth-child(n) {
+    /* Made very specific to override the default stripped style of the table. */
+    background-color: #ffe3a0;
+}
+
+.path-grade-report-grader .gradeparent .excludedfloater {
+    font-weight: bold;
+    color: red;
+    font-size: 9px;
+    float: left;
+}
+
+.path-grade-report-grader .gradeparent .category {
+    text-align: left;
+}
+
+/**
+ * Editing fields.
+ * MDL-74286 - width 100% pushes action menu out of cell.
+ */
+.path-grade-report-grader .gradeparent select {
+    text-overflow: ellipsis;
+    min-width: 8rem;
+}
+
+.path-grade-report-grader .gradeparent .text {
+    border: 1px solid #666;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.path-grade-report-grader .gradeparent table .action-menu {
+    display: inline-block;
+    margin-right: -0.5rem;
+    padding-left: 0.5rem;
+}
+
+.path-grade-report-grader .gradeparent table .heading .action-menu {
+    padding-left: 0;
+}
+
+.path-grade-report-grader .dropdown-menu {
+    width: max-content;
+}
+
+.path-grade-report-grader .initialsdropdown {
+    width: 460px;
+}
+
+.path-grade-report-grader .initialsdropdown::after {
+    content: '';
+}
+
+.path-grade-report-grader .usersearchwidget::after {
+    content: '';
+}
+
+.path-grade-report-grader .usersearchwidget {
+    pointer-events: none;
+}
+.path-grade-report-grader .usersearchwidget input {
+    pointer-events: initial;
+    z-index: 1;
+}
+.path-grade-report-grader .usersearchwidget button,
+.path-grade-report-grader .usersearchwidget a {
+    pointer-events: initial;
+}
+.path-grade-report-grader .usersearchdropdown {
+    /*Extra height to allow non result items.*/
+    max-height: 400px;
+    width: 300px;
+    pointer-events: all;
+    padding: 0;
+}
+.path-grade-report-grader .usersearchdropdown .unsearchablecontentcontainer {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+}
+.path-grade-report-grader .usersearchdropdown .footer {
+    border-top: 1px solid #dee2e6;
+    font-size: 90%;
+}
+
+.collapsecolumndropdown.show {
+    width: 300px;
+    max-height: 300px;
+}
+
+@media only screen and (min-width: 768px) {
+    .path-grade-report-grader .gradeparent table {
+        padding-right: 6em;
+    }
+}
+
+
+
+
+
+
+/* History */
+
+.path-grade-report-history div.gradeparent {
+    overflow-x: scroll;
+}
+
+.path-grade-report-history .singlebutton div,
+.path-grade-report-history .singlebutton div input[type="button"] {
+    margin: 0;
+}
+
+/* User Selector */
+.yui3-gradereport_history_usp-hidden {
+    display: none;
+}
+
+.gradereport_history_usp .usp-content {
+    position: relative;
+}
+
+.gradereport_history_usp .usp-ajax-content {
+    overflow: auto;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.gradereport_history_usp .usp-ajax-content,
+.gradereport_history_usp .usp-loading-lightbox {
+    height: 375px;
+}
+
+.gradereport_history_usp .usp-loading-lightbox {
+    background-color: #fff;
+    opacity: .5;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.gradereport_history_usp .usp-loading-lightbox img {
+    margin-top: 100px;
+    opacity: 1;
+}
+
+.gradereport_history_usp .usp-search {
+    text-align: center;
+}
+
+.gradereport_history_usp .usp-user {
+    width: 100%;
+    text-align: left;
+    border-top: 1px solid #eee;
+}
+
+.gradereport_history_usp .usp-user:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.gradereport_history_usp .usp-first-added {
+    border-top: 1px solid #bbb;
+}
+
+.gradereport_history_usp .usp-checkbox {
+    text-align: center;
+    float: left;
+    padding: 11px 6px 0 6px;
+}
+
+.gradereport_history_usp .usp-checkbox input[type=checkbox] {
+    margin: 0;
+}
+
+.gradereport_history_usp .usp-picture {
+    margin: 6px 3px 0 3px;
+    float: left;
+}
+
+.gradereport_history_usp .usp-userpicture {
+    cursor: pointer;
+}
+
+.gradereport_history_usp .usp-user .details {
+    margin-left: 67px;
+    padding: 3px 6px 0 6px;
+    word-wrap: break-word;
+}
+
+.gradereport_history_usp .usp-user .details label {
+    margin: 0;
+}
+
+.gradereport_history_usp .usp-more-results {
+    padding: 5px;
+    border-top: 1px solid #bbb;
+}
+
+.gradereport_history_usp .usp-finish {
+    padding-top: 1em;
+    text-align: center;
+}
+
+.gradereport_history_usp .usp-finish input {
+    margin: 0;
+}
+
+
+
+
+
+
+
+
+.path-grade-report-singleview div.reporttable {
+    margin: 20px 0 30px 0;
+    padding: 10px 10px;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.path-grade-report-singleview div.groupselector,
+.path-grade-report-singleview div.selectitems {
+    display: block;
+    text-align: right;
+    clear: both;
+}
+
+.path-grade-report-singleview div.singleselect + div.singleselect select,
+.path-grade-report-singleview div.groupselector select {
+    margin-right: 0;
+}
+
+.path-grade-report-singleview div.reporttable div.singleselect form div {
+    text-align: center;
+}
+
+.path-grade-report-singleview div.reporttable table.reporttable {
+    margin: 0 auto 15px auto;
+}
+
+.path-grade-report-singleview div.reporttable form div {
+    text-align: left;
+}
+
+.path-grade-report-singleview div.reporttable h2 {
+    text-align: left;
+}
+
+.path-grade-report-singleview .overrideexcludecheck {
+    width: 14.75px;
+    height: 12px;
+    color: #2ca14f;
+}
+
+.path-grade-report-singleview .report-navigation .container {
+    max-width: 1060px;
+    margin-left: 0;
+}
+
+.path-grade-report-singleview .zero-state img {
+    width: 185px;
+}
+
+.path-grade-report-singleview .reporttable thead th,
+.path-grade-report-singleview .reporttable thead td {
+    white-space: nowrap;
+    border: none;
+}
+
+.path-grade-report-singleview .reporttable tbody tr,
+.path-grade-report-singleview .reporttable tbody tr:nth-of-type(odd),
+.path-grade-report-singleview .reporttable tbody tr:hover {
+    color: inherit;
+    background-color: white;
+    border-top: none;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.path-grade-report-singleview .reporttable tbody th,
+.path-grade-report-singleview .reporttable tbody td.range {
+    white-space: nowrap;
+    font-weight: normal;
+}
+
+.path-grade-report-singleview .reporttable tbody th > * {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
+.path-grade-report-singleview .itemnav {
+    font-size: small;
+    display: inline;
+    padding-bottom: 0.5em;
+}
+
+.path-grade-report-singleview .itemnav.previtem {
+    float: left;
+}
+
+.path-grade-report-singleview div.nextitem {
+    float: right;
+}
+
+.path-grade-report-singleview .reporttable {
+    width: 100%;
+}
+
+.path-grade-report-singleview .reporttable .generaltable th,
+.path-grade-report-singleview .reporttable .generaltable td {
+    text-align: left;
+    vertical-align: middle;
+    border: none;
+}
+
+.path-grade-report-singleview div.reporttable form div.singleview_bulk {
+    display: inline-block;
+    text-align: left;
+    margin-bottom: 1em;
+}
+
+.path-grade-report-singleview .singleview_bulk div > *,
+.path-grade-report-singleview .singleview_bulk fieldset > * {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.path-grade-report-singleview .singleselect select,
+.path-grade-report-singleview div.reporttable form .singleview_bulk select,
+.path-grade-report-singleview div.reporttable form .singleview_bulk input {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#bulkinsertmodal {
+    width: 181px;
+    height: 39px;
+    top: 309px;
+    border-radius: 4px;
+}
+
+.path-grade-report-singleview .singleview_bulk > fieldset {
+    display: block;
+}
+
+.path-grade-report-singleview div.reporttable form .singleview_bulk > div.enable {
+    margin-bottom: 0.5em;
+    text-align: left;
+}
+
+.searchresultitemscontainer {
+    max-height: 150px;
+    height: 150px;
+    overflow: auto;
+}
+
+.path-grade-report-singleview .search-widget[data-searchtype="user"] .userinitials {
+    width: 40px;
+    height: 40px;
+}
+
+.path-grade-report-singleview .reporttable .gradeitem span.small {
+    font-size: 70%;
+}
+
+.path-grade-report-singleview .reporttable div.categoryitem .gradeitemheader,
+.path-grade-report-singleview .reporttable div.courseitem .gradeitemheader {
+    font-weight: bold;
+}
+
+
+
+
+
+
+
+
+.path-grade-report-user #graded_users_selector {
+    float: right;
+    margin-bottom: 5px;
+}
+
+.path-grade-report-user .view_users_selector {
+    clear: both;
+    float: right;
+    margin-bottom: 5px;
+}
+
+.path-grade-report-user #graded_users_selector .singleselect label,
+.path-grade-report-user .view_users_selector .singleselect label {
+    display: inline-block;
+}
+
+.path-grade-report-user .user-grade,
+.grade-report-user .user-grade {
+    width: 100%;
+}
+
+.path-grade-report-user .user-grade thead th,
+.grade-report-user .user-grade thead th {
+    vertical-align: bottom;
+    border: none;
+    text-align: left;
+    background-color: #f8f9fa;
+}
+
+.path-grade-report-user .user-grade td,
+.grade-report-user .user-grade td {
+    min-width: 4.5em;
+    background-color: #f8f9fa;
+    border: none;
+    vertical-align: middle;
+}
+
+.path-grade-report-user .user-grade .b1l,
+.grade-report-user .user-grade .b1l {
+    padding: 0;
+    width: 24px;
+    min-width: 24px;
+}
+
+.path-grade-report-user .user-grade tbody .column-itemname,
+.grade-report-user .user-grade tbody .column-itemname {
+    padding-left: 24px;
+    padding-right: 8px;
+}
+
+.path-grade-report-user .user-grade .column-itemname.baggt,
+.path-grade-report-user .user-grade .column-itemname.baggb,
+.grade-report-user .user-grade .column-itemname.baggt,
+.grade-report-user .user-grade .column-itemname.baggb {
+    padding-left: 0;
+}
+
+.path-grade-report-user .user-grade .baggt,
+.path-grade-report-user .user-grade .baggb,
+.grade-report-user .user-grade .baggt,
+.grade-report-user .user-grade .baggb {
+    font-weight: bold;
+    background-color: #f8f9fa;
+    border: none;
+}
+
+.path-grade-report-user .user-report-container,
+.grade-report-user .user-report-container {
+    margin: 20px 0 30px 0;
+    padding: 10px 10px;
+    background-color: #f8f9fa;
+}
+
+.path-grade-report-user .user-grade tbody tr,
+.grade-report-user .user-grade tbody tr {
+    background-color: #f8f9fa;
+}
+
+.path-grade-report-user .user-grade tbody tr:hover,
+.grade-report-user .user-grade tbody tr:hover {
+    color: inherit;
+    background-color: #f8f9fa;
+}
+
+.path-grade-report-user .user-grade tbody tr.spacer,
+.grade-report-user .user-grade tbody tr.spacer {
+    height: 0.5rem;
+}
+
+.path-grade-report-user .user-grade td.item,
+.grade-report-user .user-grade td.item {
+    background-color: white;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.path-grade-report-user .user-grade th.column-itemname:not(.header,.category,.baggt,.baggb),
+.grade-report-user .user-grade th.column-itemname:not(.header,.category,.baggt,.baggb) {
+    background-color: white;
+    font-weight: normal;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.path-grade-report-user .user-grade th.category,
+.grade-report-user .user-grade th.category {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    padding-left: 10px;
+    font-weight: bold;
+}
+
+.path-grade-report-user .user-grade th.category a[aria-expanded="true"] .expanded,
+.path-grade-report-user .user-grade th.category a[aria-expanded="false"] .collapsed,
+.grade-report-user .user-grade th.category a[aria-expanded="true"] .expanded,
+.grade-report-user .user-grade th.category a[aria-expanded="false"] .collapsed {
+    display: none;
+}
+
+.path-grade-report-user .user-grade th.category a.toggle-category,
+.grade-report-user .user-grade th.category a.toggle-category {
+    height: 24px;
+    width: 24px;
+    font-size: 12px;
+    line-height: 24px;
+    margin-right: 3px;
+}
+
+.path-grade-report-user .user-grade th.category a.toggle-category i,
+.grade-report-user .user-grade th.category a.toggle-category i {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    color: #1d2125;
+    margin: 0;
+}
+
+.path-grade-report-user .user-grade .column-itemname .small,
+.grade-report-user .user-grade .column-itemname .small {
+    font-size: 70%;
+}
+
+.path-grade-report-user .user-grade tr[data-hidden="true"],
+.grade-report-user .user-grade tr[data-hidden="true"] {
+    display: none;
+}
+
+.path-grade-report-user .user-grade .category div,
+.grade-report-user .user-grade .category div {
+    min-height: 30px;
+    align-items: center;
+}
+
+.path-grade-report-user .search-widget[data-searchtype="user"] .userinitials {
+    width: 40px;
+    height: 40px;
+}
+
+.path-grade-report-user .user-navigation .container {
+    max-width: 767px;
+}
+
+.path-grade-report-user .view-user-selector label {
+    display: block;
+    font-size: 80%;
+    margin: 0;
+}
+
+.path-grade-report-user .view-user-selector .dropdown-toggle {
+    padding: 0;
+    font-weight: bold;
+}
+
+.path-grade-report-user .zero-state img {
+    width: 185px;
+}
+
+@media print {
+    .path-grade-report-user .user-grade th.category,
+    .grade-report-user .user-grade th.category {
+        border-left: none;
+        border-right: none;
+    }
+
+    .path-grade-report-user .user-grade th.category a.toggle-category,
+    .grade-report-user .user-grade th.category a.toggle-category
+    .path-grade-report-user #page-footer,
+    .path-grade-report-user .user-grade td.column-grade .action-menu {
+        display: none;
+    }
+}
+
+
+
+
+
+
+

@@ -909,3 +909,11 @@ $divider-hover-color: $primary !default;
         width: (16 * $mod-indent-size);
     }
 }
+
+
+
+
+
+.format-singleactivity .tree_item.orphaned a {
+    color: red;
+}

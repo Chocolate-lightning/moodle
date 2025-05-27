@@ -1,0 +1,201 @@
+.core_payment_gateways_modal .paypal .icon {
+    height: 40px;
+    width: auto;
+}
+
+
+
+
+
+/* enrol_lti styles */
+
+#registration-tab-content .input-group-append button.btn {
+    border: solid 1px #8f959e;
+}
+form#auto_submit {
+    display: none;
+}
+#registration-tab-content .input-group-append button.btn span.pix {
+    padding-left: 0.5rem;
+}
+
+
+
+
+.path-admin-mnet-service-enrol .singlebutton {
+    text-align: center;
+}
+.path-admin-mnet-service-enrol table.remotehosts,
+.path-admin-mnet-service-enrol table.otherenrolledusers,
+.path-admin-mnet-service-enrol table.remotecourses {
+    margin: 0 auto 1em auto;
+}
+.path-admin-mnet-service-enrol table.remotecourses th.categoryname {
+    text-align: left;
+    background-color: #f6f6f6;
+}
+.path-admin-mnet-service-enrol table.remotecourses td.c1 {
+    font-weight: bold;
+}
+.path-admin-mnet-service-enrol table.remotecourses th.categoryname img {
+    margin-right: 1em;
+}
+.path-admin-mnet-service-enrol .collapsibleregioncaption {
+    font-size: 110%;
+    font-weight: bold;
+    text-align: center;
+}
+.path-admin-mnet-service-enrol .collapsibleregioninner {
+    border: 1px solid #ddd;
+    padding: 1em;
+}
+.path-admin-mnet-service-enrol .collapsibleregion.remotecourse.summary {
+    margin: 0 10em;
+}
+.path-admin-mnet-service-enrol .roleassigntable {
+    margin: 1em auto;
+}
+
+
+
+
+
+
+
+
+.ai-drawer {
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    right: calc(-315px + -10px);
+    width: 315px;
+    background-color: #f8f9fa;
+    z-index: 1016;
+    transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
+    visibility: hidden;
+}
+.ai-drawer.show {
+    right: 0;
+    visibility: visible;
+}
+
+.ai-drawer-header {
+    padding: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.ai-drawer-header .ai-drawer-button {
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.ai-drawer-body {
+    position: relative;
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 0.4rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #6a737b #f8f9fa;
+}
+
+#course-summarise-response {
+    font-size: 0.875em;
+}
+
+.course-summarise-response-controls button .icon,
+.course-summarise-response-watermark img.icon {
+    margin-right: 0;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary {
+    color: unset;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary span.ai-course-summarise-sparkles-icon {
+    display: inline-block;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary span.ai-course-summarise-sparkles-icon.white {
+    display: none;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary:not([disabled]):hover {
+    color: #fff;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary:not([disabled]):hover span.ai-course-summarise-sparkles-icon {
+    display: none;
+}
+
+.ai-course-summarise-controls button.btn.btn-outline-secondary:not([disabled]):hover span.ai-course-summarise-sparkles-icon.white {
+    display: inline-block;
+}
+
+.ai-course-summarise-controls button img.icon {
+    width: auto;
+    vertical-align: sub;
+}
+
+
+
+
+
+
+
+
+
+#glossaryfilteroverlayprogress {
+    position: fixed;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+}
+
+
+
+
+
+
+/**
+ * Filters
+ */
+.mediaplugin {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.mediaplugin,
+.mediaplugin video {
+    /* Make videos as wide as possible without being wider than their containers */
+    width: 100%;
+    max-width: 100%;
+}
+
+.mediaplugin > div {
+    margin: auto;
+}
+
+/* This is needed to display videos in an adequate size and without too much space
+   withing the specific mod assign table views. */
+.path-mod-assign .gradingtable .mediaplugin,
+.path-mod-assign .submissionsummarytable .mediaplugin {
+    width: 400px;
+    height: auto;
+}
+
+/* Make media plugin behave properly in mod summaries and labels */
+.mod-indent-outer .mediaplugin {
+    display: table-cell;
+}
+
+/* Make media plugin behave properly in Modal dialog. */
+.modal-dialog .mediaplugin {
+    width: 100vw;
+}
