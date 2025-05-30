@@ -698,63 +698,49 @@ body.path-question-type .mform fieldset.hidden {
     color: $link-color;
 }
 
-
-
-
-
-
-
-
-
-
 #page-admin-question-bank-columnsortorder-sortcolumns .addcolumn {
     display: inline-block;
 }
 .qbank-sortable-column {
     background-color: white;
     position: relative;
+    .qbank_columnsortorder-action-handle {
+        display: none;
+    }
+    .handle-container {
+        pointer-events: none; /* Prevent the handle container blocking clicks to elements in the header */
+        width: 100%;
+        position: absolute;
+        top: 40%;
+        z-index: 1;
+    }
 }
 .jsenabled .qbank-column-list button.savewidths {
-    display: none;
-}
-.qbank-sortable-column .qbank_columnsortorder-action-handle {
     display: none;
 }
 .qbank-sortable-column.show-handles .qbank_columnsortorder-action-handle {
     display: block;
 }
-.qbank-sortable-column .handle-container {
-    pointer-events: none; /* Prevent the handle container blocking clicks to elements in the header */
-    width: 100%;
-    position: absolute;
-    top: 40%;
-    z-index: 1;
-}
 .qbank_columnsortorder-action-handle {
     pointer-events: auto; /* Ensure the handles themselves receive clicks */
+    &.move {
+        margin-left: -21px;
+        width: 16px;
+    }
+    &.resize {
+        cursor: col-resize;
+        position: absolute;
+        top: 0;
+        right: 5px;
+        img {
+            /* Prevent the resize handle icon being dragged across the page */
+            pointer-events: none;
+        }
+    }
+    .icon {
+        margin-right: 0;
+    }
 }
-.qbank_columnsortorder-action-handle.move {
-    margin-left: -21px;
-    width: 16px;
-}
-.qbank_columnsortorder-action-handle.resize {
-    cursor: col-resize;
-    position: absolute;
-    top: 0;
-    right: 5px;
-}
-.qbank_columnsortorder-action-handle.resize img {
-    /* Prevent the resize handle icon being dragged across the page */
-    pointer-events: none;
-}
-.qbank_columnsortorder-action-handle .icon {
-    margin-right: 0;
-}
-
-
-
-
-
 
 /* Comment text area size to maximum */
 .question-comment-view .comment-ctrl .comment-area {
@@ -762,16 +748,17 @@ body.path-question-type .mform fieldset.hidden {
     width: 100%;
 }
 
-
-
-
-
-
 /* Card-style border on category lists */
 .qbank_managecategories-categorylist {
     padding: 1rem;
     border: 1px solid #dee2e6;
     border-radius: 1rem;
+    /* Don't show card border on nested lists. */
+    .qbank_managecategories-categorylist {
+        padding: 0 0 .5rem 0;
+        border: 0;
+        border-radius: 0;
+    }
 }
 /* Category item layout */
 .qbank_managecategories-handlecontainer {
@@ -781,23 +768,23 @@ body.path-question-type .mform fieldset.hidden {
     justify-content: center;
     align-items: center;
 }
-.qbank_managecategories-item .container {
-    padding: 0.75rem;
-}
 /* Separators between each item become drop indicators */
 .qbank_managecategories-item {
     width: 100%;
     list-style: none;
     border-top: 1px solid #dee2e6;
-}
-.qbank_managecategories-item:first-child {
-    border-top-color: transparent;
-}
-.qbank_managecategories-item:last-child {
-    border-bottom: 1px solid transparent;
-}
-.qbank_managecategories-item .qbank_managecategories-item:first-child {
-    border-top-color: #dee2e6;
+    .container {
+        padding: 0.75rem;
+    }
+    &:first-child {
+        border-top-color: transparent;
+    }
+    &:last-child {
+        border-bottom: 1px solid transparent;
+    }
+    .qbank_managecategories-item:first-child {
+        border-top-color: #dee2e6;
+    }
 }
 .qbank_managecategories-details p:last-child {
     margin-bottom: 0;
@@ -810,31 +797,28 @@ body.path-question-type .mform fieldset.hidden {
     display: none;
     opacity: 0.45;
 }
-.qbank_managecategories-item.draghandle .qbank_managecategories-draghandle {
-    display: inline;
+.qbank_managecategories-item.draghandle {
+    .qbank_managecategories-draghandle {
+        display: inline;
+    }
+    /* Drag indicator */
+    > .container {
+        border: 2px solid transparent;
+        border-radius: 1rem;
+        &:hover {
+            cursor: move;
+            border-color: #0f6cbf;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+    }
 }
-/* Drag indicator */
-.qbank_managecategories-item.draghandle > .container {
-    border: 2px solid transparent;
-    border-radius: 1rem;
-}
-.qbank_managecategories-item.draghandle > .container:hover {
-    cursor: move;
-    border-color: #0f6cbf;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
+
 /* No move/delete buttons on non-draggable items */
 .dropdown-item.show-when-movable {
     display: none;
 }
 .qbank_managecategories-item.draghandle .dropdown-item.show-when-movable {
     display: block;
-}
-/* Don't show card border on nested lists. */
-.qbank_managecategories-categorylist .qbank_managecategories-categorylist {
-    padding: 0 0 .5rem 0;
-    border: 0;
-    border-radius: 0;
 }
 /* Don't show hover indication on parent when a child is hovered */
 .editing .qbank_managecategories-item .container:hover:has(.container:hover) {
@@ -851,8 +835,10 @@ body.path-question-type .mform fieldset.hidden {
 }
 .qbank_managecategories-newchild.qbank_managecategories-droptarget,
     /* Show the drop target if it's directly inside a highlighted category, but not if its inside a child of that category */
-.qbank_managecategories-droptarget-before > .container > .row > .qbank_managecategories-contentcontainer > :not(.qbank_managecategories-childlistcontainer) .qbank_managecategories-newchild {
-    display: unset;
+.qbank_managecategories-droptarget-before > .container > .row > .qbank_managecategories-contentcontainer {
+    > :not(.qbank_managecategories-childlistcontainer) .qbank_managecategories-newchild {
+        display: unset;
+    }
 }
 /* Hidden descriptions */
 .qbank_managecategories-description {
@@ -862,25 +848,10 @@ body.path-question-type .mform fieldset.hidden {
     display: unset;
 }
 
-
-
-
-
-
-
-
-
 .question-bank-table td.questionlastused span.date {
     font-weight: 400;
     font-size: .8em;
 }
-
-
-
-
-
-
-
 
 .qbehaviour_deferredcbm_slightlyunderconfident,
 .qbehaviour_deferredcbm_slightlyoverconfident {
@@ -907,29 +878,23 @@ body.path-question-type .mform fieldset.hidden {
     margin: 0;
 }
 
-.que.deferredcbm .certaintychoices input[type="radio"] {
-    margin-left: 0.5em;
+.que.deferredcbm {
+    .certaintychoices {
+        input[type="radio"] {
+            margin-left: 0.5em;
+        }
+        label {
+            white-space: nowrap;
+        }
+    }
 }
-
-.que.deferredcbm .certaintychoices label {
-    white-space: nowrap;
-}
-
-
-
-
-
-
-
-
 
 .que.calculated .answer {
     padding: 0.3em;
     display: inline;
-}
-
-.que.calculated .answer input[type="text"] {
-    width: 30%;
+    input[type="text"] {
+        width: 30%;
+    }
 }
 
 /*rtl:ignore*/
@@ -1006,171 +971,163 @@ div[id^="fgroup_id_answerdisplay_"].mb-3 {
 }
 /* stylelint-enable declaration-no-important  */
 
+.que.calculatedmulti {
+    .answer {
+        .specificfeedback {
+            display: inline;
+            padding: 0 0.7em;
+            background: #fff3bf;
 
+            * {
+                display: inline;
+                background: #fff3bf;
+            }
 
-
-
-
-
-
-.que.calculatedmulti .answer .specificfeedback {
-    display: inline;
-    padding: 0 0.7em;
-    background: #fff3bf;
+            script {
+                display: none;
+            }
+        }
+        div.r0,
+        div.r1 {
+            display: flex;
+            margin: 0.25rem 0;
+            align-items: flex-start;
+            input {
+                margin: 0.3rem 0.5rem;
+                width: 14px;
+                flex-shrink: 0;
+            }
+        }
+    }
 }
 
-.que.calculatedmulti .answer .specificfeedback * {
-    display: inline;
-    background: #fff3bf;
-}
-
-.que.calculatedmulti .answer .specificfeedback script {
-    display: none;
-}
-
-
-.que.calculatedmulti .answer div.r0,
-.que.calculatedmulti .answer div.r1 {
-    display: flex;
-    margin: 0.25rem 0;
-    align-items: flex-start;
-}
-
-.que.calculatedmulti .answer div.r0 input,
-.que.calculatedmulti .answer div.r1 input {
-    margin: 0.3rem 0.5rem;
-    width: 14px;
-    flex-shrink: 0;
-}
-
-
-
-
-
-
-
-
-
-.que.calculatedsimple .answer {
-    padding: 0.3em;
-    display: inline;
-}
-
-.que.calculatedsimple .answer input[type="text"] {
-    width: 30%;
+.que.calculatedsimple {
+    .answer {
+        padding: 0.3em;
+        display: inline;
+        input[type="text"] {
+            width: 30%;
+        }
+    }
 }
 
 /* Editing form. */
-body#page-question-type-calculatedsimple div[id^=fgroup_id_][id*=answeroptions_] {
-    background: #eee;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-bottom: 0;
+body#page-question-type-calculatedsimple {
+    div[id^=fgroup_id_][id*=answeroptions_] {
+        background: #eee;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-bottom: 0;
+        .fgrouplabel label {
+            font-weight: bold;
+        }
+    }
+    div[id^=fgroup_id_][id*=answeroptions_] label[for^='id_answer_'],
+    div[id^=fgroup_id_][id*=answertolerance_] label[for^='id_tolerance_'],
+    div[id^=fgroup_id_][id*=answerdisplay_] label[for^='id_correctanswerlength_'] {
+        position: absolute;
+        left: -10000px;
+        font-weight: normal;
+        font-size: 1em;
+    }
+    div[id^=fgroup_id_][id*=answertolerance_],
+    div[id^=fgroup_id_][id*=answerdisplay_] {
+        background: #eee;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+        border-bottom: 0;
+    }
+    div[id^=fitem_id_][id*=feedback_] {
+        background: #eee;
+        margin-bottom: 2em;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+    }
 }
 
-body#page-question-type-calculatedsimple div[id^=fgroup_id_][id*=answeroptions_] .fgrouplabel label {
-    font-weight: bold;
-}
-
-body#page-question-type-calculatedsimple div[id^=fgroup_id_][id*=answeroptions_] label[for^='id_answer_'],
-body#page-question-type-calculatedsimple div[id^=fgroup_id_][id*=answertolerance_] label[for^='id_tolerance_'],
-body#page-question-type-calculatedsimple div[id^=fgroup_id_][id*=answerdisplay_] label[for^='id_correctanswerlength_'] {
-    position: absolute;
-    left: -10000px;
-    font-weight: normal;
-    font-size: 1em;
-}
-
-body#page-question-type-calculatedsimple div[id^=fgroup_id_][id*=answertolerance_],
-body#page-question-type-calculatedsimple div[id^=fgroup_id_][id*=answerdisplay_] {
-    background: #eee;
-    margin-bottom: 0;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-    border-bottom: 0;
-}
-
-body#page-question-type-calculatedsimple div[id^=fitem_id_][id*=feedback_] {
-    background: #eee;
-    margin-bottom: 2em;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-}
-
-
-
-
-
-
-.que.ddimageortext .qtext {
-    margin-bottom: 0.5em;
-    display: block;
-}
-
-.que.ddimageortext div.ddarea,
-form.mform fieldset#id_previewareaheader div.ddarea {
-    text-align: center;
-}
-
-.que.ddimageortext div.droparea,
-form.mform fieldset#id_previewareaheader div.ddarea {
-    position: relative;
-}
-
-.que.ddimageortext div.droparea {
-    display: inline-block;
-}
-
-.que.ddimageortext div.droparea .draghome {
-    position: absolute;
-    cursor: move;
-    white-space: nowrap;
-}
-
-.que.ddimageortext div.droparea .dropzones {
-    position: absolute;
-    top: 0;
-    /*rtl:ignore*/
-    left: 0;
-}
-
-.que.ddimageortext .dropbackground,
-form.mform fieldset#id_previewareaheader .dropbackground {
-    border: 1px solid #000;
-    margin: 0 auto;
+.que.ddimageortext {
+    .qtext {
+        margin-bottom: 0.5em;
+        display: block;
+    }
+    div.droparea {
+        display: inline-block;
+        .draghome {
+            position: absolute;
+            cursor: move;
+            white-space: nowrap;
+        }
+        .dropzones {
+            position: absolute;
+            top: 0;
+            /*rtl:ignore*/
+            left: 0;
+        }
+    }
+    .dropzone {
+        display: none;
+        position: absolute;
+        opacity: 0.5;
+        border: 1px solid black;
+        &.active {
+            display: block;
+        }
+    }
+    .draghomes .draghome {
+        vertical-align: top;
+        margin: 5px;
+        height: auto;
+        width: auto;
+        cursor: move;
+        &.dragplaceholder {
+            display: none;
+        }
+    }
+    .dragitems.readonly .drag {
+        cursor: auto;
+    }
+    .dropzone:focus,
+    .droparea .draghome:focus,
+    .dropzone.valid-drag-over-drop,
+    .draghome.placed.valid-drag-over-drop {
+        border-color: #0a0;
+        box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
+        outline: 0;
+    }
+    .draghomes.readonly .draghome,
+    .droparea.readonly .draghome {
+        cursor: auto;
+    }
+    /**
+     * The position of mathjax element in ddimageortext is calculated by javascript in question.js line 254.
+     * So we remove the default margin of Mathjax.
+     */
+    .MathJax_Display,
+    .MathJax_SVG_Display {
+        margin: 0;
+    }
+    .draghomes .draghome.dragplaceholder.active {
+        visibility: hidden;
+        display: inline-block;
+    }
+    .draghomes .draghome.beingdragged,
+    .droparea .draghome.beingdragged {
+        position: absolute;
+    }
 }
 
 form.mform fieldset#id_previewareaheader .dropbackground {
     max-width: none;
-}
-
-.que.ddimageortext .dropzone {
-    display: none;
-    position: absolute;
-    opacity: 0.5;
-    border: 1px solid black;
-}
-
-.que.ddimageortext .dropzone.active {
-    display: block;
-}
-
-.que.ddimageortext .dropzone:focus,
-.que.ddimageortext .droparea .draghome:focus,
-.que.ddimageortext .dropzone.valid-drag-over-drop,
-.que.ddimageortext .draghome.placed.valid-drag-over-drop {
-    border-color: #0a0;
-    box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
-    outline: 0;
 }
 
 .que.ddimageortext .draghome,
@@ -1181,53 +1138,6 @@ form.mform fieldset#id_previewareaheader .droppreview {
     font: 13px/1.231 arial, helvetica, clean, sans-serif;
 }
 
-.que.ddimageortext .draghomes .draghome {
-    vertical-align: top;
-    margin: 5px;
-    height: auto;
-    width: auto;
-    cursor: move;
-}
-
-.que.ddimageortext .draghomes.readonly .draghome,
-.que.ddimageortext .droparea.readonly .draghome {
-    cursor: auto;
-}
-
-.que.ddimageortext .draghomes .draghome.dragplaceholder {
-    display: none;
-}
-
-/**
- * The position of mathjax element in ddimageortext is calculated by javascript in question.js line 254.
- * So we remove the default margin of Mathjax.
- */
-.que.ddimageortext .MathJax_Display,
-.que.ddimageortext .MathJax_SVG_Display {
-    margin: 0;
-}
-
-.que.ddimageortext .draghomes .draghome.dragplaceholder.active {
-    visibility: hidden;
-    display: inline-block;
-}
-
-.que.ddimageortext .dragitems,
-form.mform fieldset#id_previewareaheader .dragitems {
-    height: 0;
-}
-
-.que.ddimageortext .drag,
-form.mform fieldset#id_previewareaheader .droppreview {
-    position: absolute;
-    cursor: move;
-    white-space: nowrap;
-}
-
-.que.ddimageortext .dragitems.readonly .drag {
-    cursor: auto;
-}
-
 form.mform fieldset#id_previewareaheader .drag.beingdragged,
 .que.ddimageortext .drag.beingdragged,
 .que.ddimageortext .draghomes .draghome.beingdragged,
@@ -1235,93 +1145,97 @@ form.mform fieldset#id_previewareaheader .drag.beingdragged,
     box-shadow: 3px 3px 4px #000;
 }
 
-.que.ddimageortext .draghomes .draghome.beingdragged,
-.que.ddimageortext .droparea .draghome.beingdragged {
-    position: absolute;
-}
-
-.que.ddimageortext .group1,
-form.mform fieldset#id_previewareaheader .group1 {
-    background-color: #fff;
-}
-
-.que.ddimageortext .group2,
-form.mform fieldset#id_previewareaheader .group2 {
-    background-color: #b0c4de;
-    border-radius: 10px 0 0 0;
-}
-
-.que.ddimageortext .group3,
-form.mform fieldset#id_previewareaheader .group3 {
-    background-color: #dcdcdc;
-    border-radius: 0 10px 0 0;
-}
-
-.que.ddimageortext .group4,
-form.mform fieldset#id_previewareaheader .group4 {
-    background-color: #d8bfd8;
-    border-radius: 0 0 10px 0;
-}
-
-.que.ddimageortext .group5,
-form.mform fieldset#id_previewareaheader .group5 {
-    background-color: #87cefa;
-    border-radius: 0 0 0 10px;
-}
-
-.que.ddimageortext .group6,
-form.mform fieldset#id_previewareaheader .group6 {
-    background-color: #daa520;
-    border-radius: 0 10px 10px 0;
-}
-
-.que.ddimageortext .group7,
-form.mform fieldset#id_previewareaheader .group7 {
-    background-color: #ffd700;
-    border-radius: 10px 0 0 10px;
-}
-
-.que.ddimageortext .group8,
-form.mform fieldset#id_previewareaheader .group8 {
-    background-color: #f0e68c;
-    border-radius: 10px 10px 10px 10px;
+.que.ddimageortext,
+form.mform fieldset#id_previewareaheader {
+    div.ddarea {
+        text-align: center;
+    }
+    div.droparea,
+    div.ddarea {
+        position: relative;
+    }
+    .dropbackground {
+        border: 1px solid #000;
+        margin: 0 auto;
+    }
+    .dragitems {
+        height: 0;
+    }
+    .drag,
+    .droppreview {
+        position: absolute;
+        cursor: move;
+        white-space: nowrap;
+    }
+    .group1 {
+        background-color: #fff;
+    }
+    .group2 {
+        background-color: #b0c4de;
+        border-radius: 10px 0 0 0;
+    }
+    .group3 {
+        background-color: #dcdcdc;
+        border-radius: 0 10px 0 0;
+    }
+    .group4 {
+        background-color: #d8bfd8;
+        border-radius: 0 0 10px 0;
+    }
+    .group5 {
+        background-color: #87cefa;
+        border-radius: 0 0 0 10px;
+    }
+    .group6 {
+        background-color: #daa520;
+        border-radius: 0 10px 10px 0;
+    }
+    .group7 {
+        background-color: #ffd700;
+        border-radius: 10px 0 0 10px;
+    }
+    .group8 {
+        background-color: #f0e68c;
+        border-radius: 10px 10px 10px 10px;
+    }
 }
 
 /* Editing form. Style repeated elements*/
 /*Top*/
-body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] {
-    background: #eee;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-bottom: 0;
-}
-
-body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] .fgrouplabel label {
-    font-weight: bold;
-}
-/* Middle */
-body#page-question-type-ddimageortext div[id^=fitem_id_][id*=dragitem_] {
-    background: #eee;
-    margin-bottom: 0;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-    border-bottom: 0;
-}
-/* Bottom */
-body#page-question-type-ddimageortext div[id^=fitem_id_][id*=draglabel_] {
-    background: #eee;
-    margin-bottom: 2em;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
+body#page-question-type-ddimageortext {
+    div[id^=fgroup_id_][id*=drags_] {
+        background: #eee;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-bottom: 0;
+        .fgrouplabel label {
+            font-weight: bold;
+        }
+    }
+    /* Middle */
+    div[id^=fitem_id_][id*=dragitem_] {
+        background: #eee;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+        border-bottom: 0;
+    }
+    /* Bottom */
+    div[id^=fitem_id_][id*=draglabel_] {
+        background: #eee;
+        margin-bottom: 2em;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+    }
 }
 
 /* stylelint-disable declaration-no-important  */
@@ -1333,57 +1247,151 @@ div[id^="fitem_id_dragitem_"].mb-3 {
 
 /* stylelint-enable declaration-no-important  */
 
-
-
-
-
-
-
-.que.ddmarker .qtext {
-    margin-bottom: 0.5em;
-    display: block;
+.que.ddmarker {
+    .qtext {
+        margin-bottom: 0.5em;
+        display: block;
+    }
+    .droparea {
+        display: inline-block;
+        position: relative;
+        .dropzones,
+        .markertexts {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .marker {
+            position: absolute;
+        }
+    }
+    .draghomes .marker {
+        position: relative;
+        display: inline-block;
+        margin: 10px;
+        &.dragplaceholder {
+            display: none;
+            &.active {
+                visibility: hidden;
+                display: inline-block;
+            }
+        }
+    }
+    .draghomes .marker,
+    .droparea .marker {
+        vertical-align: top;
+        cursor: move;
+    }
+    .draghomes.readonly .marker,
+    .droparea.readonly .marker {
+        cursor: auto;
+    }
+    .droparea,
+    .draghomes {
+        .marker {
+            span.markertext {
+                white-space: nowrap;
+            }
+            img.target,
+            img.target {
+                position: absolute;
+                left: -7px; /* This must be half the size of the target image, minus 0.5. */
+                top: -7px;  /* In other words, this works for a 15x15 cross-hair. */
+            }
+        }
+    }
+    div.markertexts span.markertext {
+        z-index: 2;
+        background-color: yellow;
+        border: 2px solid khaki;
+        position: absolute;
+        white-space: nowrap;
+    }
+    span.wrongpart {
+        background-color: yellow;
+        border: 2px solid khaki;
+        padding: 5px;
+        border-radius: 10px;
+        opacity: 0.6;
+        margin: 5px;
+        display: inline-block;
+    }
+    div.dragitems div.draghome img.target {
+        display: none;
+    }
+    .marker.beingdragged {
+        position: absolute;
+        span.markertext {
+            z-index: 3;
+            box-shadow: 3px 3px 4px #000;
+        }
+    }
+    .dropzone {
+        /* Styles for the preview on the editing form. */
+        .shape {
+            fill: #fff;
+            fill-opacity: 0.5;
+            stroke: black;
+            stroke-width: 1;
+        }
+        &.active {
+            .handle {
+                display: inherit;
+            }
+            .shape {
+                stroke-width: 2;
+            }
+        }
+        &.color0 .shape {
+            fill: #fff;
+        }
+        &.color1 .shape {
+            fill: #b0c4de;
+        }
+        &.color2 .shape {
+            fill: #dcdcdc;
+        }
+        &.color3 .shape {
+            fill: #d8bfd8;
+        }
+        &.color4 .shape {
+            fill: #87cefa;
+        }
+        &.color5 .shape {
+            fill: #daa520;
+        }
+        &.color6 .shape {
+            fill: #ffd700;
+        }
+        &.color7 .shape {
+            fill: #f0e68c;
+        }
+        .shapeLabel {
+            text-anchor: middle;
+        }
+        .handle {
+            fill: #fff;
+            fill-opacity: 0.1; /* Need a small amount of opacity of the handle can't be grabbed. */
+            stroke-width: 1;
+            display: none;
+            cursor: move;
+            &.move {
+                stroke: #800;
+            }
+            &.edit {
+                stroke: #008;
+            }
+        }
+    }
 }
 
-.que.ddmarker .droparea {
-    display: inline-block;
-    position: relative;
-}
-
-.que.ddmarker .droparea .dropzones,
-.que.ddmarker .droparea .markertexts {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.que.ddmarker .draghomes .marker,
-.que.ddmarker .droparea .marker {
-    vertical-align: top;
-    cursor: move;
-}
-
-.que.ddmarker .draghomes.readonly .marker,
-.que.ddmarker .droparea.readonly .marker {
-    cursor: auto;
-}
-
-.que.ddmarker .droparea .marker {
-    position: absolute;
-}
-
-.que.ddmarker .draghomes .marker {
-    position: relative;
-    display: inline-block;
-    margin: 10px;
-}
-
-.que.ddmarker .draghomes .marker.dragplaceholder {
-    display: none;
-}
-
-.que.ddmarker .draghomes .marker.dragplaceholder.active {
-    visibility: hidden;
-    display: inline-block;
+form.mform fieldset#id_previewareaheader {
+    div.ddarea .markertexts {
+        min-height: 80px;
+    }
+    .dropbackground {
+        max-width: none;
+    }
 }
 
 .que.ddmarker div.ddarea,
@@ -1391,18 +1399,10 @@ form.mform fieldset#id_previewareaheader div.ddarea {
     text-align: center;
 }
 
-form.mform fieldset#id_previewareaheader div.ddarea .markertexts {
-    min-height: 80px;
-}
-
 .que.ddmarker .dropbackground,
 form.mform fieldset#id_previewareaheader .dropbackground {
     margin: 0 auto;
     border: 1px solid black;
-}
-
-form.mform fieldset#id_previewareaheader .dropbackground {
-    max-width: none;
 }
 
 .que.ddmarker div.dragitems div.draghome,
@@ -1412,393 +1412,245 @@ form.mform fieldset#id_previewareaheader div.drag {
     font: 13px/1.231 arial, helvetica, clean, sans-serif;
 }
 
-.que.ddmarker .droparea .marker span.markertext,
-.que.ddmarker .draghomes .marker span.markertext,
-.que.ddmarker div.markertexts span.markertext,
-form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
-    margin: 0 5px;
-    z-index: 3;
-    background-color: white;
-    border: 2px solid black;
-    padding: 5px;
-    display: inline-block;
-    zoom: 1;
-    border-radius: 10px;
-    color: black;
-    opacity: 0.6;
-}
-
-.que.ddmarker .droparea .marker span.markertext,
-.que.ddmarker .draghomes .marker span.markertext {
-    white-space: nowrap;
-}
-
-.que.ddmarker div.markertexts span.markertext {
-    z-index: 2;
-    background-color: yellow;
-    border: 2px solid khaki;
-    position: absolute;
-    white-space: nowrap;
-}
-
-.que.ddmarker span.wrongpart {
-    background-color: yellow;
-    border: 2px solid khaki;
-    padding: 5px;
-    border-radius: 10px;
-    opacity: 0.6;
-    margin: 5px;
-    display: inline-block;
-}
-
-.que.ddmarker .droparea .marker img.target,
-.que.ddmarker .draghomes .marker img.target {
-    position: absolute;
-    left: -7px; /* This must be half the size of the target image, minus 0.5. */
-    top: -7px;  /* In other words, this works for a 15x15 cross-hair. */
-}
-
-.que.ddmarker div.dragitems div.draghome img.target {
-    display: none;
-}
-
-.que.ddmarker .marker.beingdragged {
-    position: absolute;
-}
-
-.que.ddmarker .marker.beingdragged span.markertext {
-    z-index: 3;
-    box-shadow: 3px 3px 4px #000;
-}
-
-/* Styles for the preview on the editing form. */
-.que.ddmarker .dropzone .shape {
-    fill: #fff;
-    fill-opacity: 0.5;
-    stroke: black;
-    stroke-width: 1;
-}
-.que.ddmarker .dropzone.active .shape {
-    stroke-width: 2;
-}
-.que.ddmarker .dropzone.color0 .shape {
-    fill: #fff;
-}
-.que.ddmarker .dropzone.color1 .shape {
-    fill: #b0c4de;
-}
-.que.ddmarker .dropzone.color2 .shape {
-    fill: #dcdcdc;
-}
-.que.ddmarker .dropzone.color3 .shape {
-    fill: #d8bfd8;
-}
-.que.ddmarker .dropzone.color4 .shape {
-    fill: #87cefa;
-}
-.que.ddmarker .dropzone.color5 .shape {
-    fill: #daa520;
-}
-.que.ddmarker .dropzone.color6 .shape {
-    fill: #ffd700;
-}
-.que.ddmarker .dropzone.color7 .shape {
-    fill: #f0e68c;
-}
-
-.que.ddmarker .dropzone .shapeLabel {
-    text-anchor: middle;
-}
-
-.que.ddmarker .dropzone .handle {
-    fill: #fff;
-    fill-opacity: 0.1; /* Need a small amount of opacity of the handle can't be grabbed. */
-    stroke-width: 1;
-    display: none;
-    cursor: move;
-}
-.que.ddmarker .dropzone .handle.move {
-    stroke: #800;
-}
-.que.ddmarker .dropzone .handle.edit {
-    stroke: #008;
-}
-.que.ddmarker .dropzone.active .handle {
-    display: inherit;
+.que.ddmarker .droparea .marker,
+.que.ddmarker .draghomes .marker,
+.que.ddmarker div.markertexts,
+form.mform fieldset#id_previewareaheader div.markertexts {
+    span.markertext {
+        margin: 0 5px;
+        z-index: 3;
+        background-color: white;
+        border: 2px solid black;
+        padding: 5px;
+        display: inline-block;
+        zoom: 1;
+        border-radius: 10px;
+        color: black;
+        opacity: 0.6;
+    }
 }
 
 /* Editing form. Style repeated elements*/
 /*Top*/
-body#page-question-type-ddmarker div[id^=fitem_id_][id*=hint_] {
-    background: #eee;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-bottom: 0;
+body#page-question-type-ddmarker {
+    div[id^=fitem_id_][id*=hint_] {
+        background: #eee;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-bottom: 0;
+    }
+    div[id^=fitem_id_][id*=hint_] .fitemtitle {
+        font-weight: bold;
+    }
+    /* Middle */
+    div[id^=fitem_id_][id*=hintoptions_],
+    div[id^=fitem_id_][id*=hintshownumcorrect_] {
+        background: #eee;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+        border-bottom: 0;
+    }
+    /* Bottom */
+    div[id^=fitem_id_][id*=hintclearwrong_] {
+        background: #eee;
+        margin-bottom: 2em;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+    }
+    #fitem_id_penalty {
+        margin-bottom: 2em;
+    }
 }
 
-body#page-question-type-ddmarker div[id^=fitem_id_][id*=hint_] .fitemtitle {
-    font-weight: bold;
-}
-/* Middle */
-body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintoptions_],
-body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintshownumcorrect_] {
-    background: #eee;
-    margin-bottom: 0;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-    border-bottom: 0;
-}
-/* Bottom */
-body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintclearwrong_] {
-    background: #eee;
-    margin-bottom: 2em;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-}
-
-body#page-question-type-ddmarker #fitem_id_penalty {
-    margin-bottom: 2em;
-}
-
-
-
-
-
-
-.que.ddwtos .qtext {
-    margin-bottom: 0.5em;
-    display: block;
-}
-
-.que.ddwtos .draghome {
-    margin-bottom: 1em;
-}
-
-.que.ddwtos .answertext {
-    margin-bottom: 0.5em;
-}
-
-.que.ddwtos .drop.active {
-    display: inline-block;
-    text-align: center;
-    border: 1px solid #000;
-    margin-bottom: 2px;
-}
-
-.que.ddwtos .drop {
-    display: none;
-}
-
-.que.ddwtos .drags {
-    height: 0;
-}
-
-.que.ddwtos .draghome {
-    display: inline-block;
-    text-align: center;
-    background: transparent;
-    border: 1px solid #000;
-    cursor: move;
-}
-
-.que.ddwtos.qtype_ddwtos-readonly .draghome {
-    cursor: default;
-}
-
-.que.ddwtos .draghome.beingdragged {
-    z-index: 3;
-    box-shadow: 3px 3px 4px #000;
-    position: absolute;
-}
-
-.que.ddwtos .draghome.dragplaceholder {
-    display: none;
-}
-
-.que.ddwtos .draghome.dragplaceholder.active {
-    visibility: hidden;
-    display: inline-block;
-}
-
-.que.ddwtos .draghome.placed {
-    margin-bottom: 2px;
-}
-
-.que.ddwtos .drop:focus,
-.que.ddwtos .drop.valid-drag-over-drop,
-.que.ddwtos .draghome.placed:focus:not(.beingdragged),
-.que.ddwtos .draghome.placed.valid-drag-over-drop {
-    border-color: #0a0;
-    box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
-}
-
-.que.ddwtos span.incorrect {
-    background-color: #faa;
-}
-
-.que.ddwtos span.correct {
-    background-color: #afa;
-}
-
-.que.ddwtos .group1 {
-    background-color: #fff;
+.que.ddwtos {
+    .qtext {
+        margin-bottom: 0.5em;
+        display: block;
+    }
+    .draghome {
+        margin-bottom: 1em;
+    }
+    .answertext {
+        margin-bottom: 0.5em;
+    }
+    .drop {
+        display: none;
+        &.active {
+            display: inline-block;
+            text-align: center;
+            border: 1px solid #000;
+            margin-bottom: 2px;
+        }
+    }
+    .drags {
+        height: 0;
+    }
+    .draghome {
+        display: inline-block;
+        text-align: center;
+        background: transparent;
+        border: 1px solid #000;
+        cursor: move;
+        &.beingdragged {
+            z-index: 3;
+            box-shadow: 3px 3px 4px #000;
+            position: absolute;
+        }
+        &.dragplaceholder {
+            display: none;
+            &.active {
+                visibility: hidden;
+                display: inline-block;
+            }
+        }
+        &.placed {
+            margin-bottom: 2px;
+        }
+    }
+    &.qtype_ddwtos-readonly .draghome {
+        cursor: default;
+    }
+    .drop:focus,
+    .drop.valid-drag-over-drop,
+    .draghome.placed:focus:not(.beingdragged),
+    .draghome.placed.valid-drag-over-drop {
+        border-color: #0a0;
+        box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
+    }
+    span.incorrect {
+        background-color: #faa;
+    }
+    span.correct {
+        background-color: #afa;
+    }
+    .group1 {
+        background-color: #fff;
+    }
+    .group2 {
+        background-color: #dcdcdc;
+        border-radius: 10px 0 0 0;
+    }
+    .group3 {
+        background-color: #b0c4de;
+        border-radius: 0 10px 0 0;
+    }
+    .group4 {
+        background-color: #d8bfd8;
+        border-radius: 0 0 10px 0;
+    }
+    .group5 {
+        background-color: #87cefa;
+        border-radius: 0 0 0 10px;
+    }
+    .group6 {
+        background-color: #daa520;
+        border-radius: 0 10px 10px 0;
+    }
+    .group7 {
+        background-color: #ffd700;
+        border-radius: 10px 0 0 10px;
+    }
+    .group8 {
+        background-color: #f0e68c;
+        border-radius: 10px 10px 10px 10px;
+    }
+    sub,
+    sup {
+        font-size: 80%;
+        position: relative;
+        vertical-align: baseline;
+    }
+    sup {
+        top: -0.4em;
+    }
+    sub {
+        bottom: -0.2em;
+    }
+    .MathJax_Display {
+        margin: 0;
+    }
 }
 
-.que.ddwtos .group2 {
-    background-color: #dcdcdc;
-    border-radius: 10px 0 0 0;
+.que.essay {
+    textarea.qtype_essay_response {
+        width: 100%;
+        &.qtype_essay_plain {
+            white-space: pre-wrap;
+            font: inherit;
+        }
+        &.qtype_essay_monospaced {
+            white-space: pre;
+            font-family: Andale Mono, Monaco, Courier New, DejaVu Sans Mono, monospace;
+        }
+    }
+    .qtype_essay_response {
+        min-height: 3em;
+        &.readonly {
+            background-color: white;
+        }
+        textarea {
+            width: 100%;
+        }
+    }
+    .ablock .filemanager .fp-restrictions {
+        margin-top: 1em;
+    }
 }
 
-.que.ddwtos .group3 {
-    background-color: #b0c4de;
-    border-radius: 0 10px 0 0;
-}
-
-.que.ddwtos .group4 {
-    background-color: #d8bfd8;
-    border-radius: 0 0 10px 0;
-}
-
-.que.ddwtos .group5 {
-    background-color: #87cefa;
-    border-radius: 0 0 0 10px;
-}
-
-.que.ddwtos .group6 {
-    background-color: #daa520;
-    border-radius: 0 10px 10px 0;
-}
-
-.que.ddwtos .group7 {
-    background-color: #ffd700;
-    border-radius: 10px 0 0 10px;
-}
-
-.que.ddwtos .group8 {
-    background-color: #f0e68c;
-    border-radius: 10px 10px 10px 10px;
-}
-
-.que.ddwtos sub,
-.que.ddwtos sup {
-    font-size: 80%;
-    position: relative;
-    vertical-align: baseline;
-}
-
-.que.ddwtos sup {
-    top: -0.4em;
-}
-
-.que.ddwtos sub {
-    bottom: -0.2em;
-}
-
-.que.ddwtos .MathJax_Display {
-    margin: 0;
-}
-
-
-
-
-
-
-
-.que.essay textarea.qtype_essay_response {
-    width: 100%;
-}
-
-.que.essay textarea.qtype_essay_response.qtype_essay_plain {
-    white-space: pre-wrap;
-    font: inherit;
-}
-
-.que.essay textarea.qtype_essay_response.qtype_essay_monospaced {
-    white-space: pre;
-    font-family: Andale Mono, Monaco, Courier New, DejaVu Sans Mono, monospace;
-}
-
-.que.essay .qtype_essay_response {
-    min-height: 3em;
-}
-
-.que.essay .qtype_essay_response.readonly {
-    background-color: white;
-}
-
-.que.essay div.qtype_essay_response textarea {
-    width: 100%;
-}
-
-.que.essay .ablock .filemanager .fp-restrictions {
-    margin-top: 1em;
-}
-
-
-
-
-
-
-
-.que.gapselect .qtext {
-    line-height: 2em;
-    margin-top: 1px;
-    margin-bottom: 0.5em;
-    display: block;
-}
-
-.que.gapselect .answercontainer {
-    line-height: 2em;
-    margin-bottom: 1em;
-    display: block;
-}
-
-.que.gapselect .answertext {
-    padding-bottom: 0.5em;
+.que.gapselect {
+    .qtext {
+        line-height: 2em;
+        margin-top: 1px;
+        margin-bottom: 0.5em;
+        display: block;
+    }
+    .answercontainer {
+        line-height: 2em;
+        margin-bottom: 1em;
+        display: block;
+    }
+    .answertext {
+        padding-bottom: 0.5em;
+    }
 }
 
 .que.sddl .control {
     padding: 0.2em;
 }
 
-
-
-
-
-
-
 /* Editing form. */
-body#page-question-type-match div[id^=fitem_id_][id*=subquestions_] {
-    background: #eee;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-bottom: 0;
-}
-
-body#page-question-type-match div[id^=fitem_id_][id*=subquestions_] .fitemtitle {
-    font-weight: bold;
-}
-
-body#page-question-type-match div[id^=fitem_id_][id*=subanswers_] {
-    background: #eee;
-    margin-bottom: 2em;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
+body#page-question-type-match {
+    div[id^=fitem_id_][id*=subquestions_] {
+        background: #eee;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-bottom: 0;
+    }
+    div[id^=fitem_id_][id*=subquestions_] .fitemtitle {
+        font-weight: bold;
+    }
+    div[id^=fitem_id_][id*=subanswers_] {
+        background: #eee;
+        margin-bottom: 2em;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+    }
 }
 
 /* stylelint-disable declaration-no-important  */
@@ -1808,141 +1660,117 @@ div[id^="fitem_id_subquestions_"].mb-3 {
 }
 /* stylelint-enable declaration-no-important  */
 
-
-
-
-
-
-
-
-.que.multianswer .feedbackspan {
-    display: block;
-    max-width: 70%;
-    background: #fff3bf;
-    padding: 0.5em;
-    margin-top: 1em;
-    box-shadow: 0.5em 0.5em 1em #000;
+body.ie6,
+body.ie7,
+body.ie8,
+body.ie9 {
+    .que.multianswer .feedbackspan {
+        width: 70%;
+    }
 }
 
-body.ie6 .que.multianswer .feedbackspan,
-body.ie7 .que.multianswer .feedbackspan,
-body.ie8 .que.multianswer .feedbackspan,
-body.ie9 .que.multianswer .feedbackspan {
-    width: 70%;
+.que.multianswer {
+    .feedbackspan {
+        display: block;
+        max-width: 70%;
+        background: #fff3bf;
+        padding: 0.5em;
+        margin-top: 1em;
+        box-shadow: 0.5em 0.5em 1em #000;
+    }
+    .answer {
+        .specificfeedback {
+            display: inline;
+            padding: 0 0.7em;
+            background: #fff3bf;
+            * {
+                display: inline;
+                background: #fff3bf;
+            }
+            script {
+                display: none;
+            }
+        }
+        div.r0,
+        div.r1 {
+            padding: 0.3em;
+        }
+    }
+    table.answer {
+        margin-bottom: 0;
+        width: 100%;
+    }
 }
 
-.que.multianswer .answer .specificfeedback {
-    display: inline;
-    padding: 0 0.7em;
-    background: #fff3bf;
-}
-
-.que.multianswer .answer .specificfeedback * {
-    display: inline;
-    background: #fff3bf;
-}
-
-.que.multianswer .answer .specificfeedback script {
-    display: none;
-}
-
-.que.multianswer .answer div.r0,
-.que.multianswer .answer div.r1 {
-    padding: 0.3em;
-}
-
-.que.multianswer table.answer {
-    margin-bottom: 0;
-    width: 100%;
-}
-
-
-
-
-
-
-
-.que.multichoice .answer div.r0,
-.que.multichoice .answer div.r1 {
-    display: flex;
-    margin: 0.25rem 0;
-    align-items: flex-start;
-}
-
-.que.multichoice .answer div.r0 input,
-.que.multichoice .answer div.r1 input {
-    margin: 0.3rem 0.5rem;
-    width: 14px;
-    flex-shrink: 0;
-}
-
-.que.multichoice .answer .answernumber {
-    min-width: 1.5em;
-}
-
-.que.multichoice .answer .specificfeedback {
-    display: inline;
-    padding: 0 0.7em;
-    background: #fff3bf;
+.que.multichoice .answer {
+    div.r0,
+    div.r1 {
+        display: flex;
+        margin: 0.25rem 0;
+        align-items: flex-start;
+        input {
+            margin: 0.3rem 0.5rem;
+            width: 14px;
+            flex-shrink: 0;
+        }
+    }
+    .answernumber {
+        min-width: 1.5em;
+    }
+    .specificfeedback {
+        display: inline;
+        padding: 0 0.7em;
+        background: #fff3bf;
+    }
 }
 
 /* Editing form. */
-body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] {
-    background: #eee;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-bottom: 0;
-}
-
-body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] .fitemtitle {
-    font-weight: bold;
-}
-
-body#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 6px;
-    padding-right: 0;
-}
-
-body#page-question-type-multichoice div[id^=fitem_id_][id*=fraction_] {
-    background: #eee;
-    margin-bottom: 0;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-    border-bottom: 0;
-}
-
-body#page-question-type-multichoice div[id^=fitem_id_][id*=feedback_] {
-    background: #eee;
-    margin-bottom: 2em;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
+body#page-question-type-multichoice {
+    div[id^=fitem_id_][id*=answer_] {
+        background: #eee;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-bottom: 0;
+        .fitemtitle {
+            font-weight: bold;
+        }
+    }
+    div[id^=fitem_id_] .fitemtitle {
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 6px;
+        padding-right: 0;
+    }
+    div[id^=fitem_id_][id*=fraction_] {
+        background: #eee;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+        border-bottom: 0;
+    }
+    div[id^=fitem_id_][id*=feedback_] {
+        background: #eee;
+        margin-bottom: 2em;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+    }
 }
 
 /* stylelint-disable declaration-no-important  */
-
 div[id^="fitem_id_answer_"].mb-3,
 div[id^="fitem_id_fraction_"].mb-3 {
     margin-bottom: 0 !important;
 }
 /* stylelint-enable declaration-no-important  */
-
-
-
-
-
-
-
 
 .que.numerical .answer {
     padding: 0.3em;
@@ -1950,30 +1778,51 @@ div[id^="fitem_id_fraction_"].mb-3 {
 }
 
 /*rtl:ignore*/
-#page-question-type-numerical input[name="unitpenalty"],
-#page-question-type-numerical input[name^="answer"],
-#page-question-type-numerical input[name^="tolerance"],
-#page-question-type-numerical input[name^="multiplier"],
-#page-question-type-numerical input[name^="unit"] {
-    direction: ltr;
-    text-align: left;
+#page-question-type-numerical {
+    input[name="unitpenalty"],
+    input[name^="answer"],
+    input[name^="tolerance"],
+    input[name^="multiplier"],
+    input[name^="unit"] {
+        direction: ltr;
+        text-align: left;
+    }
 }
 
 /* Editing form. */
-body#page-question-type-numerical div[id^=fgroup_id_][id*=answeroptions_] {
-    background: #eee;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-bottom: 0;
+body#page-question-type-numerical {
+    div[id^=fgroup_id_][id*=answeroptions_] {
+        background: #eee;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-bottom: 0;
+        .fgrouplabel label {
+            font-weight: bold;
+        }
+    }
+    div[id^=fitem_id_][id*=fraction_] {
+        background: #eee;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+        border-bottom: 0;
+    }
+    div[id^=fitem_id_][id*=feedback_] {
+        background: #eee;
+        margin-bottom: 2em;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+    }
 }
-
-body#page-question-type-numerical div[id^=fgroup_id_][id*=answeroptions_] .fgrouplabel label {
-    font-weight: bold;
-}
-
 body.path-question-type div#fgroup_id_penaltygrp label[for^=id_unitpenalty],
 body.path-question-type div[id^=fgroup_id_units_] label[for^='id_unit_'],
 body#page-question-type-numerical div[id^=fgroup_id_][id*=answeroptions_] label[for^='id_answer_'] {
@@ -1983,143 +1832,168 @@ body#page-question-type-numerical div[id^=fgroup_id_][id*=answeroptions_] label[
     font-size: 1em;
 }
 
-body#page-question-type-numerical div[id^=fitem_id_][id*=fraction_] {
-    background: #eee;
-    margin-bottom: 0;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-    border-bottom: 0;
-}
-
-body#page-question-type-numerical div[id^=fitem_id_][id*=feedback_] {
-    background: #eee;
-    margin-bottom: 2em;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-}
-
-
-
-
-
-
-
-
-
 /* Styles for the initial layout of the question. */
 
 /* Ensure container covers the draggable items. */
-.que.ordering div.answer.ordering {
-    overflow: auto;
-}
+.que.ordering {
+    div.answer.ordering {
+        overflow: auto;
+    }
+    .sortablelist {
+        float: left;
+        list-style-type: none;
+        margin: 0 0 0 8px;
+        &.active {
+            border: 1px dotted #333;
+            border-radius: 4px;
+        }
+        li {
+            background-color: #fff;
+            border: 1px solid #000;
+            border-radius: 4px;
+            list-style-type: none;
+            margin: 4px;
+            .grip {
+                opacity: 0.45;
+            }
+            &.sortableitem {
+                position: relative;
+                cursor: move;
+                margin-left: 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
+                &:first-of-type [data-action="move-backward"],
+                &:last-of-type [data-action="move-forward"] {
+                    visibility: hidden;
+                }
+            }
+        }
+        &.numbering123 li,
+        &.numberingabc li,
+        &.numberingABCD li,
+        &.numberingiii li,
+        &.numberingIIII li {
+            margin-left: 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
+        }
 
-.que.ordering .sortablelist {
-    float: left;
-    list-style-type: none;
-    margin: 0 0 0 8px;
-}
-.que.ordering .sortablelist.active {
-    border: 1px dotted #333;
-    border-radius: 4px;
-}
+        &.numberingnone li {
+            list-style-type: none;
+            margin-left: 0;
+        }
+        &.numbering123 li {
+            list-style-type: decimal;
+        }
+        &.numberingabc li {
+            list-style-type: lower-alpha;
+        }
+        &.numberingABCD li {
+            list-style-type: upper-alpha;
+        }
+        &.numberingiii li {
+            list-style-type: lower-roman;
+        }
+        &.numberingIIII li {
+            list-style-type: upper-roman;
+        }
 
-.que.ordering .sortablelist li {
-    background-color: #fff;
-    border: 1px solid #000;
-    border-radius: 4px;
-    list-style-type: none;
-    margin: 4px;
-}
+        &.horizontal {
+            display: flex;
+            flex-wrap: wrap;
+        }
 
-.que.ordering .sortablelist li .grip {
-    opacity: 0.45;
-}
+        /* Better define 'row' of item for horizontal list. */
+        &.horizontal {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
 
-.que.ordering .sortablelist li.sortableitem {
-    position: relative;
-    cursor: move;
-    margin-left: 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
-}
+        &.vertical li {
+            min-height: 18px;
+        }
+    }
+    .sortableitem .btn.btn-icon {
+        height: 32px;
+        width: 32px;
+        border-radius: 0.5rem;
+    }
+    /* Styles for when things are being dragged. */
+    &.dragproxy {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+        .sortablelist {
+            margin: 0;
+            padding: 0;
+            float: none;
+            li {
+                margin: 0;
+                padding: 6px 0 6px 12px;
+                width: 100%;
+                &.horizontal {
+                    float: none;
+                }
+            }
+        }
+    }
+    /* Styles for feedback. */
+    .sortablelist.notactive {
+        li.correct {
+            background-color: #dff4d8; /* light green */
+            border-color: #9f6; /* gentle green */
+        }
 
-.que.ordering .sortablelist li.sortableitem:first-of-type [data-action="move-backward"],
-.que.ordering .sortablelist li.sortableitem:last-of-type [data-action="move-forward"] {
-    visibility: hidden;
-}
+        li.partial66 {
+            background-color: #dff4d8; /* light green */
+            border-color: #f90; /* dark  orange */
+        }
 
-.que.ordering .sortableitem .btn.btn-icon {
-    height: 32px;
-    width: 32px;
-    border-radius: 0.5rem;
-}
+        li.partial33 {
+            background-color: #ffebcc; /* light orange */
+            border-color: #f90; /* dark orange */
+        }
 
-.que.ordering .sortablelist.numbering123 li,
-.que.ordering .sortablelist.numberingabc li,
-.que.ordering .sortablelist.numberingABCD li,
-.que.ordering .sortablelist.numberingiii li,
-.que.ordering .sortablelist.numberingIIII li {
-    margin-left: 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
-}
+        li.partial00 {
+            background-color: #fdd; /* light red */
+            border-color: #f90; /* dark orange */
+        }
 
-.que.ordering .sortablelist.numberingnone li {
-    list-style-type: none;
-    margin-left: 0;
-}
-.que.ordering .sortablelist.numbering123 li {
-    list-style-type: decimal;
-}
-.que.ordering .sortablelist.numberingabc li {
-    list-style-type: lower-alpha;
-}
-.que.ordering .sortablelist.numberingABCD li {
-    list-style-type: upper-alpha;
-}
-.que.ordering .sortablelist.numberingiii li {
-    list-style-type: lower-roman;
-}
-.que.ordering .sortablelist.numberingIIII li {
-    list-style-type: upper-roman;
-}
+        li.incorrect {
+            background-color: #fdd; /* light red */
+            border-color: #ff7373; /* gentle red */
+        }
+    }
+    /*
+    Force containing DIV to cover the floating LI elements
+    Note: if you add "overflow:auto;  to "ol.correctorder"
+    then the numbers for the <LI> elements disappear !!
+    */
+    div.rightanswer {
+        overflow: auto;
 
-.que.ordering .sortablelist.horizontal {
-    display: flex;
-    flex-wrap: wrap;
-}
+        ol.correctorder {
+            padding-inline-start: 16px;
 
-/* Better define 'row' of item for horizontal list. */
-.que.ordering .sortablelist.horizontal {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-}
+            &.horizontal {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: baseline;
 
-.que.ordering .sortablelist.vertical li {
-    min-height: 18px;
-}
+            }
 
-/* Styles for when things are being dragged. */
-.que.ordering.dragproxy {
-    margin: 0;
-    padding: 0;
-    border: 0 none;
+            li.horizontal {
+                margin-left: 24px;
+                margin-right: 24px;
+            }
+
+            li.vertical {
+                margin-left: 24px;
+            }
+        }
+    }
 }
-.que.ordering.dragproxy .sortablelist {
-    margin: 0;
-    padding: 0;
-    float: none;
-}
-.que.ordering.dragproxy .sortablelist li {
-    margin: 0;
-    padding: 6px 0 6px 12px;
-    width: 100%;
-}
-.que.ordering.dragproxy .sortablelist li.horizontal {
-    float: none;
+/* the width restriction can be limited to editors for draggable items
+   by inserting "fieldset:nth-child(n+4)" before "div.feditor" */
+#page-question-type-ordering form.mform fieldset:nth-child(n+4) div.feditor {
+    max-width: 480px;
 }
 .item-moving {
     box-shadow: 3px 3px 4px #000;
@@ -2128,135 +2002,61 @@ body#page-question-type-numerical div[id^=fitem_id_][id*=feedback_] {
     visibility: hidden;
 }
 
-
-/* Styles for feedback. */
-.que.ordering .sortablelist.notactive li.correct {
-    background-color: #dff4d8; /* light green */
-    border-color: #9f6; /* gentle green */
-}
-.que.ordering .sortablelist.notactive li.partial66 {
-    background-color: #dff4d8; /* light green */
-    border-color: #f90; /* dark  orange */
-}
-.que.ordering .sortablelist.notactive li.partial33 {
-    background-color: #ffebcc; /* light orange */
-    border-color: #f90; /* dark orange */
-}
-.que.ordering .sortablelist.notactive li.partial00 {
-    background-color: #fdd; /* light red */
-    border-color: #f90; /* dark orange */
-}
-.que.ordering .sortablelist.notactive li.incorrect {
-    background-color: #fdd; /* light red */
-    border-color: #ff7373; /* gentle red */
-}
-/*
-    Force containing DIV to cover the floating LI elements
-    Note: if you add "overflow:auto;  to "ol.correctorder"
-    then the numbers for the <LI> elements disappear !!
-*/
-.que.ordering div.rightanswer {
-    overflow: auto;
-}
-.que.ordering div.rightanswer ol.correctorder {
-    padding-inline-start: 16px;
-}
-.que.ordering div.rightanswer ol.correctorder.horizontal {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-}
-.que.ordering div.rightanswer ol.correctorder li.horizontal {
-    margin-left: 24px;
-    margin-right: 24px;
-}
-.que.ordering div.rightanswer ol.correctorder li.vertical {
-    margin-left: 24px;
-}
-
-/* the width restriction can be limited to editors for draggable items
-   by inserting "fieldset:nth-child(n+4)" before "div.feditor" */
-#page-question-type-ordering form.mform fieldset:nth-child(n+4) div.feditor {
-    max-width: 480px;
-}
-
-
-
-
-
-
-
-
-
 .que.shortanswer .answer {
     padding: 0.3em;
     display: inline;
+    input {
+        width: 80%;
+    }
 }
 
-.que.shortanswer .answer input {
-    width: 80%;
+body#page-question-type-shortanswer {
+    /* Editing form. */
+    div[id^=fgroup_id_][id*=answeroptions_] {
+        background: #eee;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-bottom: 0;
+        .fgrouplabel label {
+            font-weight: bold;
+        }
+        label[for^='id_answer_'] {
+            position: absolute;
+            left: -10000px;
+            font-weight: normal;
+            font-size: 1em;
+        }
+    }
+    div[id^=fitem_id_][id*=fraction_] {
+        background: #eee;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+        border-bottom: 0;
+    }
+    div[id^=fitem_id_][id*=feedback_] {
+        background: #eee;
+        margin-bottom: 2em;
+        margin-top: 0;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border: 1px solid #bbb;
+        border-top: 0;
+    }
 }
 
-/* Editing form. */
-body#page-question-type-shortanswer div[id^=fgroup_id_][id*=answeroptions_] {
-    background: #eee;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-bottom: 0;
+.que.truefalse .answer {
+    div.r0,
+    div.r1 {
+        padding: 0.3em;
+    }
 }
-
-body#page-question-type-shortanswer div[id^=fgroup_id_][id*=answeroptions_] .fgrouplabel label {
-    font-weight: bold;
-}
-
-body#page-question-type-shortanswer div[id^=fgroup_id_][id*=answeroptions_] label[for^='id_answer_'] {
-    position: absolute;
-    left: -10000px;
-    font-weight: normal;
-    font-size: 1em;
-}
-
-body#page-question-type-shortanswer div[id^=fitem_id_][id*=fraction_] {
-    background: #eee;
-    margin-bottom: 0;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-    border-bottom: 0;
-}
-
-body#page-question-type-shortanswer div[id^=fitem_id_][id*=feedback_] {
-    background: #eee;
-    margin-bottom: 2em;
-    margin-top: 0;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    border: 1px solid #bbb;
-    border-top: 0;
-}
-
-
-
-
-
-
-
-
-.que.truefalse .answer div.r0,
-.que.truefalse .answer div.r1 {
-    padding: 0.3em;
-}
-
-
-
-
-
-
 
 .jsenabled .question-text-format .input-group-append {
     display: none;

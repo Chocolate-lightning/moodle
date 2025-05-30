@@ -54,55 +54,39 @@
     font-weight: bolder;
 }
 
+#page-report-completion-index {
+    table#completion-progress {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+    .export-actions {
+        text-align: center;
+        list-style: none;
+    }
+    .criterianame,
+    .criteriaicon,
+    .completion-progresscell {
+        text-align: center;
+    }
+    /* Custom CSS for rotated header.. */
+    .rotated-text-container {
+        display: inline-block;
+        width: 16px;
+    }
+    .rotated-text {
+        display: inline-block;
+        white-space: nowrap;
 
-
-
-
-
-
-#page-report-completion-index table#completion-progress {
-    margin-top: 20px;
-    margin-bottom: 30px;
+        transform: translate(0, 100%) rotate(-90deg);
+        transform-origin: 0 0;
+        vertical-align: middle;
+        &:after {
+            content: "";
+            float: left;
+            margin-top: 100%;
+        }
+    }
 }
-
-#page-report-completion-index .export-actions {
-    text-align: center;
-    list-style: none;
-}
-
-#page-report-completion-index .criterianame,
-#page-report-completion-index .criteriaicon,
-#page-report-completion-index .completion-progresscell {
-    text-align: center;
-}
-
-/* Custom CSS for rotated header.. */
-#page-report-completion-index .rotated-text-container {
-    display: inline-block;
-    width: 16px;
-}
-
-/*rtl:begin:ignore*/
-#page-report-completion-index .rotated-text {
-    display: inline-block;
-    white-space: nowrap;
-
-    transform: translate(0, 100%) rotate(-90deg);
-    transform-origin: 0 0;
-    vertical-align: middle;
-}
-
-#page-report-completion-index .rotated-text:after {
-    content: "";
-    float: left;
-    margin-top: 100%;
-}
-/*rtl:end:ignore*/
-
-
-
-
-
 
 .report-eventlist-name {
     color: #888;
@@ -113,61 +97,50 @@
     width: 100%;
 }
 
-#page-admin-report-eventlist-index dt {
-    float: left;
-    text-align: right;
-    width: 20em;
-}
-
-#page-admin-report-eventlist-index dd {
-    display: block;
-    text-align: left;
-    margin-left: 21em;
-}
-
-#page-admin-report-eventlist-index dd + dd {
-    clear: left;
+#page-admin-report-eventlist-index {
+    dt {
+        float: left;
+        text-align: right;
+        width: 20em;
+    }
+    dd {
+        display: block;
+        text-align: left;
+        margin-left: 21em;
+    }
+    dd + dd {
+        clear: left;
+    }
 }
 
 @media (max-width: 767px) {
-    #page-admin-report-eventlist-index dt {
-        width: 100%;
-        text-align: left;
-    }
-
-    #page-admin-report-eventlist-index dd {
-        margin-left: 0;
-    }
-
-    #page-admin-report-eventlist-index dd + dd {
-        margin-left: 0;
+    #page-admin-report-eventlist-index {
+        dt {
+            width: 100%;
+            text-align: left;
+        }
+        dd {
+            margin-left: 0;
+        }
+        dd + dd {
+            margin-left: 0;
+        }
     }
 }
 
-
-
-
-
-
-
-#page-report-log-index .info {
-    margin: 10px;
-}
-
-#page-report-log-index .logselectform {
-    margin: 10px auto;
+#page-report-log-index {
+    .info {
+        margin: 10px;
+    }
+    .logselectform {
+        margin: 10px auto;
+    }
 }
 
 #page-report-log-user .info {
     margin: 10px;
     text-align: center;
 }
-
-
-
-
-
-
 
 #page-report-loglive-index .info {
     margin: 10px;
@@ -177,126 +150,91 @@ table.flexible > tbody > tr:nth-child(n).newrow > td {
     background: #d4d4d4;
 }
 
-
-
-
-
-
-
-#page-report-outline-user table tr td {
-    padding: 10px 3px;
-    min-width: 20px;
+#page-report-outline-user {
+    table tr td {
+        padding: 10px 3px;
+        min-width: 20px;
+    }
+    .subsection .icon {
+        padding-left: 10px;
+    }
 }
 
-#page-report-outline-user .subsection .icon {
-    padding-left: 10px;
+#page-report-participation-index {
+    .participationselectform {
+        margin: 10px auto;
+        label {
+            margin-left: 15px;
+            margin-right: 5px;
+        }
+        /* Die to css conflicts with form-inline, we have to create a specific class to fix submit button alignment on clean */
+        input[type="submit"] {
+            margin-bottom: 0;
+        }
+    }
 }
 
-
-
-
-
-
-
-#page-report-participation-index .participationselectform {
-    margin: 10px auto;
+#page-report-progress-index {
+    #completion-progress {
+        th,
+        td {
+            padding: 2px 2px;
+            font-weight: normal;
+            border-right: 1px solid #eee;
+        }
+        .icon {
+            margin-left: 0.5rem;
+        }
+    }
+    .progress-actions {
+        text-align: center;
+        list-style: none;
+    }
+    .completion_pagingbar {
+        margin: 1em 0;
+        text-align: center;
+        p {
+            display: inline;
+        }
+    }
+    .completion_prev {
+        display: inline;
+        margin-right: 2em;
+    }
+    .completion_next {
+        display: inline;
+        margin-left: 2em;
+    }
+    .completion-header,
+    .completion-progresscell {
+        text-align: center;
+    }
+    /* Custom CSS for rotated header.. */
+    .rotated-text-container {
+        display: inline-block;
+        width: 16px;
+    }
+    .rotated-text {
+        display: inline-block;
+        white-space: nowrap;
+        /*rtl:remove*/
+        transform: translate(0, 100%) rotate(-90deg);
+        /*rtl:raw:
+        transform: translate(0, 100%) rotate(90deg);
+        */
+        transform-origin: 0 0;
+        vertical-align: middle;
+        &:after {
+            content: "";
+            float: left;
+            margin-top: 100%;
+        }
+    }
+    .modicon {
+        padding-top: 5px;
+    }
 }
-
-#page-report-participation-index .participationselectform label {
-    margin-left: 15px;
-    margin-right: 5px;
-}
-
-/* Die to css conflicts with form-inline, we have to create a specific class to fix submit button alignment on clean */
-#page-report-participation-index .participationselectform input[type="submit"] {
-    margin-bottom: 0;
-}
-
-
-
-
-
-#page-report-progress-index #completion-progress th,
-#page-report-progress-index #completion-progress td {
-    padding: 2px 2px;
-    font-weight: normal;
-    border-right: 1px solid #eee;
-}
-
-#page-report-progress-index .progress-actions {
-    text-align: center;
-    list-style: none;
-}
-
-#page-report-progress-index .completion_pagingbar {
-    margin: 1em 0;
-    text-align: center;
-}
-
-#page-report-progress-index .completion_prev {
-    display: inline;
-    margin-right: 2em;
-}
-
-#page-report-progress-index .completion_pagingbar p {
-    display: inline;
-}
-
-#page-report-progress-index .completion_next {
-    display: inline;
-    margin-left: 2em;
-}
-
-#page-report-progress-index .completion-header,
-#page-report-progress-index .completion-progresscell {
-    text-align: center;
-}
-
-/* Custom CSS for rotated header.. */
-#page-report-progress-index .rotated-text-container {
-    display: inline-block;
-    width: 16px;
-}
-
-#page-report-progress-index .rotated-text {
-    display: inline-block;
-    white-space: nowrap;
-    /*rtl:remove*/
-    transform: translate(0, 100%) rotate(-90deg);
-    /*rtl:raw:
-    transform: translate(0, 100%) rotate(90deg);
-    */
-    transform-origin: 0 0;
-    vertical-align: middle;
-}
-
-#page-report-progress-index .rotated-text:after {
-    content: "";
-    float: left;
-    margin-top: 100%;
-}
-
-#page-report-progress-index .modicon {
-    padding-top: 5px;
-}
-#completion-progress .icon {
-    margin-left: 0.5rem;
-}
-
-
-
-
-
 
 #page-report-stats-index .graph {
     margin-bottom: 1em;
 }
-
-
-
-
-
-
-
-
-
