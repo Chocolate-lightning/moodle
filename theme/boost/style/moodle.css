@@ -29997,7 +29997,7 @@ img.icon {
 .competency-heading {
   margin-bottom: 15px;
 }
-.competency-heading h4 {
+.competency-heading h4, .competency-heading .h4 {
   margin: 0;
 }
 
@@ -30091,8 +30091,9 @@ ul.competency-tree img {
   color: initial;
 }
 
-[data-region=managecompetencies] h2 a .icon,
-[data-region=plan-page] h2 a .icon {
+[data-region=managecompetencies] h2 a .icon, [data-region=managecompetencies] .h2 a .icon,
+[data-region=plan-page] h2 a .icon,
+[data-region=plan-page] .h2 a .icon {
   font-size: smaller;
 }
 
@@ -30729,7 +30730,7 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
   text-decoration: underline;
 }
 
-.block_activity_results h1 {
+.block_activity_results h1, .block_activity_results .h1 {
   margin: 4px;
   font-size: 1.1em;
 }
@@ -30817,7 +30818,7 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
   text-align: center;
 }
 
-.block_lp.block .content h3 {
+.block_lp.block .content h3, .block_lp.block .content .h3 {
   padding: 0;
   text-transform: none;
 }
@@ -31146,10 +31147,10 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
   flex: 0 0 100%;
   max-width: 100%;
 }
-#block-region-side-pre .block_timeline h6.event-action {
+#block-region-side-pre .block_timeline h6.event-action, #block-region-side-pre .block_timeline .event-action.h6 {
   flex-basis: 100%;
 }
-#block-region-side-pre .block_timeline h6.event-action a.btn {
+#block-region-side-pre .block_timeline h6.event-action a.btn, #block-region-side-pre .block_timeline .event-action.h6 a.btn {
   width: auto;
 }
 #block-region-side-pre .block_timeline .event-name-container {
@@ -39512,14 +39513,14 @@ img.userpicture {
   cursor: pointer;
   margin-bottom: 7px;
 }
-.path-mod-assign.jsenabled .mod-assign-history-link h4 {
+.path-mod-assign.jsenabled .mod-assign-history-link h4, .path-mod-assign.jsenabled .mod-assign-history-link .h4 {
   display: inline;
 }
-.path-mod-assign.jsenabled .attempthistory h4 {
+.path-mod-assign.jsenabled .attempthistory h4, .path-mod-assign.jsenabled .attempthistory .h4 {
   margin-bottom: 7px;
   text-align: left;
 }
-.path-mod-assign.jsenabled.dir_rtl .attempthistory h4 {
+.path-mod-assign.jsenabled.dir_rtl .attempthistory h4, .path-mod-assign.jsenabled.dir_rtl .attempthistory .h4 {
   text-align: right;
 }
 .path-mod-assign.jsenabled .mod-assign-history-link-open {
@@ -39785,7 +39786,7 @@ img.userpicture {
   overflow-x: hidden;
   text-overflow: ellipsis;
 }
-.path-mod-assign [data-region=assignment-info] small[data-region=assignment-tooltip] {
+.path-mod-assign [data-region=assignment-info] small[data-region=assignment-tooltip], .path-mod-assign [data-region=assignment-info] [data-region=assignment-tooltip].small {
   margin-left: 0.5em;
 }
 .path-mod-assign [data-region=user-info] {
@@ -39952,7 +39953,7 @@ img.userpicture {
   width: 100%;
   overflow: auto;
 }
-.path-mod-assign [data-region=grade-panel] h3 {
+.path-mod-assign [data-region=grade-panel] h3, .path-mod-assign [data-region=grade-panel] .h3 {
   font-size: 18px;
   font-weight: 500;
 }
@@ -40855,7 +40856,7 @@ input.form-control[readonly][name=guestjoinurl] {
   display: inline;
 }
 
-.path-mod-data #id_entrieshdr div .alert.alert-danger, .path-mod-data #id_entrieshdr div .environmenttable .alert.error, .environmenttable .path-mod-data #id_entrieshdr div .alert.error {
+.path-mod-data #id_entrieshdr div .alert.alert-danger {
   margin-bottom: 2rem;
 }
 
@@ -41564,7 +41565,7 @@ span.unread {
   background-image: none;
   background-color: #ddd;
 }
-#page-mod-imscp-view .yui-layout-hd h2 {
+#page-mod-imscp-view .yui-layout-hd h2, #page-mod-imscp-view .yui-layout-hd .h2 {
   color: black;
 }
 
@@ -41728,7 +41729,7 @@ span.unread {
   height: 1.5em;
 }
 
-#tool-list-container h3 {
+#tool-list-container h3, #tool-list-container .h3 {
   display: inline-block;
 }
 
@@ -42082,12 +42083,12 @@ span.unread {
   height: auto;
   vertical-align: bottom;
 }
-.path-mod-quiz #mod_quiz_navblock h3.mod_quiz-section-heading {
+.path-mod-quiz #mod_quiz_navblock h3.mod_quiz-section-heading, .path-mod-quiz #mod_quiz_navblock .mod_quiz-section-heading.h3 {
   padding: 0.7em 0 0;
   margin: 0;
   clear: both;
 }
-.path-mod-quiz #mod_quiz_navblock h3.mod_quiz-section-heading:first-child {
+.path-mod-quiz #mod_quiz_navblock h3.mod_quiz-section-heading:first-child, .path-mod-quiz #mod_quiz_navblock .mod_quiz-section-heading.h3:first-child {
   padding-top: 0;
 }
 .path-mod-quiz .qnbutton {
@@ -42301,7 +42302,7 @@ table.quizreviewsummary td.cell {
 }
 
 /** Mod quiz report **/
-#page-mod-quiz-report h2.main {
+#page-mod-quiz-report h2.main, #page-mod-quiz-report .main.h2 {
   clear: both;
 }
 #page-mod-quiz-report .controls {
@@ -42477,7 +42478,7 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .section-heading .instancesectioncontainer {
   display: inline;
 }
-#page-mod-quiz-edit .section-heading .instancesectioncontainer h3 {
+#page-mod-quiz-edit .section-heading .instancesectioncontainer h3, #page-mod-quiz-edit .section-heading .instancesectioncontainer .h3 {
   display: inline;
   color: #555;
 }
@@ -42538,7 +42539,7 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit ul.slots li.section li.activity.page {
   background: transparent;
 }
-#page-mod-quiz-edit ul.slots li.section li.activity.page h4 {
+#page-mod-quiz-edit ul.slots li.section li.activity.page h4, #page-mod-quiz-edit ul.slots li.section li.activity.page .h4 {
   display: inline;
   font-weight: normal;
   font-size: 1em;
@@ -42962,8 +42963,9 @@ table.quizreviewsummary td.cell {
   #page-mod-quiz-review #dock {
     display: none;
   }
-  #page-mod-quiz-attempt #page #page-header h1,
-  #page-mod-quiz-review #page #page-header h1 {
+  #page-mod-quiz-attempt #page #page-header h1, #page-mod-quiz-attempt #page #page-header .h1,
+  #page-mod-quiz-review #page #page-header h1,
+  #page-mod-quiz-review #page #page-header .h1 {
     display: none;
   }
   #page-mod-quiz-attempt #region-main,
@@ -43306,7 +43308,7 @@ table.quizreviewsummary td.cell {
 .wiki-upload-table table {
   margin: auto;
 }
-.wiki-upload-table h3 {
+.wiki-upload-table h3, .wiki-upload-table .h3 {
   margin: 4px 0;
   text-align: center;
 }
@@ -46499,7 +46501,7 @@ p.arrow_button {
 .path-grade-report-singleview div.reporttable form div {
   text-align: left;
 }
-.path-grade-report-singleview div.reporttable h2 {
+.path-grade-report-singleview div.reporttable h2, .path-grade-report-singleview div.reporttable .h2 {
   text-align: left;
 }
 .path-grade-report-singleview div.reporttable form div.singleview_bulk {
