@@ -45753,12 +45753,10 @@ p.arrow_button {
   padding: 0.25em;
   border: 1px solid #eee;
 }
-
 .gradingform_rubric_editform .status.ready {
   background-color: #e7f1c3;
   border-color: #aea;
 }
-
 .gradingform_rubric_editform .status.draft {
   background-color: #f3f2aa;
   border-color: #ee2;
