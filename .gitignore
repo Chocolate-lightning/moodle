@@ -60,3 +60,6 @@ phpcs.xml
 jsconfig.json
 UPGRADING-CURRENT.md
 .phpunit.cache
+/public/calendar/build
+/public/calendar/node_modules
+/public/calendar/package-lock.json
