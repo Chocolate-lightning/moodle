@@ -6,7 +6,7 @@ const Home = () => {
     const { toggleTheme, themeMode } = useTheme();
 
     return (
-        <div>
+        <>
             <InputGroup className="mb-3">
                 <InputGroup.Text id="formStart">Toggle theme</InputGroup.Text>
                 <Form.Select aria-label="Default select example" value={themeMode} onChange={toggleTheme}>
@@ -15,7 +15,7 @@ const Home = () => {
                     <option value="high-contrast">High contrast</option>
                 </Form.Select>
             </InputGroup>
-        </div>
+        </>
     );
 };
 

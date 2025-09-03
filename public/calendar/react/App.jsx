@@ -107,7 +107,7 @@ export default function App({ events }) {
 
     return (
         <>
-            <Button variant="primary" onClick={onClickHandler}>
+            <Button className="mb-3" variant="primary" onClick={onClickHandler}>
                 {newEventString}
             </Button>
             <EventModal
