@@ -2,8 +2,10 @@
   "name": "Moodle",
   "private": true,
   "description": "Moodle",
+  "type": "module",
   "scripts": {
-    "upgradenote": "node .grunt/upgradenotes.mjs create"
+    "upgradenote": "node .grunt/upgradenotes.mjs create",
+    "buildtokens": "node .grunt/tasks/tokens.js"
   },
   "devDependencies": {
     "@babel/core": "7.17.5",
@@ -47,6 +49,7 @@
     "sass": "^1.58.3",
     "semver": "7.3.5",
     "shifter": "https://github.com/andrewnicols/shifter/archive/v1.2.0_moodle-0.tar.gz",
+    "style-dictionary": "^5.1.1",
     "stylelint": "^15.11.0",
     "stylelint-csstree-validator": "^3.0.0",
     "winston": "^3.13.0",
