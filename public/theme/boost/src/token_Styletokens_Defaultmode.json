@@ -14,10 +14,6 @@
     }
   },
   "Corner radius": {
-    "Pill": {
-      "$type": "number",
-      "$value": "{Border radius.pill}"
-    },
     "lg": {
       "$type": "number",
       "$value": "{Border radius.lg}"
@@ -25,6 +21,10 @@
     "md (default)": {
       "$type": "number",
       "$value": "{Border radius.md (default)}"
+    },
+    "pill": {
+      "$type": "number",
+      "$value": "{Border radius.pill}"
     },
     "sm": {
       "$type": "number",

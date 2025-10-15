@@ -114,7 +114,7 @@
       },
       "semibold": {
         "$type": "string",
-        "$value": "{typography.font-weight.italic.semiBold-600}"
+        "$value": "{typography.font-weight.italic.semibold-600}"
       }
     },
     "Normal": {
@@ -140,7 +140,7 @@
       },
       "semibold": {
         "$type": "number",
-        "$value": "{typography.font-weight.normal.semiBold-600}",
+        "$value": "{typography.font-weight.normal.semibold-600}",
         "$description": "Stronger emphasis, used for UI labels."
       }
     }

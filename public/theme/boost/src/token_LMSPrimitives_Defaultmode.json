@@ -93,7 +93,7 @@
         "$type": "color",
         "$value": "#ced4da"
       },
-      "500 (base)": {
+      "500": {
         "$type": "color",
         "$value": "#8f959e"
       },
@@ -507,10 +507,6 @@
         "2,5": {
           "$type": "number",
           "$value": 37.5
-        },
-        "_font-size-base": {
-          "$type": "string",
-          "$value": "0.9375rem"
         }
       }
     },
@@ -524,11 +520,11 @@
           "$type": "string",
           "$value": "Bold Italic"
         },
-        "extraBold-800": {
+        "extrabold-800": {
           "$type": "string",
           "$value": "Extra bold Italic"
         },
-        "extraLight-200": {
+        "extralight-200": {
           "$type": "string",
           "$value": "Extra light Italic"
         },
@@ -544,7 +540,7 @@
           "$type": "string",
           "$value": "Italic"
         },
-        "semiBold-600": {
+        "semibold-600": {
           "$type": "string",
           "$value": "Semi Bold Italic"
         },
@@ -563,11 +559,11 @@
           "$value": 700,
           "$description": "/* bold */"
         },
-        "extraBold-800": {
+        "extrabold-800": {
           "$type": "number",
           "$value": 800
         },
-        "extraLight-200": {
+        "extralight-200": {
           "$type": "number",
           "$value": 200
         },
@@ -584,7 +580,7 @@
           "$value": 400,
           "$description": "/* normal */"
         },
-        "semiBold-600": {
+        "semibold-600": {
           "$type": "number",
           "$value": 600
         },
@@ -603,10 +599,6 @@
     },
     "line-height": {
       "displays": {
-        "_display-line-height": {
-          "$type": "string",
-          "$value": "headings-line-height (1.2)"
-        },
         "d1": {
           "$type": "number",
           "$value": 96
@@ -633,10 +625,6 @@
         }
       },
       "headings": {
-        "_headings-line-height": {
-          "$type": "string",
-          "$value": "1.2 !default"
-        },
         "h1": {
           "$type": "number",
           "$value": 45
@@ -663,18 +651,6 @@
         }
       },
       "paragraph": {
-        "_line-height-base": {
-          "$type": "string",
-          "$value": "1.5 !default"
-        },
-        "_line-height-lg": {
-          "$type": "string",
-          "$value": "2 !default"
-        },
-        "_line-height-sm": {
-          "$type": "string",
-          "$value": "1.25 !default"
-        },
         "base": {
           "$type": "number",
           "$value": 22.5
@@ -771,10 +747,6 @@
       "6": {
         "$type": "number",
         "$value": 96
-      },
-      "_ROOT": {
-        "$type": "string",
-        "$value": "1rem = 16px"
       }
     }
   }

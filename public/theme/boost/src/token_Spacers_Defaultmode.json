@@ -27,10 +27,6 @@
     "6": {
       "$type": "number",
       "$value": "{utilities.rem.3}"
-    },
-    "_spacer": {
-      "$type": "string",
-      "$value": "1rem !default;"
     }
   }
 }

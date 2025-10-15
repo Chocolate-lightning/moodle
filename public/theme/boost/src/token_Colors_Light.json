@@ -131,7 +131,7 @@
       },
       "dark": {
         "$type": "color",
-        "$value": "{color.gray.500 (base)}"
+        "$value": "{color.gray.500}"
       },
       "info": {
         "$type": "color",
