@@ -1,7 +1,8 @@
 //
 // Bootstrap variables
 //
-
+// Moodle Design System variables
+@use '../@moodlehq/design-system/tokens/scss' as *;
 // Prefix for all CSS variables
 $prefix: bs- !default;
 
