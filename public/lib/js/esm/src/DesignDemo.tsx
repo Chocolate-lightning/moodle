@@ -21,7 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {ActivityIcon, Badge, Button, Checkbox, CloseButton, Radio} from "@moodlehq/design-system";
+// import {ActivityIcon, Badge, Button, Checkbox, CloseButton, Radio} from "@moodlehq/design-system";
+import {Button, CloseButton, Radio} from "@moodlehq/design-system";
 import {FC} from "react";
 
 interface ExampleProps {
@@ -41,12 +42,12 @@ const Example: FC<ExampleProps> = () => {
                     <tr>
                         <th scope="row">ActivityIcon</th>
                         <td>
-                            <ActivityIcon
+                            {/* <ActivityIcon
                                 alt=""
                                 icon="assignment"
                                 size="md"
                                 variant="default"
-                            />
+                            /> */}
                         </td>
                     </tr>
                     <tr>
@@ -60,10 +61,10 @@ const Example: FC<ExampleProps> = () => {
                     <tr>
                         <th scope="row">Badge</th>
                         <td>
-                            <Badge
+                            {/* <Badge
                                 label="حالة"
                                 startIcon={<i aria-hidden="true" className="fa-solid fa-circle-check" />}
-                            />
+                            /> */}
                         </td>
                     </tr>
                     <tr>
@@ -102,13 +103,13 @@ const Example: FC<ExampleProps> = () => {
                     <tr>
                         <th scope="row">Checkbox</th>
                         <td>
-                            <Checkbox
+                            {/* <Checkbox
                                 defaultChecked
                                 label="Remember this setting"
                                 name="settings"
                                 onChange={() => null}
                                 value="remember-this-setting"
-                            />
+                            /> */}
                         </td>
                     </tr>
                 </tbody>
