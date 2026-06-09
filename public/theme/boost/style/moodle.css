@@ -47927,3 +47927,33 @@ body {
   --bs-btn-disabled-border-color: #a6670e;
   --bs-gradient: none;
 }
+
+.activity-item {
+  padding: 1rem;
+}
+.activity-item .activity {
+  margin-bottom: 1.25rem;
+}
+.activity-item .activity .activity-checkbox {
+  margin-right: 0.25rem;
+}
+.activity-item .activity .activity-icon {
+  margin-right: 0.5rem;
+}
+.activity-item .activity .activity-content .activity-title {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.activity-item .activity .activity-content .activity-subtitle {
+  font-size: 0.875rem;
+  color: #6a737b;
+}
+.activity-item .activity .activity-dropdown {
+  font-size: 0.875rem;
+  background-color: #e9ecef;
+  border-radius: 1rem;
+  padding: 0.25rem 0.5rem;
+}
+.activity-item .activity-badges .activity-badge {
+  margin-right: 0.5rem;
+}

@@ -21,99 +21,61 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// import {ActivityIcon, Badge, Button, Checkbox, CloseButton, Radio} from "@moodlehq/design-system";
-import {Button, CloseButton, Radio} from "@moodlehq/design-system";
+import {ActivityIcon, Badge, Checkbox, Button, CloseButton, Radio} from "@moodlehq/design-system";
 import {FC} from "react";
 
 interface ExampleProps {
 }
 
+// startIcon={<i aria-hidden="true" className="fa-solid fa-calendar"/>}
 const Example: FC<ExampleProps> = () => {
     return (
-        <div className="table-responsive">
-            <table className="table table-striped align-middle">
-                <thead>
-                    <tr>
-                        <th scope="col">Component</th>
-                        <th scope="col">Example</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">ActivityIcon</th>
-                        <td>
-                            {/* <ActivityIcon
-                                alt=""
-                                icon="assignment"
-                                size="md"
-                                variant="default"
-                            /> */}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Button</th>
-                        <td>
-                            <Button
-                                label="Button"
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Badge</th>
-                        <td>
-                            {/* <Badge
-                                label="حالة"
-                                startIcon={<i aria-hidden="true" className="fa-solid fa-circle-check" />}
-                            /> */}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Radio</th>
-                        <td>
-                            <div className="d-flex flex-column gap-2">
-                                <Radio
-                                    label="Phone"
-                                    name="contact"
-                                    value="phone"
-                                />
-                                <Radio
-                                    label="SMS"
-                                    name="contact"
-                                    value="sms"
-                                />
-                                <Radio
-                                    defaultChecked
-                                    label="Email"
-                                    name="contact"
-                                    value="email"
-                                />
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">CloseButton</th>
-                        <td>
-                            <CloseButton
-                                aria-label="Close"
-                                disabled
-                                size="md"
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Checkbox</th>
-                        <td>
-                            {/* <Checkbox
-                                defaultChecked
-                                label="Remember this setting"
-                                name="settings"
-                                onChange={() => null}
-                                value="remember-this-setting"
-                            /> */}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div className="d-flex flex-column activity-item">
+            <div className="d-flex flex-row align-items-center activity">
+                <div className="d-flex activity-checkbox">
+                <Checkbox
+                hideLabel
+                label="Select PDF activity 120"
+                name="settings"
+                value="remember-this-setting"
+                />
+                </div>
+                <div className="d-flex activity-icon">
+                <ActivityIcon
+                alt="The PDF activity icon"
+                icon="file-pdf"
+                size="md"
+                variant="default"
+                />
+                </div>
+                <div className="d-flex flex-column activity-content">
+                    <div className="d-flex activity-title">
+                        <p className="mb-0">Course Syllabus & Reading List</p>
+                    </div>
+                    <div className="d-flex activity-subtitle">
+                        <p className="mb-0">Download the slides</p>
+                    </div>
+                </div>
+                <div className="d-flex ms-auto activity-dropdown">Dropdown: Coming Soon</div>
+            </div>
+            <div className="d-flex flex-row activity-badges">
+                <div className="d-flex activity-badge">
+                <Badge
+                startIcon={<i aria-hidden="true" className="fa-solid fa-calendar"/>}
+                label="Opens: Monday, 14 January, 8.30 AM"
+                subtle
+                variant="secondary"
+                />
+                </div>
+                <div className="d-flex activity-badge">
+                <Badge
+                startIcon={<i aria-hidden="true" className="fa-solid fa-clock"/>}
+                label="Closes: Monday, 30 January, 8.30 AM"
+                subtle
+                variant="warning"
+                />
+                </div>
+            </div>
         </div>
     );
 };

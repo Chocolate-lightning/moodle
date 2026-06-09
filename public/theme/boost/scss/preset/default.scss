@@ -152,3 +152,37 @@ $warning-outline: #a6670e;
 .btn-outline-warning {
     @include button-outline-variant($warning-outline);
 }
+
+.activity-item {
+    padding: $mds-spacing-md;
+    .activity {
+        margin-bottom: $mds-spacing-lg;
+        .activity-checkbox {
+            margin-right: $mds-spacing-xxs;
+        }
+        .activity-icon {
+            margin-right: $mds-spacing-xs;
+        }
+        .activity-content {
+            .activity-title {
+                font-size: $mds-font-size-headings-6;
+                font-weight: $mds-font-weight-medium;
+            }
+            .activity-subtitle {
+                font-size: $mds-font-size-paragraph-small;
+                color: $mds-text-muted;
+            }
+        }
+        .activity-dropdown {
+            font-size: $mds-font-size-paragraph-small;
+            background-color: $mds-bg-surface-strong;
+            border-radius: $mds-border-radius-xl;
+            padding: $mds-spacing-xxs $mds-spacing-xs;
+        }
+    }
+    .activity-badges {
+        .activity-badge {
+            margin-right: $mds-spacing-xs;
+        }
+    }
+}
