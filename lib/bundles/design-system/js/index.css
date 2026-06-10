@@ -1,145 +1,863 @@
-@charset "UTF-8";.mds-btn.btn {
+@charset "UTF-8";.mds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-sm);
+
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-medium);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.mds-badge--has-icon {
+  gap: var(--mds-spacing-xxs);
+}
+
+/* Normalize icon dimensions to match the badge icon token across <i> and <svg> usage. */
+.mds-badge > i,
+.mds-badge > svg {
+  width: var(--mds-icons-xxs);
+  height: var(--mds-icons-xxs);
+  font-size: var(--mds-icons-xxs);
+  flex-shrink: 0;
+}
+
+/* Pill shape overrides the default rounded corners */
+.mds-badge--pill {
+  border-radius: var(--mds-border-radius-pill);
+}
+
+/*
+ * Per-variant colour rules.
+ * Default contrast: solid coloured background with inverse text.
+ * Subtle contrast (.mds-badge--subtle): light tinted background, dark feedback text, visible border.
+ */
+
+.mds-badge--subtle {
+  border: var(--mds-stroke-weight-sm) solid transparent;
+}
+
+/* --- Primary --- */
+.mds-badge--primary {
+  background-color: var(--mds-bg-feedback-primary-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--primary.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-primary-subtle);
+  color: var(--mds-text-feedback-primary);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* --- Secondary --- */
+.mds-badge--secondary {
+  background-color: var(--mds-bg-feedback-secondary-default);
+  color: var(--mds-text-feedback-secondary);
+}
+
+.mds-badge--secondary.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-secondary-subtle);
+  color: var(--mds-text-feedback-secondary);
+  border-color: var(--mds-border-feedback-secondary);
+}
+
+/* --- Success --- */
+.mds-badge--success {
+  background-color: var(--mds-bg-feedback-success-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--success.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-success-subtle);
+  color: var(--mds-text-feedback-success);
+  border-color: var(--mds-border-feedback-success);
+}
+
+/* --- Danger --- */
+.mds-badge--danger {
+  background-color: var(--mds-bg-feedback-danger-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--danger.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-danger-subtle);
+  color: var(--mds-text-feedback-danger);
+  border-color: var(--mds-border-feedback-danger);
+}
+
+/* --- Warning --- */
+.mds-badge--warning {
+  background-color: var(--mds-bg-feedback-warning-default);
+  color: var(--mds-text-feedback-warning);
+}
+
+.mds-badge--warning.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-warning-subtle);
+  color: var(--mds-text-feedback-warning);
+  border-color: var(--mds-border-feedback-warning);
+}
+
+/* --- Info --- */
+.mds-badge--info {
+  background-color: var(--mds-bg-feedback-info-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--info.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-info-subtle);
+  color: var(--mds-text-feedback-info);
+  border-color: var(--mds-border-feedback-info);
+}
+.mds-activity-icon {
+  align-items: center;
+  /*
+   * content-box so block-size/inline-size declare the ICON content area.
+   * Padding then expands the tile beyond that — matching Figma's structure
+   * where "size" is the icon and padding is added by the container variant.
+   */
+  box-sizing: content-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* none: no background tile, no padding — tile equals the icon size */
+
+.mds-activity-icon--none {
+  border-radius: var(--mds-border-radius-none);
+}
+
+/*
+ * default: 8px padding each side — tile = icon + 16px (e.g. lg: 24+16 = 40px total).
+ * large:  12px padding each side — tile = icon + 24px (e.g. lg: 24+24 = 48px total).
+ */
+
+.mds-activity-icon--default {
+  border-radius: var(--mds-border-radius-xl);
+  padding: var(--mds-spacing-xs);
+}
+
+.mds-activity-icon--large {
+  border-radius: var(--mds-border-radius-xl);
+  padding: var(--mds-spacing-sm);
+}
+
+/* Figma uses a smaller outer radius for default+sm only. */
+
+.mds-activity-icon--default.mds-activity-icon--size-sm {
+  border-radius: var(--mds-border-radius-lg);
+}
+
+/* Category background colors apply only when a background container is active. */
+
+.mds-activity-icon--default.mds-activity-icon--category-assessment,
+.mds-activity-icon--large.mds-activity-icon--category-assessment {
+  background-color: var(--mds-activity-icon-assessment-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-collaboration,
+.mds-activity-icon--large.mds-activity-icon--category-collaboration {
+  background-color: var(--mds-activity-icon-collaboration-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-communication,
+.mds-activity-icon--large.mds-activity-icon--category-communication {
+  background-color: var(--mds-activity-icon-communication-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-interactive,
+.mds-activity-icon--large.mds-activity-icon--category-interactive {
+  background-color: var(--mds-activity-icon-interactive-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-other,
+.mds-activity-icon--large.mds-activity-icon--category-other {
+  background-color: var(--mds-activity-icon-other-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-resource,
+.mds-activity-icon--large.mds-activity-icon--category-resource {
+  background-color: var(--mds-activity-icon-resource-bg);
+}
+
+/* Size variants */
+
+.mds-activity-icon--size-sm {
+  block-size: var(--mds-icons-sm);
+  inline-size: var(--mds-icons-sm);
+}
+
+.mds-activity-icon--size-md {
+  /* Intentionally follows the Figma token mapping, where md uses the lg icon token. */
+  block-size: var(--mds-icons-lg);
+  inline-size: var(--mds-icons-lg);
+}
+
+.mds-activity-icon--size-lg {
+  /* Intentionally follows the Figma token mapping, where lg uses the xl icon token. */
+  block-size: var(--mds-icons-xl);
+  inline-size: var(--mds-icons-xl);
+}
+
+.mds-activity-icon--size-xl {
+  /* Intentionally follows the Figma token mapping, where xl uses the xxl icon token. */
+  block-size: var(--mds-icons-xxl);
+  inline-size: var(--mds-icons-xxl);
+}
+
+.mds-activity-icon__asset {
+  block-size: 100%;
+  border-radius: var(--mds-border-radius-xs);
+  display: block;
+  inline-size: 100%;
+}
+
+.mds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-sm);
+
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-medium);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.mds-badge--has-icon {
+  gap: var(--mds-spacing-xxs);
+}
+
+/* Normalize icon dimensions to match the badge icon token across <i> and <svg> usage. */
+
+.mds-badge > i,
+.mds-badge > svg {
+  width: var(--mds-icons-xxs);
+  height: var(--mds-icons-xxs);
+  font-size: var(--mds-icons-xxs);
+  flex-shrink: 0;
+}
+
+/* Pill shape overrides the default rounded corners */
+
+.mds-badge--pill {
+  border-radius: var(--mds-border-radius-pill);
+}
+
+/*
+ * Per-variant colour rules.
+ * Default contrast: solid coloured background with inverse text.
+ * Subtle contrast (.mds-badge--subtle): light tinted background, dark feedback text, visible border.
+ */
+
+.mds-badge--subtle {
+  border: var(--mds-stroke-weight-sm) solid transparent;
+}
+
+/* --- Primary --- */
+
+.mds-badge--primary {
+  background-color: var(--mds-bg-feedback-primary-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--primary.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-primary-subtle);
+  color: var(--mds-text-feedback-primary);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* --- Secondary --- */
+
+.mds-badge--secondary {
+  background-color: var(--mds-bg-feedback-secondary-default);
+  color: var(--mds-text-feedback-secondary);
+}
+
+.mds-badge--secondary.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-secondary-subtle);
+  color: var(--mds-text-feedback-secondary);
+  border-color: var(--mds-border-feedback-secondary);
+}
+
+/* --- Success --- */
+
+.mds-badge--success {
+  background-color: var(--mds-bg-feedback-success-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--success.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-success-subtle);
+  color: var(--mds-text-feedback-success);
+  border-color: var(--mds-border-feedback-success);
+}
+
+/* --- Danger --- */
+
+.mds-badge--danger {
+  background-color: var(--mds-bg-feedback-danger-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--danger.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-danger-subtle);
+  color: var(--mds-text-feedback-danger);
+  border-color: var(--mds-border-feedback-danger);
+}
+
+/* --- Warning --- */
+
+.mds-badge--warning {
+  background-color: var(--mds-bg-feedback-warning-default);
+  color: var(--mds-text-feedback-warning);
+}
+
+.mds-badge--warning.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-warning-subtle);
+  color: var(--mds-text-feedback-warning);
+  border-color: var(--mds-border-feedback-warning);
+}
+
+/* --- Info --- */
+
+.mds-badge--info {
+  background-color: var(--mds-bg-feedback-info-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--info.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-info-subtle);
+  color: var(--mds-text-feedback-info);
+  border-color: var(--mds-border-feedback-info);
+}
+
+.mds-btn.btn {
   background-color: var(--mds-bg-interactive-primary-default);
-  border: var(--mds-stroke-weight-sm) solid var(--mds-border-translucent);
-  border-radius: var(--mds-border-radius-md);
+  border: none;
+  border-radius: var(--mds-border-radius-sm);
   padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
 
   color: var(--mds-text-inverse);
   font-family: var(--mds-font-family-base);
   font-weight: var(--mds-font-weight-regular);
   font-size: var(--mds-font-size-paragraph-default);
-  line-height: var(--mds-line-height-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-xs);
   letter-spacing: var(--mds-letter-spacing-default);
 
-  /* gap provides consistent spacing between startIcon/endIcon and label text;
-     has no visual effect when the button contains only a single child (no icon) */
+  /* Keep icon/text spacing consistent with icon variants from the design matrix. */
   display: inline-flex;
   align-items: center;
-  gap: var(--mds-spacing-xxs);
+  gap: var(--mds-spacing-xs);
 }
+
+/* Icon-only sizing in Figma is not derived from text button size classes. */
+
+.mds-btn.btn.mds-btn--icon-only {
+  padding: var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-xl);
+}
+
+.mds-btn.btn.mds-btn--icon-only i,
+.mds-btn.btn.mds-btn--icon-only svg {
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  font-size: var(--mds-icons-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-btn.btn.mds-btn--icon-only.mds-btn--size-sm {
+  padding: var(--mds-spacing-xxs);
+}
+
+.mds-btn.btn.mds-btn--icon-only.mds-btn--size-sm i,
+.mds-btn.btn.mds-btn--icon-only.mds-btn--size-sm svg {
+  inline-size: var(--mds-icons-xxs);
+  block-size: var(--mds-icons-xxs);
+  font-size: var(--mds-icons-xxs);
+}
+
+.mds-btn.btn.mds-btn--icon-only.mds-btn--size-lg {
+  padding: var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-sm);
+}
+
+.mds-btn.btn.mds-btn--size-sm i,
+.mds-btn.btn.mds-btn--size-sm svg {
+  inline-size: var(--mds-icons-xxs);
+  block-size: var(--mds-icons-xxs);
+  font-size: var(--mds-icons-xxs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-btn.btn.mds-btn--size-md i,
+.mds-btn.btn.mds-btn--size-md svg,
+.mds-btn.btn.mds-btn--size-lg i,
+.mds-btn.btn.mds-btn--size-lg svg {
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  font-size: var(--mds-icons-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-btn.btn:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-btn.btn:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-btn.btn:active:focus-visible {
+  box-shadow: none;
+}
+
+.mds-btn.btn.btn-danger:focus-visible,
+.mds-btn.btn.btn-outline-danger:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-danger);
+}
+
 .mds-btn.btn:hover {
   background-color: var(--mds-bg-interactive-primary-hover);
 }
+
 .mds-btn.btn:active {
   background-color: var(--mds-bg-interactive-primary-active);
-  border: var(--mds-stroke-weight-sm) solid var(--mds-border-translucent);
+  box-shadow: none;
 }
+
 .mds-btn.btn:disabled {
   background-color: var(--mds-bg-interactive-primary-disabled);
 }
+
 /**
   * Secondary variants
   */
+
 .mds-btn.btn.btn-secondary {
   background-color: var(--mds-bg-interactive-secondary-default);
-  color: var(--mds-text-default);
+  color: var(--mds-text-subtle);
 }
+
 .mds-btn.btn.btn-secondary:hover {
   background-color: var(--mds-bg-interactive-secondary-hover);
 }
+
 .mds-btn.btn.btn-secondary:active {
   background-color: var(--mds-bg-interactive-secondary-active);
 }
+
 .mds-btn.btn.btn-secondary:disabled {
   background-color: var(--mds-bg-interactive-secondary-disabled);
+  color: var(--mds-text-muted);
 }
+
 /**
   * Danger variants
   */
+
 .mds-btn.btn-danger {
   background-color: var(--mds-bg-interactive-danger-default);
 }
+
 .mds-btn.btn-danger:hover {
   background-color: var(--mds-bg-interactive-danger-hover);
 }
+
 .mds-btn.btn-danger:active {
   background-color: var(--mds-bg-interactive-danger-active);
 }
+
 .mds-btn.btn.btn-danger:disabled {
   background-color: var(--mds-bg-interactive-danger-disabled);
 }
+
+/**
+  * Ghost variants
+  */
+
+.mds-btn.btn.btn-ghost {
+  background-color: transparent;
+  color: var(--mds-text-subtle);
+}
+
+.mds-btn.btn.btn-ghost:hover {
+  background-color: var(--mds-bg-interactive-secondary-hover);
+  color: var(--mds-text-subtle);
+}
+
+.mds-btn.btn.btn-ghost:active {
+  background-color: var(--mds-bg-interactive-secondary-active);
+  color: var(--mds-text-subtle);
+}
+
+.mds-btn.btn.btn-ghost:disabled {
+  background-color: transparent;
+  color: var(--mds-text-muted);
+}
+
 /**
   * Outline Primary variants
   */
-.mds-btn.btn-outline-primary {
+
+.mds-btn.btn:is(
+    .btn-outline-primary,
+    .btn-outline-secondary,
+    .btn-outline-danger
+  ) {
   background-color: transparent;
-  border: var(--mds-stroke-weight-sm) solid
-    var(--mds-border-interactive-primary-default);
+  border: var(--mds-stroke-weight-sm) solid transparent;
+}
+
+.mds-btn.btn.btn-outline-primary {
+  border-color: var(--mds-border-interactive-primary-default);
   color: var(--mds-text-link-primary-default);
 }
+
 .mds-btn.btn-outline-primary:hover {
+  border-color: var(--mds-bg-interactive-primary-hover);
   background-color: var(--mds-bg-interactive-primary-hover);
   color: var(--mds-text-inverse);
 }
+
 .mds-btn.btn-outline-primary:active {
+  border-color: var(--mds-bg-interactive-primary-active);
   background-color: var(--mds-bg-interactive-primary-active);
   color: var(--mds-text-inverse);
 }
+
 .mds-btn.btn.btn-outline-primary:disabled {
-  background-color: transparent;
-  border: var(--mds-stroke-weight-sm) solid
-    var(--mds-border-interactive-primary-disabled);
-  color: var(--mds-color-blue-300);
+  border-color: var(--mds-border-interactive-primary-disabled);
+  color: var(--mds-text-link-primary-disabled);
 }
+
 /**
   * Outline Secondary variants
   */
-.mds-btn.btn-outline-secondary {
-  background-color: transparent;
-  border: var(--mds-stroke-weight-sm) solid
-    var(--mds-border-interactive-secondary-default);
-  color: var(--mds-text-muted);
+
+.mds-btn.btn.btn-outline-secondary {
+  border-color: var(--mds-border-interactive-secondary-default);
+  color: var(--mds-text-subtle);
 }
+
 .mds-btn.btn-outline-secondary:hover {
+  border-color: var(--mds-border-interactive-secondary-hover);
   background-color: var(--mds-border-interactive-secondary-hover);
   color: var(--mds-text-inverse);
 }
+
 .mds-btn.btn-outline-secondary:active {
+  border-color: var(--mds-border-interactive-secondary-active);
   background-color: var(--mds-border-interactive-secondary-active);
   color: var(--mds-text-inverse);
 }
+
 .mds-btn.btn.btn-outline-secondary:disabled {
-  background-color: transparent;
-  border: var(--mds-stroke-weight-sm) solid
-    var(--mds-border-interactive-secondary-disabled);
-  color: var(--mds-color-gray-500);
+  border-color: var(--mds-border-interactive-secondary-disabled);
+  color: var(--mds-text-muted);
 }
+
 /**
   * Outline Danger variants
   */
-.mds-btn.btn-outline-danger {
-  background-color: transparent;
-  border: var(--mds-stroke-weight-sm) solid
-    var(--mds-border-interactive-danger-default);
+
+.mds-btn.btn.btn-outline-danger {
+  border-color: var(--mds-border-interactive-danger-default);
   color: var(--mds-text-danger);
 }
+
 .mds-btn.btn-outline-danger:hover {
-  background-color: var(--mds-bg-interactive-danger-default);
-  color: var(--mds-text-inverse);
-}
-.mds-btn.btn-outline-danger:active {
+  border-color: var(--mds-bg-interactive-danger-hover);
   background-color: var(--mds-bg-interactive-danger-hover);
   color: var(--mds-text-inverse);
 }
-.mds-btn.btn.btn-outline-danger:disabled {
-  background-color: transparent;
-  border: var(--mds-stroke-weight-sm) solid
-    var(--mds-border-interactive-danger-disabled);
-  color: var(--mds-color-red-300);
+
+.mds-btn.btn-outline-danger:active {
+  border-color: var(--mds-bg-interactive-danger-active);
+  background-color: var(--mds-bg-interactive-danger-active);
+  color: var(--mds-text-inverse);
 }
+
+.mds-btn.btn.btn-outline-danger:disabled {
+  border-color: var(--mds-border-interactive-danger-disabled);
+  color: var(--mds-text-danger-disabled);
+}
+
 /**
   * Size variants
   */
-.mds-btn.btn-sm {
+
+.mds-btn.mds-btn--size-sm {
   padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-xs);
+  font-weight: var(--mds-font-weight-medium);
   font-size: var(--mds-font-size-paragraph-small);
-  line-height: var(--mds-line-height-paragraph-small);
 }
-.mds-btn.btn-lg {
-  padding: var(--mds-spacing-xs) var(--mds-spacing-md);
-  font-size: var(--mds-font-size-paragraph-lead);
-  line-height: var(--mds-line-height-paragraph-default);
+
+.mds-btn.mds-btn--size-md {
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  font-size: var(--mds-font-size-paragraph-default);
 }
+
+.mds-btn.mds-btn--size-lg {
+  padding: var(--mds-spacing-sm) var(--mds-spacing-md);
+  font-size: var(--mds-font-size-paragraph-default);
+}
+
+/* Keep outer geometry aligned with filled variants when outline border is present. */
+
+.mds-btn.mds-btn--size-sm:is(
+    .btn-outline-primary,
+    .btn-outline-secondary,
+    .btn-outline-danger
+  ) {
+  padding: calc(var(--mds-spacing-xxs) - var(--mds-stroke-weight-sm))
+    calc(var(--mds-spacing-xs) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--size-md:is(
+    .btn-outline-primary,
+    .btn-outline-secondary,
+    .btn-outline-danger
+  ) {
+  padding: calc(var(--mds-spacing-xs) - var(--mds-stroke-weight-sm))
+    calc(var(--mds-spacing-sm) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--size-lg:is(
+    .btn-outline-primary,
+    .btn-outline-secondary,
+    .btn-outline-danger
+  ) {
+  padding: calc(var(--mds-spacing-sm) - var(--mds-stroke-weight-sm))
+    calc(var(--mds-spacing-md) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--icon-only:is(
+    .btn-outline-primary,
+    .btn-outline-secondary,
+    .btn-outline-danger
+  ) {
+  padding: calc(var(--mds-spacing-xs) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--icon-only.mds-btn--size-sm:is(
+    .btn-outline-primary,
+    .btn-outline-secondary,
+    .btn-outline-danger
+  ) {
+  padding: calc(var(--mds-spacing-xxs) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--icon-only.mds-btn--size-lg:is(
+    .btn-outline-primary,
+    .btn-outline-secondary,
+    .btn-outline-danger
+  ) {
+  padding: calc(var(--mds-spacing-xs) - var(--mds-stroke-weight-sm));
+}
+
+.mds-checkbox {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  align-self: start;
+  min-height: var(--mds-icons-lg);
+  padding: var(--mds-spacing-none);
+  column-gap: var(--mds-spacing-xs);
+  row-gap: var(--mds-spacing-xxs);
+
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-default);
+  font-weight: var(--mds-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+}
+
+.mds-checkbox-input {
+  border-radius: var(--mds-border-radius-xs);
+  border: var(--mds-stroke-weight-sm) solid
+    var(--mds-border-interactive-secondary-default);
+}
+
+.mds-checkbox .mds-checkbox-input {
+  /* Bootstrap applies float/offset styles to .form-check-input for indented label layouts.
+     Match selector specificity and reset float/margins for the grid-based sibling layout. */
+  margin: 0;
+  float: none;
+  background-color: var(--mds-bg-surface-default);
+}
+
+.mds-checkbox-input:checked {
+  background-color: var(--mds-bg-interactive-primary-default);
+  border-color: transparent;
+}
+
+.mds-checkbox-input:indeterminate {
+  background-color: var(--mds-bg-interactive-primary-default);
+  border-color: transparent;
+}
+
+.mds-checkbox-input:disabled {
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+.mds-checkbox-input:disabled:checked {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-checkbox-input:disabled:indeterminate {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-checkbox-input.is-invalid {
+  border-color: var(--mds-border-interactive-danger-default);
+}
+
+.mds-checkbox-input.is-invalid:checked {
+  background-color: var(--mds-bg-interactive-danger-default);
+  border-color: transparent;
+}
+
+.mds-checkbox-input.is-invalid:indeterminate {
+  background-color: var(--mds-bg-interactive-danger-default);
+  border-color: transparent;
+}
+
+.mds-checkbox-input.is-invalid:disabled {
+  background-color: var(--mds-bg-interactive-secondary-disabled);
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+.mds-checkbox-input.is-invalid:disabled:checked {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-checkbox-input.is-invalid:disabled:indeterminate {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-checkbox-input:focus,
+.mds-checkbox-input.is-invalid:focus {
+  /* Reset Bootstrap's :focus box-shadow; our ring is applied on :focus-visible only */
+  box-shadow: none;
+  outline: none;
+}
+
+/* Bootstrap also sets border-color on :focus. Restore the correct border for each state,
+   excluding checked/indeterminate which keep their transparent border. */
+
+.mds-checkbox-input:focus:not(:checked):not(:indeterminate) {
+  border-color: var(--mds-border-interactive-secondary-default);
+}
+
+.mds-checkbox-input.is-invalid:focus:not(:checked):not(:indeterminate) {
+  border-color: var(--mds-border-interactive-danger-default);
+}
+
+.mds-checkbox-input:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-checkbox-input.is-invalid:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-border-feedback-danger);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-checkbox .form-check-label,
+.mds-checkbox .mds-checkbox-label {
+  display: flex;
+  align-items: center;
+  /* In the radio-style sibling layout, the checkbox should align to the label text line,
+     not to an expanded label hit area. Keep the label box tight and let htmlFor preserve click behavior. */
+  padding: 0;
+  color: var(--mds-text-default);
+}
+
+.mds-checkbox .mds-checkbox-label-text {
+  min-width: 0;
+}
+
+.mds-checkbox .mds-checkbox-input:disabled ~ .form-check-label,
+.mds-checkbox .mds-checkbox-input:disabled ~ .mds-checkbox-label {
+  color: var(--mds-text-muted);
+}
+
+.mds-checkbox .mds-checkbox-input.is-invalid ~ .form-check-label,
+.mds-checkbox .mds-checkbox-input.is-invalid ~ .mds-checkbox-label {
+  color: var(--mds-text-danger);
+}
+
+/* Disabled takes precedence over invalid — restore muted colour when both are active. */
+
+.mds-checkbox .mds-checkbox-input.is-invalid:disabled ~ .form-check-label,
+.mds-checkbox .mds-checkbox-input.is-invalid:disabled ~ .mds-checkbox-label {
+  color: var(--mds-text-muted);
+}
+
+.mds-checkbox-required {
+  color: var(--mds-text-danger);
+  margin-inline-start: var(--mds-spacing-xxs);
+}
+
+.mds-checkbox .invalid-feedback,
+.mds-checkbox .mds-checkbox-feedback {
+  grid-column: 2;
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-xs);
+}
+
+.mds-checkbox .invalid-feedback,
+.mds-checkbox .mds-checkbox-feedback.mds-checkbox-supporting-text {
+  margin: 0;
+}
+
+.mds-checkbox .invalid-feedback {
+  color: var(--mds-text-danger);
+}
+
+/* In the default state supporting text is subtle. In the invalid state use danger to match
+   the label colour \u2014 matching Figma where the label container sets the colour for both. */
+
+.mds-checkbox .mds-checkbox-feedback.mds-checkbox-supporting-text {
+  color: var(--mds-text-subtle);
+}
+
+.mds-checkbox
+  .mds-checkbox-input.is-invalid
+  ~ .mds-checkbox-feedback.mds-checkbox-supporting-text {
+  color: var(--mds-text-danger);
+}
+
+.mds-checkbox .mds-checkbox-input:disabled ~ .invalid-feedback,
+.mds-checkbox .mds-checkbox-input:disabled ~ .mds-checkbox-feedback {
+  opacity: 0.5;
+}
+
 .mds-close-button.btn-close {
   inline-size: var(--mds-icons-md);
   block-size: var(--mds-icons-md);
@@ -149,38 +867,47 @@
   background-size: var(--mds-icons-md) var(--mds-icons-md);
   opacity: 0.6;
 }
+
 .mds-close-button.btn-close:hover {
   opacity: 0.75;
 }
+
 .mds-close-button.btn-close:focus {
   box-shadow: none;
 }
+
 .mds-close-button.btn-close:focus-visible {
   outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
   outline-offset: 0;
   box-shadow: none;
   opacity: 1;
 }
+
 .mds-close-button.btn-close:disabled,
 .mds-close-button.btn-close.disabled {
   opacity: 0.25;
 }
+
 .mds-close-button.btn-close.mds-close-button--sm {
   inline-size: var(--mds-icons-sm);
   block-size: var(--mds-icons-sm);
   background-size: var(--mds-icons-sm) var(--mds-icons-sm);
 }
+
 .mds-close-button.btn-close.mds-close-button--md {
   inline-size: var(--mds-icons-md);
   block-size: var(--mds-icons-md);
   background-size: var(--mds-icons-md) var(--mds-icons-md);
 }
+
 .mds-close-button.btn-close.mds-close-button--lg {
   inline-size: var(--mds-icons-lg);
   block-size: var(--mds-icons-lg);
   background-size: var(--mds-icons-lg) var(--mds-icons-lg);
 }
+
 /* Parent element */
+
 .mds-form-check {
   /* Grid layout: column 1 = input, column 2 = label. The feedback is then placed
      explicitly into column 2 via grid-column so it aligns with the label without
@@ -207,10 +934,12 @@
   font-family: var(--mds-font-family-base, Arial, sans-serif);
   font-size: var(--mds-font-size-body, 1rem);
   font-weight: var(--mds-font-weight-regular, 400);
-  line-height: var(--mds-line-height-paragraph-small, 1.0875rem); /* 108.75% */
+  line-height: var(--mds-line-height-paragraph-xs, 0.75rem);
   letter-spacing: var(--mds-letter-spacing, 0);
 }
+
 /* Input element styles */
+
 .mds-form-check-input {
   border-radius: var(--mds-border-radius-pill, 50rem);
   border: var(--mds-stroke-weight-sm, 1px) solid
@@ -219,83 +948,103 @@
      background-image to none, which wipes out Bootstrap's --bs-form-check-bg-image
      (the inner dot SVG) on the checked state. */
 }
+
 /* Bootstrap's .form-check .form-check-input rule (specificity 0,2,0) sets float: left
    and a negative margin-inline-start that causes overlap. Match its specificity to
    ensure our flex-friendly reset wins regardless of load order. */
+
 .mds-form-check .mds-form-check-input {
   margin: 0;
   float: none;
   background-color: var(--mds-bg-surface-default, #fff);
 }
+
 .mds-form-check-input:checked {
   background-color: var(--mds-bg-interactive-primary-default);
   border-color: transparent;
 }
+
 .mds-form-check-input:disabled {
   border-color: var(--mds-border-interactive-secondary-disabled);
 }
+
 .mds-form-check-input:disabled:checked {
   background-color: var(--mds-bg-interactive-primary-disabled);
   border-color: transparent;
 }
+
 .mds-form-check-input.is-invalid {
   border-color: var(--mds-border-interactive-danger-default);
 }
+
 .mds-form-check-input.is-invalid:checked {
   background-color: var(--mds-bg-interactive-danger-default);
   border-color: transparent;
 }
+
 /* Explicit rule for invalid + disabled to avoid relying on specificity cascade order.
    Disabled takes visual precedence: use the disabled background/border, not the danger ones. */
+
 .mds-form-check-input.is-invalid:disabled {
   background-color: var(--mds-bg-interactive-secondary-disabled);
   border-color: var(--mds-border-interactive-secondary-disabled);
 }
+
 .mds-form-check-input.is-invalid:disabled:checked {
   background-color: var(--mds-bg-interactive-primary-disabled);
   border-color: transparent;
 }
+
 /* is-valid (Bootstrap) and neutral feedback states are intentionally not supported.
    Radio buttons surface a binary valid/invalid result; positive confirmation
    is conveyed by form-level success messaging rather than per-input valid styling. */
+
 /* Hover styles are intentionally omitted. The radio input relies on the OS/browser
    default appearance for hover; no design token exists for a radio hover state. */
+
 /* Focus ring: Only outline + outline-offset allowed (no box-shadow or border).
   See .github/instructions/components.instructions.md for full rules and rationale. */
+
 .mds-form-check-input:focus,
 .mds-form-check-input.is-invalid:focus {
   /* Reset Bootstrap's :focus box-shadow; our ring is applied on :focus-visible only */
   box-shadow: none;
   outline: none;
 }
+
 .mds-form-check-input:focus-visible {
   outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
   outline-offset: var(--mds-spacing-offset);
   box-shadow: none;
 }
+
 .mds-form-check-input.is-invalid:focus-visible {
   outline: var(--mds-stroke-weight-md) solid var(--mds-border-feedback-danger);
   outline-offset: var(--mds-spacing-offset);
   box-shadow: none;
 }
+
 /* Label element styles */
+
 .mds-form-check .form-check-label,
 .mds-form-check .mds-form-check-label {
   color: var(--mds-text-default, #1d2125);
-  cursor: pointer;
 }
+
 /* Use sibling selector so the label reflects the input's disabled/invalid state */
+
 .mds-form-check .mds-form-check-input:disabled ~ .form-check-label,
 .mds-form-check .mds-form-check-input:disabled ~ .mds-form-check-label {
   color: var(--mds-text-muted);
-  /* Disabled inputs are not interactive — suppress the pointer cursor on the label */
-  cursor: default;
 }
+
 .mds-form-check .mds-form-check-input.is-invalid ~ .form-check-label,
 .mds-form-check .mds-form-check-input.is-invalid ~ .mds-form-check-label {
   color: var(--mds-text-danger);
 }
+
 /* Feedback element styles — UI text/UI small */
+
 .mds-form-check .invalid-feedback,
 .mds-form-check .mds-form-check-feedback {
   /* Place feedback in column 2 (the label column) so it aligns with the label
@@ -303,10 +1052,13 @@
   grid-column: 2;
   font-size: var(--mds-font-size-paragraph-small, 0.875rem);
   font-weight: var(--mds-font-weight-medium, 500);
+  line-height: var(--mds-line-height-paragraph-xs, 0.75rem);
   color: var(--mds-text-danger);
 }
+
 /* Dim the feedback when the input is disabled to match the reduced visual weight of
    the label and input; keeps the feedback legible without implying it is actionable. */
+
 .mds-form-check:has(.mds-form-check-input:disabled) .invalid-feedback,
 .mds-form-check:has(.mds-form-check-input:disabled) .mds-form-check-feedback {
   opacity: 0.5;
@@ -372,23 +1124,30 @@
   --mds-activity-icon-other-icon: var(--mds-color-gray-900);
   --mds-activity-icon-resource-bg: var(--mds-color-cyan-100);
   --mds-activity-icon-resource-icon: var(--mds-color-cyan-500);
+  --mds-bg-feedback-danger-light: var(--mds-color-red-50);
   --mds-bg-feedback-danger-subtle: var(--mds-color-red-100);
-  --mds-bg-feedback-info-default: var(--mds-color-cyan-500);
+  --mds-bg-feedback-info-default: var(--mds-color-cyan-600);
+  --mds-bg-feedback-info-light: var(--mds-color-cyan-50);
   --mds-bg-feedback-info-subtle: var(--mds-color-cyan-100);
   --mds-bg-feedback-primary-default: var(--mds-color-blue-500);
+  --mds-bg-feedback-primary-light: var(--mds-color-blue-50);
   --mds-bg-feedback-primary-subtle: var(--mds-color-blue-100);
   --mds-bg-feedback-secondary-default: var(--mds-color-gray-400);
   --mds-bg-feedback-secondary-subtle: var(--mds-color-gray-100);
   --mds-bg-feedback-success-default: var(--mds-color-green-500);
+  --mds-bg-feedback-success-light: var(--mds-color-green-50);
   --mds-bg-feedback-success-subtle: var(--mds-color-green-100);
   --mds-bg-feedback-warning-default: var(--mds-color-yellow-500);
+  --mds-bg-feedback-warning-light: var(--mds-color-yellow-50);
   --mds-bg-feedback-warning-subtle: var(--mds-color-yellow-100);
   --mds-bg-interactive-danger-active: var(--mds-color-red-700);
   --mds-bg-interactive-danger-default: var(--mds-color-red-500);
+  --mds-bg-interactive-danger-default-light: var(--mds-color-red-50);
   --mds-bg-interactive-danger-disabled: var(--mds-color-red-200);
   --mds-bg-interactive-danger-hover: var(--mds-color-red-600);
   --mds-bg-interactive-primary-active: var(--mds-color-blue-700);
   --mds-bg-interactive-primary-default: var(--mds-color-blue-500);
+  --mds-bg-interactive-primary-default-light: var(--mds-color-blue-50);
   --mds-bg-interactive-primary-disabled: var(--mds-color-blue-200);
   --mds-bg-interactive-primary-hover: var(--mds-color-blue-600);
   --mds-bg-interactive-secondary-default: var(--mds-color-gray-400);
@@ -444,6 +1203,7 @@
  */
 
 :root {
+  --mds-color-blue-50: #e7f0f9;
   --mds-color-blue-100: #cfe2f2;
   --mds-color-blue-200: #9fc4e5;
   --mds-color-blue-300: #6fa7d9;
@@ -453,6 +1213,7 @@
   --mds-color-blue-700: #094173;
   --mds-color-blue-800: #062b4c;
   --mds-color-blue-900: #031626;
+  --mds-color-cyan-50: #e5f2f4;
   --mds-color-cyan-100: #cce6ea;
   --mds-color-cyan-200: #99cdd5;
   --mds-color-cyan-300: #66b3c0;
@@ -473,6 +1234,7 @@
   --mds-color-gray-900: #1d2125;
   --mds-color-gray-black: #000000;
   --mds-color-gray-white: #ffffff;
+  --mds-color-green-50: #ebf2ea;
   --mds-color-green-100: #d7e4d6;
   --mds-color-green-200: #aecaad;
   --mds-color-green-300: #86af84;
@@ -518,6 +1280,7 @@
   --mds-color-purple-700: #3a254a;
   --mds-color-purple-800: #271832;
   --mds-color-purple-900: #130c19;
+  --mds-color-red-50: #faeae9;
   --mds-color-red-100: #f4d6d2;
   --mds-color-red-200: #eaada6;
   --mds-color-red-300: #df8379;
@@ -536,6 +1299,7 @@
   --mds-color-teal-700: #13795b;
   --mds-color-teal-800: #0d503c;
   --mds-color-teal-900: #06281e;
+  --mds-color-yellow-50: #fdf7ed;
   --mds-color-yellow-100: #fcefdc;
   --mds-color-yellow-200: #f9deb8;
   --mds-color-yellow-300: #f6ce95;
@@ -600,6 +1364,7 @@
   --mds-typography-line-height-paragraph-base: 1.5rem;
   --mds-typography-line-height-paragraph-lg: 2.5rem;
   --mds-typography-line-height-paragraph-sm: 1.0875rem;
+  --mds-typography-line-height-paragraph-xs: 0.75rem;
 }
 
 /**
@@ -692,6 +1457,7 @@
   --mds-line-height-paragraph-default: var(--mds-typography-line-height-paragraph-base); /** Comfortable line height for paragraphs. */
   --mds-line-height-paragraph-lead: var(--mds-typography-line-height-paragraph-lg); /** Extended line height for large body text. */
   --mds-line-height-paragraph-small: var(--mds-typography-line-height-paragraph-sm); /** Compact line height for small text. */
+  --mds-line-height-paragraph-xs: var(--mds-typography-line-height-paragraph-xs);
   --mds-margin-bottom-display: var(--mds-spacing-none); /** Default margin below a Displays. */
   --mds-margin-bottom-heading: var(--mds-spacing-xs); /** Default margin below a Headings. */
   --mds-margin-bottom-paragraph: var(--mds-spacing-md); /** Default margin below a paragraph. */
