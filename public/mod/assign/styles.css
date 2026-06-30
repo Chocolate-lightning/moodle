@@ -16,6 +16,7 @@
 .path-mod-assign div.feedback,
 .path-mod-assign div.gradingsummary {
     margin-bottom: 1.5em;
+    background-color: var(--mds-bg-interactive-danger-default);
 }
 
 .path-mod-assign div.submissionstatus .table,
