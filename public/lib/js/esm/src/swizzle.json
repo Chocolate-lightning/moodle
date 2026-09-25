@@ -1,4 +1,8 @@
 {
+  "DesignSystemShowcase": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
   "nav/Nav": {
     "eject": "risky",
     "wrap": "risky"
