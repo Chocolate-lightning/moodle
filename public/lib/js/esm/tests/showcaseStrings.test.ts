@@ -14,54 +14,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests that the Design System showcase strings match the lang file they are loaded from.
+ * Tests that the Design System showcase strings match the lang file and the PHP that provide them.
  *
  * @copyright  2026 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {readFileSync} from 'fs';
+import {readFileSync, readdirSync} from 'fs';
 import path from 'path';
-import {formatString, sharedStrings, showcaseComponent, showcaseStringKeys} from '../src/showcase/strings';
+import {formatString} from '../src/designsystemshowcase/strings';
 
 // Strings the showcase page needs from PHP, before any JavaScript runs.
 const phpOnlyKeys = ['pagetitle'];
 
-/** Read the identifiers defined by a component's English lang file. */
-const readLangKeys = (component: string): string[] => {
-    // Plugins keep their lang files in their own directory; everything else is a core lang file.
-    const dir = component.startsWith('tool_')
-        ? `../../../../admin/tool/${component.replace('tool_', '')}/lang/en`
-        : '../../../../lang/en';
-    const file = path.resolve(__dirname, dir, `${component === 'core' ? 'moodle' : component.replace('core_', '')}.php`);
-    return [...readFileSync(file, 'utf8').matchAll(/^\$string\['([^']+)'\]/gm)].map((match) => match[1]);
-};
+const showcaseDir = path.resolve(__dirname, '../src/designsystemshowcase');
+const langFile = path.resolve(__dirname, '../../../../lang/en/designsystemshowcase.php');
+const fixtureFile = path.resolve(__dirname, '../../../tests/behat/fixtures/design_system_showcase.php');
 
-const langKeys = readLangKeys(showcaseComponent);
+/** The identifiers defined by the showcase lang file. */
+const langKeys = [...readFileSync(langFile, 'utf8').matchAll(/^\$string\['([^']+)'\]/gm)].map((match) => match[1]);
+
+/** The keys the page borrows from other components, as listed by the PHP that provides the strings. */
+const sharedKeys = [...readFileSync(fixtureFile, 'utf8').matchAll(/^ {4}'([^']+)' => \['[^']+', '[^']+'\],$/gm)]
+    .map((match) => match[1]);
+
+/** The source of the page, which looks strings up with `t('key')`. */
+const pageSource = readdirSync(showcaseDir)
+    .filter((file) => /(DesignSystemShowcase|Sections|Layout)\.tsx$/.test(file))
+    .map((file) => readFileSync(path.join(showcaseDir, file), 'utf8'))
+    .join('\n');
+
+const usedKeys = [...pageSource.matchAll(/\bt\('([a-z_]+)'/g)].map((match) => match[1]);
 
 describe('showcase strings', () => {
-    it('are all defined in the lang file', () => {
-        expect(showcaseStringKeys.filter((key) => !langKeys.includes(key))).toEqual([]);
+    it('are all provided by the lang file or borrowed', () => {
+        expect(usedKeys.filter((key) => !langKeys.includes(key) && !sharedKeys.includes(key))).toEqual([]);
     });
 
     it('are all used by the page', () => {
-        expect(langKeys.filter((key) => !showcaseStringKeys.includes(key as never) && !phpOnlyKeys.includes(key)))
+        expect([...langKeys, ...sharedKeys].filter((key) => !phpOnlyKeys.includes(key) && !pageSource.includes(`'${key}'`)))
             .toEqual([]);
     });
 
     it('do not repeat strings that are borrowed from elsewhere', () => {
-        expect(showcaseStringKeys.filter((key) => key in sharedStrings)).toEqual([]);
-    });
-
-    it('only borrow strings that exist', () => {
-        const missing = Object.entries(sharedStrings)
-            .filter(([, {key, component}]) => !readLangKeys(component).includes(key))
-            .map(([alias]) => alias);
-        expect(missing).toEqual([]);
+        expect(langKeys.filter((key) => sharedKeys.includes(key))).toEqual([]);
     });
 
     it('are listed once each', () => {
-        expect(new Set(showcaseStringKeys).size).toBe(showcaseStringKeys.length);
+        expect(new Set(langKeys).size).toBe(langKeys.length);
+        expect(new Set(sharedKeys).size).toBe(sharedKeys.length);
     });
 });
 

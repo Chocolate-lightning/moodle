@@ -16,13 +16,13 @@
 /**
  * Shared layout pieces for the Design System showcase page.
  *
- * @module     core/showcase/Layout
+ * @module     core/designsystemshowcase/Layout
  * @copyright  2026 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import {FC, PropsWithChildren, ReactNode} from 'react';
-import {useShowcaseStrings} from '@moodle/lms/core/showcase/strings';
+import {useShowcaseStrings} from '@moodle/lms/core/designsystemshowcase/strings';
 
 // Handler for examples that need a callback but have no behaviour to show.
 export const noop = (): void => undefined;

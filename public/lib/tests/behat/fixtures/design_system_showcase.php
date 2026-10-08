@@ -39,38 +39,60 @@ if (!$CFG->debugdeveloper) {
     throw new \core\exception\moodle_exception('notavailable');
 }
 
-// Right-to-left checks need a right-to-left language pack. Prefer Arabic, as the most widely installed one,
-// but use any other installed one rather than skipping the checks.
 $stringmanager = get_string_manager();
-$rtllang = 'ar';
-$rtllanginstalled = $stringmanager->translation_exists($rtllang, false);
-if (!$rtllanginstalled) {
-    foreach (array_keys($stringmanager->get_list_of_translations(true)) as $lang) {
-        if ($stringmanager->get_string('thisdirection', 'langconfig', null, $lang) === 'rtl') {
-            $rtllang = $lang;
-            $rtllanginstalled = true;
-            break;
-        }
-    }
-}
 
-$langimporturl = null;
-if (\core\component::get_plugin_directory('tool', 'langimport')) {
-    $langimporturl = (new \core\url('/admin/tool/langimport/index.php'))->out(false);
+// The strings of the page. Generic words are borrowed from existing strings rather than defined again, and some are
+// close matches rather than the same text, such as "Email address" for "Email". The keys are the ones the page uses.
+$sharedstrings = [
+    'badge_complete' => ['complete', 'core'],
+    'breadcrumb' => ['breadcrumb', 'access'],
+    'breadcrumb_home' => ['home', 'core'],
+    'breadcrumb_showmore' => ['showmore', 'core'],
+    'checkbox_notifications' => ['registrationemail', 'core'],
+    'choicebox_group' => ['group', 'core'],
+    'default' => ['default', 'core'],
+    'disabled' => ['disabled', 'admin'],
+    'dropdown_actions' => ['actions', 'core'],
+    'dropdown_columns' => ['profilefieldcolumns', 'admin'],
+    'dropdown_coursename' => ['coursename', 'grades'],
+    'dropdown_delete' => ['delete', 'core'],
+    'dropdown_duplicate' => ['duplicate', 'core'],
+    'dropdown_editsettings' => ['editsettings', 'core'],
+    'dropdown_email' => ['email', 'core'],
+    'dropdown_export' => ['export', 'calendar'],
+    'dropdown_filter' => ['filter', 'core'],
+    'dropdown_lastaccess' => ['lastaccess', 'core'],
+    'dropdown_lastmodified' => ['lastmodified', 'core'],
+    'dropdown_moreactions' => ['moreactions', 'core'],
+    'dropdown_name' => ['name', 'core'],
+    'dropdown_progress' => ['progress', 'core'],
+    'dropdown_sortby' => ['sortby', 'core'],
+    'formsubmission_advanced' => ['advanced', 'core'],
+    'formsubmission_nothing' => ['nothingtodisplay', 'core'],
+    'link_back' => ['back', 'core'],
+    'radio_email' => ['email', 'core'],
+    'radio_no' => ['no', 'core'],
+    'radio_phone' => ['phone', 'core'],
+    'radio_sms' => ['sms', 'sms'],
+    'radio_yes' => ['yes', 'core'],
+    'selected' => ['selected', 'form'],
+    'settings' => ['settings', 'core'],
+    'submit' => ['submit', 'core'],
+    'switch_lock' => ['lock', 'grades'],
+    'switch_visibility' => ['visibilityshort', 'group'],
+];
+
+// Parameters are filled in by the page, so the same string can be used with different values.
+$strings = $stringmanager->load_component_strings('core_designsystemshowcase', current_language());
+foreach ($sharedstrings as $alias => [$identifier, $component]) {
+    $strings[$alias] = $stringmanager->get_string($identifier, $component);
 }
 
 echo $OUTPUT->header();
 
-echo \core\output\html_writer::div('', '', [
-    'data-react-component' => '@moodle/lms/core/DesignSystemShowcase',
-    'data-react-props' => json_encode([
-        'isRtl' => right_to_left(),
-        'rtlLang' => $rtllang,
-        'rtlLangInstalled' => $rtllanginstalled,
-        'rtlUrl' => (new \core\url($PAGE->url, ['lang' => $rtllang]))->out(false),
-        'ltrUrl' => (new \core\url($PAGE->url, ['lang' => 'en']))->out(false),
-        'langImportUrl' => $langimporturl,
-    ]),
+echo $OUTPUT->render_react_component('core/designsystemshowcase/DesignSystemShowcase', (object) [
+    'isRtl' => right_to_left(),
+    'strings' => $strings,
 ]);
 
 echo $OUTPUT->footer();

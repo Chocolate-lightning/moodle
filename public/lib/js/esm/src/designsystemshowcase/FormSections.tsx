@@ -16,7 +16,7 @@
 /**
  * Showcase sections for form controls, plus a native form submission check.
  *
- * @module     core/showcase/FormSections
+ * @module     core/designsystemshowcase/FormSections
  * @copyright  2026 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +24,8 @@
 import {Button, Checkbox, Choicebox, Radio, Switch} from '@moodlehq/design-system';
 import type {SwitchLabelSide, SwitchVariant} from '@moodlehq/design-system/components/switch';
 import {ChangeEvent, FC, FormEvent, useState} from 'react';
-import {Example, Section, allOf, icon, noop} from '@moodle/lms/core/showcase/Layout';
-import {useShowcaseStrings} from '@moodle/lms/core/showcase/strings';
+import {Example, Section, allOf, icon, noop} from '@moodle/lms/core/designsystemshowcase/Layout';
+import {useShowcaseStrings} from '@moodle/lms/core/designsystemshowcase/strings';
 
 const switchVariants = allOf<SwitchVariant>({enable: true, visibility: true, lock: true});
 const switchLabelSides = allOf<SwitchLabelSide>({start: true, end: true});

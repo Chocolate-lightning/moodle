@@ -24,9 +24,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['activityicon_all'] = 'All activity icons (md size, default container)';
 $string['activityicon_container'] = 'Sizes, container: {$a}';
 $string['activityicon_expectation'] = 'Every icon loads (no broken images) and keeps its category colour. Each size and container is visibly distinct.';
+$string['activityicon_filetypes'] = 'File type icons, shown for a resource according to its file (md size, default container)';
+$string['activityicon_modules'] = 'Activity and resource icons (md size, default container)';
 $string['avatar_broken'] = 'Broken image URL (should fall back to initials)';
 $string['avatar_expectation'] = 'Images, initials and silhouettes are circular at every size. The broken image URL falls back to initials.';
 $string['avatar_image'] = 'Sizes: image';
@@ -151,12 +152,9 @@ $string['radio_group'] = 'Group (arrow keys move between options)';
 $string['radio_hiddenlabel'] = 'Select this row (hidden label)';
 $string['radio_invalidfeedback'] = 'Choose an option to continue';
 $string['radio_long'] = 'Students can submit after the due date, but submissions will be marked as late';
-$string['reload_ltr'] = 'Reload page in English';
-$string['reload_rtl'] = 'Reload page in {$a} (full RTL theme)';
 $string['render_help'] = 'Only sets the dir attribute. The RTL theme CSS is loaded only when the page language is RTL.';
 $string['render_ltr'] = 'Render left to right';
 $string['render_rtl'] = 'Render right to left';
-$string['rtl_missing'] = 'No right-to-left language pack is installed, so the RTL theme CSS cannot be tested. Install a right-to-left language pack, preferably Arabic ({$a}).';
 $string['section_activityicon'] = 'Activity icon';
 $string['section_avatar'] = 'Avatar';
 $string['section_badge'] = 'Badge';

@@ -16,7 +16,7 @@
 /**
  * Showcase sections for action and navigation components: buttons, dropdowns, links and tooltips.
  *
- * @module     core/showcase/ActionSections
+ * @module     core/designsystemshowcase/ActionSections
  * @copyright  2026 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,8 +28,8 @@ import {
 } from '@moodlehq/design-system';
 import type {ButtonVariant} from '@moodlehq/design-system/components/button';
 import {FC, useState} from 'react';
-import {Example, Section, allOf, icon, noop} from '@moodle/lms/core/showcase/Layout';
-import {useShowcaseStrings} from '@moodle/lms/core/showcase/strings';
+import {Example, Section, allOf, icon, noop} from '@moodle/lms/core/designsystemshowcase/Layout';
+import {useShowcaseStrings} from '@moodle/lms/core/designsystemshowcase/strings';
 
 const buttonVariants = allOf<ButtonVariant>({
     primary: true, secondary: true, danger: true, ghost: true, 'outline-primary': true, 'outline-secondary': true,

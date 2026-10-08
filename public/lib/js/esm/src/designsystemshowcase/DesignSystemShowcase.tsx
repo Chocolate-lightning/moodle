@@ -18,24 +18,24 @@
  *
  * Renders MDS components in situ so they can be verified against the LMS theme and Bootstrap.
  *
- * @module     core/DesignSystemShowcase
+ * @module     core/designsystemshowcase/DesignSystemShowcase
  * @copyright  2026 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {Button, Link} from '@moodlehq/design-system';
+import {Button} from '@moodlehq/design-system';
 import {FC, useEffect, useRef, useState} from 'react';
 import {
     ButtonSection, CloseButtonSection, DropdownSection, FavouriteButtonSection, LinkSection, NavPillSection,
     PaginationSection, TooltipSection,
-} from '@moodle/lms/core/showcase/ActionSections';
+} from '@moodle/lms/core/designsystemshowcase/ActionSections';
 import {
     ActivityIconSection, AvatarSection, BadgeSection, BreadcrumbSection, ProgressBarSection,
-} from '@moodle/lms/core/showcase/DisplaySections';
+} from '@moodle/lms/core/designsystemshowcase/DisplaySections';
 import {
     CheckboxSection, ChoiceboxSection, FormSubmissionSection, RadioSection, SwitchSection,
-} from '@moodle/lms/core/showcase/FormSections';
-import {ShowcaseStringsProvider, useShowcaseStrings} from '@moodle/lms/core/showcase/strings';
+} from '@moodle/lms/core/designsystemshowcase/FormSections';
+import {ShowcaseStrings, ShowcaseStringsProvider, useShowcaseStrings} from '@moodle/lms/core/designsystemshowcase/strings';
 
 interface ContentsEntry {
     id: string;
@@ -45,19 +45,11 @@ interface ContentsEntry {
 interface DesignSystemShowcaseProps {
     /** Whether the page is being rendered in a right-to-left language, with the RTL theme CSS loaded. */
     isRtl: boolean;
-    /** The right-to-left language used for the translated examples. */
-    rtlLang: string;
-    /** Whether the language pack for rtlLang is installed. Without it, the strings fall back to English. */
-    rtlLangInstalled: boolean;
-    /** This page, rendered in rtlLang. */
-    rtlUrl: string;
-    /** This page, rendered in English. */
-    ltrUrl: string;
-    /** Where an administrator can install language packs, or null if they cannot from this site. */
-    langImportUrl: string | null;
+    /** The strings of the page, by key. */
+    strings: ShowcaseStrings;
 }
 
-const Showcase: FC<DesignSystemShowcaseProps> = ({isRtl, rtlLang, rtlLangInstalled, rtlUrl, ltrUrl, langImportUrl}) => {
+const Showcase: FC<DesignSystemShowcaseProps> = ({isRtl}) => {
     const t = useShowcaseStrings();
     const [dir, setDir] = useState<'ltr' | 'rtl'>(isRtl ? 'rtl' : 'ltr');
     const [contents, setContents] = useState<ContentsEntry[]>([]);
@@ -71,19 +63,7 @@ const Showcase: FC<DesignSystemShowcaseProps> = ({isRtl, rtlLang, rtlLangInstall
 
     return (
         <div className="container py-5" dir={dir}>
-            {!rtlLangInstalled && (
-                <div className="alert alert-warning" role="alert">
-                    {t('rtl_missing', rtlLang)}
-                    {langImportUrl && <> <a href={langImportUrl}>{t('rtl_install')}</a></>}
-                </div>
-            )}
             <div className="d-flex flex-wrap justify-content-end gap-2 mb-4">
-                {rtlLangInstalled && (
-                    <Link
-                        href={isRtl ? ltrUrl : rtlUrl}
-                        label={isRtl ? t('reload_ltr') : t('reload_rtl', rtlLang)}
-                    />
-                )}
                 <Button
                     label={dir === 'ltr' ? t('render_rtl') : t('render_ltr')}
                     onClick={() => setDir(dir === 'ltr' ? 'rtl' : 'ltr')}
@@ -126,7 +106,7 @@ const Showcase: FC<DesignSystemShowcaseProps> = ({isRtl, rtlLang, rtlLangInstall
 };
 
 const DesignSystemShowcase: FC<DesignSystemShowcaseProps> = (props) => (
-    <ShowcaseStringsProvider>
+    <ShowcaseStringsProvider strings={props.strings}>
         <Showcase {...props} />
     </ShowcaseStringsProvider>
 );

@@ -16,7 +16,7 @@
 /**
  * Showcase sections for display components: icons, avatars, badges, breadcrumbs and progress.
  *
- * @module     core/showcase/DisplaySections
+ * @module     core/designsystemshowcase/DisplaySections
  * @copyright  2026 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,15 +27,23 @@ import {
 import type {ActivityIconContainer, ActivityIconSize} from '@moodlehq/design-system/components/activity-icon';
 import {FC} from 'react';
 import config from '@moodle/lms/core/config';
-import {Example, Section, allOf, icon} from '@moodle/lms/core/showcase/Layout';
-import {useShowcaseStrings} from '@moodle/lms/core/showcase/strings';
+import {Example, Section, allOf, icon} from '@moodle/lms/core/designsystemshowcase/Layout';
+import {useShowcaseStrings} from '@moodle/lms/core/designsystemshowcase/strings';
 
 // The design system does not export the list of activity icon names, so this one has to be kept up to date by hand.
-const activityIcons = [
-    'assignment', 'quiz', 'workshop', 'database', 'forum', 'glossary', 'wiki', 'bigbluebutton', 'chat',
-    'choice', 'feedback', 'survey', 'h5p', 'ims-package', 'lesson', 'scorm-package', 'book', 'external-tool',
-    'file', 'folder', 'page', 'text-and-media', 'url', 'subsection', 'file-pdf', 'file-image', 'file-unknown',
+const allActivityIcons = [
+    'assignment', 'quiz', 'workshop', 'database', 'forum', 'glossary', 'wiki', 'bigbluebutton', 'chat', 'choice',
+    'feedback', 'survey', 'h5p', 'ims-package', 'lesson', 'scorm-package', 'book', 'external-tool', 'file', 'folder',
+    'page', 'text-and-media', 'url', 'subsection', 'file-ai', 'file-archive', 'file-audio', 'file-code',
+    'file-database', 'file-doc', 'file-draw', 'file-eps', 'file-epub', 'file-flash', 'file-folder', 'file-gif',
+    'file-graphic', 'file-h5p', 'file-image', 'file-isf-flowchart', 'file-json', 'file-math', 'file-moodle',
+    'file-oth', 'file-pdf', 'file-plain-text', 'file-presentation', 'file-ppt', 'file-psd', 'file-pub',
+    'file-source-code', 'file-spreadsheet', 'file-text-editor', 'file-unknown', 'file-video', 'file-xls',
 ];
+// File type icons are shown for a resource according to its file, so they are listed apart from the module icons.
+const isFileTypeIcon = (name: string): boolean => name.startsWith('file-');
+const activityIcons = allActivityIcons.filter((name) => !isFileTypeIcon(name));
+const fileTypeIcons = allActivityIcons.filter(isFileTypeIcon);
 const activityIconSizes = allOf<ActivityIconSize>({sm: true, md: true, lg: true, xl: true});
 const activityIconContainers = allOf<ActivityIconContainer>({none: true, 'default': true, large: true});
 const avatarSizes = allOf<AvatarSize>({xs: true, sm: true, md: true, lg: true, xl: true, xxl: true});
@@ -54,8 +62,13 @@ export const ActivityIconSection: FC = () => {
 
     return (
         <Section expectation={t('activityicon_expectation')} id="activityicon" title={t('section_activityicon')}>
-            <Example label={t('activityicon_all')}>
+            <Example label={t('activityicon_modules')}>
                 {activityIcons.map((name) => (
+                    <ActivityIcon alt={name} icon={name} key={name} />
+                ))}
+            </Example>
+            <Example label={t('activityicon_filetypes')}>
+                {fileTypeIcons.map((name) => (
                     <ActivityIcon alt={name} icon={name} key={name} />
                 ))}
             </Example>
